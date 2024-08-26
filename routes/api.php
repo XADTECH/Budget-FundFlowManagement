@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlannedCashController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\BusinessUnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,3 +40,9 @@ Route::post('/add-project', [ProjectController::class, 'addRecord'])->name('add-
 Route::get('/get-projects', [ProjectController::class, 'getRecords'])->name('get-projects');
 Route::post('/update-project', [ProjectController::class, 'updateRecord'])->name('update-project');
 Route::post('/delete-project', [ProjectController::class, 'deleteRecord'])->name('delete-project');
+
+//add business unit
+Route::post('/add-business-unit', [BusinessUnitController::class, 'store'])->name('add-business-unit');
+Route::get('/get-business-units', [BusinessUnitController::class, 'index'])->name('get-business-units');
+Route::post('/update-business-unit', [BusinessUnitController::class, 'update'])->name('update-business-unit');
+Route::post('/delete-business-unit', [BusinessUnitController::class, 'destroy'])->name('delete-business-unit');

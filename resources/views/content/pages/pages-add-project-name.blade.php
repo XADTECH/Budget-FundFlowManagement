@@ -27,13 +27,13 @@
               <input type="text" class="form-control" name="projectname" placeholder="Enter Project Name" required />
             </div>
             <div class="col-sm-6">
-              <input type="text" class="form-control" name="projectdetail" placeholder="Enter Project Detail" required />
+              <input type="text" class="form-control" name="projectdetail" placeholder="Enter Project Detail"  />
             </div>
           </div>
 
           <div class="row mt-4">
             <div class="col-sm-6">
-              <input type="text" class="form-control" name="projectremark" placeholder="Remarks" required />
+              <input type="text" class="form-control" name="projectremark" placeholder="Remarks"  />
             </div>
             <div class="col-sm-6">
               <select class="form-select" name="status">
@@ -100,7 +100,7 @@
             <label for="projectStatus" class="form-label">Status</label>
             <select class="form-select" id="projectStatus" name="projectStatus">
               <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="Non Active">Non Active</option>
             </select>
           </div>
           <button type="submit" class="btn btn-primary">Save Changes</button>

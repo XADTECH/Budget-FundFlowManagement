@@ -20,7 +20,6 @@ class ProjectController extends Controller
       // Validate the request data
       $validatedData = $request->validate([
         'projectname' => 'required|string|max:255',
-        'status' => 'required|string|in:Active,Non Active',
       ]);
 
       // Create a new Project record
@@ -28,7 +27,7 @@ class ProjectController extends Controller
       $project->name = $validatedData['projectname'];
       $project->projectdetail = $request->projectdetail;
       $project->projectremark = $request->projectremark;
-      $project->status = $validatedData['status'];
+      $project->status = $request->status;
       $project->save();
 
       return response()->json(['success' => 'Project added successfully']);
