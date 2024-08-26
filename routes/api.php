@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlannedCashController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
 
 /*
@@ -32,3 +33,9 @@ Route::post('/add-bank-record', [BankController::class, 'addRecord'])->name('add
 Route::get('/get-bank-records', [BankController::class, 'getRecords'])->name('get-bank-records');
 Route::post('/update-bank-record', [BankController::class, 'updateRecord'])->name('update-bank-record');
 Route::post('/delete-bank-record', [BankController::class, 'deleteRecord'])->name('delete-bank-record');
+
+//get all projects routes
+Route::post('/add-project', [ProjectController::class, 'addRecord'])->name('add-project');
+Route::get('/get-projects', [ProjectController::class, 'getRecords'])->name('get-projects');
+Route::post('/update-project', [ProjectController::class, 'updateRecord'])->name('update-project');
+Route::post('/delete-project', [ProjectController::class, 'deleteRecord'])->name('delete-project');

@@ -9,7 +9,9 @@ class Project extends Model
 {
   use HasFactory;
 
-  protected $fillable = ['name'];
+  protected $table = 'projects';
+
+  protected $fillable = ['name', 'projectdetail', 'projectremark', 'status'];
 
   public function plannedCashes()
   {
