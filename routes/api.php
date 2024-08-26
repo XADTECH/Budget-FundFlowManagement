@@ -30,3 +30,5 @@ Route::post('/add-cash-receive', [PlannedCashController::class, 'addcashreceiveA
 Route::post('/add-bank-record', [BankController::class, 'addRecord'])->name('add-bank-record');
 //get all bank records
 Route::get('/get-bank-records', [BankController::class, 'getRecords'])->name('get-bank-records');
+Route::post('/update-bank-record', [BankController::class, 'updateRecord'])->name('update-bank-record');
+Route::post('/delete-bank-record', [BankController::class, 'deleteRecord'])->name('delete-bank-record');
