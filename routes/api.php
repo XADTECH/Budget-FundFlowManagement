@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlannedCashController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BusinessUnitController;
 use App\Http\Controllers\BusinessClientController;
@@ -54,3 +55,6 @@ Route::post('/business-clients', [BusinessClientController::class, 'addRecord'])
 Route::get('/business-clients', [BusinessClientController::class, 'getRecords']);
 Route::post('/update-business-clients', [BusinessClientController::class, 'updateRecord']);
 Route::post('/delete-business-clients', [BusinessClientController::class, 'deleteRecord']);
+
+//user management
+Route::post('/add-user', [UserController::class, 'store'])->name('add-user');

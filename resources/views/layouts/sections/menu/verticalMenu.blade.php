@@ -158,8 +158,8 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="/pages/add-bank-detail" class="menu-link">
-                        <div>Managers</div>
+                    <a href="/pages/add-user" class="menu-link">
+                        <div>Add User</div>
                     </a>
                 </li>
            

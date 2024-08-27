@@ -51,7 +51,7 @@
               </div>
             </div>
             <div class="mb-3">
-              <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+            <a href="{{ route('dashboard-analytics') }}" class="btn btn-primary d-grid w-100">Sign in</a>
             </div>
           </form>
 
