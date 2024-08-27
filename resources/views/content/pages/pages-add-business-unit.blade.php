@@ -51,9 +51,13 @@
           </div>
         </form>
       </div>
-         <!-- Business Units Table -->
-    <div class="card">
-      <h5 class="card-header">List</h5>
+    </div>
+  </div>
+</div>
+
+
+<div class="card mt-4">
+      <h5 class="card-header">Buniess Units</h5>
       <div class="table-responsive text-nowrap">
         <table class="table table-hover">
           <thead>
@@ -71,12 +75,6 @@
         </table>
       </div>
     </div>
-    </div>
-
- 
-
-  </div>
-</div>
 
 <!-- Edit Business Unit Modal -->
 <div class="modal fade" id="editBusinessUnitModal" tabindex="-1" aria-labelledby="editBusinessUnitModalLabel" aria-hidden="true">

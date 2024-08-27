@@ -6,6 +6,7 @@ use App\Http\Controllers\PlannedCashController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BusinessUnitController;
+use App\Http\Controllers\BusinessClientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,3 +47,10 @@ Route::post('/add-business-unit', [BusinessUnitController::class, 'store'])->nam
 Route::get('/get-business-units', [BusinessUnitController::class, 'index'])->name('get-business-units');
 Route::post('/update-business-unit', [BusinessUnitController::class, 'update'])->name('update-business-unit');
 Route::post('/delete-business-unit', [BusinessUnitController::class, 'destroy'])->name('delete-business-unit');
+
+// Routes for Business Clients
+Route::get('/business-clients/add', [BusinessClientController::class, 'showaddBusinessClient']);
+Route::post('/business-clients', [BusinessClientController::class, 'addRecord']);
+Route::get('/business-clients', [BusinessClientController::class, 'getRecords']);
+Route::post('/update-business-clients', [BusinessClientController::class, 'updateRecord']);
+Route::post('/delete-business-clients', [BusinessClientController::class, 'deleteRecord']);

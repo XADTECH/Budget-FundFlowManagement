@@ -49,9 +49,11 @@
         </form>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Projects Table -->
-    <div class="card">
+   <!-- Projects Table -->
+   <div class="card mt-4">
       <h5 class="card-header">List</h5>
       <div class="table-responsive text-nowrap">
         <table class="table table-hover">
@@ -71,8 +73,6 @@
       </div>
     </div>
 
-  </div>
-</div>
 <!--Model-->
 <div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -252,8 +252,8 @@ function attachButtonListeners() {
       // Populate the modal fields
       document.getElementById('projectId').value = projectId;
       document.getElementById('projectName').value = projectName;
-      document.getElementById('projectDetails').value = projectDetails ?? 'Not Entered';
-      document.getElementById('projectRemarks').value = projectRemarks ?? 'Not Entered';
+      document.getElementById('projectDetails').value = projectDetails === 'null' ? "Not Entered" : projectDetails
+      document.getElementById('projectRemarks').value = projectRemarks === 'null' ? "Not Entered" :projectRemarks
       document.getElementById('projectStatus').value = projectStatus;
 
       // Show the edit modal
