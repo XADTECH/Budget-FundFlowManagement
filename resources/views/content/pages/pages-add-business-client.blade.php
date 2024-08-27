@@ -27,7 +27,7 @@
               <input type="text" class="form-control" name="clientname" placeholder="Enter Client Name" required />
             </div>
             <div class="col-sm-6">
-              <input type="email" class="form-control" name="clientdetail" placeholder="Enter Client Detail"  />
+              <input type="text" class="form-control" name="clientdetail" placeholder="Enter Client Detail"  />
             </div>
           </div>
 
@@ -52,14 +52,14 @@
 
     <!-- Business Clients Table -->
     <div class="card mt-4">
-      <h5 class="card-header">Clients List</h5>
+      <h5 class="card-header">Client List</h5>
       <div class="table-responsive text-nowrap">
         <table class="table table-hover">
           <thead>
             <tr>
               <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
+              <th>Detail</th>
+              <th>Remark</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>

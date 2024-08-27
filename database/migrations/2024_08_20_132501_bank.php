@@ -15,6 +15,7 @@ return new class extends Migration {
       $table->string('bank_name');
       $table->string('bank_details');
       $table->string('bank_address');
+      $table->string('balance_amount');
       $table->timestamps();
     });
   }

@@ -13,9 +13,9 @@ return new class extends Migration {
     Schema::create('business_units', function (Blueprint $table) {
       $table->id();
       $table->string('source');
-      $table->string('unitdetail');
+      $table->string('unitdetail')->nullable();
       $table->string('unitremark')->nullable();
-      $table->string('status');
+      $table->string('status')->nullable();
       $table->timestamps();
     });
   }

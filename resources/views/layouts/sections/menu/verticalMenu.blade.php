@@ -37,7 +37,7 @@
 
         <li class="menu-item active open">
             <a href="http://localhost:8000" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <i class="menu-icon tf-icons bx bx-rocket"></i>
                 <div>Project Budgeting</div>
             </a>
             
@@ -84,7 +84,7 @@
 
 <li class="menu-item">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-layout"></i>
+        <i class="menu-icon tf-icons bx bx-money"></i>
         <div> Cash Flow Management</div>
     </a>
     <ul class="menu-sub">
@@ -119,7 +119,7 @@
 
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-store"></i>
+                <i class="menu-icon tf-icons bx bx-wallet-alt"></i>
                 <div>Bank Management</div>
             </a>
             <ul class="menu-sub">
@@ -148,6 +148,21 @@
                         <div>Help Center</div>
                     </a>
                 </li> -->
+            </ul>
+        </li>
+
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-user"></i>
+                <div>User Management</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="/pages/add-bank-detail" class="menu-link">
+                        <div>Managers</div>
+                    </a>
+                </li>
+           
             </ul>
         </li>
     </ul>

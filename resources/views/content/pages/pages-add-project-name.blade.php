@@ -4,6 +4,13 @@
 
 @section('content')
 
+<style>
+.limited-scroll {
+  max-height: 200px; /* Set the maximum height as needed */
+  overflow-y: auto;  /* Adds a vertical scrollbar when content overflows */
+  display: block;    /* Ensures the scrollbar is visible on the tbody */
+}
+</style>
 <h4 class="py-3 mb-4">
   <span class="text-muted fw-light">Project Budgeting /</span> Add Project Name
 </h4>
@@ -55,7 +62,7 @@
    <!-- Projects Table -->
    <div class="card mt-4">
       <h5 class="card-header">List</h5>
-      <div class="table-responsive text-nowrap">
+      <div class="table-responsive text-nowrap  limited-scroll">
         <table class="table table-hover">
           <thead>
             <tr>
