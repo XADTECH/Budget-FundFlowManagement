@@ -1,20 +1,20 @@
 <style>
+    .menu-subheading {
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #4CAF50;
+        /* Change color as needed */
+        margin: 10px 0;
+        padding: 5px 15px;
+        border-bottom: 1px solid #ddd;
+        /* Add a bottom border for separation */
+    }
 
-.menu-subheading {
-    font-size: 0.8em;
-    font-weight: bold;
-    color: #4CAF50; /* Change color as needed */
-    margin: 10px 0;
-    padding: 5px 15px;
-    border-bottom: 1px solid #ddd; /* Add a bottom border for separation */
-}
-
-.menu-subheading span {
-    display: block;
-    text-transform: uppercase; /* Optional: Make text uppercase */
-}
-
-
+    .menu-subheading span {
+        display: block;
+        text-transform: uppercase;
+        /* Optional: Make text uppercase */
+    }
 </style>
 
 
@@ -40,7 +40,7 @@
                 <i class="menu-icon tf-icons bx bx-rocket"></i>
                 <div>Project Budgeting</div>
             </a>
-            
+
             <ul class="menu-sub">
 
                 <li class="menu-item">
@@ -62,59 +62,59 @@
                         <div>Add Project</div>
                         <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
                     </a>
-                </li>   
+                </li>
 
                 <li class="menu-item">
                     <a href="/pages/add-business-unit" class="menu-link">
                         <div>Add Business Unit</div>
                         <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
                     </a>
-                </li>  
+                </li>
 
-                
+
                 <li class="menu-item">
-                    <a href="/pages/add-business-client" class="menu-link" >
+                    <a href="/pages/add-business-client" class="menu-link">
                         <div>Add Client</div>
                         <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
                     </a>
-                </li> 
-                
+                </li>
+
             </ul>
         </li>
 
-<li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-money"></i>
-        <div> Cash Flow Management</div>
-    </a>
-    <ul class="menu-sub">
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-money"></i>
+                <div> Cash Flow Management</div>
+            </a>
+            <ul class="menu-sub">
 
-            <a href="javascript:void(0);" class="menu-link">
-                <div style="color:Green; font-weight:bold;text-decoration:underline;">Planned Cash</div>
-            </a>
-   
-        <li class="menu-item">
-            <a href="/pages/add-opening-balance" class="menu-link">
-                <div>Add Opening Balance</div>
-            </a>
+                <a href="javascript:void(0);" class="menu-link">
+                    <div style="color:Green; font-weight:bold;text-decoration:underline;">Planned Cash</div>
+                </a>
+
+                <li class="menu-item">
+                    <a href="/pages/add-opening-balance" class="menu-link">
+                        <div>Add Opening Balance</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/pages/allocate-cash" class="menu-link">
+                        <div>Allocate Cash</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/pages/cash-receive-amount" class="menu-link">
+                        <div>Add Cash Receive</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/pages/plan-cash-report" class="menu-link">
+                        <div>Report</div>
+                    </a>
+                </li>
+            </ul>
         </li>
-        <li class="menu-item">
-            <a href="/pages/allocate-cash" class="menu-link">
-                <div>Allocate Cash</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="/pages/cash-receive-amount" class="menu-link">
-                <div>Add Cash Receive</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="/pages/plan-cash-report" class="menu-link">
-                <div>Report</div>
-            </a>
-        </li>
-    </ul>
-</li>
 
 
         <li class="menu-item">
@@ -128,26 +128,21 @@
                         <div>Add Bank</div>
                     </a>
                 </li>
-                <!-- <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-laravel-admin-template/demo-1/front-pages/pricing" class="menu-link" target="_blank">
-                        <div>Pricing</div>
+            </ul>
+        </li>
+
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-wallet-alt"></i>
+                <div>Budget Management</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="/pages/add-project-budget" class="menu-link">
+                        <div>Add Project Budget</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-laravel-admin-template/demo-1/front-pages/payment" class="menu-link" target="_blank">
-                        <div>Payment</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-laravel-admin-template/demo-1/front-pages/checkout" class="menu-link" target="_blank">
-                        <div>Checkout</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-laravel-admin-template/demo-1/front-pages/help-center" class="menu-link" target="_blank">
-                        <div>Help Center</div>
-                    </a>
-                </li> -->
+
             </ul>
         </li>
 
@@ -162,7 +157,7 @@
                         <div>Managers</div>
                     </a>
                 </li>
-           
+
             </ul>
         </li>
     </ul>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BudgetController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\Analytics;
 use App\Http\Controllers\layouts\WithoutMenu;
@@ -87,6 +88,10 @@ Route::get('/pages/add-business-unit', [ProjectController::class, 'showaddBusine
 Route::get('/pages/add-business-client', [ProjectController::class, 'showaddBusinessClient'])->name(
   'add-business-client'
 );
+
+
+// Budget Managment
+Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
 
 // authentication
 Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
