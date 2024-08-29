@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Phpass\PasswordHash;
 
 class UserController extends Controller
 {
@@ -22,18 +24,12 @@ class UserController extends Controller
         'last_name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
         'password' => 'required|string',
-        'confirm_password' => 'required|string',
         'role' => 'required|string',
         'permissions' => 'nullable|array',
       ]);
 
       if ($validator->fails()) {
         return response()->json(['message' => $validator->errors()], 422);
-      }
-
-      // Check if passwords match
-      if ($request->password !== $request->confirm_password) {
-        return response()->json(['message' => ['confirm_password' => ['Passwords do not match.']]], 400);
       }
 
       // Process image upload if an image is provided
@@ -44,23 +40,30 @@ class UserController extends Controller
         $file->move(public_path('assets/profile'), $fileName);
       }
 
-      // Create the new user
-      $user = User::create([
-        'first_name' => $request->first_name,
-        'last_name' => $request->last_name,
-        'email' => $request->email,
-        'organization_unit' => $request->organization_unit,
-        'phone_number' => $request->phone_number,
-        'password' => bcrypt($request->password),
-        'role' => $request->role,
-        'permissions' => $request->permissions ? json_encode($request->permissions) : null,
-        'profile_image' => $fileName, // Save the image path to the database
-        'nationality' => $request->nationality,
-      ]);
+      // Hash the password using bcrypt
+      $hashedPassword = bcrypt($request->input('password'));
 
-      return response()->json(['message' => ['user created' => ['user created successfully.']]], 200);
+      // Create a new instance of the User model
+      $user = new User();
+
+      // Set the attributes
+      $user->first_name = $request->first_name;
+      $user->last_name = $request->last_name;
+      $user->email = $request->email;
+      $user->organization_unit = $request->organization_unit;
+      $user->phone_number = $request->phone_number;
+      $user->password = $hashedPassword;
+      $user->role = $request->role;
+      $user->permissions = $request->permissions ? json_encode($request->permissions) : null;
+      $user->profile_image = $fileName;
+      $user->nationality = $request->nationality;
+
+      // Save the user to the database
+      $user->save();
+
+      return response()->json(['message' => 'User created successfully.'], 200);
     } catch (Exception $e) {
-      return response()->json(['message' => ['Error' => $e->getMessage()]], 200);
+      return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
     }
   }
 }

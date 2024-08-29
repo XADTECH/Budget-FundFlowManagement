@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\AuthenticateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\Analytics;
 use App\Http\Controllers\layouts\WithoutMenu;
@@ -50,9 +51,17 @@ use App\Http\Controllers\form_layouts\HorizontalForm;
 use App\Http\Controllers\tables\Basic as TablesBasic;
 
 // Main Page Route
+// Public route for the login page with middleware to redirect if authenticated
+Route::get('/', [LoginBasic::class, 'index'])
+  ->name('auth-login-basic')
+  ->middleware('redirectIfAuthenticated');
+
+Route::post('/login-user', [AuthenticateController::class, 'loginUser'])->name('login-user');
+Route::get('/checkhash', [AuthenticateController::class, 'checkHash'])->name('checkhash');
+
+// Protected routes with custom checklogin middleware
+
 Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard-analytics');
-Route::get('/', [LoginBasic::class, 'index'])->name('auth-login-basic');
-// Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
 
 // layout
 Route::get('/layouts/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
@@ -92,12 +101,11 @@ Route::get('/pages/add-business-client', [ProjectController::class, 'showaddBusi
   'add-business-client'
 );
 
-
 // Budget Managment
 Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
 
 // authentication
-Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
+//Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
 Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
 Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
 
@@ -145,3 +153,6 @@ Route::get('/tables/basic', [TablesBasic::class, 'index'])->name('tables-basic')
 
 //user management
 Route::get('/pages/add-user', [UserController::class, 'index'])->name('add-user');
+
+// Add other routes that require authentication here
+Route::post('/logout', [LoginBasicController::class, 'logout'])->name('logout');

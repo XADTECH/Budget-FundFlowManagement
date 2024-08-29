@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class RedirectIfAuthenticated
+class CheckLogin
 {
   /**
    * Handle an incoming request.
@@ -17,13 +17,13 @@ class RedirectIfAuthenticated
    */
   public function handle(Request $request, Closure $next)
   {
-    // Check if the user is authenticated
-    if (Auth::check()) {
-      // Redirect to the dashboard if already authenticated
-      return redirect()->route('dashboard-analytics');
+    // Check if the user is not authenticated
+    if (!Auth::check()) {
+      // Redirect to the login page if not authenticated
+      return redirect()->route('auth-login-basic');
     }
 
-    // Proceed with the request if not authenticated
+    // Proceed with the request if authenticated
     return $next($request);
   }
 }
