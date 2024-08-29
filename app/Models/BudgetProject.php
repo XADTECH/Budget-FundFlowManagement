@@ -12,6 +12,7 @@ class BudgetProject extends Model
   protected $table = 'budget_project';
 
   protected $fillable = [
+    'reference_code',
     'start_date',
     'end_date',
     'project_name',
@@ -19,9 +20,9 @@ class BudgetProject extends Model
     'manager_id',
     'client',
     'region',
-    'sit_name',
+    'site_name',
     'month',
-    'budget_status',
+    'approval_status',
     'daily_payment_expense',
     'lpo_amount',
     'bal_under_over_budget',
@@ -29,5 +30,6 @@ class BudgetProject extends Model
     'total_dpm_expense',
     'total_lpo_expense',
     'total_budget',
+    'status',
   ];
 }
