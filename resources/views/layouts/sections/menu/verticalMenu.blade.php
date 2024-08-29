@@ -38,20 +38,19 @@
         <li class="menu-item active open">
             <a href="http://localhost:8000" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-rocket"></i>
-                <div>Project Budgeting</div>
+                <div>Budget Management</div>
             </a>
 
             <ul class="menu-sub">
 
                 <li class="menu-item">
-                    <a href="/pages/add-opening-balance" class="menu-link" target="_blank">
+                    <a href="/pages/add-project-budget" class="menu-link">
                         <div>Add Project Budget</div>
-                        <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
                     </a>
                 </li>
 
                 <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-laravel-admin-template/demo-1/dashboard/crm" class="menu-link" target="_blank">
+                    <a href="#" class="menu-link">
                         <div>Month Wise Project Budgeting</div>
                         <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
                     </a>
@@ -131,7 +130,7 @@
             </ul>
         </li>
 
-        <li class="menu-item">
+        <!-- <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-wallet-alt"></i>
                 <div>Budget Management</div>
@@ -144,7 +143,7 @@
                 </li>
 
             </ul>
-        </li>
+        </li> -->
 
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -153,8 +152,8 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="/pages/add-bank-detail" class="menu-link">
-                        <div>Managers</div>
+                    <a href="/pages/add-user" class="menu-link">
+                        <div>Add User</div>
                     </a>
                 </li>
 

@@ -11,7 +11,12 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+    const ROLE_FINANCE_MANAGER = 'Finance Manager';
+    const ROLE_OPERATION_MANAGER = 'Operation Manager';
+    const ROLE_PROJECT_MANAGER = 'Project Manager';
+    const ROLE_CLIENT_MANAGER = 'Client Manager';
+    const ROLE_ADMIN = 'Admin';
+    const ROLE_SUBADMIN = 'SubAdmin';
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +26,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'first_name',
+        'last_name',
+        'organization_unit',
+        'phone_number',
+        'role',
+        'permissions',
+        'profile_image',
+        'nationality',
     ];
 
     /**
@@ -40,6 +53,17 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
+
+    public static function roles()
+    {
+        return [
+            self::ROLE_FINANCE_MANAGER,
+            self::ROLE_OPERATION_MANAGER,
+            self::ROLE_PROJECT_MANAGER,
+            self::ROLE_CLIENT_MANAGER,
+            self::ROLE_ADMIN,
+            self::ROLE_SUBADMIN,
+        ];
+    }
 }
