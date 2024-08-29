@@ -207,10 +207,14 @@
                 <td class="font_style">{{ $budget->start_date }}</td>
                 <td class="font_style">{{ $budget->end_date }}</td>
                 <!-- <td class="font_style">{{ $unitName}}</td> -->
-                <td>
-                        <a href="" class="btn btn-primary btn-sm" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </a>
+                      <td>
+                      <form action="{{route('edit-project-budget')}}" method="POST" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bx bx-edit"></i>
+                            </button>
+                            <input type="hidden" name="project_id" value="{{$budget->id}}">
+                        </form>
                         <form action="" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')

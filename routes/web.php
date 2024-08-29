@@ -104,6 +104,7 @@ Route::get('/pages/add-business-client', [ProjectController::class, 'showaddBusi
 // Budget Managment
 Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
 Route::post('/pages/add-project-budget', [BudgetController::class, 'store'])->name('add-project-budget');
+Route::post('/pages/edit-project-budget', [BudgetController::class, 'edit'])->name('edit-project-budget');
 
 // authentication
 //Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');

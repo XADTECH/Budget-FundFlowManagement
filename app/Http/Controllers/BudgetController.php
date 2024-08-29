@@ -28,9 +28,19 @@ class BudgetController extends Controller
   /**
    * Show the form for creating a new resource.
    */
-  public function create()
+  public function edit(Request $request)
   {
-    //
+    $budget = BudgetProject::where('id', $request->project_id)->first();
+    $projects = Project::get();
+    $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
+    $clients = BusinessClient::get();
+    $units = BusinessUnit::get();
+    $budgets = BudgetProject::get();
+    return view(
+      'content.pages.pages-edit-project-budget',
+      compact('clients', 'projects', 'units', 'budgets', 'users', 'budget')
+    );
+    //return response()->json($budget);
   }
 
   /**
@@ -138,10 +148,6 @@ class BudgetController extends Controller
   /**
    * Show the form for editing the specified resource.
    */
-  public function edit(string $id)
-  {
-    //
-  }
 
   /**
    * Update the specified resource in storage.
