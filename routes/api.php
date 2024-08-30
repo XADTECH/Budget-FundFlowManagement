@@ -55,6 +55,3 @@ Route::post('/business-clients', [BusinessClientController::class, 'addRecord'])
 Route::get('/business-clients', [BusinessClientController::class, 'getRecords']);
 Route::post('/update-business-clients', [BusinessClientController::class, 'updateRecord']);
 Route::post('/delete-business-clients', [BusinessClientController::class, 'deleteRecord']);
-
-//user management
-Route::post('/add-user', [UserController::class, 'store'])->name('add-user');

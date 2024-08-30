@@ -15,16 +15,36 @@
   .alert {
     opacity: 1;
     transition: opacity 0.6s ease-out;
-    background-color:#696cff;
+    background-color:#0067ab;
     color:white;
-    text-align:center;
+    text-align:left;
 }
 </style>
 
 <div class="row">
   <div class="col-md-12">
      <!-- Alert box HTML -->
-     <div id="alert-container"></div>
+     @if ($errors->any())
+            <div class="alert alert-danger" id="error-alert">
+                <!-- <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        @if (session('success'))
+            <div class="alert alert-success" id="success-alert">
+                    <!-- <button type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> -->
+                {{ session('success') }}
+            </div>
+        @endif
 
     <!-- <ul class="nav nav-pills flex-column flex-md-row mb-3">
       <li class="nav-item"><a class="nav-link active" href="javascript:void(0);"><i class="bx bx-user me-1"></i> Account</a></li>
@@ -34,7 +54,13 @@
     <div class="card mb-4">
       <h5 class="card-header">User Details</h5>
       <!-- Account -->
+
       <div class="card-body">
+        <form id="formAccountSettings" method="POST" enctype="multipart/form-data" action="{{url('add-user')}}">
+
+          @csrf
+          <div class="row">
+          <div class="card-body">
         <div class="d-flex align-items-start align-items-sm-center gap-4">
           <img src="{{asset('assets/img/avatars/1.png')}}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
           <div class="button-wrapper">
@@ -53,10 +79,6 @@
         </div>
       </div>
       <hr class="my-0">
-      <div class="card-body">
-        <form id="formAccountSettings" method="POST" enctype="multipart/form-data">
-          @csrf
-          <div class="row">
             <div class="mb-3 col-md-6">
               <label for="first_name" class="form-label">First Name</label>
               <input class="form-control" type="text" id="first_name" name="first_name" value="" placeholder="John" autofocus />
@@ -106,80 +128,6 @@
               <label for="nationality" class="form-label">Nationality</label>
               <input type="text" class="form-control" id="nationality" name="nationality" placeholder="pakistan" maxlength="6" />
             </div>
-            <!-- <div class="mb-3 col-md-6">
-              <label class="form-label" for="country">Country</label>
-              <select id="country" class="select2 form-select">
-                <option value="">Select</option>
-                <option value="Australia">Australia</option>
-                <option value="Bangladesh">Bangladesh</option>
-                <option value="Belarus">Belarus</option>
-                <option value="Brazil">Brazil</option>
-                <option value="Canada">Canada</option>
-                <option value="China">China</option>
-                <option value="France">France</option>
-                <option value="Germany">Germany</option>
-                <option value="India">India</option>
-                <option value="Indonesia">Indonesia</option>
-                <option value="Israel">Israel</option>
-                <option value="Italy">Italy</option>
-                <option value="Japan">Japan</option>
-                <option value="Korea">Korea, Republic of</option>
-                <option value="Mexico">Mexico</option>
-                <option value="Philippines">Philippines</option>
-                <option value="Russia">Russian Federation</option>
-                <option value="South Africa">South Africa</option>
-                <option value="Thailand">Thailand</option>
-                <option value="Turkey">Turkey</option>
-                <option value="Ukraine">Ukraine</option>
-                <option value="United Arab Emirates">United Arab Emirates</option>
-                <option value="United Kingdom">United Kingdom</option>
-                <option value="United States">United States</option>
-              </select>
-            </div>
-            <div class="mb-3 col-md-6">
-              <label for="language" class="form-label">Language</label>
-              <select id="language" class="select2 form-select">
-                <option value="">Select Language</option>
-                <option value="en">English</option>
-                <option value="fr">French</option>
-                <option value="de">German</option>
-                <option value="pt">Portuguese</option>
-              </select>
-            </div>
-            <div class="mb-3 col-md-6">
-              <label for="timeZones" class="form-label">Timezone</label>
-              <select id="timeZones" class="select2 form-select">
-                <option value="">Select Timezone</option>
-                <option value="-12">(GMT-12:00) International Date Line West</option>
-                <option value="-11">(GMT-11:00) Midway Island, Samoa</option>
-                <option value="-10">(GMT-10:00) Hawaii</option>
-                <option value="-9">(GMT-09:00) Alaska</option>
-                <option value="-8">(GMT-08:00) Pacific Time (US & Canada)</option>
-                <option value="-8">(GMT-08:00) Tijuana, Baja California</option>
-                <option value="-7">(GMT-07:00) Arizona</option>
-                <option value="-7">(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
-                <option value="-7">(GMT-07:00) Mountain Time (US & Canada)</option>
-                <option value="-6">(GMT-06:00) Central America</option>
-                <option value="-6">(GMT-06:00) Central Time (US & Canada)</option>
-                <option value="-6">(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>
-                <option value="-6">(GMT-06:00) Saskatchewan</option>
-                <option value="-5">(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>
-                <option value="-5">(GMT-05:00) Eastern Time (US & Canada)</option>
-                <option value="-5">(GMT-05:00) Indiana (East)</option>
-                <option value="-4">(GMT-04:00) Atlantic Time (Canada)</option>
-                <option value="-4">(GMT-04:00) Caracas, La Paz</option>
-              </select>
-            </div>
-            <div class="mb-3 col-md-6">
-              <label for="currency" class="form-label">Currency</label>
-              <select id="currency" class="select2 form-select">
-                <option value="">Select Currency</option>
-                <option value="usd">USD</option>
-                <option value="euro">Euro</option>
-                <option value="pound">Pound</option>
-                <option value="bitcoin">Bitcoin</option>
-              </select>
-            </div> -->
           </div>
           <div class="form-group">
             <label class="form-label">Permissions</label>
@@ -203,8 +151,10 @@
 
           <div class="mt-2">
             <button type="submit" class="btn btn-primary me-2">Submit</button>
+            <input type="hidden" name="profile_image" id="profileImage">
             <!-- <button type="reset" class="btn btn-outline-secondary">Cancel</button> -->
           </div>
+          
         </form>
       </div>
       <!-- /Account -->
@@ -232,77 +182,28 @@
 
 <script>
 
-  // Utility function to display alerts
-  function showAlert(type, message) {
-    // Create an alert container if it doesn't exist
-    let alertContainer = document.getElementById('alert-container');
-    if (!alertContainer) {
-        alertContainer = document.createElement('div');
-        alertContainer.id = 'alert-container';
-        document.body.appendChild(alertContainer);
-    }
 
-    // Create a new alert element
-    const alertElement = document.createElement('div');
-    alertElement.className = `alert alert-${type} fade show`; // Added 'fade show' for Bootstrap alerts
-    alertElement.innerText = message;
-
-    // Append the alert to the container
-    alertContainer.appendChild(alertElement);
-
-    // Automatically remove the alert after 5 seconds
-    setTimeout(() => {
-        alertElement.classList.remove('show'); // Hide with Bootstrap's fade effect
-        alertElement.classList.add('fade'); // Optional: Fade effect
-        setTimeout(() => alertElement.remove(), 500); // Remove from DOM after fade out
-    }, 3000); // Display for 5 seconds
-}
-
-    //form submission
-    const form = document.getElementById('formAccountSettings');
-
-    form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent the default form submission
-
-    const formData = new FormData(form);
-    try {
-        const response = await fetch('/api/add-user', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF token for security
-            }
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            if (typeof data === 'object' && data.message) {
-                const errors = data.message;
-                for (const field in errors) {
-                    if (errors.hasOwnProperty(field)) {
-                        errors[field].forEach(errorMessage => {
-                            showAlert('error', errorMessage);
-                        });
-                    }
-                }
-            } else {
-                showAlert('success', data.message || 'User created successfully.');
-            }
+    //hide alert 
+    function hideAlertAfterDelay(alertId, delay) {
+        console.log('Trying to hide', alertId);
+        var alertElement = document.getElementById(alertId);
+        if (alertElement) {
+            setTimeout(function() {
+                console.log('Hiding', alertId);
+                alertElement.style.opacity = 0; // Fade out effect
+                setTimeout(function() {
+                    alertElement.style.display = 'none'; // Hide element after fading out
+                }, 500); // Match the duration of the fade-out effect
+            }, delay);
         } else {
-            showAlert('error', data.message || 'Error creating user.');
+            console.log('Element not found:', alertId);
         }
-    } catch (error) {
-        console.error('Network error:', error);
-        showAlert('error', 'Network error occurred.');
-    } finally {
-        // Reset the form after showing alerts
-        form.reset();
-
     }
-});
+
+    // Hide alerts after 3000 ms
+    hideAlertAfterDelay('error-alert', 3000);
+    hideAlertAfterDelay('success-alert', 3000);
+  
 
 </script>
 @endsection

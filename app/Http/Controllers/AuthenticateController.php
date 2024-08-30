@@ -129,7 +129,7 @@ class AuthenticateController extends Controller
   {
     Auth::logout();
     return redirect()
-      ->route('index')
+      ->route('auth-login-basic')
       ->with('success', 'successfully Log out From System');
   }
 
@@ -163,7 +163,7 @@ class AuthenticateController extends Controller
     }
 
     // Attempt to log in the user
-    // Auth::login($user);
+    Auth::login($user);
 
     return redirect()
       ->route('dashboard-analytics')

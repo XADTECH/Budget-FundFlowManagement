@@ -18,6 +18,8 @@ class UserController extends Controller
   // Store a newly created resource in storage
   public function store(Request $request)
   {
+    //return response()->json($request->all());
+
     try {
       $validator = Validator::make($request->all(), [
         'first_name' => 'required|string|max:255',
@@ -28,8 +30,12 @@ class UserController extends Controller
         'permissions' => 'nullable|array',
       ]);
 
+      // Check if validation fails
       if ($validator->fails()) {
-        return response()->json(['message' => $validator->errors()], 422);
+        $errors = $validator->errors();
+        return back()
+          ->withErrors($errors)
+          ->withInput();
       }
 
       // Process image upload if an image is provided
@@ -40,9 +46,9 @@ class UserController extends Controller
         $file->move(public_path('assets/profile'), $fileName);
       }
 
+      $rounds = 12;
       // Hash the password using bcrypt
-      $hashedPassword = bcrypt($request->input('password'));
-
+      $hashedpassword = Hash::make(trim($request->password), ['rounds' => $rounds]);
       // Create a new instance of the User model
       $user = new User();
 
@@ -52,7 +58,7 @@ class UserController extends Controller
       $user->email = $request->email;
       $user->organization_unit = $request->organization_unit;
       $user->phone_number = $request->phone_number;
-      $user->password = $hashedPassword;
+      $user->password = Hash::make(trim($request->password), ['rounds' => $rounds]);
       $user->role = $request->role;
       $user->permissions = $request->permissions ? json_encode($request->permissions) : null;
       $user->profile_image = $fileName;
@@ -60,8 +66,9 @@ class UserController extends Controller
 
       // Save the user to the database
       $user->save();
-
-      return response()->json(['message' => 'User created successfully.'], 200);
+      return redirect()
+        ->back()
+        ->with('success', 'User created successfully');
     } catch (Exception $e) {
       return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
     }

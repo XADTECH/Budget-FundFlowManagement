@@ -51,10 +51,6 @@ class User extends Authenticatable
    *
    * @param string $password
    */
-  public function setPasswordAttribute($password)
-  {
-    $this->attributes['password'] = bcrypt($password);
-  }
 
   public static function roles()
   {

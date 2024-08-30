@@ -59,17 +59,17 @@ $navbarDetached = ($navbarDetached ?? '');
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
                 <a class="dropdown-item" href="javascript:void(0);">
-                  <div class="d-flex">
-                    <div class="flex-shrink-0 me-3">
-                      <div class="avatar avatar-online">
-                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
-                      </div>
-                    </div>
-                    <div class="flex-grow-1">
-                      <span class="fw-medium d-block">John Doe</span>
-                      <small class="text-muted">Admin</small>
-                    </div>
-                  </div>
+                <div class="d-flex">
+    <div class="flex-shrink-0 me-3">
+        <div class="avatar avatar-online">
+            <img src="{{ Auth::user()->profile_image ? asset('assets/profile/' . Auth::user()->profile_image) : asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
+        </div>
+    </div>
+    <div class="flex-grow-1">
+        <span class="fw-medium d-block">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
+        <small class="text-muted">{{ Auth::user()->role }}</small>
+    </div>
+</div>
                 </a>
               </li>
               <li>
@@ -81,13 +81,13 @@ $navbarDetached = ($navbarDetached ?? '');
                   <span class="align-middle">My Profile</span>
                 </a>
               </li>
-              <li>
+              <!-- <li>
                 <a class="dropdown-item" href="javascript:void(0);">
                   <i class='bx bx-cog me-2'></i>
                   <span class="align-middle">Settings</span>
                 </a>
-              </li>
-              <li>
+              </li> -->
+              <!-- <li>
                 <a class="dropdown-item" href="javascript:void(0);">
                   <span class="d-flex align-items-center align-middle">
                     <i class="flex-shrink-0 bx bx-credit-card me-2 pe-1"></i>
@@ -95,15 +95,18 @@ $navbarDetached = ($navbarDetached ?? '');
                     <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
                   </span>
                 </a>
-              </li>
+              </li> -->
               <li>
                 <div class="dropdown-divider"></div>
               </li>
               <li>
-                <a class="dropdown-item" href="javascript:void(0);">
-                  <i class='bx bx-power-off me-2'></i>
-                  <span class="align-middle">Log Out</span>
-                </a>
+              <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+        @csrf
+        <button type="submit" class="dropdown-item">
+            <i class='bx bx-power-off me-2'></i>
+            <span class="align-middle">Log Out</span>
+        </button>
+    </form>
               </li>
             </ul>
           </li>
