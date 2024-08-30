@@ -93,100 +93,97 @@
 
         <!-- Project Form -->
         <div class="card">
-            <div class="card-body">
-                <h6>Add A Budget </h6>
-                <form action="{{ route('add-project-budget') }}" method="POST">
-                    @csrf
-                <div class="row">
-                        <div class="col-sm-4">
-                            <label for="startdate" class="form-label">Start Date</label>
-                            <input type="date" id="startdate" class="form-control" name="startdate" placeholder="Enter Start Date" required />
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="startdate" class="form-label">End Date</label>
-                            <input type="date" id="enddate" class="form-control" name="enddate" placeholder="Enter Start Date" />
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="startdate" class="form-label">Choose Date</label>
-                            <input type="date" class="form-control" name="month" placeholder="Enter End Date" />
-                        </div>
-                    </div>
+    <div class="card-body">
+        <h6>Edit Budget</h6>
+        <form action="" method="POST">
+            @csrf
+            @method('PUT') <!-- Use PUT method for updating -->
 
-                    <div class="row mt-4">
-                        <div class="col-sm-4">
-                            <label for="startdate" class="form-label">Choose Project Name</label>
-
-                            <select class="form-select" name="projectname">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($projects as $project)
-                                <option value="{{$project->id}}">{{$project->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="startdate" class="form-label">Choose Client </label>
-
-                            <select class="form-select" name="client">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($clients as $client)
-                                <option value="{{$client->id}}">{{$client->clientname}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="startdate" class="form-label">Choose Division </label>
-                            <select class="form-select" name="division">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($units as $unit)
-                                <option value="{{$unit->id}}">{{$unit->source}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row mt-4">
-                        <div class="col-sm-6">
-                            <label for="startdate" class="form-label">Site Name </label>
-                            <input type="text" class="form-control" name="sitename" placeholder="Please enter site name" />
-                        </div>
-                        <div class="col-sm-6">
-                            <label for="region" class="form-label">Region </label>
-                            <select class="form-select" name="region">
-                            <option disabled selected value>Choose</option>
-                                <option value="Abu Dhabi">Abu Dhabi</option>
-                                <option value="Dubai">Dubai</option>
-                                <option value="Sharjah">Sharjah</option>
-                                <option value="Umm Al Quwain">Umm Al Quwain</option>
-                                <option value="Ras Al Khaimah">Ras Al Khaimah</option>
-                                <option value="Fujairah">Fujairah</option>
-
-                            </select>
-                        </div>
-                        <div class="col-sm-6 mt-4">
-                            <label for="startdate" class="form-label">Project Manager / Client Manager </label>
-                            <select class="form-select" name="manager">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($users as $user)
-                                <option value="{{$user->id}}">{{$user->first_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-sm-6 mt-4">
-                            <label for="description" class="form-label"> Description </label>
-                            <input type="text" class="form-control" name="description" placeholder="description"/>
-                        </div>
-
-                    </div>
-
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary me-2">Submit</button>
-                    </div>
-                </form>
+            <div class="row">
+                <div class="col-sm-4">
+                    <label for="startdate" class="form-label">Start Date</label>
+                    <input type="date" id="startdate" class="form-control" name="startdate" value="{{ old('startdate', $budget->start_date) }}" required />
+                </div>
+                <div class="col-sm-4">
+                    <label for="enddate" class="form-label">End Date</label>
+                    <input type="date" id="enddate" class="form-control" name="enddate" value="{{ old('enddate', $budget->end_date) }}" />
+                </div>
+                <div class="col-sm-4">
+                    <label for="month" class="form-label">Choose Date</label>
+                    <input type="date" class="form-control" name="month" value="{{ old('month', $budget->month) }}" />
+                </div>
             </div>
-        </div>
+
+            <div class="row mt-4">
+                <div class="col-sm-4">
+                    <label for="projectname" class="form-label">Choose Project Name</label>
+                    <select class="form-select" name="projectname">
+                        <option disabled selected value>Choose</option>
+                        @foreach ($projects as $project)
+                            <option value="{{ $project->id }}" {{ $project->id == $budget->project_id ? 'selected' : '' }}>{{ $project->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <label for="client" class="form-label">Choose Client</label>
+                    <select class="form-select" name="client">
+                        <option disabled selected value>Choose</option>
+                        @foreach ($clients as $client)
+                            <option value="{{ $client->id }}" {{ $client->id == $budget->client_id ? 'selected' : '' }}>{{ $client->clientname }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <label for="division" class="form-label">Choose Division</label>
+                    <select class="form-select" name="division">
+                        <option disabled selected value>Choose</option>
+                        @foreach ($units as $unit)
+                            <option value="{{ $unit->business_unit }}" {{ $unit->business_unit == $budget->business_unit ? 'selected' : '' }}>{{ $unit->source }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-sm-6">
+                    <label for="sitename" class="form-label">Site Name</label>
+                    <input type="text" class="form-control" name="sitename" value="{{ old('sitename', $budget->sitename) }}" placeholder="Please enter site name" />
+                </div>
+                <div class="col-sm-6">
+                    <label for="region" class="form-label">Region</label>
+                    <select class="form-select" name="region">
+                        <option disabled selected value>Choose</option>
+                        <option value="Abu Dhabi" {{ $budget->region == 'Abu Dhabi' ? 'selected' : '' }}>Abu Dhabi</option>
+                        <option value="Dubai" {{ $budget->region == 'Dubai' ? 'selected' : '' }}>Dubai</option>
+                        <option value="Sharjah" {{ $budget->region == 'Sharjah' ? 'selected' : '' }}>Sharjah</option>
+                        <option value="Umm Al Quwain" {{ $budget->region == 'Umm Al Quwain' ? 'selected' : '' }}>Umm Al Quwain</option>
+                        <option value="Ras Al Khaimah" {{ $budget->region == 'Ras Al Khaimah' ? 'selected' : '' }}>Ras Al Khaimah</option>
+                        <option value="Fujairah" {{ $budget->region == 'Fujairah' ? 'selected' : '' }}>Fujairah</option>
+                    </select>
+                </div>
+                <div class="col-sm-6 mt-4">
+                    <label for="manager" class="form-label">Project Manager / Client Manager</label>
+                    <select class="form-select" name="manager">
+                        <option disabled selected value>Choose</option>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}" {{ $user->id == $budget->manager_id ? 'selected' : '' }}>{{ $user->first_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-sm-6 mt-4">
+                    <label for="description" class="form-label">Description</label>
+                    <input type="text" class="form-control" name="description" value="{{ old('description', $budget->description) }}" placeholder="description"/>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary me-2">Submit</button>
+            </div>
+        </form>
     </div>
 </div>
+
 
 <div class="container mt-4">
     <div class="card mt-4">

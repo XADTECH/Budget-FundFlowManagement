@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BudgetProject extends Model
 {
@@ -32,4 +32,14 @@ class BudgetProject extends Model
     'total_budget',
     'status',
   ];
+
+  public function directCosts()
+  {
+    return $this->hasMany(DirectCost::class);
+  }
+
+  public function indirectCosts()
+  {
+    return $this->hasMany(IndirectCost::class);
+  }
 }
