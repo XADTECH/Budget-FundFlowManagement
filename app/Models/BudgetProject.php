@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -35,11 +34,36 @@ class BudgetProject extends Model
 
   public function directCosts()
   {
-    return $this->hasMany(DirectCost::class);
+    return $this->hasMany(DirectCost::class, 'budget_project_id');
   }
 
   public function indirectCosts()
   {
-    return $this->hasMany(IndirectCost::class);
+    return $this->hasMany(IndirectCost::class, 'budget_project_id');
+  }
+
+  public function salaries()
+  {
+    return $this->hasMany(Salary::class, 'budget_project_id');
+  }
+
+  public function facilityCosts()
+  {
+    return $this->hasMany(FacilityCost::class, 'budget_project_id');
+  }
+
+  public function materialCosts()
+  {
+    return $this->hasMany(MaterialCost::class, 'budget_project_id');
+  }
+
+  public function costOverheads()
+  {
+    return $this->hasMany(CostOverhead::class, 'budget_project_id');
+  }
+
+  public function financialCosts()
+  {
+    return $this->hasMany(FinancialCost::class, 'budget_project_id');
   }
 }

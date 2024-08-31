@@ -17,6 +17,7 @@ use App\Http\Controllers\PlannedCashController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\DirectCostController;
 use App\Http\Controllers\pages\MiscUnderMaintenance;
 use App\Http\Controllers\authentications\LoginBasic;
 use App\Http\Controllers\authentications\RegisterBasic;
@@ -108,12 +109,17 @@ Route::middleware(['checklogin'])->group(function () {
   // Budget Managment
   Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
   Route::post('/pages/add-project-budget', [BudgetController::class, 'store'])->name('add-project-budget');
-  Route::post('/pages/edit-project-budget', [BudgetController::class, 'edit'])->name('edit-project-budget');
+  Route::get('/pages/edit-project-budget/{project_id}', [BudgetController::class, 'edit'])->name('edit-project-budget');
 
   // authentication
   //Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
   Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
   Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
+
+  //direct cost controller
+  Route::post('/pages/add-budget-project-salary', [DirectCostController::class, 'storeSalary'])->name(
+    'add-budget-project-salary'
+  );
 
   // cards
   Route::get('/cards/basic', [CardBasic::class, 'index'])->name('cards-basic');

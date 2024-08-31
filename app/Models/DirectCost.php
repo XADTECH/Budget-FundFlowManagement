@@ -1,15 +1,18 @@
 <?php
+namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Salary;
+use App\Models\FacilitiesCost;
+use App\Models\MaterialCost;
 
 class DirectCost extends Model
 {
   use HasFactory;
 
-  protected $fillable = [
-    'budget_project_id', // Foreign key reference
-    'total_cost',
-  ];
+  protected $table = 'direct_cost';
+  protected $fillable = ['budget_project_id', 'total_cost'];
 
   public function budgetProject()
   {
@@ -23,11 +26,22 @@ class DirectCost extends Model
 
   public function facilitiesCosts()
   {
-    return $this->hasMany(FacilitiesCost::class);
+    return $this->hasMany(FacilityCost::class);
   }
 
   public function materialCosts()
   {
     return $this->hasMany(MaterialCost::class);
+  }
+
+  public function calculateTotalDirectCost()
+  {
+    // Calculate totals from related models
+    $salariesTotal = $this->salaries()->sum('total_cost');
+    $facilitiesTotal = $this->facilitiesCosts()->sum('total_cost');
+    $materialTotal = $this->materialCosts()->sum('total_cost');
+
+    // Return the sum of all totals
+    return $salariesTotal + $facilitiesTotal + $materialTotal;
   }
 }

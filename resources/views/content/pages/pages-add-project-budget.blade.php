@@ -208,14 +208,13 @@
                 <td class="font_style">{{ $budget->end_date }}</td>
                 <!-- <td class="font_style">{{ $unitName}}</td> -->
                       <td>
-                      <form action="{{route('edit-project-budget')}}" method="POST" style="display:inline;">
-                            @csrf
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="bx bx-edit"></i>
-                            </button>
-                            <input type="hidden" name="project_id" value="{{$budget->id}}">
-                        </form>
-                        <form action="" method="POST" style="display:inline;">
+                      <form action="{{ route('edit-project-budget', ['project_id' => $budget->id]) }}" method="GET" style="display:inline;">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bx bx-edit"></i>
+                        </button>
+                    </form>
+                                            
+                    <form action="" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Are you sure?');">

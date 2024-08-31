@@ -19,6 +19,7 @@ class CreateSalariesTable extends Migration
       $table->unsignedBigInteger('budget_project_id');
       $table->string('sn')->default('2.1'); // Default value for 'sn'
       $table->string('type');
+      $table->string('contract');
       $table->string('project');
       $table->string('po');
       $table->string('expenses');

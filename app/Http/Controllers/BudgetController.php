@@ -7,6 +7,13 @@ use App\Models\BudgetProject;
 use App\Models\BusinessUnit;
 use App\Models\User;
 use App\Models\Project;
+use App\Models\Salary;
+use App\Models\FacilityCost;
+use App\Models\MaterialCost;
+use App\Models\CostOverhead;
+use App\Models\FinancialCost;
+use App\Models\DirectCost;
+use App\Models\IndirectCost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -28,19 +35,44 @@ class BudgetController extends Controller
   /**
    * Show the form for creating a new resource.
    */
-  public function edit(Request $request)
+  public function edit($project_id)
   {
-    $budget = BudgetProject::where('id', $request->project_id)->first();
+    // Retrieve the budget project with the specified ID and related data
+    $budget = BudgetProject::with([
+      'directCosts',
+      'indirectCosts',
+      'salaries',
+      'facilityCosts',
+      'materialCosts',
+      'costOverheads',
+      'financialCosts',
+    ])
+      ->where('id', $project_id)
+      ->first();
+
+    // Retrieve additional data for the view
     $projects = Project::get();
     $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
     $clients = BusinessClient::get();
     $units = BusinessUnit::get();
     $budgets = BudgetProject::get();
+    $directCost = DirectCost::firstOrNew([
+      'budget_project_id' => $project_id,
+    ]);
+    $IndirectCost = InDirectCost::get();
+
+    if (!$budget) {
+      // Debug output if budget is not found
+      return response()->json(['error' => 'Budget not found'], 404);
+    }
+
+    $totalDirectCost = $directCost->calculateTotalDirectCost();
+
+    // Return the view with the retrieved data
     return view(
       'content.pages.pages-edit-project-budget',
-      compact('clients', 'projects', 'units', 'budgets', 'users', 'budget')
+      compact('clients', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost')
     );
-    //return response()->json($budget);
   }
 
   /**
