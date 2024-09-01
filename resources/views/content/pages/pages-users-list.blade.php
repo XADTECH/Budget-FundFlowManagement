@@ -279,7 +279,7 @@
                     showAlert('success', data.success);
                     fetchProjects(); // Refresh the project list after deletion
                 } else {
-                    showAlert('danger', data.message || 'An error occurred while deleting the project record.');
+                    showAlert('danger', data.message || 'An error occurred while deleting the User record.');
                 }
             })
             .catch(error => {
