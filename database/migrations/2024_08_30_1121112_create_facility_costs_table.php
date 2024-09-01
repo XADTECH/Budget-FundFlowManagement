@@ -5,18 +5,16 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-  /**
-   * Run the migrations.
-   */
-  public function up(): void
+  public function up()
   {
-    Schema::create('financial_cost', function (Blueprint $table) {
+    Schema::create('facility_cost', function (Blueprint $table) {
       $table->id();
-      $table->unsignedBigInteger('in_direct_cost_id');
+      $table->unsignedBigInteger('direct_cost_id');
       $table->unsignedBigInteger('budget_project_id');
-      $table->string('sn')->default('2.1'); // Default value for 'sn'
+      $table->string('sn')->default('2.2'); // Default value for 'sn'
       $table->string('type');
       $table->string('project');
+      $table->string('contract');
       $table->string('po');
       $table->string('expenses');
       $table->string('description');
@@ -32,9 +30,11 @@ return new class extends Migration {
 
   /**
    * Reverse the migrations.
+   *
+   * @return void
    */
-  public function down(): void
+  public function down()
   {
-    Schema::dropIfExists('financial_cost');
+    Schema::dropIfExists('facilities_cost');
   }
 };

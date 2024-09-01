@@ -18,6 +18,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\DirectCostController;
+use App\Http\Controllers\InDirectCostController;
 use App\Http\Controllers\pages\MiscUnderMaintenance;
 use App\Http\Controllers\authentications\LoginBasic;
 use App\Http\Controllers\authentications\RegisterBasic;
@@ -117,8 +118,30 @@ Route::middleware(['checklogin'])->group(function () {
   Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
 
   //direct cost controller
+
+  //salary
   Route::post('/pages/add-budget-project-salary', [DirectCostController::class, 'storeSalary'])->name(
     'add-budget-project-salary'
+  );
+
+  //facility cost
+  Route::post('/pages/add-budget-project-facility-cost', [DirectCostController::class, 'storeFacility'])->name(
+    'add-budget-project-salary'
+  );
+
+  //material cost
+  Route::post('/pages/add-budget-project-material-cost', [DirectCostController::class, 'storeMaterial'])->name(
+    'add-budget-project-salary'
+  );
+
+  //Cost Overhead Cost
+  Route::post('/pages/add-budget-project-overhead-cost', [InDirectCostController::class, 'storeCostOverhead'])->name(
+    'add-budget-project-overhead-cost'
+  );
+
+  //add Financial Cost
+  Route::post('/pages/add-budget-project-financial-cost', [InDirectCostController::class, 'storeFinancialCost'])->name(
+    'add-budget-project-financial-cost'
   );
 
   // cards

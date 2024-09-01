@@ -8,14 +8,15 @@ return new class extends Migration {
   /**
    * Run the migrations.
    */
-  public function up()
+  public function up(): void
   {
-    Schema::create('material_cost', function (Blueprint $table) {
+    Schema::create('financial_cost', function (Blueprint $table) {
       $table->id();
-      $table->unsignedBigInteger('direct_cost_id');
+      $table->unsignedBigInteger('in_direct_cost_id');
       $table->unsignedBigInteger('budget_project_id');
-      $table->string('sn')->default('2.1'); // Default value for 'sn'
+      $table->string('sn')->default('2.5'); // Default value for 'sn'
       $table->string('type');
+      $table->string('contract');
       $table->string('project');
       $table->string('po');
       $table->string('expenses');
@@ -35,6 +36,6 @@ return new class extends Migration {
    */
   public function down(): void
   {
-    Schema::dropIfExists('material_cost');
+    Schema::dropIfExists('financial_cost');
   }
 };

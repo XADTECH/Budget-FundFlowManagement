@@ -12,7 +12,7 @@ class FinancialCost extends Model
   protected $table = 'financial_cost';
 
   protected $fillable = [
-    'in_direct_cost', // Foreign key reference to DirectCost
+    'in_direct_cost_id', // Foreign key reference to DirectCost
     'budget_project',
     'sn', // Serial number or identifier
     'type', // Type of record (Cost)

@@ -13,7 +13,7 @@ return new class extends Migration {
     Schema::create('indirect_cost', function (Blueprint $table) {
       $table->id();
       $table->unsignedBigInteger('budget_project_id');
-      $table->decimal('total_cost', 15, 2);
+      $table->decimal('total_cost', 15, 2)->nullable();
       $table->timestamps();
     });
   }

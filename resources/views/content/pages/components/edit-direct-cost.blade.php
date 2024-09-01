@@ -34,160 +34,164 @@
 </style>
 
 
-<div class="container mt-4">
-    <div class="card mt-4">
-        <div class="card-body">
-            <div class="dropdown-section">
-                <h3 class="dropdown-header">Direct Cost ▼</h3>
-                <div class="dropdown-content">
-                    <h5>Total Direct Cost - {{$totalDirectCost}}</h5>
-                    <!-- Salary Section -->
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h3>Salary</h3>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewSalaryModal">ADD NEW</button>
-                        </div>
-                        <div class="table-responsive text-nowrap limited-scroll mt-2">
-                            <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>SN</th>
-                                    <th>TYPE</th>
-                                    <th>CONTRACT</th>
-                                    <th>PROJECT</th>
-                                    <th>PO</th>
-                                    <th>EXPENSE</th>
-                                    <th>DESCRIPTION</th>
-                                    <th>COST PER MONTH</th>
-                                    <th>NO OF PERSON</th>
-                                    <th>MONTHS</th>
-                                    <th>AVERAGE COST</th>
-                                    <th>TOTAL COST</th>
-                                    <th>STATUS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($budget->salaries as $salary)
-                                <tr>
-                                    <td>{{$salary->sn}}</td>
-                                    <td>{{$salary->type}}</td>
-                                    <td>{{$salary->contract}}</td>
-                                    <td>{{$salary->project}}</td>
-                                    <td>{{$salary->po}}</td>
-                                    <td>{{$salary->expenses}}</td>
-                                    <td>{{$salary->description}}</td>
-                                    <td>{{$salary->cost_per_month}}</td>
-                                    <td>{{$salary->no_of_staff}}</td>
-                                    <td>{{$salary->no_of_months}}</td>
-                                    <td>{{$salary->average_cost}}</td>
-                                    <td>{{$salary->total_cost}}</td>
-                                    <td>{{$salary->status}}</td>
-                                </tr>    
-                              @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- Facilities Cost Section -->
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h3>Facilities Cost</h3>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewFacilitiesModal">ADD NEW</button>
-                        </div>
-                        <div class="table-responsive text-nowrap limited-scroll mt-2">
-                            <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>SN</th>
-                                    <th>TYPE</th>
-                                    <th>CONTRACT</th>
-                                    <th>PROJECT</th>
-                                    <th>PO</th>
-                                    <th>EXPENSE</th>
-                                    <th>DESCRIPTION</th>
-                          
-                                    <th>COST PER MONTH</th>
-                                    <th>NO OF PERSON</th>
-                                    <th>MONTHS</th>
-                                    <th>AVERAGE COST</th>
-                                    <th>TOTAL COST</th>
-                                    <th>STATUS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Cost</td>
-                                    <td>Contract 001</td>
-                                    <td>Project Alpha</td>
-                                    <td>CAPEX</td>
-                                    <td>2000</td>
-                                    <td>Salary for team</td>
-                             
-                                    <td>1000 AED</td>
-                                    <td>5</td>
-                                    <td>12</td>
-                                    <td>5000 AED</td>
-                                    <td>60000 AED</td>
-                                    <td>Active</td>
-                                </tr>    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- Material Cost Section -->
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h3>Material Cost</h3>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewMaterialModal">ADD NEW</button>
-                        </div>
-                        <div class="table-responsive text-nowrap limited-scroll mt-2">
-                            <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>SN</th>
-                                    <th>TYPE</th>
-                                    <th>CONTRACT</th>
-                                    <th>PROJECT</th>
-                                    <th>PO</th>
-                                    <th>EXPENSE</th>
-                                    <th>DESCRIPTION</th>
-                                    <th>COST PER MONTH</th>
-                                    <th>NO OF PERSON</th>
-                                    <th>MONTHS</th>
-                                    <th>AVERAGE COST</th>
-                                    <th>TOTAL COST</th>
-                                    <th>STATUS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                
-                                <tr>
-                                    <td>1</td>
-                                    <td>Cost</td>
-                                    <td>Contract 001</td>
-                                    <td>Project Alpha</td>
-                                    <td>CAPEX</td>
-                                    <td>2000</td>
-                                    <td>Salary for team</td>
-                           
-                                    <td>1000 AED</td>
-                                    <td>5</td>
-                                    <td>12</td>
-                                    <td>5000 AED</td>
-                                    <td>60000 AED</td>
-                                    <td>Active</td>
-                                </tr>    
-                                </tbody>
-                            </table>
-                        </div>
+            <div class="container mt-4">
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div class="dropdown-section">
+                            <h3 class="dropdown-header">Direct Cost ▼</h3>
+                            <div class="dropdown-content">
+                                <h5>Total Direct Cost - {{$totalDirectCost}}</h5>
+                                <!-- Salary Section -->
+                                <div class="mt-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3>Salary</h3>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewSalaryModal">ADD NEW</button>
+                                    </div>
+                                    <p>Total Salary Cost : <span style="color:#0067aa; font-weight:bold">{{ number_format($totalSalary, 0) }}<span></p>
+                                    <div class="table-responsive text-nowrap limited-scroll mt-2">
+                                        <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>SN</th>
+                                                <th>TYPE</th>
+                                                <th>CONTRACT</th>
+                                                <th>PROJECT</th>
+                                                <th>PO</th>
+                                                <th>EXPENSE</th>
+                                                <th>DESCRIPTION</th>
+                                                <th>COST PER MONTH</th>
+                                                <th>NO OF PERSON</th>
+                                                <th>MONTHS</th>
+                                                <th>AVERAGE COST</th>
+                                                <th>TOTAL COST</th>
+                                                <th>STATUS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($budget->salaries as $salary)
+                                            <tr>
+                                                <td>{{$salary->sn}}</td>
+                                                <td>{{$salary->type}}</td>
+                                                <td>{{$salary->contract}}</td>
+                                                <td>{{$salary->project}}</td>
+                                                <td>{{$salary->po}}</td>
+                                                <td>{{$salary->expenses}}</td>
+                                                <td>{{$salary->description}}</td>
+                                                <td>{{$salary->cost_per_month}}</td>
+                                                <td>{{$salary->no_of_staff}}</td>
+                                                <td>{{$salary->no_of_months}}</td>
+                                                <td>{{$salary->average_cost}}</td>
+                                                <td>{{$salary->total_cost}}</td>
+                                                <td>{{$salary->status}}</td>
+                                            </tr>    
+                                        @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- Facilities Cost Section -->
+                                <div class="mt-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3>Facilities Cost</h3>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewFacilitiesModal">ADD NEW</button>
+                                    </div>
+                                    <p>Total Facility Cost : <span style="color:#0067aa; font-weight:bold">{{ number_format($totalFacilityCost, 0) }}<span></p>
+                                    <div class="table-responsive text-nowrap limited-scroll mt-2">
+                                        <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>SN</th>
+                                                <th>TYPE</th>
+                                                <th>CONTRACT</th>
+                                                <th>PROJECT</th>
+                                                <th>PO</th>
+                                                <th>EXPENSE</th>
+                                                <th>DESCRIPTION</th>
+                                    
+                                                <th>COST PER MONTH</th>
+                                                <th>NO OF PERSON</th>
+                                                <th>MONTHS</th>
+                                                <th>AVERAGE COST</th>
+                                                <th>TOTAL COST</th>
+                                                <th>STATUS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($budget->facilityCosts as $facility)
+                                            <tr>
+                                                <td>{{$facility->sn}}</td>
+                                                <td>{{$facility->type}}</td>
+                                                <td>{{$facility->contract}}</td>
+                                                <td>{{$facility->project}}</td>
+                                                <td>{{$facility->po}}</td>
+                                                <td>{{$facility->expenses}}</td>
+                                                <td>{{$facility->description}}</td>
+                                                <td>{{$facility->cost_per_month}}</td>
+                                                <td>{{$facility->no_of_staff}}</td>
+                                                <td>{{$facility->no_of_months}}</td>
+                                                <td>{{$facility->average_cost}}</td>
+                                                <td>{{$facility->total_cost}}</td>
+                                                <td>{{$facility->status}}</td>
+                                            </tr>    
+                                        @endforeach    
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- Material Cost Section -->
+                                <div class="mt-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3>Material Cost</h3>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewMaterialModal">ADD NEW</button>
+                                    </div>
+                                    <p>Total Material Cost : <span style="color:#0067aa; font-weight:bold">{{ number_format($totalMaterialCost, 0) }}<span></p>
+                                    <div class="table-responsive text-nowrap limited-scroll mt-2">
+                                        <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>SN</th>
+                                                <th>TYPE</th>
+                                                <th>CONTRACT</th>
+                                                <th>PROJECT</th>
+                                                <th>PO</th>
+                                                <th>EXPENSE</th>
+                                                <th>DESCRIPTION</th>
+                                                <th>COST PER MONTH</th>
+                                                <th>NO OF PERSON</th>
+                                                <th>MONTHS</th>
+                                                <th>AVERAGE COST</th>
+                                                <th>TOTAL COST</th>
+                                                <th>STATUS</th>
+                                            </tr>
+                                        </thead>
+                                            <tbody>
+                                                @foreach($budget->materialCosts as $material)
+                                                    <tr>
+                                                        <td>{{$material->sn}}</td>
+                                                        <td>{{$material->type}}</td>
+                                                        <td>{{$material->contract}}</td>
+                                                        <td>{{$material->project}}</td>
+                                                        <td>{{$material->po}}</td>
+                                                        <td>{{$material->expenses}}</td>
+                                                        <td>{{$material->description}}</td>
+                                                        <td>{{$material->cost_per_month}}</td>
+                                                        <td>{{$material->no_of_staff}}</td>
+                                                        <td>{{$material->no_of_months}}</td>
+                                                        <td>{{$material->average_cost}}</td>
+                                                        <td>{{$material->total_cost}}</td>
+                                                        <td>{{$material->status}}</td>
+                                                    </tr>    
+                                                @endforeach                 
+                                            </tbody>
+                                        </table>
+                                    </div>
 
-                    </div>  
+                                </div>  
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
             <!-- Salary Modal -->
             <div class="modal fade" id="addNewSalaryModal" tabindex="-1" aria-labelledby="addNewSalaryModalLabel" aria-hidden="true">
@@ -198,7 +202,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                        <form id="addNewSalaryForm" action="{{ url('/pages/add-budget-project-salary') }}" method="POST">
+            <form id="addNewSalaryForm" action="{{ url('/pages/add-budget-project-salary') }}" method="POST">
                 @csrf
                 <div class="mb-3">
                     <label for="type" class="form-label">Type</label>
@@ -260,7 +264,7 @@
     </div>
 </div>
 
-    <!-- Facilities Modal -->
+
  <!-- Facilities Modal -->
 <div class="modal fade" id="addNewFacilitiesModal" tabindex="-1" aria-labelledby="addNewFacilitiesModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -270,7 +274,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addNewFacilitiesForm">
+                <form id="addNewFacilitiesForm" action="{{ url('/pages/add-budget-project-facility-cost') }}" method="POST">
+                    @csrf
                     <div class="mb-3">
                         <label for="type" class="form-label">Type</label>
                         <select class="form-select" id="type" name="type" required>
@@ -302,8 +307,12 @@
                         <input type="text" class="form-control" id="expense" name="expense" required>
                     </div>
                     <div class="mb-3">
+                        <label for="cost_per_month" class="form-label">Cost Per Month</label>
+                        <input type="number" class="form-control" id="cost_per_month" name="cost_per_month">
+                    </div>
+                    <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" name="description">
+                        <input type="text" class="form-control" id="description" name="description" required>
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
@@ -317,6 +326,7 @@
                         <label for="months" class="form-label">Months</label>
                         <input type="number" class="form-control" id="months" name="months" step="any" required>
                     </div>
+                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
                     <button type="submit" class="btn btn-primary">Add Facilities Cost</button>
                 </form>
             </div>
@@ -334,7 +344,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addNewMaterialForm">
+                    <form id="addNewMaterialForm" action="{{ url('/pages/add-budget-project-material-cost') }}" method="POST">
+                    @csrf
                         <div class="mb-3">
                             <label for="type" class="form-label">Type</label>
                             <select class="form-select" id="type" name="type" required>
@@ -366,6 +377,10 @@
                             <input type="text" class="form-control" id="expense" name="expense" required>
                         </div>
                         <div class="mb-3">
+                            <label for="cost_per_month" class="form-label">Cost Per Month</label>
+                            <input type="number" class="form-control" id="cost_per_month" name="cost_per_month">
+                        </div>
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <input type="text" class="form-control" id="description" name="description">
                         </div>
@@ -381,6 +396,7 @@
                         <label for="months" class="form-label">Months</label>
                         <input type="number" class="form-control" id="months" name="months" step="any" required>
                     </div>
+                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
                         <button type="submit" class="btn btn-primary">Add Material Cost</button>
                     </form>
                 </div>

@@ -56,22 +56,53 @@ class BudgetController extends Controller
     $clients = BusinessClient::get();
     $units = BusinessUnit::get();
     $budgets = BudgetProject::get();
+
     $directCost = DirectCost::firstOrNew([
       'budget_project_id' => $project_id,
     ]);
-    $IndirectCost = InDirectCost::get();
 
-    if (!$budget) {
-      // Debug output if budget is not found
-      return response()->json(['error' => 'Budget not found'], 404);
+    $indirectCost = IndirectCost::firstOrNew([
+      'budget_project_id' => $project_id,
+    ]);
+
+    // Initialize total costs to 0
+    $totalDirectCost = 0;
+    $totalInDirectCost = 0;
+
+    // Calculate direct cost if it exists
+    if ($directCost->exists) {
+      $totalDirectCost = $directCost->calculateTotalDirectCost();
     }
 
-    $totalDirectCost = $directCost->calculateTotalDirectCost();
+    // Calculate indirect cost if it exists
+    if ($indirectCost->exists) {
+      $totalInDirectCost = $indirectCost->calculateTotalIndirectCost();
+    }
 
-    // Return the view with the retrieved data
+    $totalSalary = Salary::sum('total_cost');
+    $totalFacilityCost = FacilityCost::sum('total_cost');
+    $totalMaterialCost = MaterialCost::sum('total_cost');
+    $totalCostOverhead = CostOverhead::sum('total_cost');
+    $totalFinancialCost = FinancialCost::sum('total_cost');
+
+    // Now return the view with all necessary variables
     return view(
       'content.pages.pages-edit-project-budget',
-      compact('clients', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost')
+      compact(
+        'clients',
+        'projects',
+        'units',
+        'budgets',
+        'users',
+        'budget',
+        'totalDirectCost',
+        'totalSalary',
+        'totalFacilityCost',
+        'totalMaterialCost',
+        'totalInDirectCost',
+        'totalCostOverhead',
+        'totalFinancialCost'
+      )
     );
   }
 

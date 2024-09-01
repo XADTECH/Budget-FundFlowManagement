@@ -14,8 +14,9 @@ return new class extends Migration {
       $table->id();
       $table->unsignedBigInteger('in_direct_cost_id');
       $table->unsignedBigInteger('budget_project_id');
-      $table->string('sn')->default('2.1'); // Default value for 'sn'
+      $table->string('sn')->default('2.4'); // Default value for 'sn'
       $table->string('type');
+      $table->string('contract');
       $table->string('project');
       $table->string('po');
       $table->string('expenses');

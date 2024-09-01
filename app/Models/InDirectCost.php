@@ -2,6 +2,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CostOverhead;
+use App\Models\FinancialCost;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class IndirectCost extends Model
@@ -22,12 +25,12 @@ class IndirectCost extends Model
 
   public function costOverheads()
   {
-    return $this->hasMany(CostOverhead::class);
+    return $this->hasMany(CostOverhead::class, 'in_direct_cost_id'); // Specify foreign key here
   }
 
   public function financialCosts()
   {
-    return $this->hasMany(FinancialCost::class);
+    return $this->hasMany(FinancialCost::class, 'in_direct_cost_id');
   }
 
   public function calculateTotalIndirectCost()

@@ -12,7 +12,7 @@ class CostOverhead extends Model
   protected $table = 'cost_overhead';
 
   protected $fillable = [
-    'in_direct_cost', // Foreign key reference to DirectCost
+    'in_direct_cost_id', // Foreign key reference to DirectCost
     'budget_project',
     'sn', // Serial number or identifier
     'type', // Type of record (Cost)
