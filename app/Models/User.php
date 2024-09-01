@@ -18,6 +18,7 @@ class User extends Authenticatable
   const ROLE_CLIENT_MANAGER = 'Client Manager';
   const ROLE_ADMIN = 'Admin';
   const ROLE_SUBADMIN = 'SubAdmin';
+  const ROLE_USER = 'User';
 
   /**
    * The attributes that are mass assignable.
@@ -61,6 +62,7 @@ class User extends Authenticatable
       self::ROLE_CLIENT_MANAGER,
       self::ROLE_ADMIN,
       self::ROLE_SUBADMIN,
+      self::ROLE_USER,
     ];
   }
 }

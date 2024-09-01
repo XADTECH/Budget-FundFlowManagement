@@ -44,13 +44,13 @@
             <ul class="menu-sub">
 
                 <li class="menu-item">
-                     <a href="/pages/add-project-budget" class="menu-link">
+                    <a href="/pages/add-project-budget" class="menu-link">
                         <div>Add Project Budget</div>
                     </a>
                 </li>
 
                 <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-laravel-admin-template/demo-1/dashboard/crm" class="menu-link" target="_blank">
+                    <a href="#" class="menu-link" target="_blank">
                         <div>Month Wise Project Budgeting</div>
                         <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
                     </a>
@@ -151,6 +151,11 @@
                 <div>User Management</div>
             </a>
             <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="/pages/users" class="menu-link">
+                        <div>Users List</div>
+                    </a>
+                </li>
                 <li class="menu-item">
                     <a href="/pages/add-user" class="menu-link">
                         <div>Add User</div>

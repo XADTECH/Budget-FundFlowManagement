@@ -194,8 +194,10 @@ Route::middleware(['checklogin'])->group(function () {
   // Add other routes that require authentication here
 
   //add user
+
   //user management
   Route::post('add-user', [UserController::class, 'store'])->name('add-user');
+  Route::get('pages/users', [UserController::class, 'usersList'])->name('user-lists');
 });
 
 //check indivisual route

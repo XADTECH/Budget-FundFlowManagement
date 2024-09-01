@@ -1,5 +1,6 @@
 
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlannedCashController;
@@ -32,6 +33,8 @@ Route::post('/add-cash-receive', [PlannedCashController::class, 'addcashreceiveA
 
 //add bank record
 Route::post('/add-bank-record', [BankController::class, 'addRecord'])->name('add-bank-record');
+
+
 //get all bank records
 Route::get('/get-bank-records', [BankController::class, 'getRecords'])->name('get-bank-records');
 Route::post('/update-bank-record', [BankController::class, 'updateRecord'])->name('update-bank-record');
@@ -55,3 +58,9 @@ Route::post('/business-clients', [BusinessClientController::class, 'addRecord'])
 Route::get('/business-clients', [BusinessClientController::class, 'getRecords']);
 Route::post('/update-business-clients', [BusinessClientController::class, 'updateRecord']);
 Route::post('/delete-business-clients', [BusinessClientController::class, 'deleteRecord']);
+
+
+// Routes for users
+Route::get('/get-users', [UserController::class, 'getRecords']);
+Route::post('/update-user', [UserController::class, 'updateRecord'])->name('update-user');
+Route::post('/delete-user', [UserController::class, 'deleteRecord'])->name('delete-user');

@@ -14,6 +14,10 @@ class UserController extends Controller
   {
     return view('content.pages.pages-add-user-account');
   }
+  public function usersList()
+  {
+    return view('content.pages.pages-users-list');
+  }
 
   // Store a newly created resource in storage
   public function store(Request $request)
@@ -71,6 +75,85 @@ class UserController extends Controller
         ->with('success', 'User created successfully');
     } catch (Exception $e) {
       return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+    }
+  }
+
+  public function getRecords()
+  {
+
+    $users = User::all();
+    return response()->json($users);
+  }
+
+  public function updateRecord(Request $request)
+  {
+    //return response()->json($request->all());
+    try {
+      // Create a Validator instance
+      $validator = Validator::make($request->all(), [
+        'id' => 'required|integer|exists:users,id',
+        'first_name' => 'required',
+        'last_name' => 'required',
+        'email' => 'required',
+        'role' => 'required',
+      ]);
+
+      // Check if validation fails
+      if ($validator->fails()) {
+        return response()->json(['message' => $validator->errors()], 422);
+      }
+      // Find the user record by ID
+      $user = User::findOrFail($request->input('id'));
+
+      // Prepare the data for updating
+      $userData = [
+        'first_name' => $request->input('first_name', $user->first_name),
+        'last_name' => $request->input('last_name', $user->last_name),
+        'email' => $request->input('email', $user->email),
+        'phone_number' => $request->input('phone_number', $user->phone_number),
+        'role' => $request->input('role', $user->role),
+      ];
+
+      // Check if password is provided in the request
+      if ($request->filled('password')) {
+        $userData['password'] = Hash::make($request->input('password'));
+      }
+
+      // Update the user record with validated data
+      $user->update($userData);
+
+      return response()->json(['success' => 'Project updated successfully']);
+    } catch (Exception $e) {
+      // Handle exceptions
+      return response()->json(['message' => 'An unexpected error occurred: ' . $e->getMessage()], 500);
+    }
+  }
+
+  public function deleteRecord(Request $request)
+  {
+    try {
+      // Validate that project_id is provided
+      $validator = Validator::make($request->all(), [
+        'user_id' => 'required|integer|exists:users,id',
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+      }
+
+      // Find the project record by ID
+      $project = User::find($request->input('user_id'));
+
+      if (!$project) {
+        return response()->json(['message' => 'User record not found.'], 404);
+      }
+
+      // Delete the project record
+      $project->delete();
+
+      return response()->json(['success' => 'User deleted successfully']);
+    } catch (Exception $e) {
+      return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
     }
   }
 }
