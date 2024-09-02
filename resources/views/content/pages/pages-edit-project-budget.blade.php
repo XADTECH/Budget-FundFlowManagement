@@ -200,6 +200,15 @@
     'budget' => $budget
 ])
 
+@include('content.pages.components.edit-revenue-plan', [
+    'projects' => $projects,
+    'costOverheads' => $budget->costOverheads,
+    'financialCosts' => $budget->financialCosts,
+    'budget' => $budget,
+    'revenuePlans' => $budget->revenuePlans 
+])
+
+
 
 <!--Model-->
 <div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">

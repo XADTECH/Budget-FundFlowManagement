@@ -144,6 +144,11 @@ Route::middleware(['checklogin'])->group(function () {
     'add-budget-project-financial-cost'
   );
 
+    //add Revenue
+    Route::post('/pages/add-budget-project-revenue', [BudgetController::class, 'storeRevenue'])->name(
+      'add-budget-project-revenue'
+    );
+
   // cards
   Route::get('/cards/basic', [CardBasic::class, 'index'])->name('cards-basic');
 

@@ -33,6 +33,11 @@ class IndirectCost extends Model
     return $this->hasMany(FinancialCost::class, 'in_direct_cost_id');
   }
 
+  public function revenuePlans()
+  {
+      return $this->hasMany(RevenuePlan::class, 'budget_project_id');
+  }
+
   public function calculateTotalIndirectCost()
   {
     // Calculate totals from related models

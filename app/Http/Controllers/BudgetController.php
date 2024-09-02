@@ -13,6 +13,7 @@ use App\Models\MaterialCost;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
 use App\Models\DirectCost;
+use App\Models\RevenuePlan;
 use App\Models\IndirectCost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -41,6 +42,7 @@ class BudgetController extends Controller
     $budget = BudgetProject::with([
       'directCosts',
       'indirectCosts',
+      'revenuePlans',
       'salaries',
       'facilityCosts',
       'materialCosts',
@@ -57,13 +59,25 @@ class BudgetController extends Controller
     $units = BusinessUnit::get();
     $budgets = BudgetProject::get();
 
-    $directCost = DirectCost::firstOrNew([
-      'budget_project_id' => $project_id,
-    ]);
+      $directCost = DirectCost::firstOrNew([
+        'budget_project_id' => $project_id,
+      ]);
 
-    $indirectCost = IndirectCost::firstOrNew([
-      'budget_project_id' => $project_id,
-    ]);
+      $indirectCost = IndirectCost::firstOrNew([
+        'budget_project_id' => $project_id,
+      ]);
+
+    // Retrieve the most recent RevenuePlan record
+    $latestRevenuePlan = RevenuePlan::latest('created_at')->first(); 
+
+    // Check if a record was found
+    if ($latestRevenuePlan) {
+        // Get the net_profit_after_tax value from the latest record
+        $totalNetProfitAfterTax = $latestRevenuePlan->net_profit_after_tax;
+    } else {
+        // Handle the case where no records are found
+        $totalNetProfitAfterTax = 0; // Or handle accordingly
+    }
 
     // Initialize total costs to 0
     $totalDirectCost = 0;
@@ -85,6 +99,7 @@ class BudgetController extends Controller
     $totalCostOverhead = CostOverhead::sum('total_cost');
     $totalFinancialCost = FinancialCost::sum('total_cost');
 
+
     // Now return the view with all necessary variables
     return view(
       'content.pages.pages-edit-project-budget',
@@ -101,7 +116,8 @@ class BudgetController extends Controller
         'totalMaterialCost',
         'totalInDirectCost',
         'totalCostOverhead',
-        'totalFinancialCost'
+        'totalFinancialCost',
+        'totalNetProfitAfterTax'
       )
     );
   }
@@ -199,6 +215,72 @@ class BudgetController extends Controller
       return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
     }
   }
+  
+  public function storeRevenue(Request $request)
+  {
+      // Validate the incoming request data
+      $validator = Validator::make($request->all(), [
+          'amount' => 'required|numeric',
+          'description' => 'required|string|max:500',
+          'project_id' => 'required|exists:budget_project,id', // Ensure project_id exists in budget_projects table
+      ]);
+  
+      // If validation fails, return errors
+      if ($validator->fails()) {
+          return response()->json(['errors' => $validator->errors()], 422);
+      }
+  
+      // Find the related budget project
+      $budgetProject = BudgetProject::find($request->project_id);
+  
+      // Initialize DirectCost and IndirectCost for the project
+      $directCost = DirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
+      $indirectCost = IndirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
+  
+      // Initialize total costs to 0
+      $totalDirectCost = 0;
+      $totalIndirectCost = 0;
+  
+      // Calculate direct cost if it exists
+      if ($directCost->exists) {
+          $totalDirectCost = $directCost->calculateTotalDirectCost();
+      }
+  
+      // Calculate indirect cost if it exists
+      if ($indirectCost->exists) {
+          $totalIndirectCost = $indirectCost->calculateTotalIndirectCost();
+      }
+  
+      // Create and save the new revenue plan
+      $revenuePlan = new RevenuePlan();
+      $revenuePlan->budget_project_id = $budgetProject->id;
+      $revenuePlan->direct_cost_id = $directCost->id;
+      $revenuePlan->indirect_cost_id = $indirectCost->id;
+      $revenuePlan->type = $request->type;
+      $revenuePlan->contract = $request->contract;
+      $revenuePlan->project = $request->project;
+      $revenuePlan->amount = $request->amount;
+      $revenuePlan->description = $request->description;
+      $revenuePlan->status = $request->status;
+      
+      // Save the revenue plan data
+      $revenuePlan->save();
+  
+      // Run calculations after saving, passing in the pre-calculated costs
+      $revenuePlan->calculateTotalProfit();
+      $revenuePlan->calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost);
+      $revenuePlan->calculateTax();
+      $revenuePlan->calculateNetProfitAfterTax();
+      $revenuePlan->calculateProfitPercentage();
+  
+      // Return the response with the newly created revenue plan
+      return response()->json([
+          'message' => 'Revenue Plan saved successfully!',
+          'revenue_plan' => $revenuePlan,
+      ], 201);
+  }
+  
+  
 
   /**
    * Display the specified resource.

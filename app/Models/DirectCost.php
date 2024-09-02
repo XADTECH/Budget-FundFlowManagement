@@ -34,6 +34,11 @@ class DirectCost extends Model
     return $this->hasMany(MaterialCost::class);
   }
 
+  public function revenuePlans()
+  {
+      return $this->hasMany(RevenuePlan::class, 'budget_project_id');
+  }
+
   public function calculateTotalDirectCost()
   {
     // Calculate totals from related models

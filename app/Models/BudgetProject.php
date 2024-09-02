@@ -66,4 +66,9 @@ class BudgetProject extends Model
   {
     return $this->hasMany(FinancialCost::class, 'budget_project_id');
   }
+
+  public function revenuePlans()
+  {
+      return $this->hasMany(RevenuePlan::class, 'budget_project_id');
+  }
 }
