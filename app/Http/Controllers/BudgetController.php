@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Project;
 use App\Models\Salary;
 use App\Models\FacilityCost;
+use App\Models\CapitalExpenditure;
 use App\Models\MaterialCost;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
@@ -48,6 +49,7 @@ class BudgetController extends Controller
       'materialCosts',
       'costOverheads',
       'financialCosts',
+      'capitalExpenditures'
     ])
       ->where('id', $project_id)
       ->first();
@@ -68,15 +70,19 @@ class BudgetController extends Controller
       ]);
 
     // Retrieve the most recent RevenuePlan record
-    $latestRevenuePlan = RevenuePlan::latest('created_at')->first(); 
+    $latestRevenuePlan = RevenuePlan::where('budget_project_id', $project_id)
+    ->latest('created_at')
+    ->first();
 
     // Check if a record was found
     if ($latestRevenuePlan) {
         // Get the net_profit_after_tax value from the latest record
         $totalNetProfitAfterTax = $latestRevenuePlan->net_profit_after_tax;
+        $totalNetProfitBeforeTax = $latestRevenuePlan->net_profit_before_tax;
     } else {
         // Handle the case where no records are found
         $totalNetProfitAfterTax = 0; // Or handle accordingly
+        $totalNetProfitBeforeTax = 0; // Or handle accordingly
     }
 
     // Initialize total costs to 0
@@ -93,11 +99,12 @@ class BudgetController extends Controller
       $totalInDirectCost = $indirectCost->calculateTotalIndirectCost();
     }
 
-    $totalSalary = Salary::sum('total_cost');
-    $totalFacilityCost = FacilityCost::sum('total_cost');
-    $totalMaterialCost = MaterialCost::sum('total_cost');
-    $totalCostOverhead = CostOverhead::sum('total_cost');
-    $totalFinancialCost = FinancialCost::sum('total_cost');
+    $totalSalary = Salary::where('budget_project_id', $project_id)->sum('total_cost');
+    $totalFacilityCost = FacilityCost::where('budget_project_id', $project_id)->sum('total_cost');
+    $totalMaterialCost = MaterialCost::where('budget_project_id', $project_id)->sum('total_cost');
+    $totalCostOverhead = CostOverhead::where('budget_project_id', $project_id)->sum('total_cost');
+    $totalFinancialCost = FinancialCost::where('budget_project_id', $project_id)->sum('total_cost');
+    $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $project_id)->sum('total_cost');
 
 
     // Now return the view with all necessary variables
@@ -117,7 +124,9 @@ class BudgetController extends Controller
         'totalInDirectCost',
         'totalCostOverhead',
         'totalFinancialCost',
-        'totalNetProfitAfterTax'
+        'totalNetProfitAfterTax',
+        'totalCapitalExpenditure',
+        'totalNetProfitBeforeTax'
       )
     );
   }
@@ -279,6 +288,49 @@ class BudgetController extends Controller
           'revenue_plan' => $revenuePlan,
       ], 201);
   }
+
+  //store capital expense 
+  public function storeCapex(Request $request)
+  {
+
+    $validated = $request->validate([
+      'type' => 'required|string',
+      'contract' => 'required|string',
+      'project' => 'required|exists:projects,id', // Ensure `projects` table exists
+      'po' => 'required|string',
+      'expense' => 'required|string',
+      'cost_per_month' => 'required|numeric',
+      'description' => 'required|string',
+      'status' => 'nullable|string',
+      'noOfPerson' => 'required|numeric', // Renamed to `no_of_person`
+      'months' => 'required|numeric', // Renamed to `no_of_months`
+      'project_id' => 'required|string', // Ensure `budget_projects` table exists
+    ]);
+
+    // Create a new salary record
+    $capitalExpenditure = new CapitalExpenditure();
+    $capitalExpenditure->budget_project_id = $request->project_id;
+    $capitalExpenditure->type = $validated['type'];
+    $capitalExpenditure->contract = $validated['contract'];
+    $capitalExpenditure->project = $validated['project'];
+    $capitalExpenditure->po = $validated['po'];
+    $capitalExpenditure->expenses = $validated['expense'];
+    $capitalExpenditure->cost_per_month = $validated['cost_per_month'];
+    $capitalExpenditure->description = $validated['description'];
+    $capitalExpenditure->status = $validated['status'];
+    $capitalExpenditure->no_of_staff = $validated['noOfPerson']; // Map to your model attribute
+    $capitalExpenditure->no_of_months = $validated['months']; // Map to your model attribute
+    $capitalExpenditure->budget_project_id = $validated['project_id']; // Map to your model attribute
+    $capitalExpenditure->calculateTotalCost();
+    $capitalExpenditure->calculateAverageCost();
+    $capitalExpenditure->save();
+
+    return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with(
+      'success',
+      'CAPEX added successfully!'
+    );
+  }
+  
   
   
 

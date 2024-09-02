@@ -38,10 +38,11 @@
                         <div class="dropdown-section">
                             <h3 class="dropdown-header">Renenue & Profit ▼</h3>
                             <div class="dropdown-content">
-                                <h5>Net Profit after Tax  :  {{number_format($totalNetProfitAfterTax)}} AED</h5>
                                 <!-- Salary Section -->
                                 <div class="mt-4">
                                     <div class="d-flex justify-content-between align-items-center">
+                                    <h5>Net Profit after Tax  :  {{number_format($totalNetProfitAfterTax)}} AED</h5>
+
                                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewRevenuePlan">ADD REVENUE</button>
                                     </div>
                                     <div class="table-responsive text-nowrap limited-scroll mt-2">

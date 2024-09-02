@@ -200,12 +200,18 @@
     'budget' => $budget
 ])
 
+@include('content.pages.components.edit-capital-expenditure', [
+    'budget' => $budget,
+
+])
+
 @include('content.pages.components.edit-revenue-plan', [
-    'projects' => $projects,
-    'costOverheads' => $budget->costOverheads,
-    'financialCosts' => $budget->financialCosts,
     'budget' => $budget,
     'revenuePlans' => $budget->revenuePlans 
+])
+
+@include('content.pages.components.edit-cash-management', [
+    'budget' => $budget,
 ])
 
 

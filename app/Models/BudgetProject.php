@@ -71,4 +71,9 @@ class BudgetProject extends Model
   {
       return $this->hasMany(RevenuePlan::class, 'budget_project_id');
   }
+
+  public function capitalExpenditures()
+  {
+      return $this->hasMany(CapitalExpenditure::class, 'budget_project_id');
+  }
 }
