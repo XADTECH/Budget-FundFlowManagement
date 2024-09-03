@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 02, 2024 at 01:43 PM
+-- Generation Time: Sep 03, 2024 at 07:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -74,7 +74,9 @@ CREATE TABLE `budget_project` (
 --
 
 INSERT INTO `budget_project` (`id`, `reference_code`, `start_date`, `end_date`, `project_id`, `unit_id`, `manager_id`, `client_id`, `region`, `site_name`, `month`, `approval_status`, `daily_payment_expense`, `lpo_amount`, `bal_under_over_budget`, `total_budget_allocated`, `total_dpm_expense`, `total_lpo_expense`, `total_budget`, `status`, `created_at`, `updated_at`, `description`) VALUES
-(10, 'SEP2024-713h-OutSource-nabeel-Etisalat', '2024-08-29', '2024-08-30', 1, 1, 19, 1, 'Abu Dhabi', 'Stadium Abu Hail, UAE', '2024-09-07', 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Good', '2024-08-29 06:16:44', '2024-08-29 06:16:44', 'starting new Project');
+(10, 'SEP2024-713h-OutSource-nabeel-Etisalat', '2024-08-29', '2024-08-30', 1, 1, 19, 1, 'Abu Dhabi', 'Stadium Abu Hail, UAE', '2024-09-07', 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Good', '2024-08-29 06:16:44', '2024-08-29 06:16:44', 'starting new Project'),
+(12, 'BP090320240001-WR-OLT-NotOutSource-nabeel-Etisalat', '2024-09-03', '2024-11-02', 2, 2, 19, 1, 'Dubai', 'abu hail, dubai', '2024-09-01', 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Good', '2024-09-03 01:00:33', '2024-09-03 01:00:33', 'starting new'),
+(13, 'BP090320240002-WR-OLT-OutSource-nabeel-DU', '2024-09-03', '2024-09-04', 2, 1, 19, 2, 'Dubai', NULL, '2024-09-04', 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Good', '2024-09-03 01:05:18', '2024-09-03 01:05:18', NULL);
 
 -- --------------------------------------------------------
 
@@ -122,7 +124,7 @@ CREATE TABLE `business_units` (
 
 INSERT INTO `business_units` (`id`, `source`, `unitdetail`, `unitremark`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'OutSource', NULL, NULL, 'Active', '2024-08-29 01:40:18', '2024-08-29 01:40:18'),
-(2, 'NotOutSource', NULL, NULL, 'Active', '2024-08-29 01:40:21', '2024-08-29 01:40:21');
+(2, 'none outsource', 'Not Entered', 'Not Entered', 'Active', '2024-08-29 01:40:21', '2024-09-03 01:04:29');
 
 -- --------------------------------------------------------
 
@@ -210,7 +212,8 @@ CREATE TABLE `direct_cost` (
 --
 
 INSERT INTO `direct_cost` (`id`, `budget_project_id`, `total_cost`, `created_at`, `updated_at`) VALUES
-(4, 10, NULL, '2024-08-31 05:24:29', '2024-08-31 05:24:29');
+(4, 10, NULL, '2024-08-31 05:24:29', '2024-08-31 05:24:29'),
+(5, 11, NULL, '2024-09-03 00:32:56', '2024-09-03 00:32:56');
 
 -- --------------------------------------------------------
 
@@ -405,7 +408,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (33, '2024_08_31_115424_create_cost_overhead_table', 23),
 (34, '2024_08_31_104731_create_indirect_cost_table', 24),
 (35, '2024_09_02_072221_create_revenue_plans_table', 25),
-(36, '2024_09_02_103513_create_capital_expenditure_table', 26);
+(36, '2024_09_02_103513_create_capital_expenditure_table', 26),
+(37, '2024_09_03_045117_create_project_budget_sequence_table', 27);
 
 -- --------------------------------------------------------
 
@@ -520,6 +524,27 @@ INSERT INTO `projects` (`id`, `name`, `projectdetail`, `projectremark`, `status`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `project_budget_sequence`
+--
+
+CREATE TABLE `project_budget_sequence` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `date` char(8) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `last_sequence` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `project_budget_sequence`
+--
+
+INSERT INTO `project_budget_sequence` (`id`, `date`, `last_sequence`, `created_at`, `updated_at`) VALUES
+(1, '09032024', 2, '2024-09-03 01:00:33', '2024-09-03 01:05:18');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `revenue_plans`
 --
 
@@ -586,7 +611,8 @@ CREATE TABLE `salaries` (
 INSERT INTO `salaries` (`id`, `direct_cost_id`, `budget_project_id`, `sn`, `type`, `contract`, `project`, `po`, `expenses`, `description`, `status`, `cost_per_month`, `no_of_staff`, `no_of_months`, `total_cost`, `average_cost`, `created_at`, `updated_at`) VALUES
 (4, 4, 10, '2.1', 'Cost', 'DU CIVIL', '1', 'CAPEX', 'salary', 'starting new Project', 'Contractor', 2000.00, 1, 1, 2000.00, 2000.00, '2024-08-31 05:24:29', '2024-08-31 05:24:29'),
 (5, 4, 10, '2.1', 'Cost', 'DU CIVIL', '1', 'CAPEX', 'salary', 'Project Manager', 'new hiring', 3000.00, 1, 1, 3000.00, 3000.00, '2024-08-31 05:25:28', '2024-08-31 05:25:28'),
-(6, 4, 10, '2.1', 'Cost', 'DU CIVIL', '2', 'OPEX', 'salary', 'starting new', 'Contractor', 2000.00, 2, 2, 8000.00, 2000.00, '2024-08-31 05:29:15', '2024-08-31 05:29:15');
+(6, 4, 10, '2.1', 'Cost', 'DU CIVIL', '2', 'OPEX', 'salary', 'starting new', 'Contractor', 2000.00, 2, 2, 8000.00, 2000.00, '2024-08-31 05:29:15', '2024-08-31 05:29:15'),
+(8, 5, 11, '2.1', 'Cost', 'DU CIVIL', '1', 'OPEX', 'salary', 'starting new', 'new hiring', 2000.00, 1, 1, 2000.00, 2000.00, '2024-09-03 00:32:56', '2024-09-03 00:32:56');
 
 -- --------------------------------------------------------
 
@@ -742,6 +768,13 @@ ALTER TABLE `projects`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `project_budget_sequence`
+--
+ALTER TABLE `project_budget_sequence`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `project_budget_sequence_date_index` (`date`);
+
+--
 -- Indexes for table `revenue_plans`
 --
 ALTER TABLE `revenue_plans`
@@ -773,7 +806,7 @@ ALTER TABLE `banks`
 -- AUTO_INCREMENT for table `budget_project`
 --
 ALTER TABLE `budget_project`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `business_clients`
@@ -803,7 +836,7 @@ ALTER TABLE `cost_overhead`
 -- AUTO_INCREMENT for table `direct_cost`
 --
 ALTER TABLE `direct_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `facility_cost`
@@ -839,7 +872,7 @@ ALTER TABLE `material_cost`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -866,6 +899,12 @@ ALTER TABLE `projects`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `project_budget_sequence`
+--
+ALTER TABLE `project_budget_sequence`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `revenue_plans`
 --
 ALTER TABLE `revenue_plans`
@@ -875,7 +914,7 @@ ALTER TABLE `revenue_plans`
 -- AUTO_INCREMENT for table `salaries`
 --
 ALTER TABLE `salaries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`

@@ -25,8 +25,8 @@
           <div class="row">
             <div class="col-sm-6">
               <select class="form-select" name="source" required>
-                <option value="OutSource">OutSource</option>
-                <option value="NotOutSource">Not Outsource</option>
+              <option value="outsource">outsource</option>
+              <option value="none outsource">none outsource</option>
               </select>
             </div>
             <div class="col-sm-6">
@@ -90,8 +90,8 @@
           <div class="mb-3">
             <label for="businessUnitSource" class="form-label">Source</label>
             <select class="form-select" id="businessUnitSource" name="source" required>
-              <option value="OutSource">OutSource</option>
-              <option value="NotOutSource">Not Outsource</option>
+              <option value="outsource">outsource</option>
+              <option value="none outsource">none outsource</option>
             </select>
           </div>
           <div class="mb-3">

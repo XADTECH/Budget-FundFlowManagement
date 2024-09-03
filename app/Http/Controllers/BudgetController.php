@@ -8,6 +8,7 @@ use App\Models\BusinessUnit;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Salary;
+use App\Models\ProjectBudgetSequence;
 use App\Models\FacilityCost;
 use App\Models\CapitalExpenditure;
 use App\Models\MaterialCost;
@@ -18,6 +19,8 @@ use App\Models\RevenuePlan;
 use App\Models\IndirectCost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class BudgetController extends Controller
 {
@@ -30,7 +33,11 @@ class BudgetController extends Controller
     $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
     $clients = BusinessClient::get();
     $units = BusinessUnit::get();
-    $budgets = BudgetProject::get();
+    $loggedInUserId = Auth::id();
+
+    // Retrieve budgets where manager_id matches the logged-in user ID
+    $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
+    
     return view('content.pages.pages-add-project-budget', compact('clients', 'projects', 'units', 'budgets', 'users'));
   }
 
@@ -136,94 +143,96 @@ class BudgetController extends Controller
    */
   public function store(Request $request)
   {
-    try {
-      // Define validation rules
-      $rules = [
-        'startdate' => 'required|date',
-        'enddate' => 'required|date|after_or_equal:startdate',
-        'month' => 'required|date', // Keep this as date for full date validation
-        'projectname' => 'required|exists:projects,id',
-        'division' => 'required|exists:business_units,id',
-        'manager' => 'required|string', // Assuming 'manager' is a string representing the manager's name
-        'client' => 'required|exists:business_clients,id',
-        'region' => 'required|string|max:255',
-        'sitename' => 'required|string|max:255',
-        'description' => 'nullable|string|max:255',
-      ];
-
-      // Create a validator instance
-      $validator = Validator::make($request->all(), $rules);
-
-      // Check if validation fails
-      if ($validator->fails()) {
-        $errors = $validator->errors();
-        return back()
-          ->withErrors($errors)
-          ->withInput();
+      try {
+          // Define validation rules
+          $rules = [
+              'startdate' => 'required|date',
+              'enddate' => 'required|date|after_or_equal:startdate',
+              'month' => 'required|date', // Keep this as date for full date validation
+              'projectname' => 'required|exists:projects,id',
+              'division' => 'required|exists:business_units,id',
+              'manager' => 'required|string', // Assuming 'manager' is a string representing the manager's name
+              'client' => 'required|exists:business_clients,id',
+              'region' => 'nullable|string|max:255',
+              'sitename' => 'nullable|string|max:255',
+              'description' => 'nullable|string|max:255',
+          ];
+  
+          // Create a validator instance
+          $validator = Validator::make($request->all(), $rules);
+  
+          // Check if validation fails
+          if ($validator->fails()) {
+              return back()->withErrors($validator)->withInput();
+          }
+  
+          // Retrieve the validated data
+          $validatedData = $validator->validated();
+  
+          // Extract IDs and fields from the validated data
+          $month = $validatedData['month'];
+          $projectId = $validatedData['projectname'];
+          $businessUnitId = $validatedData['division'];
+          $managerID = $validatedData['manager'];
+          $managerName = User::find($managerID)->first_name;
+          $clientId = $validatedData['client'];
+  
+          // Fetch names associated with the provided IDs
+          $projectName = Project::find($projectId)->name;
+          $businessUnitName = BusinessUnit::find($businessUnitId)->source;
+          $clientName = BusinessClient::find($clientId)->clientname;
+  
+          // Convert the month string to a DateTime object
+          $monthDate = \DateTime::createFromFormat('Y-m-d', $month);
+          if (!$monthDate) {
+              throw new Exception('Invalid month format.');
+          }
+          $monthName = $monthDate->format('M');
+          $year = $monthDate->format('Y');
+          $formattedMonthYear = strtoupper($monthName . $year);
+  
+          // Get current date in the desired format (MMDDYYYY)
+          $formattedDate = Carbon::now()->format('mdY');
+  
+          // Fetch the current sequence for the date or create a new one
+          $projectSequence = ProjectBudgetSequence::firstOrCreate(
+              ['date' => $formattedDate],
+              ['last_sequence' => 0]
+          );
+  
+          // Increment the sequence number
+          $newSerialNumber = str_pad($projectSequence->last_sequence + 1, 4, '0', STR_PAD_LEFT);
+  
+          // Update the last sequence in the database
+          $projectSequence->last_sequence = $newSerialNumber;
+          $projectSequence->save();
+  
+          // Generate the unique reference code using the incremented serial number
+          $referenceCode = 'BP' . $formattedDate . $newSerialNumber . '-' . $projectName . '-' . $businessUnitName . '-' . $managerName . '-' . $clientName;
+  
+          // Store the validated data along with the generated reference code
+          $newProject = new BudgetProject();
+          $newProject->reference_code = $referenceCode;
+          $newProject->start_date = $validatedData['startdate'];
+          $newProject->end_date = $validatedData['enddate'];
+          $newProject->month = $validatedData['month'];
+          $newProject->project_id = $projectId; // Assuming IDs are correct
+          $newProject->unit_id = $businessUnitId;
+          $newProject->manager_id = $managerID; // If manager should be stored as a name, otherwise update this to store the ID
+          $newProject->client_id = $clientId;
+          $newProject->region = $validatedData['region'];
+          $newProject->site_name = $validatedData['sitename'];
+          $newProject->description = $validatedData['description'] ?? null; // Optional description
+          $newProject->save();
+  
+          return redirect()
+              ->route('add-project-budget')
+              ->with('success', 'Project created successfully!');
+      } catch (Exception $e) {
+          return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
       }
-
-      // Retrieve the validated data
-      $validatedData = $validator->validated();
-
-      // Extract IDs and fields from the validated data
-      $month = $validatedData['month'];
-      $projectId = $validatedData['projectname'];
-      $businessUnitId = $validatedData['division'];
-      $managerID = $validatedData['manager'];
-      $managerName = User::find($managerID)->first_name;
-      $clientId = $validatedData['client'];
-
-      // Fetch names associated with the provided IDs
-      $projectName = Project::find($projectId)->name;
-      $businessUnitName = BusinessUnit::find($businessUnitId)->source;
-      $clientName = BusinessClient::find($clientId)->clientname;
-
-      // Convert the month string to a DateTime object
-      $monthDate = \DateTime::createFromFormat('Y-m-d', $month);
-      if (!$monthDate) {
-        throw new Exception('Invalid month format.');
-      }
-      $monthName = $monthDate->format('M');
-      $year = $monthDate->format('Y');
-      $formattedMonthYear = strtoupper($monthName . $year);
-
-      // Generate a unique reference code using the payload month and fetched names
-      $referenceCode =
-        $formattedMonthYear . '-' . $projectName . '-' . $businessUnitName . '-' . $managerName . '-' . $clientName;
-
-      // Ensure the reference code is unique
-      $existingProject = BudgetProject::where('reference_code', $referenceCode)->first();
-      if ($existingProject) {
-        return back()
-          ->withErrors([
-            'reference_code' => 'The generated reference code is not unique. Please try again.',
-          ])
-          ->withInput();
-      }
-
-      // Store the validated data along with the generated reference code
-      $newProject = new BudgetProject();
-      $newProject->reference_code = $referenceCode;
-      $newProject->start_date = $validatedData['startdate'];
-      $newProject->end_date = $validatedData['enddate'];
-      $newProject->month = $validatedData['month'];
-
-      $newProject->project_id = $projectId; // Assuming IDs are correct
-      $newProject->unit_id = $businessUnitId;
-      $newProject->manager_id = $managerID; // If manager should be stored as a name, otherwise update this to store the ID
-      $newProject->client_id = $clientId;
-      $newProject->region = $validatedData['region'];
-      $newProject->site_name = $validatedData['sitename'];
-      $newProject->description = $validatedData['description'] ?? null; // Optional description
-      $newProject->save();
-
-      return redirect()
-        ->route('add-project-budget')
-        ->with('success', 'Project created successfully!');
-    } catch (Exception $e) {
-      return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
-    }
   }
+  
   
   public function storeRevenue(Request $request)
   {
