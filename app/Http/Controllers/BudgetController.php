@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Auth;
 class BudgetController extends Controller
 {
   /**
-   * Display a listing of the resource.
+   * Display a listing Budgets / Add Budget
    */
   public function index()
   {
@@ -42,7 +42,7 @@ class BudgetController extends Controller
   }
 
   /**
-   * Show the form for creating a new resource.
+   * Edit Budget PRoject
    */
   public function edit($project_id)
   {
@@ -139,7 +139,7 @@ class BudgetController extends Controller
   }
 
   /**
-   * Store a newly created resource in storage.
+   * Create a Budget 
    */
   public function store(Request $request)
   {
@@ -225,15 +225,16 @@ class BudgetController extends Controller
           $newProject->description = $validatedData['description'] ?? null; // Optional description
           $newProject->save();
   
-          return redirect()
-              ->route('add-project-budget')
-              ->with('success', 'Project created successfully!');
+          return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with(
+            'success',
+            'CAPEX added successfully!'
+          );
       } catch (Exception $e) {
           return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
       }
   }
   
-  
+  //store revenue 
   public function storeRevenue(Request $request)
   {
       // Validate the incoming request data
@@ -272,8 +273,6 @@ class BudgetController extends Controller
       // Create and save the new revenue plan
       $revenuePlan = new RevenuePlan();
       $revenuePlan->budget_project_id = $budgetProject->id;
-      $revenuePlan->direct_cost_id = $directCost->id;
-      $revenuePlan->indirect_cost_id = $indirectCost->id;
       $revenuePlan->type = $request->type;
       $revenuePlan->contract = $request->contract;
       $revenuePlan->project = $request->project;
@@ -292,10 +291,9 @@ class BudgetController extends Controller
       $revenuePlan->calculateProfitPercentage();
   
       // Return the response with the newly created revenue plan
-      return response()->json([
-          'message' => 'Revenue Plan saved successfully!',
-          'revenue_plan' => $revenuePlan,
-      ], 201);
+      return redirect()
+      ->route('add-project-budget')
+      ->with('success', 'Revenue Added successfully!');
   }
 
   //store capital expense 

@@ -35,6 +35,7 @@
 
     <ul class="menu-inner py-1 ps ps--active-y">
 
+        <!--Budget Management-->
         <li class="menu-item active open">
             <a href="http://localhost:8000" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-rocket"></i>
@@ -81,6 +82,7 @@
             </ul>
         </li>
 
+            <!--cash flow Management-->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-money"></i>
@@ -115,7 +117,7 @@
             </ul>
         </li>
 
-
+         <!--Bank Management-->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-wallet-alt"></i>
@@ -130,21 +132,8 @@
             </ul>
         </li>
 
-        <!-- <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-wallet-alt"></i>
-                <div>Budget Management</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="/pages/add-project-budget" class="menu-link">
-                        <div>Add Project Budget</div>
-                    </a>
-                </li>
 
-            </ul>
-        </li> -->
-
+           <!--User Management -->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-user"></i>
@@ -162,6 +151,21 @@
                     </a>
                 </li>
 
+            </ul>
+        </li>
+
+            <!--User Management -->
+            <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-pen"></i>
+                <div>Report</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="/pages/users" class="menu-link">
+                        <div>Budget List</div>
+                    </a>
+                </li>
             </ul>
         </li>
     </ul>

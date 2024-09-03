@@ -16,8 +16,6 @@ class CreateRevenuePlansTable extends Migration
         Schema::create('revenue_plans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('budget_project_id');
-            $table->unsignedBigInteger('direct_cost_id');
-            $table->unsignedBigInteger('indirect_cost_id');
             $table->integer('sn')->default(1.1);  // Serial number
             $table->string('type');
             $table->string('project')->nullable();
