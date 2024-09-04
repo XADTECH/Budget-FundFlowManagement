@@ -117,58 +117,58 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addNewCostOverheadForm"  action="{{ url('/pages/add-budget-project-overhead-cost') }}" method="POST">
+                <form id="addNewCostOverheadForm" action="{{ url('/pages/add-budget-project-overhead-cost') }}" method="POST">
                     @csrf
-                <div class="mb-3">
-                    <label for="type" class="form-label">Type</label>
-                    <select class="form-select" id="type" name="type" required>
-                        <option value="Cost">Cost</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="contract" class="form-label">Contract</label>
-                    <input type="text" class="form-control" id="contract" name="contract" required>
-                </div>
-                <div class="mb-3">
-                    <label for="project" class="form-label">Project</label>
-                    <select class="form-select" id="project" name="project" required>
-                        @foreach($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="po" class="form-label">PO</label>
-                    <select class="form-select" id="po" name="po" required>
-                        <option value="CAPEX">CAPEX</option>
-                        <option value="OPEX">OPEX</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="expense" class="form-label">Expense</label>
-                    <input type="text" class="form-control" id="expense" name="expense" required>
-                </div>
-                <div class="mb-3">
-                    <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                    <input type="number" class="form-control" id="cost_per_month" name="cost_per_month">
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <input type="text" class="form-control" id="description" name="description">
-                </div>
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status</label>
-                    <input type="text" class="form-control" id="status" name="status" required>
-                </div>
-                <div class="mb-3">
-                    <label for="noOfPerson" class="form-label">No Of Person</label>
-                    <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" required>
-                </div>
-                <div class="mb-3">
-                    <label for="months" class="form-label">Months</label>
-                    <input type="number" class="form-control" id="months" name="months" step="any" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="overhead cost">Overhead Cost</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contract" class="form-label">Contract</label>
+                        <input type="text" class="form-control" id="contract" name="contract" placeholder="e.g., contract number, annual maintenance" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="project" class="form-label">Project</label>
+                        <select class="form-select" id="project" name="project" required>
+                            @foreach($projects as $project)
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="po" class="form-label">PO</label>
+                        <select class="form-select" id="po" name="po" required>
+                            <option value="CAPEX">CAPEX</option>
+                            <option value="OPEX">OPEX</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expense" class="form-label">Expense Head</label>
+                        <input type="text" class="form-control" id="expense" name="expense" placeholder="e.g., overhead or other" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cost_per_month" class="form-label">Cost Per Month</label>
+                        <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 150.00">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="description" name="description" placeholder="e.g., Annual visa renewal cost or insurance coverage details">
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <input type="text" class="form-control" id="status" name="status" placeholder="e.g., new, old, renew" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="noOfPerson" class="form-label">No Of Person</label>
+                        <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" placeholder="e.g., 5" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="months" class="form-label">Months</label>
+                        <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" required>
+                    </div>
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
                     <button type="submit" class="btn btn-primary">Add Cost Overhead</button>
                 </form>
@@ -191,13 +191,13 @@
                 <div class="mb-3">
                     <label for="type" class="form-label">Type</label>
                     <select class="form-select" id="type" name="type" required>
-                        <option value="Cost">Cost</option>
+                        <option value="financial cost">financial cost</option>
                         <option value="Other">Other</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="contract" class="form-label">Contract</label>
-                    <input type="text" class="form-control" id="contract" name="contract" required>
+                    <input type="text" class="form-control" id="contract" name="contract" placeholder="e.g., Du Civil, Insurance" required>
                 </div>
                 <div class="mb-3">
                     <label for="project" class="form-label">Project</label>
@@ -216,32 +216,29 @@
                 </div>
                 <div class="mb-3">
                     <label for="expense" class="form-label">Expense</label>
-                    <input type="text" class="form-control" id="expense" name="expense" required>
+                    <input type="text" class="form-control" id="expense" name="expense" placeholder="e.g., Risk, Finance cost" required>
                 </div>
                 <div class="mb-3">
                     <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                    <input type="number" class="form-control" id="cost_per_month" name="cost_per_month">
+                    <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 1000">
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <input type="text" class="form-control" id="description" name="description">
+                    <input type="text" class="form-control" id="description" name="description" placeholder="e.g., 5% for Risk, 1% for Finance cost">
                 </div>
                 <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
-                    <input type="text" class="form-control" id="status" name="status" required>
-                </div>
-                <div class="mb-3">
-                    <label for="noOfPerson" class="form-label">No Of Person</label>
-                    <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" required>
+                    <input type="text" class="form-control" id="status" name="status" placeholder="e.g., new old or other" required>
                 </div>
                 <div class="mb-3">
                     <label for="months" class="form-label">Months</label>
-                    <input type="number" class="form-control" id="months" name="months" step="any" required>
+                    <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" required>
                 </div>
-                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
-                    <button type="submit" class="btn btn-primary">Add Financial Cost</button>
+                <input type="hidden" name="project_id" value="{{ $budget->id }}">
+                <button type="submit" class="btn btn-primary">Add Financial Cost</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+

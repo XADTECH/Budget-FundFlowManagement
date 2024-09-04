@@ -41,7 +41,7 @@ class FinancialCost extends Model
   // Calculate total cost dynamically
   public function calculateTotalCost()
   {
-    $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
+    $this->total_cost = $this->cost_per_month  * $this->no_of_months;
     $this->save();
     return $this->total_cost;
   }
@@ -49,7 +49,7 @@ class FinancialCost extends Model
   // Calculate average cost dynamically
   public function calculateAverageCost()
   {
-    $this->average_cost = $this->total_cost / ($this->no_of_staff * $this->no_of_months);
+    $this->average_cost = $this->total_cost / $this->no_of_months;
     $this->save();
     return $this->average_cost;
   }

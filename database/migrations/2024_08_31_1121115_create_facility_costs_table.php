@@ -20,7 +20,7 @@ return new class extends Migration {
       $table->string('description');
       $table->string('status');
       $table->decimal('cost_per_month', 10, 2);
-      $table->integer('no_of_staff');
+      $table->integer('no_of_staff')->nullable();
       $table->integer('no_of_months');
       $table->decimal('total_cost', 15, 2)->nullable();
       $table->decimal('average_cost', 15, 2)->nullable();

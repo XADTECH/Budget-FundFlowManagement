@@ -17,6 +17,7 @@ use App\Http\Controllers\PlannedCashController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\DirectCostController;
 use App\Http\Controllers\InDirectCostController;
 use App\Http\Controllers\pages\MiscUnderMaintenance;
@@ -153,6 +154,16 @@ Route::middleware(['checklogin'])->group(function () {
        Route::post('/pages/add-budget-capital-expense', [BudgetController::class, 'storeCapex'])->name(
         'add-budget-capital-expense'
       );
+
+         //add purchase order
+         Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
+          'add-budget-capital-expense'
+        );
+
+      //download pdf 
+      Route::get('/download-pdf', [PdfController::class, 'download'])->name('download.pdf');
+
+    
   
 
   // cards

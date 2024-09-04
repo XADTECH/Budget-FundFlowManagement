@@ -99,46 +99,43 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                        <form id="addNewSalaryForm" action="{{ url('/pages/add-budget-project-revenue') }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="type" class="form-label">Type</label>
-                                <select class="form-select" id="type" name="type" required>
-                                    <option value="Cost">Revenue</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="contract" class="form-label">Contract</label>
-                                <input type="text" class="form-control" id="contract" name="contract" >
-                            </div>
-                            <div class="mb-3">
-                                <label for="project" class="form-label">Project</label>
-                                <select class="form-select" id="project" name="project" >
-                                    @foreach($projects as $project)
-                                        <option value="{{ $project->id }}">{{ $project->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                         
-                    
-                            <div class="mb-3">
-                                <label for="amount" class="form-label">Amount</label>
-                                <input type="number" class="form-control" id="amount" name="amount" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <input type="text" class="form-control" id="description" name="description" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <input type="text" class="form-control" id="status" name="status" >
-                            </div>
-                   
-                            <input type="hidden" name="project_id" value="{{ $budget->id }}">
+                        <form id="addNewRevenueForm" action="{{ url('/pages/add-budget-project-revenue') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="Revenue">Revenue</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contract" class="form-label">Contract</label>
+                        <input type="text" class="form-control" id="contract" name="contract" placeholder="Enter contract details (e.g., Civil Project)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="project" class="form-label">Project</label>
+                        <select class="form-select" id="project" name="project">
+                            @foreach($projects as $project)
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" class="form-control" id="amount" name="amount" required placeholder="Enter amount (e.g., 10000)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="description" name="description" required placeholder="Enter description (e.g., NOC Payment)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <input type="text" class="form-control" id="status" name="status" placeholder="Enter status (e.g., Pending)">
+                    </div>
+                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
 
-                            <button type="submit" class="btn btn-primary">Add Revenue</button>
-                        </form>
+                    <button type="submit" class="btn btn-primary">Add Revenue</button>
+                </form>
             </div>
         </div>
     </div>

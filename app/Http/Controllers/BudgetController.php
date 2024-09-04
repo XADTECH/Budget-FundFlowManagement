@@ -291,9 +291,10 @@ class BudgetController extends Controller
       $revenuePlan->calculateProfitPercentage();
   
       // Return the response with the newly created revenue plan
-      return redirect()
-      ->route('add-project-budget')
-      ->with('success', 'Revenue Added successfully!');
+      return redirect('/pages/edit-project-budget/' . $request->project_id)->with(
+        'success',
+        'CAPEX added successfully!'
+      );
   }
 
   //store capital expense 
@@ -338,9 +339,12 @@ class BudgetController extends Controller
     );
   }
   
+  //add purchase order 
+  public function showPurchaseOrder(Request $request)
+  {
+      return view("content.pages.show-budget-project-purchase-order");
+  }
   
-  
-
   /**
    * Display the specified resource.
    */

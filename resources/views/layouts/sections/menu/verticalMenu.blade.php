@@ -51,15 +51,15 @@
                 </li>
 
                 <li class="menu-item">
-                    <a href="#" class="menu-link" target="_blank">
-                        <div>Month Wise Project Budgeting</div>
+                    <a href="/pages/show-budget-project-purchase-order" class="menu-link" target="_blank">
+                        <div>Add Purchase Order</div>
                         <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
                     </a>
                 </li>
 
                 <li class="menu-item">
                     <a href="/pages/add-project-name" class="menu-link">
-                        <div>Add Project</div>
+                        <div>Add Project Name</div>
                         <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
                     </a>
                 </li>

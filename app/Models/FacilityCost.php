@@ -41,16 +41,34 @@ class FacilityCost extends Model
   // Calculate total cost dynamically
   public function calculateTotalCost()
   {
-    $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
-    $this->save();
-    return $this->total_cost;
+      if ($this->cost_per_month && $this->no_of_staff > 0 && $this->no_of_months > 0) {
+          $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
+      } else {
+          $this->total_cost = $this->cost_per_month * $this->no_of_months;; // Or any other default value you prefer
+      }
+  
+      $this->save();
+      return $this->total_cost;
   }
+  
 
   // Calculate average cost dynamically
   public function calculateAverageCost()
   {
-    $this->average_cost = $this->total_cost / ($this->no_of_staff * $this->no_of_months);
-    $this->save();
-    return $this->average_cost;
+      if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
+          // Use no_of_staff and no_of_months for calculation
+          $this->average_cost = $this->total_cost / ($this->no_of_staff * $this->no_of_months);
+      } elseif ($this->no_of_months > 0) {
+          // Fallback to dividing total_cost by no_of_months if no_of_staff is null or 0
+          $this->average_cost = $this->total_cost / $this->no_of_months;
+      } else {
+          // Default value if no_of_months is also null or 0
+          $this->average_cost = 0; // Or another default value
+      }
+  
+      $this->save();
+      return $this->average_cost;
   }
+  
+  
 }

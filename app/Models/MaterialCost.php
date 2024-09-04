@@ -7,50 +7,54 @@ use Illuminate\Database\Eloquent\Model;
 
 class MaterialCost extends Model
 {
-  use HasFactory;
+    use HasFactory;
 
-  protected $table = 'material_cost';
+    protected $table = 'material_cost';
 
-  protected $fillable = [
-    'direct_cost', // Foreign key reference to DirectCost
-    'budget_project',
-    'sn', // Serial number or identifier
-    'type', // Type of record (Cost)
-    'project', // Project name
-    'po', // Type of expense (OPEX)
-    'expenses', // Specific expense (Salary)
-    'description', // Description of the role or details (Project Manager)
-    'status', // Status of the budget entry (New Hiring)
-    'cost_per_month', // Salary cost per staff member per month (5,000)
-    'no_of_staff', // Number of staff members (5)
-    'no_of_months', // Duration of the project in months (5)
-    'total_cost', // Total calculated cost (5,000 * 5 * 5 = 125,000)
-    'average_cost', // Average cost per staff per month (5,000)
-  ];
+    protected $fillable = [
+        'direct_cost_id', // Foreign key reference to DirectCost
+        'budget_project_id',
+        'sn', // Serial number or identifier
+        'type', // Type of record (Material/Cost)
+        'project', // Project name
+        'po', // Type of expense (e.g., OPEX)
+        'expenses', // Specific expense (e.g., Salary, Materials)
+        'description', // Description of the material or details
+        'status', // Status of the budget entry (e.g., New Hiring, Purchased)
+        'quantity', // Amount of material (e.g., 100, 50)
+        'unit', // Unit of measurement (e.g., meters, units, liters)
+        'unit_cost', // Cost per unit of the material (e.g., 100 per meter)
+        'total_cost', // Total calculated cost (quantity * unit_cost)
+        'average_cost', // Average cost per unit, if needed
+    ];
 
-  public function directCost()
-  {
-    return $this->belongsTo(DirectCost::class);
-  }
+    public function directCost()
+    {
+        return $this->belongsTo(DirectCost::class);
+    }
 
-  public function budgetProject()
-  {
-    return $this->belongsTo(BudgetProject::class);
-  }
+    public function budgetProject()
+    {
+        return $this->belongsTo(BudgetProject::class);
+    }
 
-  // Calculate total cost dynamically
-  public function calculateTotalCost()
-  {
-    $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
-    $this->save();
-    return $this->total_cost;
-  }
+    // Calculate total cost dynamically
+    public function calculateTotalCost()
+    {
+        $this->total_cost = $this->quantity * $this->unit_cost;
+        $this->save();
+        return $this->total_cost;
+    }
 
-  // Calculate average cost dynamically
-  public function calculateAverageCost()
-  {
-    $this->average_cost = $this->total_cost / ($this->no_of_staff * $this->no_of_months);
-    $this->save();
-    return $this->average_cost;
-  }
+    // Calculate average cost dynamically (optional)
+    public function calculateAverageCost()
+    {
+        if ($this->quantity > 0) {
+            $this->average_cost = $this->total_cost / $this->quantity;
+            $this->save();
+        } else {
+            $this->average_cost = 0;
+        }
+        return $this->average_cost;
+    }
 }

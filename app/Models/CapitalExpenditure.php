@@ -34,18 +34,26 @@ class CapitalExpenditure extends Model
     }
 
      // Calculate total cost dynamically
-  public function calculateTotalCost()
-  {
-    $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
-    $this->save();
-    return $this->total_cost;
-  }
+     public function calculateTotalCost()
+     {
+         if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
+             $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
+         } else {
+             $this->total_cost = $this->total_cost = $this->cost_per_month * $this->no_of_months;; 
+         }
+         $this->save();
+         return $this->total_cost;
+     }
 
   // Calculate average cost dynamically
   public function calculateAverageCost()
   {
-    $this->average_cost = $this->total_cost / ($this->no_of_staff * $this->no_of_months);
-    $this->save();
-    return $this->average_cost;
+      if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
+        $this->average_cost = $this->cost_per_month / $this->no_of_months;; 
+      } else {
+        $this->average_cost = $this->cost_per_month / $this->no_of_months;; 
+      }
+      $this->save();
+      return $this->average_cost;
   }
 }

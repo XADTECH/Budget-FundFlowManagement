@@ -83,7 +83,6 @@ class InDirectCostController extends Controller
       'cost_per_month' => 'nullable|numeric',
       'description' => 'nullable|string',
       'status' => 'required|string',
-      'noOfPerson' => 'required|numeric', // Renamed to `no_of_person`
       'months' => 'required|numeric', // Renamed to `no_of_months`
       'project_id' => 'required|string', // Ensure `budget_projects` table exists
     ]);
@@ -108,7 +107,6 @@ class InDirectCostController extends Controller
     $financialcost->cost_per_month = $validated['cost_per_month'];
     $financialcost->description = $validated['description'];
     $financialcost->status = $validated['status'];
-    $financialcost->no_of_staff = $validated['noOfPerson']; // Map to your model attribute
     $financialcost->no_of_months = $validated['months']; // Map to your model attribute
     $financialcost->budget_project_id = $validated['project_id']; // Map to your model attribute
     $financialcost->calculateTotalCost();

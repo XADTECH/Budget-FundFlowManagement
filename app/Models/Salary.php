@@ -10,7 +10,7 @@ class Salary extends Model
   protected $table = 'salaries';
 
   protected $fillable = [
-    'direct_cost', // Foreign key reference to DirectCost
+    'direct_cost_id', // Foreign key reference to DirectCost
     'budget_project',
     'sn', // Serial number or identifier
     'type', // Type of record (Cost)

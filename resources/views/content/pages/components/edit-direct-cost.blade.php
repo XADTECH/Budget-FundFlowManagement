@@ -67,21 +67,21 @@
                                         </thead>
                                         <tbody>
                                         @foreach($budget->salaries as $salary)
-                                            <tr>
-                                                <td>{{$salary->sn}}</td>
-                                                <td>{{$salary->type}}</td>
-                                                <td>{{$salary->contract}}</td>
-                                                <td>{{$salary->project}}</td>
-                                                <td>{{$salary->po}}</td>
-                                                <td>{{$salary->expenses}}</td>
-                                                <td>{{$salary->description}}</td>
-                                                <td>{{$salary->cost_per_month}}</td>
-                                                <td>{{$salary->no_of_staff}}</td>
-                                                <td>{{$salary->no_of_months}}</td>
-                                                <td>{{$salary->average_cost}}</td>
-                                                <td>{{$salary->total_cost}}</td>
-                                                <td>{{$salary->status}}</td>
-                                            </tr>    
+                                        <tr>
+                                            <td>{{ $salary->sn ?? 'no entry' }}</td>
+                                            <td>{{ $salary->type ?? 'no entry' }}</td>
+                                            <td>{{ $salary->contract ?? 'no entry' }}</td>
+                                            <td>{{ $salary->project ?? 'no entry' }}</td>
+                                            <td>{{ $salary->po ?? 'no entry' }}</td>
+                                            <td>{{ $salary->expenses ?? 'no entry' }}</td>
+                                            <td>{{ $salary->description ?? 'no entry' }}</td>
+                                            <td>{{ $salary->cost_per_month ?? 'no entry' }}</td>
+                                            <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
+                                            <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
+                                            <td>{{ $salary->average_cost ?? 'no entry' }}</td>
+                                            <td>{{ $salary->total_cost ?? 'no entry' }}</td>
+                                            <td>{{ $salary->status ?? 'no entry' }}</td>
+                                        </tr>  
                                         @endforeach
                                             </tbody>
                                         </table>
@@ -116,21 +116,21 @@
                                         </thead>
                                         <tbody>
                                         @foreach($budget->facilityCosts as $facility)
-                                            <tr>
-                                                <td>{{$facility->sn}}</td>
-                                                <td>{{$facility->type}}</td>
-                                                <td>{{$facility->contract}}</td>
-                                                <td>{{$facility->project}}</td>
-                                                <td>{{$facility->po}}</td>
-                                                <td>{{$facility->expenses}}</td>
-                                                <td>{{$facility->description}}</td>
-                                                <td>{{$facility->cost_per_month}}</td>
-                                                <td>{{$facility->no_of_staff}}</td>
-                                                <td>{{$facility->no_of_months}}</td>
-                                                <td>{{$facility->average_cost}}</td>
-                                                <td>{{$facility->total_cost}}</td>
-                                                <td>{{$facility->status}}</td>
-                                            </tr>    
+                                        <tr>
+                                            <td>{{ $facility->sn ?? 'no entry' }}</td>
+                                            <td>{{ $facility->type ?? 'no entry' }}</td>
+                                            <td>{{ $facility->contract ?? 'no entry' }}</td>
+                                            <td>{{ $facility->project ?? 'no entry' }}</td>
+                                            <td>{{ $facility->po ?? 'no entry' }}</td>
+                                            <td>{{ $facility->expenses ?? 'no entry' }}</td>
+                                            <td>{{ $facility->description ?? 'no entry' }}</td>
+                                            <td>{{ $facility->cost_per_month ?? 'no entry' }}</td>
+                                            <td>{{ $facility->no_of_staff ?? 'no entry' }}</td>
+                                            <td>{{ $facility->no_of_months ?? 'no entry' }}</td>
+                                            <td>{{ $facility->average_cost ?? 'no entry' }}</td>
+                                            <td>{{ $facility->total_cost ?? 'no entry' }}</td>
+                                            <td>{{ $facility->status ?? 'no entry' }}</td>
+                                        </tr>   
                                         @endforeach    
                                         </tbody>
                                         </table>
@@ -152,33 +152,33 @@
                                                 <th>CONTRACT</th>
                                                 <th>PROJECT</th>
                                                 <th>PO</th>
-                                                <th>EXPENSE</th>
+                                                <th>EXPENSE HEAD</th>
                                                 <th>DESCRIPTION</th>
-                                                <th>COST PER MONTH</th>
-                                                <th>NO OF PERSON</th>
-                                                <th>MONTHS</th>
-                                                <th>AVERAGE COST</th>
+                                                <th>QUANITITY</th>
+                                                <th>UNIT</th>
+                                                <th>UNIT COST</th>
                                                 <th>TOTAL COST</th>
+                                                <th>AVERAGE COST</th>
                                                 <th>STATUS</th>
                                             </tr>
                                         </thead>
                                             <tbody>
                                                 @foreach($budget->materialCosts as $material)
-                                                    <tr>
-                                                        <td>{{$material->sn}}</td>
-                                                        <td>{{$material->type}}</td>
-                                                        <td>{{$material->contract}}</td>
-                                                        <td>{{$material->project}}</td>
-                                                        <td>{{$material->po}}</td>
-                                                        <td>{{$material->expenses}}</td>
-                                                        <td>{{$material->description}}</td>
-                                                        <td>{{$material->cost_per_month}}</td>
-                                                        <td>{{$material->no_of_staff}}</td>
-                                                        <td>{{$material->no_of_months}}</td>
-                                                        <td>{{$material->average_cost}}</td>
-                                                        <td>{{$material->total_cost}}</td>
-                                                        <td>{{$material->status}}</td>
-                                                    </tr>    
+                                                <tr>
+                                                    <td>{{ $material->sn ?? 'no entry' }}</td>
+                                                    <td>{{ $material->type ?? 'no entry' }}</td>
+                                                    <td>{{ $material->contract ?? 'no entry' }}</td>
+                                                    <td>{{ $material->project ?? 'no entry' }}</td>
+                                                    <td>{{ $material->po ?? 'no entry' }}</td>
+                                                    <td>{{ $material->expenses ?? 'no entry' }}</td>
+                                                    <td>{{ $material->description ?? 'no entry' }}</td>
+                                                    <td>{{ $material->quantity ?? 'no entry' }}</td>
+                                                    <td>{{ $material->unit ?? 'no entry' }}</td>
+                                                    <td>{{ $material->unit_cost ?? 'no entry' }}</td>
+                                                    <td>{{ $material->total_cost ?? 'no entry' }}</td>
+                                                    <td>{{ $material->average_cost ?? 'no entry' }}</td>
+                                                    <td>{{ $material->status ?? 'no entry' }}</td>
+                                                </tr>   
                                                 @endforeach                 
                                             </tbody>
                                         </table>
@@ -191,169 +191,98 @@
                 </div>
             </div>
 
-            <!-- Salary Modal -->
-            <div class="modal fade" id="addNewSalaryModal" tabindex="-1" aria-labelledby="addNewSalaryModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addNewSalaryModalLabel">Add New Salary</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-            <form id="addNewSalaryForm" action="{{ url('/pages/add-budget-project-salary') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label for="type" class="form-label">Type</label>
-                    <select class="form-select" id="type" name="type" required>
-                        <option value="Cost">Cost</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="contract" class="form-label">Contract</label>
-                    <input type="text" class="form-control" id="contract" name="contract" required>
-                </div>
-                <div class="mb-3">
-                    <label for="project" class="form-label">Project</label>
-                    <select class="form-select" id="project" name="project" required>
-                        @foreach($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="po" class="form-label">PO</label>
-                    <select class="form-select" id="po" name="po" required>
-                        <option value="CAPEX">CAPEX</option>
-                        <option value="OPEX">OPEX</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="expense" class="form-label">Expense</label>
-                    <input type="text" class="form-control" id="expense" name="expense" required>
-                </div>
-                <div class="mb-3">
-                    <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                    <input type="number" class="form-control" id="cost_per_month" name="cost_per_month">
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <input type="text" class="form-control" id="description" name="description">
-                </div>
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status</label>
-                    <input type="text" class="form-control" id="status" name="status" required>
-                </div>
-                <div class="mb-3">
-                    <label for="noOfPerson" class="form-label">No Of Person</label>
-                    <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" required>
-                </div>
-                <div class="mb-3">
-                    <label for="months" class="form-label">Months</label>
-                    <input type="number" class="form-control" id="months" name="months" step="any" required>
-                </div>
-                <input type="hidden" name="project_id" value="{{ $budget->id }}">
+        <!-- Salary Modal -->
+        <div class="modal fade" id="addNewSalaryModal" tabindex="-1" aria-labelledby="addNewSalaryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewSalaryModalLabel">Add New Salary</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addNewSalaryForm" action="{{ url('/pages/add-budget-project-salary') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select class="form-select" id="type" name="type" required>
+                                    <option value="Salary">Salary</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contract" class="form-label">Contract</label>
+                                <input type="text" class="form-control" id="contract" name="contract" placeholder="e.g., Employment Contract" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="project" class="form-label">Project</label>
+                                <select class="form-select" id="project" name="project" required>
+                                    @foreach($projects as $project)
+                                        <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="po" class="form-label">PO Type</label>
+                                <select class="form-select" id="po" name="po" required>
+                                    <option value="CAPEX">CAPEX</option>
+                                    <option value="OPEX">OPEX</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expense" class="form-label">Expense Head</label>
+                                <input type="text" class="form-control" id="expense" name="expense" placeholder="e.g., Salary" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cost_per_month" class="form-label">Cost Per Month</label>
+                                <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 5000.00" step="0.01">
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="description" name="description" placeholder="e.g., Project Manager Salary">
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <input type="text" class="form-control" id="status" name="status" placeholder="e.g., New Hiring" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="noOfPerson" class="form-label">No Of Persons</label>
+                                <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" placeholder="e.g., 5" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="months" class="form-label">Months</label>
+                                <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" required>
+                            </div>
+                            <input type="hidden" name="project_id" value="{{ $budget->id }}">
 
-                <button type="submit" class="btn btn-primary">Add Salary</button>
-            </form>
-
+                            <button type="submit" class="btn btn-primary">Add Salary</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-
- <!-- Facilities Modal -->
-<div class="modal fade" id="addNewFacilitiesModal" tabindex="-1" aria-labelledby="addNewFacilitiesModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addNewFacilitiesModalLabel">Add New Facilities Cost</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addNewFacilitiesForm" action="{{ url('/pages/add-budget-project-facility-cost') }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="type" class="form-label">Type</label>
-                        <select class="form-select" id="type" name="type" required>
-                            <option value="Cost">Cost</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="contract" class="form-label">Contract</label>
-                        <input type="text" class="form-control" id="contract" name="contract" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="project" class="form-label">Project</label>
-                        <select class="form-select" id="project" name="project" required>
-                            @foreach($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="po" class="form-label">PO</label>
-                        <select class="form-select" id="po" name="po" required>
-                            <option value="CAPEX">CAPEX</option>
-                            <option value="OPEX">OPEX</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="expense" class="form-label">Expense</label>
-                        <input type="text" class="form-control" id="expense" name="expense" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                        <input type="number" class="form-control" id="cost_per_month" name="cost_per_month">
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" name="description" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
-                        <input type="text" class="form-control" id="status" name="status" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="noOfPerson" class="form-label">No Of Person</label>
-                        <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="months" class="form-label">Months</label>
-                        <input type="number" class="form-control" id="months" name="months" step="any" required>
-                    </div>
-                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
-                    <button type="submit" class="btn btn-primary">Add Facilities Cost</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-    <!-- Material Modal -->
-    <div class="modal fade" id="addNewMaterialModal" tabindex="-1" aria-labelledby="addNewMaterialModalLabel" aria-hidden="true">
+        
+        <!-- Facilities Modal -->
+    <div class="modal fade" id="addNewFacilitiesModal" tabindex="-1" aria-labelledby="addNewFacilitiesModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addNewMaterialModalLabel">Add New Material Cost</h5>
+                    <h5 class="modal-title" id="addNewFacilitiesModalLabel">Add New Facilities Cost</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addNewMaterialForm" action="{{ url('/pages/add-budget-project-material-cost') }}" method="POST">
-                    @csrf
+                    <form id="addNewFacilitiesForm" action="{{ url('/pages/add-budget-project-facility-cost') }}" method="POST">
+                        @csrf
                         <div class="mb-3">
                             <label for="type" class="form-label">Type</label>
                             <select class="form-select" id="type" name="type" required>
-                                <option value="Cost">Cost</option>
+                                <option value="Facility Cost">Facility Cost</option>
                                 <option value="Other">Other</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="contract" class="form-label">Contract</label>
-                            <input type="text" class="form-control" id="contract" name="contract" required>
+                            <input type="text" class="form-control" id="contract" name="contract" placeholder="eg, Annual Maintenance Contract" required>
                         </div>
                         <div class="mb-3">
                             <label for="project" class="form-label">Project</label>
@@ -371,36 +300,113 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="expense" class="form-label">Expense</label>
-                            <input type="text" class="form-control" id="expense" name="expense" required>
+                            <label for="expense" class="form-label">Expense Head</label>
+                            <input type="text" class="form-control" id="expense" name="expense"  placeholder="eg, Facility Cost" required>
                         </div>
                         <div class="mb-3">
                             <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                            <input type="number" class="form-control" id="cost_per_month" name="cost_per_month">
+                            <input type="number" class="form-control" id="cost_per_month" placeholder="eg,cost per month" name="cost_per_month">
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <input type="text" class="form-control" id="description" name="description">
+                            <input type="text" class="form-control" id="description" name="description" placeholder="eg, Fuel, SIM, Accomodation" required>
                         </div>
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
-                            <input type="text" class="form-control" id="status" name="status" required>
+                            <input type="text" class="form-control" id="status" name="status" placeholder="eg, new old upgrade " required>
                         </div>
                         <div class="mb-3">
-                        <label for="noOfPerson" class="form-label">No Of Person</label>
-                        <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="months" class="form-label">Months</label>
-                        <input type="number" class="form-control" id="months" name="months" step="any" required>
-                    </div>
-                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
-                        <button type="submit" class="btn btn-primary">Add Material Cost</button>
+                            <label for="noOfPerson" class="form-label">No Of Person</label>
+                            <input type="number" class="form-control" value="0" id="noOfPerson" name="noOfPerson" step="any" placeholder="eg, no of person or blank">
+                        </div>
+                        <div class="mb-3">
+                            <label for="months" class="form-label">Months</label>
+                            <input type="number" class="form-control" id="months" name="months" step="any" placeholder="eg, no of months" required>
+                        </div>
+                        <input type="hidden" name="project_id" value="{{ $budget->id }}">
+                        <button type="submit" class="btn btn-primary">Add Facilities Cost</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+
+
+        <!-- Material Modal -->
+        <div class="modal fade" id="addNewMaterialModal" tabindex="-1" aria-labelledby="addNewMaterialModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewMaterialModalLabel">Add New Material Cost</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addNewMaterialForm" action="{{ url('/pages/add-budget-project-material-cost') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select class="form-select" id="type" name="type" required>
+                                    <option value="Material">Material</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contract" class="form-label">Contract</label>
+                                <input type="text" class="form-control" id="contract" name="contract" placeholder="e.g., Annual Maintenance Contract" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="project" class="form-label">Project</label>
+                                <select class="form-select" id="project" name="project" required>
+                                    @foreach($projects as $project)
+                                        <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="po" class="form-label">PO</label>
+                                <select class="form-select" id="po" name="po" required>
+                                    <option value="CAPEX">CAPEX</option>
+                                    <option value="OPEX">OPEX</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expense" class="form-label">Expense Head</label>
+                                <input type="text" class="form-control" id="expense" name="expense" placeholder="e.g., Ethernet Cables" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" step="any" placeholder="e.g., 100" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="unit" class="form-label">Unit</label>
+                                <select class="form-select" id="unit" name="unit" required>
+                                    <option value="meters">Meters</option>
+                                    <option value="feet">Feet</option>
+                                    <option value="rolls">Rolls</option>
+                                    <option value="pieces">Pieces</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="unit_cost" class="form-label">Unit Cost</label>
+                                <input type="number" class="form-control" id="unit_cost" name="unit_cost" step="any" placeholder="e.g., 50.00" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="description" name="description" placeholder="e.g., 100-meter Ethernet cable" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <input type="text" class="form-control" id="status" name="status" placeholder="e.g., Purchased, in stock other" required>
+                            </div>
+                            <input type="hidden" name="project_id" value="{{ $budget->id }}">
+                            <button type="submit" class="btn btn-primary">Add Material Cost</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
 <script>
