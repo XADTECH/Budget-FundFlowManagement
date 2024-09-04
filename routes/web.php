@@ -145,26 +145,26 @@ Route::middleware(['checklogin'])->group(function () {
     'add-budget-project-financial-cost'
   );
 
-    //add Revenue
-    Route::post('/pages/add-budget-project-revenue', [BudgetController::class, 'storeRevenue'])->name(
-      'add-budget-project-revenue'
-    );
+  //add Revenue
+  Route::post('/pages/add-budget-project-revenue', [BudgetController::class, 'storeRevenue'])->name(
+    'add-budget-project-revenue'
+  );
 
-       //add capital expense
-       Route::post('/pages/add-budget-capital-expense', [BudgetController::class, 'storeCapex'])->name(
-        'add-budget-capital-expense'
-      );
+  //add capital expense
+  Route::post('/pages/add-budget-capital-expense', [BudgetController::class, 'storeCapex'])->name(
+    'add-budget-capital-expense'
+  );
 
-         //add purchase order
-         Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
-          'add-budget-capital-expense'
-        );
+  //add purchase order
+  Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
+    'add-budget-capital-expense'
+  );
 
-      //download pdf 
-      Route::get('/download-pdf', [PdfController::class, 'download'])->name('download.pdf');
+  //download pdf 
+  Route::get('/download-pdf', [PdfController::class, 'download'])->name('download.pdf');
 
-    
-  
+
+
 
   // cards
   Route::get('/cards/basic', [CardBasic::class, 'index'])->name('cards-basic');
@@ -220,6 +220,8 @@ Route::middleware(['checklogin'])->group(function () {
   //user management
   Route::post('add-user', [UserController::class, 'store'])->name('add-user');
   Route::get('pages/users', [UserController::class, 'usersList'])->name('user-lists');
+
+  Route::get('pages/budget-lists', [BudgetController::class, 'budgetsLists'])->name('budgets.list');
 });
 
 //check indivisual route
