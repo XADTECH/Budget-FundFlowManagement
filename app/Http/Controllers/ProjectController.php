@@ -121,4 +121,14 @@ class ProjectController extends Controller
   {
     return view('content.pages.pages-add-business-client');
   }
+
+ // Show budget project report summary
+public function showBudgetProjectReport($id) {
+  // Optionally, fetch project details using the ID
+  // $project = Project::findOrFail($id);
+
+  // Pass the project data to the view
+  return view('content.pages.pages-budget-project-summary-report', ['id' => $id]);
+}
+
 }

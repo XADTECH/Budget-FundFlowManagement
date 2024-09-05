@@ -107,6 +107,7 @@ Route::middleware(['checklogin'])->group(function () {
   Route::get('/pages/add-business-client', [ProjectController::class, 'showaddBusinessClient'])->name(
     'add-business-client'
   );
+  Route::get('/pages/budget-project-report-summary/{id}', [ProjectController::class, 'showBudgetProjectReport'])->name('budget-project-report-summary');
 
   // Budget Managment
   Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');

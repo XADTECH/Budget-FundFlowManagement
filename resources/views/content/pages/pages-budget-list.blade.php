@@ -146,10 +146,12 @@
                         @endif
                     </td>
                     <td>
-                        <span class="btn btn-primary btn-sm">
-                            <i class="bx bx-file"></i>
-                        </span>
-                    </td>
+                <span class="btn btn-primary btn-sm">
+                   <a href="{{ route('budget-project-report-summary', ['id' => $project->id]) }}">
+                            <i class="bx bx-file" style="color:white"></i>
+                        </a>
+                    </span>
+                </td>
                 </tr>
                 @endforeach
             </tbody>
