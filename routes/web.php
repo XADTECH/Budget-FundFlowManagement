@@ -163,18 +163,16 @@ Route::middleware(['checklogin'])->group(function () {
   //download pdf 
   Route::get('/download-pdf', [PdfController::class, 'download'])->name('download.pdf');
 
-<<<<<<< HEAD
-             //add purchase order
-      Route::get('/pages/add-budget-project-purchase-order', [BudgetController::class, 'addPurchaseOrder'])->name(
+
+  //add purchase order
+  Route::get('/pages/add-budget-project-purchase-order', [BudgetController::class, 'addPurchaseOrder'])->name(
         'add-budget-project-purchase-order'
-      );
+  );
 
          //show purchase order
-      Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
+  Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
           'add-budget-capital-expense'
-      );
-=======
->>>>>>> 9fb734cc81ec7b819ed8a3fc808652d3445e2e40
+  );
 
 
 

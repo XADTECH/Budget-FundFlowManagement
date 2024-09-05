@@ -149,7 +149,6 @@ class BudgetController extends Controller
    */
   public function store(Request $request)
   {
-<<<<<<< HEAD
       try {
           // Define validation rules
           $rules = [
@@ -253,7 +252,7 @@ class BudgetController extends Controller
       ]);
   
       // If validation fails, return errors
-=======
+
     try {
       // Define validation rules
       $rules = [
@@ -273,7 +272,7 @@ class BudgetController extends Controller
       $validator = Validator::make($request->all(), $rules);
 
       // Check if validation fails
->>>>>>> 9fb734cc81ec7b819ed8a3fc808652d3445e2e40
+
       if ($validator->fails()) {
         return back()->withErrors($validator)->withInput();
       }
@@ -346,68 +345,6 @@ class BudgetController extends Controller
     }
   }
 
-  //store revenue 
-  public function storeRevenue(Request $request)
-  {
-    // Validate the incoming request data
-    $validator = Validator::make($request->all(), [
-      'amount' => 'required|numeric',
-      'description' => 'required|string|max:500',
-      'project_id' => 'required|exists:budget_project,id', // Ensure project_id exists in budget_projects table
-    ]);
-
-    // If validation fails, return errors
-    if ($validator->fails()) {
-      return response()->json(['errors' => $validator->errors()], 422);
-    }
-
-    // Find the related budget project
-    $budgetProject = BudgetProject::find($request->project_id);
-
-    // Initialize DirectCost and IndirectCost for the project
-    $directCost = DirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
-    $indirectCost = IndirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
-
-    // Initialize total costs to 0
-    $totalDirectCost = 0;
-    $totalIndirectCost = 0;
-
-    // Calculate direct cost if it exists
-    if ($directCost->exists) {
-      $totalDirectCost = $directCost->calculateTotalDirectCost();
-    }
-
-    // Calculate indirect cost if it exists
-    if ($indirectCost->exists) {
-      $totalIndirectCost = $indirectCost->calculateTotalIndirectCost();
-    }
-
-    // Create and save the new revenue plan
-    $revenuePlan = new RevenuePlan();
-    $revenuePlan->budget_project_id = $budgetProject->id;
-    $revenuePlan->type = $request->type;
-    $revenuePlan->contract = $request->contract;
-    $revenuePlan->project = $request->project;
-    $revenuePlan->amount = $request->amount;
-    $revenuePlan->description = $request->description;
-    $revenuePlan->status = $request->status;
-
-    // Save the revenue plan data
-    $revenuePlan->save();
-
-    // Run calculations after saving, passing in the pre-calculated costs
-    $revenuePlan->calculateTotalProfit();
-    $revenuePlan->calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost);
-    $revenuePlan->calculateTax();
-    $revenuePlan->calculateNetProfitAfterTax();
-    $revenuePlan->calculateProfitPercentage();
-
-    // Return the response with the newly created revenue plan
-    return redirect('/pages/edit-project-budget/' . $request->project_id)->with(
-      'success',
-      'CAPEX added successfully!'
-    );
-  }
 
   //store capital expense 
   public function storeCapex(Request $request)
@@ -451,7 +388,7 @@ class BudgetController extends Controller
     );
   }
 
-<<<<<<< HEAD
+
   //add / show purchase order 
   public function addPurchaseOrder(Request $request)
   {
@@ -471,8 +408,8 @@ class BudgetController extends Controller
       return response()->json("hi");
     }
   
-=======
->>>>>>> 9fb734cc81ec7b819ed8a3fc808652d3445e2e40
+
+
   //add purchase order 
   public function showPurchaseOrder(Request $request)
   {
