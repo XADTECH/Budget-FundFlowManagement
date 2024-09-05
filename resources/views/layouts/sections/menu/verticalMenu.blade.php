@@ -90,7 +90,7 @@
             </ul>
         </li>
 
-            <!--cash flow Management-->
+        <!--cash flow Management-->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-money"></i>
@@ -125,7 +125,7 @@
             </ul>
         </li>
 
-         <!--Bank Management-->
+        <!--Bank Management-->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-wallet-alt"></i>
@@ -141,7 +141,7 @@
         </li>
 
 
-           <!--User Management -->
+        <!--User Management -->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-user"></i>
@@ -162,15 +162,15 @@
             </ul>
         </li>
 
-            <!--User Management -->
-            <li class="menu-item">
+        <!--User Management -->
+        <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-pen"></i>
                 <div>Report</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="/pages/users" class="menu-link">
+                    <a href="/pages/budget-lists" class="menu-link">
                         <div>Budget List</div>
                     </a>
                 </li>
