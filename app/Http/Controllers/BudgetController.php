@@ -208,6 +208,7 @@ class BudgetController extends Controller
           $projectSequence->save();
   
           // Generate the unique reference code using the incremented serial number
+          // $referenceCode = 'BP' . $formattedDate . $newSerialNumber . '-' . $projectName . '-' . $businessUnitName . '-' . $managerName . '-' . $clientName;
           $referenceCode = 'BP' . $formattedDate . $newSerialNumber . '-' . $projectName . '-' . $businessUnitName . '-' . $managerName . '-' . $clientName;
   
           // Store the validated data along with the generated reference code
@@ -338,6 +339,25 @@ class BudgetController extends Controller
       'CAPEX added successfully!'
     );
   }
+
+  //add / show purchase order 
+  public function addPurchaseOrder(Request $request)
+  {
+    $projects = Project::get();
+    $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
+    $loggedInUserId = Auth::id();
+
+    // Retrieve budgets where manager_id matches the logged-in user ID
+    $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
+    
+    return view("content.pages.pages-add-project-budget-purchase-order",compact('budgets'));
+  }
+
+    //add / show purchase order 
+    public function storePurchaseOrder(Request $request)
+    {
+      return response()->json("hi");
+    }
   
   //add purchase order 
   public function showPurchaseOrder(Request $request)

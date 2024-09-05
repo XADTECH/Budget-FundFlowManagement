@@ -155,10 +155,15 @@ Route::middleware(['checklogin'])->group(function () {
         'add-budget-capital-expense'
       );
 
-         //add purchase order
-         Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
+             //add purchase order
+      Route::get('/pages/add-budget-project-purchase-order', [BudgetController::class, 'addPurchaseOrder'])->name(
+        'add-budget-project-purchase-order'
+      );
+
+         //show purchase order
+      Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
           'add-budget-capital-expense'
-        );
+      );
 
       //download pdf 
       Route::get('/download-pdf', [PdfController::class, 'download'])->name('download.pdf');
