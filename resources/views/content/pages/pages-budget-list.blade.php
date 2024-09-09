@@ -26,6 +26,14 @@
 <h4 class="py-3 mb-4">
     <span class="text-muted fw-light">Report /</span> Filter Report
 </h4>
+<div class="row">
+    <div class="col-md-12"> @if (session('success'))
+        <div class="alert alert-success" id="success-alert">
+            {{ session('success') }}
+        </div>
+        @endif
+    </div>
+</div>
 
 <!-- Projects Table -->
 <div class="card mt-4">
@@ -47,7 +55,7 @@
                 <label for="startdate" class="form-label">Status</label>
                 <select class="form-select" name="approval_status">
                     <option disabled selected value>Choose Status</option>
-                    <option {{isset($fields['approval_status']) && !is_null($fields['approval_status'])  && $fields['approval_status'] === "Approved" ? 'selected' : '' }} value="Approved">Approved</option>
+                    <option {{isset($fields['approval_status']) && !is_null($fields['approval_status'])  && $fields['approval_status'] === "Approve" ? 'selected' : '' }} value="Approve">Approve</option>
                     <option {{isset($fields['approval_status']) && !is_null($fields['approval_status'])  && $fields['approval_status'] === "Pending" ? 'selected' : '' }} value="Pending">Pending</option>
                     <option {{isset($fields['approval_status']) && !is_null($fields['approval_status'])  && $fields['approval_status'] === "Cancelled" ? 'selected' : '' }} value="Cancelled">Cancelled</option>
                 </select>
@@ -137,21 +145,21 @@
                     <td class="font_style">{{ $budget->start_date }}</td>
                     <td class="font_style">{{ $budget->end_date }}</td>
                     <td class="font_style">
-                        @if (strtolower($budget->approval_status)=='approved' )
+                        @if (strtolower($budget->approval_status)=='approved'|| strtolower($budget->approval_status)=='approve' )
                         <span class="badge bg-success">{{ $budget->approval_status}}</span>
-                        @elseif(strtolower($budget->approval_status)=='cancelled')
+                        @elseif(strtolower($budget->approval_status)=='cancelled' || strtolower($budget->approval_status)=='cancel' || strtolower($budget->approval_status)=='rejected' || strtolower($budget->approval_status)=='reject')
                         <span class="badge bg-danger">{{ $budget->approval_status}}</span>
                         @else
                         <span class="badge bg-warning">{{ $budget->approval_status}}</span>
                         @endif
                     </td>
                     <td>
-                <span class="btn btn-primary btn-sm">
-                   <a href="{{ route('budget-project-report-summary', ['id' => $project->id]) }}">
-                            <i class="bx bx-file" style="color:white"></i>
-                        </a>
-                    </span>
-                </td>
+                        <span class="btn btn-primary btn-sm">
+                            <a href="{{ route('budget-project-report-summary', ['id' => $budget->id]) }}">
+                                <i class="bx bx-file" style="color:white"></i>
+                            </a>
+                        </span>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
