@@ -55,7 +55,7 @@
                 <label for="startdate" class="form-label">Status</label>
                 <select class="form-select" name="approval_status">
                     <option disabled selected value>Choose Status</option>
-                    <option {{isset($fields['approval_status']) && !is_null($fields['approval_status'])  && $fields['approval_status'] === "Approved" ? 'selected' : '' }} value="Approved">Approved</option>
+                    <option {{isset($fields['approval_status']) && !is_null($fields['approval_status'])  && $fields['approval_status'] === "Approve" ? 'selected' : '' }} value="Approve">Approve</option>
                     <option {{isset($fields['approval_status']) && !is_null($fields['approval_status'])  && $fields['approval_status'] === "Pending" ? 'selected' : '' }} value="Pending">Pending</option>
                     <option {{isset($fields['approval_status']) && !is_null($fields['approval_status'])  && $fields['approval_status'] === "Cancelled" ? 'selected' : '' }} value="Cancelled">Cancelled</option>
                 </select>
