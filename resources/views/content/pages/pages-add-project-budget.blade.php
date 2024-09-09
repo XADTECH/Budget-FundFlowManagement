@@ -14,14 +14,14 @@
         /* Ensures the scrollbar is visible on the tbody */
     }
 
-    .font_style{
-        font-weight:bold;
+    .font_style {
+        font-weight: bold;
     }
 
-    #error-alert, #success-alert {
-    transition: opacity 0.5s ease-out;
+    #error-alert,
+    #success-alert {
+        transition: opacity 0.5s ease-out;
     }
-    
 </style>
 <h4 class="py-3 mb-4">
     <span class="text-muted fw-light">Budget Management /</span> Add Project Budget
@@ -36,26 +36,26 @@
             <button type="button" class="btn-close" aria-label="Close"></button>
         </div>
 
-                @if ($errors->any())
-            <div class="alert alert-danger" id="error-alert">
-                <!-- <button type="button" class="close" aria-label="Close">
+        @if ($errors->any())
+        <div class="alert alert-danger" id="error-alert">
+            <!-- <button type="button" class="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button> -->
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
         @if (session('success'))
-            <div class="alert alert-success" id="success-alert">
-                    <!-- <button type="button" class="close" aria-label="Close">
+        <div class="alert alert-success" id="success-alert">
+            <!-- <button type="button" class="close" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button> -->
-                {{ session('success') }}
-            </div>
+            {{ session('success') }}
+        </div>
         @endif
 
         <!-- Project Form -->
@@ -64,7 +64,7 @@
                 <h6>Add A Budget </h6>
                 <form action="{{ route('add-project-budget') }}" method="POST">
                     @csrf
-                <div class="row">
+                    <div class="row">
                         <div class="col-sm-4">
                             <label for="startdate" class="form-label">Start Date</label>
                             <input type="date" id="startdate" class="form-control" name="startdate" placeholder="Enter Start Date" required />
@@ -84,8 +84,8 @@
                             <label for="startdate" class="form-label">Choose Project Name</label>
 
                             <select class="form-select" name="projectname">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($projects as $project)
+                                <option disabled selected value>Choose</option>
+                                @foreach ($projects as $project)
                                 <option value="{{$project->id}}">{{$project->name}}</option>
                                 @endforeach
                             </select>
@@ -94,8 +94,8 @@
                             <label for="startdate" class="form-label">Choose Client </label>
 
                             <select class="form-select" name="client">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($clients as $client)
+                                <option disabled selected value>Choose</option>
+                                @foreach ($clients as $client)
                                 <option value="{{$client->id}}">{{$client->clientname}}</option>
                                 @endforeach
                             </select>
@@ -103,8 +103,8 @@
                         <div class="col-sm-4">
                             <label for="startdate" class="form-label">Choose Division </label>
                             <select class="form-select" name="division">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($units as $unit)
+                                <option disabled selected value>Choose</option>
+                                @foreach ($units as $unit)
                                 <option value="{{$unit->id}}">{{$unit->source}}</option>
                                 @endforeach
                             </select>
@@ -119,7 +119,7 @@
                         <div class="col-sm-6">
                             <label for="region" class="form-label">Region </label>
                             <select class="form-select" name="region">
-                            <option disabled selected value>Choose</option>
+                                <option disabled selected value>Choose</option>
                                 <option value="Abu Dhabi">Abu Dhabi</option>
                                 <option value="Dubai">Dubai</option>
                                 <option value="Sharjah">Sharjah</option>
@@ -132,8 +132,8 @@
                         <div class="col-sm-6 mt-4">
                             <label for="startdate" class="form-label">Project Manager / Client Manager </label>
                             <select class="form-select" name="manager">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($users as $user)
+                                <option disabled selected value>Choose</option>
+                                @foreach ($users as $user)
                                 <option value="{{$user->id}}">{{$user->first_name}}</option>
                                 @endforeach
                             </select>
@@ -141,7 +141,7 @@
 
                         <div class="col-sm-6 mt-4">
                             <label for="description" class="form-label"> Description </label>
-                            <input type="text" class="form-control" name="description" placeholder="description"/>
+                            <input type="text" class="form-control" name="description" placeholder="description" />
                         </div>
 
                     </div>
@@ -174,9 +174,9 @@
                 </tr>
             </thead>
             <tbody id="project-table-body" class="table-border-bottom-0">
-            @foreach($budgets as $budget)
+                @foreach($budgets as $budget)
 
-            @php
+                @php
                 // Find the client name from the $clients collection
                 $client = $clients->firstWhere('id', $budget->client_id);
                 $clientName = $client ? $client->clientname : 'N/A'; // Handle cases where client is not found
@@ -195,26 +195,26 @@
 
                 // Format month and year
                 $formattedMonth = $month->format('F'); // Full month name (e.g., August)
-                $formattedYear = $month->format('Y');  // Year (e.g., 2024)
-            @endphp
+                $formattedYear = $month->format('Y'); // Year (e.g., 2024)
+                @endphp
 
-            <tr>
-                <td style="color:#0067aa"><i class="bx bxl-angular bx-sm text-danger me-3"></i>{{ $budget->reference_code }}</td>
-                <td class="font_style">{{ $formattedMonth }} {{ $formattedYear }}</td>
-                <td class="font_style">{{ $projectName }}</td>
-                <td class="font_style">{{ $clientName }}</td>
-                <td class="font_style">{{  $userName}}</td>
-                <td class="font_style">{{ $budget->start_date }}</td>
-                <td class="font_style">{{ $budget->end_date }}</td>
-                <!-- <td class="font_style">{{ $unitName}}</td> -->
-                      <td>
-                      <form action="{{ route('edit-project-budget', ['project_id' => $budget->id]) }}" method="GET" style="display:inline;">
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="bx bx-edit"></i>
-                        </button>
-                    </form>
-                                            
-                    <form action="" method="POST" style="display:inline;">
+                <tr>
+                    <td style="color:#0067aa"><i class="bx bxl-angular bx-sm text-danger me-3"></i>{{ $budget->reference_code }}</td>
+                    <td class="font_style">{{ $formattedMonth }} {{ $formattedYear }}</td>
+                    <td class="font_style">{{ $projectName }}</td>
+                    <td class="font_style">{{ $clientName }}</td>
+                    <td class="font_style">{{ $userName}}</td>
+                    <td class="font_style">{{ $budget->start_date }}</td>
+                    <td class="font_style">{{ $budget->end_date }}</td>
+                    <!-- <td class="font_style">{{ $unitName}}</td> -->
+                    <td>
+                        <form action="{{ route('edit-project-budget', ['project_id' => $budget->id]) }}" method="GET" style="display:inline;">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bx bx-edit"></i>
+                            </button>
+                        </form>
+
+                        <form action="" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Are you sure?');">
@@ -222,8 +222,8 @@
                             </button>
                         </form>
                     </td>
-            </tr>
-        @endforeach
+                </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -268,27 +268,27 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    function hideAlertAfterDelay(alertId, delay) {
-        console.log('Trying to hide', alertId);
-        var alertElement = document.getElementById(alertId);
-        if (alertElement) {
-            setTimeout(function() {
-                console.log('Hiding', alertId);
-                alertElement.style.opacity = 0; // Fade out effect
+    document.addEventListener('DOMContentLoaded', function() {
+        function hideAlertAfterDelay(alertId, delay) {
+            console.log('Trying to hide', alertId);
+            var alertElement = document.getElementById(alertId);
+            if (alertElement) {
                 setTimeout(function() {
-                    alertElement.style.display = 'none'; // Hide element after fading out
-                }, 500); // Match the duration of the fade-out effect
-            }, delay);
-        } else {
-            console.log('Element not found:', alertId);
+                    console.log('Hiding', alertId);
+                    alertElement.style.opacity = 0; // Fade out effect
+                    setTimeout(function() {
+                        alertElement.style.display = 'none'; // Hide element after fading out
+                    }, 500); // Match the duration of the fade-out effect
+                }, delay);
+            } else {
+                console.log('Element not found:', alertId);
+            }
         }
-    }
 
-    // Hide alerts after 3000 ms
-    hideAlertAfterDelay('error-alert', 3000);
-    hideAlertAfterDelay('success-alert', 3000);
-});
+        // Hide alerts after 3000 ms
+        hideAlertAfterDelay('error-alert', 3000);
+        hideAlertAfterDelay('success-alert', 3000);
+    });
 </script>
 
 @endsection

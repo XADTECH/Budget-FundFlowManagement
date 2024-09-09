@@ -108,6 +108,7 @@ Route::middleware(['checklogin'])->group(function () {
     'add-business-client'
   );
   Route::get('/pages/budget-project-report-summary/{id}', [ProjectController::class, 'showBudgetProjectReport'])->name('budget-project-report-summary');
+  Route::post('/apporve-budget', [ProjectController::class, 'approveBudgetStatus'])->name('approve-status');
 
   // Budget Managment
   Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
@@ -167,12 +168,12 @@ Route::middleware(['checklogin'])->group(function () {
 
   //add purchase order
   Route::get('/pages/add-budget-project-purchase-order', [BudgetController::class, 'addPurchaseOrder'])->name(
-        'add-budget-project-purchase-order'
+    'add-budget-project-purchase-order'
   );
 
-         //show purchase order
+  //show purchase order
   Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
-          'add-budget-capital-expense'
+    'add-budget-capital-expense'
   );
 
 

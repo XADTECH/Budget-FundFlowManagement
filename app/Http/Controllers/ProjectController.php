@@ -2,8 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BudgetProject;
+use App\Models\BusinessClient;
+use App\Models\BusinessUnit;
+use App\Models\CapitalExpenditure;
+use App\Models\CostOverhead;
+use App\Models\DirectCost;
+use App\Models\FacilityCost;
+use App\Models\FinancialCost;
+use App\Models\IndirectCost;
+use App\Models\MaterialCost;
+use App\Models\RevenuePlan;
+use App\Models\Salary;
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
@@ -122,13 +136,117 @@ class ProjectController extends Controller
     return view('content.pages.pages-add-business-client');
   }
 
- // Show budget project report summary
-public function showBudgetProjectReport($id) {
-  // Optionally, fetch project details using the ID
-  // $project = Project::findOrFail($id);
+  // Show budget project report summary
+  public function showBudgetProjectReport($id)
+  {
+    // Optionally, fetch project details using the ID
+    // $project = Project::findOrFail($id);
 
-  // Pass the project data to the view
-  return view('content.pages.pages-budget-project-summary-report', ['id' => $id]);
-}
+    // Pass the project data to the view
+    $budget = BudgetProject::with([
+      'directCosts',
+      'indirectCosts',
+      'revenuePlans',
+      'salaries',
+      'facilityCosts',
+      'materialCosts',
+      'costOverheads',
+      'financialCosts',
+      'capitalExpenditures'
+    ])
+      ->where('id', $id)
+      ->first();
 
+    // Retrieve additional data for the view
+    $projects = Project::findOrFail($budget->project_id);
+    $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
+    $clients = BusinessClient::findOrFail($budget->project_id);
+    $units = BusinessUnit::findOrFail($budget->project_id);
+    // $budgets = BudgetProject::get();
+
+    $directCost = DirectCost::firstOrNew([
+      'budget_project_id' => $id,
+    ]);
+
+    $indirectCost = IndirectCost::firstOrNew([
+      'budget_project_id' => $id,
+    ]);
+
+    // Retrieve the most recent RevenuePlan record
+    $latestRevenuePlan = RevenuePlan::where('budget_project_id', $id)
+      ->latest('created_at')
+      ->first();
+
+    // Check if a record was found
+    if ($latestRevenuePlan) {
+      // Get the net_profit_after_tax value from the latest record
+      $totalNetProfitAfterTax = $latestRevenuePlan->net_profit_after_tax;
+      $totalNetProfitBeforeTax = $latestRevenuePlan->net_profit_before_tax;
+    } else {
+      // Handle the case where no records are found
+      $totalNetProfitAfterTax = 0; // Or handle accordingly
+      $totalNetProfitBeforeTax = 0; // Or handle accordingly
+    }
+
+    // Initialize total costs to 0
+    $totalDirectCost = 0;
+    $totalInDirectCost = 0;
+
+    // Calculate direct cost if it exists
+    if ($directCost->exists) {
+      $totalDirectCost = $directCost->calculateTotalDirectCost();
+    }
+
+    // Calculate indirect cost if it exists
+    if ($indirectCost->exists) {
+      $totalInDirectCost = $indirectCost->calculateTotalIndirectCost();
+    }
+
+    $totalSalary = Salary::where('budget_project_id', $id)->sum('total_cost');
+    $totalFacilityCost = FacilityCost::where('budget_project_id', $id)->sum('total_cost');
+    $totalMaterialCost = MaterialCost::where('budget_project_id', $id)->sum('total_cost');
+    $totalCostOverhead = CostOverhead::where('budget_project_id', $id)->sum('total_cost');
+    $totalFinancialCost = FinancialCost::where('budget_project_id', $id)->sum('total_cost');
+    $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $id)->sum('total_cost');
+    return view('content.pages.pages-budget-project-summary-report',   compact(
+      'id',
+      'clients',
+      'projects',
+      'units',
+      'users',
+      'budget',
+      'totalDirectCost',
+      'totalSalary',
+      'totalFacilityCost',
+      'totalMaterialCost',
+      'totalInDirectCost',
+      'totalCostOverhead',
+      'totalFinancialCost',
+      'totalNetProfitAfterTax',
+      'totalCapitalExpenditure',
+      'totalNetProfitBeforeTax'
+    ));
+  }
+
+  public function approveBudgetStatus(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'project_id' => 'required|integer|exists:budget_project,id',
+      'status' => 'required',
+    ]);
+
+    if ($validator->fails()) {
+      return back()->withErrors($validator)->withInput();
+    }
+
+
+    BudgetProject::findOrFail($request->project_id)->update([
+      'approval_status' => $request->status
+    ]);
+
+    return redirect('/pages/budget-lists')->with(
+      'success',
+      'Budget status updated successfully!'
+    );
+  }
 }
