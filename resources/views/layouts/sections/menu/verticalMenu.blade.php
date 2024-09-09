@@ -57,14 +57,6 @@
                     </a>
                 </li>
 
-
-                <li class="menu-item">
-                    <a href="/pages/show-budget-project-purchase-order" class="menu-link">
-                        <div>show Purchase Order</div>
-                        <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
-                    </a>
-                </li>
-
                 <li class="menu-item">
                     <a href="/pages/add-project-name" class="menu-link">
                         <div>Add Project Name</div>
@@ -89,6 +81,23 @@
 
             </ul>
         </li>
+
+           <!--Purchase Order-->
+           <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-ball"></i>
+                <div>Manage Purchase Order</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                <a href="/pages/add-budget-project-purchase-order" class="menu-link">
+                        <div>Add Purchase Order</div>
+                        <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
 
         <!--cash flow Management-->
         <li class="menu-item">
@@ -162,7 +171,7 @@
             </ul>
         </li>
 
-        <!--User Management -->
+        <!--Report -->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-pen"></i>
@@ -171,10 +180,35 @@
             <ul class="menu-sub">
                 <li class="menu-item">
                     <a href="/pages/budget-lists" class="menu-link">
-                        <div>Budget List</div>
+                        <div>Budget Report</div>
                     </a>
                 </li>
             </ul>
         </li>
+
+             <!--Finance -->
+        <!-- <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dollar"></i>
+                <div>Finance</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item">
+                <a href="" class="menu-link">
+                        <div>Purchase Orders</div>
+                        <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
+                    </a>
+                    <a href="" class="menu-link">
+                        <div>Budget Reports</div>
+                        <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
+                    </a>
+                </li>
+            </ul>
+        </li> -->
+
+
     </ul>
+
+      
+
 </aside>

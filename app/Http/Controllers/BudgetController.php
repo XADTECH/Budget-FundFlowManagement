@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Project;
 use App\Models\Salary;
 use App\Models\ProjectBudgetSequence;
+use App\Models\PurchaseOrderController;
 use App\Models\FacilityCost;
 use App\Models\CapitalExpenditure;
 use App\Models\MaterialCost;
@@ -154,14 +155,15 @@ class BudgetController extends Controller
           $rules = [
               'startdate' => 'required|date',
               'enddate' => 'required|date|after_or_equal:startdate',
-              'month' => 'required|date', // Keep this as date for full date validation
+              'month' => 'required|date', // Full date validation
               'projectname' => 'required|exists:projects,id',
               'division' => 'required|exists:business_units,id',
-              'manager' => 'required|string', // Assuming 'manager' is a string representing the manager's name
               'client' => 'required|exists:business_clients,id',
               'region' => 'nullable|string|max:255',
               'sitename' => 'nullable|string|max:255',
               'description' => 'nullable|string|max:255',
+              'budget_type' => 'required|string', // Added budget type validation
+              'country' => 'required|string' // Country is required
           ];
   
           // Create a validator instance
@@ -179,11 +181,20 @@ class BudgetController extends Controller
           $month = $validatedData['month'];
           $projectId = $validatedData['projectname'];
           $businessUnitId = $validatedData['division'];
-          $managerID = $validatedData['manager'];
-          $managerName = User::find($managerID)->first_name;
           $clientId = $validatedData['client'];
+          $country = $validatedData['country']; // Country selection
+          $region = $validatedData['region']; // Country selection
+          $budgetType = $validatedData['budget_type']; // Budget type
   
-          // Fetch names associated with the provided IDs
+          // Check if the logged-in user has the 'Project Manager' role
+          $loggedInUser = auth()->user();
+          
+          // Check if the user is a 'Project Manager'
+          if (!$loggedInUser->hasRole('Project Manager')) {
+            return back()->withErrors(['message' => 'Only Project Managers can create project budgets.']);
+        }
+  
+          // Generate names based on IDs
           $projectName = Project::find($projectId)->name;
           $businessUnitName = BusinessUnit::find($businessUnitId)->source;
           $clientName = BusinessClient::find($clientId)->clientname;
@@ -197,7 +208,7 @@ class BudgetController extends Controller
           $year = $monthDate->format('Y');
           $formattedMonthYear = strtoupper($monthName . $year);
   
-          // Get current date in the desired format (MMDDYYYY)
+          // Get the current date in the desired format (MMDDYYYY)
           $formattedDate = Carbon::now()->format('mdY');
   
           // Fetch the current sequence for the date or create a new one
@@ -213,9 +224,8 @@ class BudgetController extends Controller
           $projectSequence->last_sequence = $newSerialNumber;
           $projectSequence->save();
   
-          // Generate the unique reference code using the incremented serial number
-          // $referenceCode = 'BP' . $formattedDate . $newSerialNumber . '-' . $projectName . '-' . $businessUnitName . '-' . $managerName . '-' . $clientName;
-          $referenceCode = 'BP' . $formattedDate . $newSerialNumber . '-' . $projectName . '-' . $businessUnitName . '-' . $managerName . '-' . $clientName;
+          // Generate the unique reference code
+          $referenceCode = 'BP' . $formattedDate . $newSerialNumber;
   
           // Store the validated data along with the generated reference code
           $newProject = new BudgetProject();
@@ -223,18 +233,21 @@ class BudgetController extends Controller
           $newProject->start_date = $validatedData['startdate'];
           $newProject->end_date = $validatedData['enddate'];
           $newProject->month = $validatedData['month'];
-          $newProject->project_id = $projectId; // Assuming IDs are correct
+          $newProject->project_id = $projectId;
           $newProject->unit_id = $businessUnitId;
-          $newProject->manager_id = $managerID; // If manager should be stored as a name, otherwise update this to store the ID
+          $newProject->manager_id = $loggedInUser->id;
           $newProject->client_id = $clientId;
           $newProject->region = $validatedData['region'];
           $newProject->site_name = $validatedData['sitename'];
-          $newProject->description = $validatedData['description'] ?? null; // Optional description
+          $newProject->description = $validatedData['description'] ?? null;
+          $newProject->budget_type = $budgetType; // Store the budget type
+          $newProject->country = $country; // Store the selected country
+          $newProject->region = $region; // Store the selected country
           $newProject->save();
   
-          return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with(
-            'success',
-            'CAPEX added successfully!'
+          return redirect('/pages/add-project-budget')->with(
+              'success',
+              'Project Budget added successfully!'
           );
       } catch (Exception $e) {
           return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
@@ -389,33 +402,6 @@ class BudgetController extends Controller
   }
 
 
-  //add / show purchase order 
-  public function addPurchaseOrder(Request $request)
-  {
-    $projects = Project::get();
-    $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
-    $loggedInUserId = Auth::id();
-
-    // Retrieve budgets where manager_id matches the logged-in user ID
-    $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
-    
-    return view("content.pages.pages-add-project-budget-purchase-order",compact('budgets'));
-  }
-
-    //add / show purchase order 
-    public function storePurchaseOrder(Request $request)
-    {
-      return response()->json("hi");
-    }
-  
-
-
-  //add purchase order 
-  public function showPurchaseOrder(Request $request)
-  {
-    return view("content.pages.show-budget-project-purchase-order");
-  }
-
   public function budgetsLists(Request $request)
   {
     $fields = $request->all();
@@ -466,10 +452,43 @@ class BudgetController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, string $id)
-  {
-    //
-  }
+ public function update(Request $request, $id)
+{
+
+  //return response()->json($request->all());
+    $request->validate([
+        'startdate' => 'required|date',
+        'enddate' => 'nullable|date',
+        'month' => 'nullable|date',
+        'projectname' => 'required|exists:projects,id',
+        'client' => 'required|exists:business_clients,id',
+        'division' => 'required|exists:business_units,id',
+        'region' => 'required|string|max:255',
+        'country' => 'required|string|max:255',
+        'description' => 'nullable|string|max:255',
+        'budget_type' => 'required|string|max:255',
+    ]);
+
+    $budget = BudgetProject::findOrFail($id);
+    $budget->update([
+      'start_date' => $request->input('startdate'),
+      'end_date' => $request->input('enddate'),
+      'month' => $request->input('month'),
+      'project_id' => $request->input('projectname'),
+      'client_id' => $request->input('client'),
+      'unit_id' => $request->input('division'),
+      'site_name' => $request->input('sitename'),
+      'region' => $request->input('region'),
+      'country' => $request->input('country'),
+      'description' => $request->input('description'),
+      'budget_type' => $request->input('budget_type'),
+  ]);
+
+    return redirect('/pages/edit-project-budget/' .  $id)->with(
+      'success',
+      'CAPEX added successfully!'
+    );
+}
 
   /**
    * Remove the specified resource from storage.

@@ -19,6 +19,9 @@ class BudgetProject extends Model
     'manager_id',
     'client',
     'region',
+    'country',
+    'description',
+    'budget_type',
     'site_name',
     'month',
     'approval_status',
@@ -76,4 +79,27 @@ class BudgetProject extends Model
   {
       return $this->hasMany(CapitalExpenditure::class, 'budget_project_id');
   }
+
+      public function getUtilization()
+    {
+      return $this->total_dpm_expense + $this->total_lpo_expense;
+    }
+
+        public function getUtilizationPercentage()
+    {
+        if ($this->total_budget_allocated == 0) {
+            return 0; // To avoid division by zero
+        }
+
+        $totalExpenses = $this->total_dpm_expense + $this->total_lpo_expense;
+        return ($totalExpenses / $this->total_budget_allocated) * 100;
+    }
+
+        // Method to calculate Remaining Budget
+        public function getRemainingBudget()
+        {
+            // Remaining budget is total budget allocated minus total expenses
+            return $this->total_budget_allocated - $this->getUtilization();
+        }
+    
 }

@@ -19,8 +19,9 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\DirectCostController;
-use App\Http\Controllers\InDirectCostController;
+use App\Http\Controllers\InDirectCostController;                                 
 use App\Http\Controllers\pages\MiscUnderMaintenance;
+use App\Http\Controllers\PurcahseOrderController;
 use App\Http\Controllers\authentications\LoginBasic;
 use App\Http\Controllers\authentications\RegisterBasic;
 use App\Http\Controllers\authentications\ForgotPasswordBasic;
@@ -113,6 +114,8 @@ Route::middleware(['checklogin'])->group(function () {
   Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
   Route::post('/pages/add-project-budget', [BudgetController::class, 'store'])->name('add-project-budget');
   Route::get('/pages/edit-project-budget/{project_id}', [BudgetController::class, 'edit'])->name('edit-project-budget');
+  // Route for handling the form submission to update the budget
+  Route::put('/budget/update/{id}', [BudgetController::class, 'update'])->name('update-project-budget');
 
   // authentication
   //Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
@@ -166,14 +169,23 @@ Route::middleware(['checklogin'])->group(function () {
 
 
   //add purchase order
-  Route::get('/pages/add-budget-project-purchase-order', [BudgetController::class, 'addPurchaseOrder'])->name(
+  Route::get('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'addPurchaseOrder'])->name(
         'add-budget-project-purchase-order'
   );
 
-         //show purchase order
-  Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
-          'add-budget-capital-expense'
-  );
+    //add purchase order
+    Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name(
+      'add-budget-project-purchase-order'
+    );
+
+    //edit purchase order 
+    Route::get('/purchase-order/edit/{POID}', [PurcahseOrderController::class, 'editPurchaseOrder'])->name('purchaseOrder.edit');
+
+
+    //show purchase order
+    Route::get('/pages/show-budget-project-purchase-order', [PurcahseOrderController::class, 'showPurchaseOrder'])->name(
+            'add-budget-capital-expense'
+    );
 
 
 

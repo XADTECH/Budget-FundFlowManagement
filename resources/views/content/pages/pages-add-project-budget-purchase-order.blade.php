@@ -24,7 +24,7 @@
     
 </style>
 <h4 class="py-3 mb-4">
-    <span class="text-muted fw-light">Budget Management /</span> Add Purchase Order 
+    <span class="text-muted fw-light">Budget Management /</span> Create Purchase Order 
 </h4>
 
 <div class="row">
@@ -62,7 +62,7 @@
         <div class="card">
             <div class="card-body">
                 <h6> (PO) Create Purchase Order</h6>
-                <form action="{{ route('add-project-budget') }}" method="POST">
+                <form action="{{ route('add-budget-project-purchase-order') }}" method="POST">
                     @csrf
                 <div class="row">
                         <div class="col-sm-4">
@@ -94,7 +94,7 @@
                                 <input type="text" class="form-control" name="supplier_address" placeholder="eg: Abu Hail Dubai, UAE" />
                             </div>
 
-                        <div class="col-sm-8">
+                        <div class="col-sm-4">
                             <label for="project_name" class="form-label">Choose Project </label>
                             <select class="form-select" name="project_name">
                             <option disabled selected value>Choose</option>
@@ -104,11 +104,20 @@
                             </select>
                         </div>
 
+                        <div class="col-sm-4">
+                            <label for="project_name" class="form-label">Choose Project Manager </label>
+                            <select class="form-select" name="project_person_id">
+                            <option disabled selected value>Choose</option>
+                            @foreach ($users as $user)
+                                <option value="{{$user->id}}">{{$user->first_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div class="col-sm-6 mt-4">
                             <label for="description" class="form-label"> Description </label>
                             <input type="text" class="form-control" name="description" placeholder="description"/>
                         </div>
-
                     </div>
 
                     <div class="mt-4">
@@ -120,13 +129,55 @@
     </div>
 </div>
 
-        <!-- Projects Table -->
-        <div class="card mt-4">
-            <h5 class="card-header">PO List</h5>
-            <div class="table-responsive text-nowrap  limited-scroll">
-            
-            </div>
-        </div>
+  <!-- Projects Table -->
+<div class="card mt-4">
+    <h5 class="card-header">PO List</h5>
+    <div class="table-responsive text-nowrap limited-scroll">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>PO #</th>
+                    <th>Project #</th>
+                    <th>Supplier Name</th>
+                    <th>Description</th>
+                    <th>Prepared By</th>
+                    <th>Requested By</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="project-table-body" class="table-border-bottom-0">
+                    <!-- Project rows will be added here -->
+
+                    @foreach($purchaseOrders as $po)   
+
+                    @php
+                        $requestPerson = $users->firstWhere('id',  $po->requested_by);
+                        $preparedPerson = $users->firstWhere('id',  $po->prepared_by);
+                        $budget = $budgetList->firstWhere('id',  $po->project_id);
+                    @endphp
+
+                    <tr>
+         
+                        <td style="color:#0067aa"><a href="{{route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">{{ $po->po_number }}</a></td>
+                
+                        <td style="color:#0067aa"><a href="{{route('edit-project-budget', ['project_id' => $budget->id]) }}">{{ $budget->reference_code}}</td>
+                        <td>{{ $po->supplier_name }}</td>
+                        <td>{{ $po->description }}</td>
+                        <td>{{ $preparedPerson->first_name }}</td>
+                        <td>{{$requestPerson->first_name }}</td>
+                        <td>
+                            @if (is_null($budget->total_budget_allocated) || $budget->total_budget_allocated <= 0)
+                                <span style="color: red;">Budget Not Allocated</span>
+                            @else
+                                {{ number_format($budget->total_budget_allocated, 2) }}
+                            @endif
+                    </tr>
+                    @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 <!--Model-->
 <div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">

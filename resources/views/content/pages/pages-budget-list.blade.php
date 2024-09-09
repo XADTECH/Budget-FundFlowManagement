@@ -24,14 +24,14 @@
     }
 </style>
 <h4 class="py-3 mb-4">
-    <span class="text-muted fw-light">Report /</span> Budget Report
+    <span class="text-muted fw-light">Report /</span> Filter Report
 </h4>
 
 <!-- Projects Table -->
 <div class="card mt-4">
 
 
-    <h5 class="card-header">Budget List</h5>
+    <h5 class="card-header">PROJECT BUDGET LIST </h5>
     <form class="container" method="GET" action="{{ route('budgets.list') }}">
         <div class="row mb-4">
             <div class="col-md-4">

@@ -38,6 +38,12 @@ class User extends Authenticatable
     'nationality',
   ];
 
+   // Add this method to your User model
+   public function hasRole($role)
+   {
+       return $this->role === $role;
+   }
+
   /**
    * The attributes that should be cast to native types.
    *

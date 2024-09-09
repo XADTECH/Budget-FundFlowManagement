@@ -116,35 +116,52 @@
                             <label for="startdate" class="form-label">Site Name </label>
                             <input type="text" class="form-control" name="sitename" placeholder="Please enter site name" />
                         </div>
+
                         <div class="col-sm-6">
-                            <label for="region" class="form-label">Region </label>
-                            <select class="form-select" name="region">
-                            <option disabled selected value>Choose</option>
-                                <option value="Abu Dhabi">Abu Dhabi</option>
-                                <option value="Dubai">Dubai</option>
-                                <option value="Sharjah">Sharjah</option>
-                                <option value="Umm Al Quwain">Umm Al Quwain</option>
-                                <option value="Ras Al Khaimah">Ras Al Khaimah</option>
-                                <option value="Fujairah">Fujairah</option>
+                                <label for="country" class="form-label">Country</label>
+                                <select class="form-select" id="country" name="country" onchange="updateRegions()">
+                                    <option disabled selected value>Choose</option>
+                                    <option value="KSA">KSA</option>
+                                    <option value="UAE">UAE</option>
+                                    <option value="UK">UK</option>
+                                    <option value="USA">USA</option>
+                                </select>
+                            </div>
+                    </div>
 
-                            </select>
-                        </div>
-                        <div class="col-sm-6 mt-4">
-                            <label for="startdate" class="form-label">Project Manager / Client Manager </label>
-                            <select class="form-select" name="manager">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($users as $user)
-                                <option value="{{$user->id}}">{{$user->first_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    <div class="row mt-4">
+                        
+                    <div class="col-sm-6">
+                                <label for="region" class="form-label">Region</label>
+                                <select class="form-select" id="region" name="region">
+                                    <option disabled selected value>Choose</option>
+                                </select>
+                            </div>
 
-                        <div class="col-sm-6 mt-4">
+                        
+
+                        <div class="col-sm-6">
                             <label for="description" class="form-label"> Description </label>
                             <input type="text" class="form-control" name="description" placeholder="description"/>
                         </div>
 
                     </div>
+
+                    <div class="row mt-4">
+          
+                        <div class="col-sm-4">
+                            <label for="budget_type" class="form-label">Project Budget Type</label>
+                            <select class="form-select" name="budget_type" id="budget_type">
+                                <option disabled selected value>Choose</option>
+                                <option value="Fleet Management">Fleet Management</option>
+                                <option value="Auto Workshop">Auto Workshop</option>
+                                <option value="Etisalat Managed Service">Etisalat Managed Service</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    
 
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary me-2">Submit</button>
@@ -167,8 +184,7 @@
                     <th>Project Name</th>
                     <th>Client</th>
                     <th>Project Manager</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
+                    <th>Budget Type</th>
                     <!-- <th>Business Unit</th> -->
                     <th>Actions</th>
                 </tr>
@@ -204,8 +220,7 @@
                 <td class="font_style">{{ $projectName }}</td>
                 <td class="font_style">{{ $clientName }}</td>
                 <td class="font_style">{{  $userName}}</td>
-                <td class="font_style">{{ $budget->start_date }}</td>
-                <td class="font_style">{{ $budget->end_date }}</td>
+                <td class="font_style">{{ $budget->budget_type }}</td>
                 <!-- <td class="font_style">{{ $unitName}}</td> -->
                       <td>
                       <form action="{{ route('edit-project-budget', ['project_id' => $budget->id]) }}" method="GET" style="display:inline;">
@@ -289,6 +304,28 @@ document.addEventListener('DOMContentLoaded', function() {
     hideAlertAfterDelay('error-alert', 3000);
     hideAlertAfterDelay('success-alert', 3000);
 });
+
+function updateRegions() {
+        const country = document.getElementById("country").value;
+        const regionSelect = document.getElementById("region");
+        regionSelect.innerHTML = '<option disabled selected value>Choose</option>'; // Reset regions
+
+        const regions = {
+            'KSA': ['Riyadh', 'Jeddah', 'Dammam', 'Makkah', 'Madinah'],
+            'UAE': ['Abu Dhabi', 'Dubai', 'Sharjah', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'],
+            'UK': ['London', 'Manchester', 'Birmingham', 'Glasgow', 'Edinburgh'],
+            'USA': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami']
+        };
+
+        if (regions[country]) {
+            regions[country].forEach(region => {
+                const option = document.createElement("option");
+                option.value = region;
+                option.text = region;
+                regionSelect.appendChild(option);
+            });
+        }
+    }
 </script>
 
 @endsection

@@ -24,6 +24,9 @@ class CreateBudgetProjectTable extends Migration
       $table->unsignedBigInteger('client_id');
       $table->string('region')->nullable();
       $table->string('site_name')->nullable();
+      $table->string('description')->nullable();
+      $table->string('budget_type');
+      $table->string('country');
       $table->string('month');
       $table
         ->string('approval_status')
