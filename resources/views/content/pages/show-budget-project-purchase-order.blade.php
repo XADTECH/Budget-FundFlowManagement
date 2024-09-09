@@ -157,12 +157,13 @@
                     </tr>
                     <tr style="border:2px solid black">
                         <td class="label" style="color:black; border:1px solid black">PO #</td>
-                        <td class="value" style="text-align:left; padding: 8px; width:60%; color:black">{{$purchaseOrder->po_number}}</td>
+                        <td class="value" style="text-align:left; padding: 8px; width:60%; color:black" id="poNumber" value="{{$purchaseOrder->po_number}}">{{$purchaseOrder->po_number}}</td>
                     </tr>
                     <tr style="border:2px solid black">
                         <td class="label" style="color:black; border:1px solid black">Payment Term</td>
                         <td class="value" style="text-align:left; padding: 8px; width:60%; color:black">{{$purchaseOrder->payment_term}}</td>
                     </tr>
+         
                 </table>
             </div>
         </div>
@@ -215,8 +216,8 @@
             </button>
         </div>
 
-        <!-- Purchase Order Table -->
-        <div class="table-container">
+    <!-- Purchase Order Table -->
+<div class="table-container">
     <table class="purchase-order-table">
         <thead>
             <tr>
@@ -225,6 +226,7 @@
                 <th>QTY</th>
                 <th>UNIT PRICE</th>
                 <th>TOTAL</th>
+                <th>ACTION</th>
             </tr>
         </thead>
         <tbody id="purchaseOrderItems">
@@ -232,33 +234,46 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="4" class="text-end"><strong>Subtotal</strong></td>
+                <td colspan="5" class="text-end"><strong>Subtotal</strong></td>
                 <td id="subtotal">0.00</td>
             </tr>
             <tr>
-                <td colspan="4" class="text-end"><strong>Enter Discount (%)</strong></td>
-                <td><input type="number" id="discountInput" class="form-control" placeholder="0"></td>
+                <td colspan="5" class="text-end"><strong>Enter Discount (%)</strong></td>
+                <td><input type="number" id="discountInput" class="form-control" placeholder="0" min="0"></td>
             </tr>
             <tr>
-                <td colspan="4" class="text-end"><strong>Enter VAT (%)</strong></td>
-                <td><input type="number" id="vatInput" class="form-control" placeholder="5"></td>
+                <td colspan="5" class="text-end"><strong>Enter VAT (%)</strong></td>
+                <td><input type="number" id="vatInput" class="form-control" placeholder="5" min="0"></td>
             </tr>
             <tr>
-                <td colspan="4" class="text-end"><strong>Total Discount</strong></td>
+                <td colspan="5" class="text-end"><strong>Total Discount</strong></td>
                 <td id="totalDiscount">0.00</td>
             </tr>
             <tr>
-                <td colspan="4" class="text-end"><strong>Total VAT</strong></td>
+                <td colspan="5" class="text-end"><strong>Total VAT</strong></td>
                 <td id="totalVAT">0.00</td>
             </tr>
             <tr>
-                <td colspan="4" class="text-end"><strong>Total</strong></td>
+                <td colspan="5" class="text-end"><strong>Total</strong></td>
                 <td id="totalAmount">0.00</td>
             </tr>
         </tfoot>
     </table>
 </div>
 
+
+<!-- Button to trigger POST request -->
+<div class="text-end mt-4">
+    <button 
+        type="button" 
+        class="btn" 
+        id="submitOrderBtn" 
+        style="background-color:#1a73e8; color:white;"
+        onClick="submitData()"
+    >
+        <i class="fas fa-save"></i> Submit Order
+    </button>
+</div>
 
     <div class="budget-verification-box mt-4">
         <h5>Budget Department Verification</h5>
@@ -347,40 +362,79 @@
 
 
 <script>
-    const purchaseOrderItems = [];
+    // Get the PO number from the hidden input field or wherever it's set
+    var poNumber = document.getElementById('poNumber').textContent.trim();
 
-    // Event listeners to update totals dynamically
-    document.getElementById('discountInput').addEventListener('input', updateTotals);
-    document.getElementById('vatInput').addEventListener('input', updateTotals);
-    
-    document.getElementById('addItemBtn').addEventListener('click', function() {
-        const item = document.getElementById('item').value;
-        const description = document.getElementById('description').value;
-        const quantity = parseFloat(document.getElementById('quantity').value);
-        const unitPrice = parseFloat(document.getElementById('unit_price').value);
+    console.log(poNumber)
 
-        // Calculate item total
-        const itemTotal = quantity * unitPrice;
-        
+    // Initialize purchase order items array
+    let purchaseOrderItems = [];
 
-        // Add item to the list
-        purchaseOrderItems.push({ item, description, quantity, unitPrice, itemTotal });
+  function submitData() {
+    let totalAmount = parseFloat(document.getElementById('totalAmount').textContent) || 0;
+    let totalDiscount = parseFloat(document.getElementById('totalDiscount').textContent) || 0;
+    let totalVAT = parseFloat(document.getElementById('totalVAT').textContent) || 0;
 
-        // Render the table
-        renderTable();
+    if (totalAmount > 0) {
+        // Retrieve items from local storage
+        const storedItems = JSON.parse(localStorage.getItem(`purchaseOrder_${poNumber}`)) || [];
 
-        // Reset the modal form and close the modal
-        document.getElementById('addItemForm').reset();
-        $('#addItemModal').modal('hide');
-    });
 
-    function renderTable() {
+        // Prepare data for submission
+        const data = {
+            poNumber: poNumber,
+            items: storedItems,
+            totalAmount: totalAmount,
+            totalDiscount: totalDiscount,
+            totalVAT: totalVAT
+        };
+
+        console.log(data);
+
+        fetch('/api/save-purchase-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+        } else {
+            alert("Total amount is less than or equal to 0.");
+        }
+    }
+
+
+    // Function to load data from local storage
+    function loadFromLocalStorage(poNumber) {
+        const storedItems = JSON.parse(localStorage.getItem(`purchaseOrder_${poNumber}`));
+        if (storedItems) {
+            purchaseOrderItems.push(...storedItems);
+            renderTable();
+        }
+    }
+
+    // Function to save data to local storage
+    function saveToLocalStorage(poNumber) {
+        localStorage.setItem(`purchaseOrder_${poNumber}`, JSON.stringify(purchaseOrderItems));
+    }
+
+    // Function to render the table
+        function renderTable() {
         const tableBody = document.getElementById('purchaseOrderItems');
         tableBody.innerHTML = '';
 
         let subtotal = 0;
 
-        purchaseOrderItems.forEach(orderItem => {
+        purchaseOrderItems.forEach((orderItem, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${orderItem.item}</td>
@@ -388,6 +442,7 @@
                 <td>${orderItem.quantity}</td>
                 <td>${orderItem.unitPrice.toFixed(2)}</td>
                 <td>${orderItem.itemTotal.toFixed(2)}</td>
+                <td><button class="btn btn-danger" onclick="removeItem(${index})">Remove</button></td>
             `;
             tableBody.appendChild(row);
 
@@ -398,27 +453,72 @@
 
         // Recalculate totals when discount or VAT inputs change
         updateTotals();
-      
     }
+
+    // Function to update totals based on discount and VAT
     function updateTotals() {
-    const subtotal = parseFloat(document.getElementById('subtotal').innerText) || 0;
-    const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
-    const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
+        const subtotal = parseFloat(document.getElementById('subtotal').innerText) || 0;
+        const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
+        const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
 
-    // Calculate total discount and VAT
-    const totalDiscount = subtotal * (discountValue / 100);
-    const totalVAT = (subtotal - totalDiscount) * (vatValue / 100);
+        // Calculate total discount and VAT
+        const totalDiscount = subtotal * (discountValue / 100);
+        const totalVAT = (subtotal - totalDiscount) * (vatValue / 100);
 
-    // Update totals in the document
-    document.getElementById('totalDiscount').innerText = totalDiscount.toFixed(2);
-    document.getElementById('totalVAT').innerText = totalVAT.toFixed(2);
-    document.getElementById('totalAmount').innerText = (subtotal - totalDiscount + totalVAT).toFixed(2);
-    const requestAmount = parseFloat(subtotal - totalDiscount + totalVAT).toFixed(2); // Ensure requestAmount is a number
-    document.getElementById('total_request_amount').innerText = requestAmount;
-    const balanceBudgetElement = document.getElementById('balance_budget');
-const balanceBudget = parseFloat(balanceBudgetElement.innerText.replace(/,/g, '')) || 0; // Remove commas and convert to number
-    console.log(balanceBudget);
-    document.getElementById('total_balance_for_budget').innerText = (balanceBudget - requestAmount).toFixed(2);
-}
+        // Update totals in the document
+        document.getElementById('totalDiscount').innerText = totalDiscount.toFixed(2);
+        document.getElementById('totalVAT').innerText = totalVAT.toFixed(2);
+        document.getElementById('totalAmount').innerText = (subtotal - totalDiscount + totalVAT).toFixed(2);
+
+        // Update balance
+        const requestAmount = parseFloat(document.getElementById('totalAmount').innerText);
+        document.getElementById('total_request_amount').innerText = requestAmount.toFixed(2);
+        const balanceBudgetElement = document.getElementById('balance_budget');
+        const balanceBudget = parseFloat(balanceBudgetElement.innerText.replace(/,/g, '')) || 0;
+        document.getElementById('total_balance_for_budget').innerText = (balanceBudget - requestAmount).toFixed(2);
+    }
+
+    // Function to remove an item
+    function removeItem(index) {
+        if (index >= 0 && index < purchaseOrderItems.length) {
+            // Remove item at the specified index
+            purchaseOrderItems.splice(index, 1);
+            saveToLocalStorage(poNumber); // Save updated items
+            renderTable(); // Re-render the table
+        } else {
+            console.error('Invalid index for removal');
+        }
+    }
+
+    // Event listener for add item button
+    document.getElementById('addItemBtn').addEventListener('click', function() {
+        const item = document.getElementById('item').value;
+        const description = document.getElementById('description').value;
+        const quantity = parseFloat(document.getElementById('quantity').value);
+        const unitPrice = parseFloat(document.getElementById('unit_price').value);
+
+        // Calculate item total
+        const itemTotal = quantity * unitPrice;
+
+        // Add item to the list
+        purchaseOrderItems.push({ item, description, quantity, unitPrice, itemTotal });
+
+        saveToLocalStorage(poNumber); // Save with PO number
+
+        // Render the table
+        renderTable();
+
+        // Reset the modal form and close the modal
+        document.getElementById('addItemForm').reset();
+        $('#addItemModal').modal('hide');
+    });
+
+    // Event listeners to update totals dynamically
+    document.getElementById('discountInput').addEventListener('input', updateTotals);
+    document.getElementById('vatInput').addEventListener('input', updateTotals);
+
+    // Load purchase order items from local storage when the page loads
+    loadFromLocalStorage(poNumber);
 </script>
+
 @endsection

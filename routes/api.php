@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BusinessUnitController;
 use App\Http\Controllers\BusinessClientController;
+use App\Http\Controllers\PurcahseOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,3 +65,6 @@ Route::post('/delete-business-clients', [BusinessClientController::class, 'delet
 Route::get('/get-users', [UserController::class, 'getRecords']);
 Route::post('/update-user', [UserController::class, 'updateRecord'])->name('update-user');
 Route::post('/delete-user', [UserController::class, 'deleteRecord'])->name('delete-user');
+
+//save purchase order 
+Route::post('/save-purchase-order', [PurcahseOrderController::class, 'store'])->name('save-purchase-order');

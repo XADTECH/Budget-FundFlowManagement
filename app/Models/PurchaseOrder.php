@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PurchaseOrderItem;
 
 class PurchaseOrder extends Model
 {
@@ -39,5 +40,11 @@ class PurchaseOrder extends Model
     public function requester()
     {
         return $this->belongsTo(User::class, 'requested_by');
+    }
+
+    // Define the relationship with the PurchaseOrderItem model
+    public function items()
+    {
+        return $this->hasMany(PurchaseOrderItem::class, 'purchase_order_id');
     }
 }

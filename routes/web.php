@@ -189,6 +189,9 @@ Route::middleware(['checklogin'])->group(function () {
 
 
 
+
+
+
   // cards
   Route::get('/cards/basic', [CardBasic::class, 'index'])->name('cards-basic');
 

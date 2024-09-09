@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('purchase_order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('purchase_order_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('purchase_order_id');
+            $table->string('po_number');
             $table->string('item_code'); // Unique item code or reference
             $table->text('description');
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2);
             $table->decimal('total', 10, 2);
+            $table->decimal('total_amount', 10, 2)->default(0); // Added column
+            $table->decimal('total_discount', 10, 2)->default(0); // Added column
+            $table->decimal('total_vat', 10, 2)->default(0); // Added column
             $table->timestamps();
         });
+        
     }
 
     /**

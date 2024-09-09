@@ -21,6 +21,7 @@ use App\Models\DirectCost;
 use App\Models\RevenuePlan;
 use App\Models\IndirectCost;
 use Illuminate\Http\Request;
+use App\Models\PurchaseOrderItem;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Exception;
@@ -135,6 +136,63 @@ class PurcahseOrderController extends Controller
              // Redirect with an error message if not found
              return redirect('/pages/add-budget-project-purchase-order')
                  ->withErrors(['error' => 'Purchase Order not found!']);
+         }
+     }
+
+     //save purchase order 
+     
+     public function store(Request $request)
+     {
+
+        // return response()->json($request->all());
+         try {
+             // Validate request data
+             $request->validate([
+                 'poNumber' => 'required|string',
+                 'items' => 'required|array',
+                 'totalAmount' => 'required|numeric',
+                 'totalDiscount' => 'required|numeric',
+                 'totalVAT' => 'required|numeric',
+             ]);
+
+
+                   // Fetch purchase order id from poNumber
+                $purchaseOrder = PurchaseOrder::where('po_number', $request->poNumber)->firstOrFail();
+                $purchaseOrder->purchase_order_id = $purchaseOrder->id;
+                $purchaseOrder->po_number = $purchaseOrder->poNumber;
+                $purchaseOrder->total_amount = $purchaseOrder->poNumber;
+                $purchaseOrder->total_discount = $purchaseOrder->poNumber;
+                $purchaseOrder->total_vat = $purchaseOrder->poNumber;
+        
+
+
+     
+             // Save or update purchase order items
+             foreach ($request->items as $item) {
+
+                 PurchaseOrderItem::updateOrCreate(
+                     [
+                         'item_code' => $item['item'],                          
+                     ],
+                     [
+                         'description' => $item['description'],
+                         'quantity' => $item['quantity'],
+                         'unit_price' => $item['unitPrice'],
+                         'total' => $item['itemTotal'],
+                         'total_amount' => $request->totalAmount
+                     ]
+                 );
+             }
+     
+             // Return success response
+             return response()->json(['message' => 'Purchase order items saved successfully!'], 200);
+     
+         } catch (\Exception $e) {
+             // Log the error for debugging
+             \Log::error('Error saving purchase order items: ' . $e->getMessage());
+     
+             // Return error response
+             return response()->json(['message' => 'Failed to save purchase order items.'.  $e->getMessage()], 500);
          }
      }
      
