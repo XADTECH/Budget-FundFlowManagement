@@ -32,13 +32,10 @@ class CreateBudgetProjectTable extends Migration
         ->string('approval_status')
         ->default('pending')
         ->nullable(); // Assuming default status
-      $table->decimal('daily_payment_expense', 15, 2)->nullable();
-      $table->decimal('lpo_amount', 15, 2)->nullable();
-      $table->decimal('bal_under_over_budget', 15, 2)->nullable();
+      $table->decimal('bal_under_over_budget', 15, 2)->nullable();  
       $table->decimal('total_budget_allocated', 15, 2)->nullable();
       $table->decimal('total_dpm_expense', 15, 2)->nullable();
       $table->decimal('total_lpo_expense', 15, 2)->nullable();
-      $table->decimal('total_budget', 15, 2)->nullable();
       $table
         ->string('status')
         ->default('Good')

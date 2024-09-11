@@ -26,12 +26,42 @@ class MaterialCost extends Model
         'unit_cost', // Cost per unit of the material (e.g., 100 per meter)
         'total_cost', // Total calculated cost (quantity * unit_cost)
         'average_cost', // Average cost per unit, if needed
+        'total_budget', // Total budget allocated
+        'total_budget_allocated', // Total of each entry
+        'approval_status', // Approval status
+        'approved_by', // ID of the user who approved
+        'total_budget', // Total budget allocated
+        'total_budget_allocated', // Total of each entry
+        'approval_status', // Approval status
+        'approved_by', // ID of the user who approved
     ];
 
     public function directCost()
     {
         return $this->belongsTo(DirectCost::class);
     }
+
+        // Update total budget and allocation
+     // Update total budget and allocation
+public function updateBudget()
+{
+    // Fetch the current total budget and total allocated budget from the database
+    $current_total_budget = MaterialCost::where('budget_project_id', $this->budget_project_id)
+                                  ->sum('total_budget');
+
+    $current_total_budget_allocated = MaterialCost::where('budget_project_id', $this->budget_project_id)
+                                            ->sum('total_budget_allocated');
+
+    // Update total budget by adding new total cost to the existing budget
+    $this->total_budget = $current_total_budget + $this->total_cost;
+
+    // Update total budget allocated similarly
+    $this->total_budget_allocated = $current_total_budget_allocated + $this->total_cost;
+
+    // Save the updated budget and allocation
+    $this->save();
+}
+    
 
     public function budgetProject()
     {
@@ -57,4 +87,7 @@ class MaterialCost extends Model
         }
         return $this->average_cost;
     }
+
+   
+    
 }

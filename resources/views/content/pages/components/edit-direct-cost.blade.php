@@ -225,7 +225,7 @@
                                 <label for="po" class="form-label">PO Type</label>
                                 <select class="form-select" id="po" name="po" required>
                                     <option value="CAPEX">CAPEX</option>
-                                    <option value="OPEX">OPEX</option>
+                                    <option selected value="OPEX">OPEX</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -234,11 +234,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                                <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 5000.00" step="0.01">
+                                <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 5000.00" step="0.01" required>
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <input type="text" class="form-control" id="description" name="description" placeholder="e.g., Project Manager Salary">
+                                <input type="text" class="form-control" id="description" name="description" placeholder="e.g., Project Manager Salary" required>
                             </div>
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
@@ -246,11 +246,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="noOfPerson" class="form-label">No Of Persons</label>
-                                <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" placeholder="e.g., 5" required>
+                                <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" placeholder="e.g., 5" value="1" required>
                             </div>
                             <div class="mb-3">
                                 <label for="months" class="form-label">Months</label>
-                                <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" required>
+                                <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" value="1" required>
                             </div>
                             <input type="hidden" name="project_id" value="{{ $budget->id }}">
 
@@ -296,7 +296,7 @@
                             <label for="po" class="form-label">PO</label>
                             <select class="form-select" id="po" name="po" required>
                                 <option value="CAPEX">CAPEX</option>
-                                <option value="OPEX">OPEX</option>
+                                <option selected value="OPEX">OPEX</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -305,7 +305,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                            <input type="number" class="form-control" id="cost_per_month" placeholder="eg,cost per month" name="cost_per_month">
+                            <input type="number" class="form-control" id="cost_per_month" placeholder="eg,cost per month" name="cost_per_month" required>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
@@ -317,11 +317,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="noOfPerson" class="form-label">No Of Person</label>
-                            <input type="number" class="form-control" value="0" id="noOfPerson" name="noOfPerson" step="any" placeholder="eg, no of person or blank">
+                            <input type="number" class="form-control" value="0" id="noOfPerson" name="noOfPerson" step="any" placeholder="eg, no of person or blank" required>
                         </div>
                         <div class="mb-3">
                             <label for="months" class="form-label">Months</label>
-                            <input type="number" class="form-control" id="months" name="months" step="any" placeholder="eg, no of months" required>
+                            <input type="number" class="form-control" id="months" value="0" name="months" step="any" placeholder="eg, no of months" required>
                         </div>
                         <input type="hidden" name="project_id" value="{{ $budget->id }}">
                         <button type="submit" class="btn btn-primary">Add Facilities Cost</button>
@@ -353,7 +353,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="contract" class="form-label">Contract</label>
-                                <input type="text" class="form-control" id="contract" name="contract" placeholder="e.g., Annual Maintenance Contract" >
+                                <input type="text" class="form-control" id="contract" name="contract" placeholder="e.g., Annual Maintenance Contract" required>
                             </div>
                             <div class="mb-3">
                                 <label for="project" class="form-label">Project</label>
@@ -366,8 +366,8 @@
                             <div class="mb-3">
                                 <label for="po" class="form-label">PO</label>
                                 <select class="form-select" id="po" name="po" required>
-                                    <option value="CAPEX">CAPEX</option>
-                                    <option value="OPEX">OPEX</option>
+                                    <option  value="CAPEX">CAPEX</option>
+                                    <option selected value="OPEX">OPEX</option>
                                 </select>
                             </div>
                             <div class="mb-3">

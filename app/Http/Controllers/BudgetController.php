@@ -455,4 +455,46 @@ class BudgetController extends Controller
   {
     //
   }
+
+  public function allocateBudget(Request $request, $id)
+  {
+      $project = BudgetProject::findOrFail($id);
+      $amount = $request->input('amount');
+      $project->allocateBudget($amount);
+
+      return redirect()->route('projects.show', $id)->with('success', 'Budget allocated successfully.');
+  }
+
+  public function processPurchaseOrder(Request $request, $id)
+  {
+      $po = PurchaseOrder::findOrFail($id);
+      $project = $po->project;
+      $success = $project->processPurchaseOrder($po);
+
+      if ($success) {
+          return redirect()->route('purchaseOrders.show', $id)->with('success', 'Purchase Order approved and budget updated.');
+      }
+
+      return redirect()->route('purchaseOrders.show', $id)->with('error', 'Insufficient budget for Purchase Order.');
+  }
+
+  public function logDailyPaymentExpense(Request $request, $id)
+  {
+      $project = BudgetProject::findOrFail($id);
+      $amount = $request->input('amount');
+      $success = $project->logDailyPaymentExpense($amount);
+
+      if ($success) {
+          return redirect()->route('projects.show', $id)->with('success', 'Daily payment expense logged and budget updated.');
+      }
+
+      return redirect()->route('projects.show', $id)->with('error', 'Insufficient budget for daily payment expense.');
+  }
+
+  public function showCashFlow($id)
+  {
+      $project = BudgetProject::findOrFail($id);
+      $cashFlows = $project->cashFlows()->get();
+      return view('projects.cash_flow', compact('project', 'cashFlows'));
+  }
 }

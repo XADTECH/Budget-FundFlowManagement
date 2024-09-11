@@ -25,13 +25,10 @@ class BudgetProject extends Model
     'site_name',
     'month',
     'approval_status',
-    'daily_payment_expense',
-    'lpo_amount',
     'bal_under_over_budget',
     'total_budget_allocated',
     'total_dpm_expense',
     'total_lpo_expense',
-    'total_budget',
     'status',
   ];
 
@@ -100,6 +97,67 @@ class BudgetProject extends Model
         {
             // Remaining budget is total budget allocated minus total expenses
             return $this->total_budget_allocated - $this->getUtilization();
+        }
+
+      // Method to allocate budget
+    public function allocateBudget($amount)
+    {
+        $this->total_budget_allocated += $amount;
+        $this->save();
+
+        // Record cash inflow
+        CashFlow::create([
+            'budget_project_id' => $this->id,
+            'type' => 'inflow',
+            'amount' => $amount,
+            'description' => 'Budget allocation',
+        ]);
+    }
+    
+        public function processPurchaseOrder(PurchaseOrder $purchaseOrder)
+        {
+            if ($this->canCoverExpense($purchaseOrder->total_amount)) {
+                $this->deductExpense($purchaseOrder->total_amount, 'Purchase Order');
+                $purchaseOrder->status = 'Approved';
+                $purchaseOrder->save();
+                return true;
+            }
+            $purchaseOrder->status = 'Rejected';
+            $purchaseOrder->save();
+            return false;
+        }
+    
+        public function logDailyPaymentExpense($amount)
+        {
+            if ($this->canCoverExpense($amount)) {
+                $this->deductExpense($amount, 'Daily Payment Expense');
+                return true;
+            }
+            return false;
+        }
+    
+        protected function deductExpense($amount, $description)
+        {
+            if ($this->current_balance >= $amount) {
+                $this->current_balance -= $amount;
+                $this->save();
+    
+                // Record cash outflow
+                CashFlow::create([
+                    'budget_project_id' => $this->id,
+                    'type' => 'outflow',
+                    'amount' => $amount,
+                    'description' => $description,
+                ]);
+    
+                return true;
+            }
+            return false;
+        }
+    
+        public function canCoverExpense($amount)
+        {
+            return $this->current_balance >= $amount;
         }
     
 }
