@@ -15,14 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('purchase_order_id');
             $table->string('po_number');
-            $table->string('item_code'); // Unique item code or reference
-            $table->text('description');
-            $table->integer('quantity');
-            $table->decimal('unit_price', 10, 2);
-            $table->decimal('total', 10, 2);
-            $table->decimal('total_amount', 10, 2)->default(0); // Added column
-            $table->decimal('total_discount', 10, 2)->default(0); // Added column
-            $table->decimal('total_vat', 10, 2)->default(0); // Added column
+            $table->json('items'); // JSON field to store item details
+            $table->decimal('total_amount', 10, 2)->default(0);
+            $table->decimal('total_discount', 10, 2)->default(0);
+            $table->decimal('total_vat', 10, 2)->default(0);
+            $table->string('status')->default('Not Submitted')->nullable(); // New field for status
             $table->timestamps();
         });
         

@@ -29,6 +29,7 @@ class PurchaseOrder extends Model
         'budget_balance',
         'current_request',
         'is_verified',
+        'status'
     ];
 
     // Define any relationships here, e.g., if you have a Project model

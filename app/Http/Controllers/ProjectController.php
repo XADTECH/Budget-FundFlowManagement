@@ -139,6 +139,7 @@ class ProjectController extends Controller
   // Show budget project report summary
   public function showBudgetProjectReport($id)
   {
+
     // Optionally, fetch project details using the ID
     // $project = Project::findOrFail($id);
 

@@ -202,7 +202,7 @@
         <!-- Button to trigger the modal -->
         <div class="text-end mt-4">
             @php
-                $isDisabled = is_null($budget->total_budget_allocated);
+                $isDisabled = is_null($budget->total_budget_allocated) || $poStatus === "submitted";
             @endphp
             <button 
                 type="button" 
@@ -262,18 +262,22 @@
 </div>
 
 
-<!-- Button to trigger POST request -->
-<div class="text-end mt-4">
-    <button 
-        type="button" 
-        class="btn" 
-        id="submitOrderBtn" 
-        style="background-color:#1a73e8; color:white;"
-        onClick="submitData()"
-    >
-        <i class="fas fa-save"></i> Submit Order
-    </button>
-</div>
+    <!-- Button to trigger POST request -->
+    <div class="text-end mt-4">
+        @php
+            $isDisabled = is_null($budget->total_budget_allocated) ||   $poStatus === 'submitted';
+        @endphp
+        <button 
+            type="button" 
+            class="btn" 
+            id="submitOrderBtn" 
+            style="background-color:#1a73e8; color:white; {{ $isDisabled ? 'pointer-events: none; opacity: 0.5;' : '' }}"
+            {{ $isDisabled ? 'disabled' : '' }}
+            onClick="{{ $isDisabled ? '' : 'submitData()' }}"
+        >
+            <i class="fas fa-save"></i> Submit Order
+        </button>
+    </div>
 
     <div class="budget-verification-box mt-4">
         <h5>Budget Department Verification</h5>
@@ -386,7 +390,8 @@
             items: storedItems,
             totalAmount: totalAmount,
             totalDiscount: totalDiscount,
-            totalVAT: totalVAT
+            totalVAT: totalVAT,
+            "status" : "submitted"
         };
 
         console.log(data);
@@ -401,7 +406,13 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+                if (data.message === 'Purchase order items saved successfully!') {
+                    // Redirect to the specified page
+                    window.location.href = '/pages/add-budget-project-purchase-order';
+                } else {
+                    // Handle unexpected responses or errors
+                    console.error('Unexpected response:', data);
+                }
         })
         .catch(error => {
             console.log(error);

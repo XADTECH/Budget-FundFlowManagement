@@ -51,13 +51,6 @@
                 </li>
 
                 <li class="menu-item">
-                    <a href="/pages/add-budget-project-purchase-order" class="menu-link">
-                        <div>Add Purchase Order</div>
-                        <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>
-                    </a>
-                </li>
-
-                <li class="menu-item">
                     <a href="/pages/add-project-name" class="menu-link">
                         <div>Add Project Name</div>
                         <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto"></div>

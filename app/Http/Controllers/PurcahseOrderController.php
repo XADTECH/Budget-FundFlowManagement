@@ -122,6 +122,7 @@ class PurcahseOrderController extends Controller
          $requested = User::where('id', $purchaseOrder->requested_by)->first();
          $prepared = User::where('id', $purchaseOrder->prepared_by)->first();
          $utilization = $budget->getUtilization();
+         $poStatus = $purchaseOrder->status;
 
 
          $balanceBudget =  $budget->getRemainingBudget();
@@ -131,7 +132,7 @@ class PurcahseOrderController extends Controller
      
          if ($purchaseOrder) {
              // Return the view with the purchase order data if found
-             return view("content.pages.show-budget-project-purchase-order", compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared','utilization','balanceBudget'));
+             return view("content.pages.show-budget-project-purchase-order", compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared','utilization','balanceBudget', 'poStatus'));
          } else {
              // Redirect with an error message if not found
              return redirect('/pages/add-budget-project-purchase-order')
@@ -142,60 +143,52 @@ class PurcahseOrderController extends Controller
      //save purchase order 
      
      public function store(Request $request)
-     {
+{
 
-        // return response()->json($request->all());
-         try {
-             // Validate request data
-             $request->validate([
-                 'poNumber' => 'required|string',
-                 'items' => 'required|array',
-                 'totalAmount' => 'required|numeric',
-                 'totalDiscount' => 'required|numeric',
-                 'totalVAT' => 'required|numeric',
-             ]);
+  
+    try {
+
+         // Validate the request data
+    $request->validate([
+        'poNumber' => 'required|string',
+        'items' => 'required|array', // Validate that items are an array
+        'totalAmount' => 'required|numeric',
+        'totalDiscount' => 'required|numeric',
+        'totalVAT' => 'required|numeric',
+    ]);
+
+    // Fetch the purchase order ID using poNumber
+    $purchaseOrder = PurchaseOrder::where('po_number', $request->poNumber)->firstOrFail();
+
+    // Ensure that items are properly set in the request
+    $items = json_encode($request->items); // Encode items as JSON
+
+    // Create a new PurchaseOrderItem entry
+    PurchaseOrderItem::create([
+        'purchase_order_id' => $purchaseOrder->id,
+        'po_number' => $request->poNumber,
+        'items' => $items, // Include the 'items' field in the insert
+        'total_amount' => $request->totalAmount,
+        'total_discount' => $request->totalDiscount,
+        'total_vat' => $request->totalVAT,
+        'status' => $request->status
+    ]);
+
+    $purchaseOrder->status = "submitted";
+    $purchaseOrder->save();
 
 
-                   // Fetch purchase order id from poNumber
-                $purchaseOrder = PurchaseOrder::where('po_number', $request->poNumber)->firstOrFail();
-                $purchaseOrder->purchase_order_id = $purchaseOrder->id;
-                $purchaseOrder->po_number = $purchaseOrder->poNumber;
-                $purchaseOrder->total_amount = $purchaseOrder->poNumber;
-                $purchaseOrder->total_discount = $purchaseOrder->poNumber;
-                $purchaseOrder->total_vat = $purchaseOrder->poNumber;
-        
 
+    // Return success response
+    return response()->json(['message' => 'Purchase order items saved successfully!'], 200);
+   
 
-     
-             // Save or update purchase order items
-             foreach ($request->items as $item) {
+    } catch (\Exception $e) {
+        \Log::error('Error saving purchase order items: ' . $e->getMessage());
 
-                 PurchaseOrderItem::updateOrCreate(
-                     [
-                         'item_code' => $item['item'],                          
-                     ],
-                     [
-                         'description' => $item['description'],
-                         'quantity' => $item['quantity'],
-                         'unit_price' => $item['unitPrice'],
-                         'total' => $item['itemTotal'],
-                         'total_amount' => $request->totalAmount
-                     ]
-                 );
-             }
-     
-             // Return success response
-             return response()->json(['message' => 'Purchase order items saved successfully!'], 200);
-     
-         } catch (\Exception $e) {
-             // Log the error for debugging
-             \Log::error('Error saving purchase order items: ' . $e->getMessage());
-     
-             // Return error response
-             return response()->json(['message' => 'Failed to save purchase order items.'.  $e->getMessage()], 500);
-         }
-     }
-     
-     
+        return response()->json(['message' => 'Failed to save purchase order items. ' . $e->getMessage()], 500);
+    }
+}
+
   
 }

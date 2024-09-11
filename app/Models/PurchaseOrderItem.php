@@ -20,6 +20,8 @@ class PurchaseOrderItem extends Model
         'quantity',
         'unit_price',
         'total',
+        'items',
+        'status',
         'total_amount',
         'total_discount',
         'total_vat',

@@ -532,9 +532,7 @@
                             <td>{{$revenuePlan->profit_percentage}}</td>
                             <td>{{$revenuePlan->profit_percentage}}</td>
                         </tr>
-                        @php
-                        $total_profit_after_tax+=@$revenuePlan->net_profit_after_tax
-                        @endphp
+                    
                         @endforeach
                     </tbody>
                 </table>
@@ -555,7 +553,7 @@
                     <tbody>
                         <!-- Add rows here -->
                         <td>Net Profit After Tax</td>
-                        <td>{{ @$total_profit_after_tax}} AED</td>
+                        <td>{{$totalNetProfitAfterTax}} AED</td>
                     </tbody>
                 </table>
             </div>
@@ -616,7 +614,7 @@
         <div class="flex-container">
             <div class="bordered">
                 <div class="section-title"></div>
-                <p>$25,000.00</p>
+                <p>{{number_format($budget->total_budget_allocated)}} </p>
             </div>
         </div>
 
@@ -645,23 +643,6 @@
             </form>
         </div>
 
-        <div class="row footer">
-            <div class="col-6">
-                <div class="section-title">Achievements:</div>
-                <ul>
-                    <li>Successful Launch: The redesigned app was successfully launched on schedule.</li>
-                    <li>Increased User Engagement: Achieved a 95% positive feedback rate from early users.</li>
-                </ul>
-            </div>
-            <div class="col-6">
-                <div class="section-title">Key Metrics:</div>
-                <ul>
-                    <li>Completed: 4 tasks</li>
-                    <li>Pending: 3 tasks</li>
-                </ul>
-            </div>
-        </div>
-    </div>
 
 
 

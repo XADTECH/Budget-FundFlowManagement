@@ -63,7 +63,7 @@ class FacilityCost extends Model
           $this->average_cost = $this->total_cost / $this->no_of_months;
       } else {
           // Default value if no_of_months is also null or 0
-          $this->average_cost = 0; // Or another default value
+          $this->average_cost = $this->total_cost; // Or another default value
       }
   
       $this->save();

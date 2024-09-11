@@ -265,97 +265,55 @@ class BudgetController extends Controller
       ]);
   
       // If validation fails, return errors
-
-    try {
-      // Define validation rules
-      $rules = [
-        'startdate' => 'required|date',
-        'enddate' => 'required|date|after_or_equal:startdate',
-        'month' => 'required|date', // Keep this as date for full date validation
-        'projectname' => 'required|exists:projects,id',
-        'division' => 'required|exists:business_units,id',
-        'manager' => 'required|string', // Assuming 'manager' is a string representing the manager's name
-        'client' => 'required|exists:business_clients,id',
-        'region' => 'nullable|string|max:255',
-        'sitename' => 'nullable|string|max:255',
-        'description' => 'nullable|string|max:255',
-      ];
-
-      // Create a validator instance
-      $validator = Validator::make($request->all(), $rules);
-
-      // Check if validation fails
-
       if ($validator->fails()) {
-        return back()->withErrors($validator)->withInput();
+          return response()->json(['errors' => $validator->errors()], 422);
       }
-
-      // Retrieve the validated data
-      $validatedData = $validator->validated();
-
-      // Extract IDs and fields from the validated data
-      $month = $validatedData['month'];
-      $projectId = $validatedData['projectname'];
-      $businessUnitId = $validatedData['division'];
-      $managerID = $validatedData['manager'];
-      $managerName = User::find($managerID)->first_name;
-      $clientId = $validatedData['client'];
-
-      // Fetch names associated with the provided IDs
-      $projectName = Project::find($projectId)->name;
-      $businessUnitName = BusinessUnit::find($businessUnitId)->source;
-      $clientName = BusinessClient::find($clientId)->clientname;
-
-      // Convert the month string to a DateTime object
-      $monthDate = \DateTime::createFromFormat('Y-m-d', $month);
-      if (!$monthDate) {
-        throw new Exception('Invalid month format.');
+  
+      // Find the related budget project
+      $budgetProject = BudgetProject::find($request->project_id);
+  
+      // Initialize DirectCost and IndirectCost for the project
+      $directCost = DirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
+      $indirectCost = IndirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
+  
+      // Initialize total costs to 0
+      $totalDirectCost = 0;
+      $totalIndirectCost = 0;
+  
+      // Calculate direct cost if it exists
+      if ($directCost->exists) {
+          $totalDirectCost = $directCost->calculateTotalDirectCost();
       }
-      $monthName = $monthDate->format('M');
-      $year = $monthDate->format('Y');
-      $formattedMonthYear = strtoupper($monthName . $year);
-
-      // Get current date in the desired format (MMDDYYYY)
-      $formattedDate = Carbon::now()->format('mdY');
-
-      // Fetch the current sequence for the date or create a new one
-      $projectSequence = ProjectBudgetSequence::firstOrCreate(
-        ['date' => $formattedDate],
-        ['last_sequence' => 0]
-      );
-
-      // Increment the sequence number
-      $newSerialNumber = str_pad($projectSequence->last_sequence + 1, 4, '0', STR_PAD_LEFT);
-
-      // Update the last sequence in the database
-      $projectSequence->last_sequence = $newSerialNumber;
-      $projectSequence->save();
-
-      // Generate the unique reference code using the incremented serial number
-      $referenceCode = 'BP' . $formattedDate . $newSerialNumber . '-' . $projectName . '-' . $businessUnitName . '-' . $managerName . '-' . $clientName;
-
-      // Store the validated data along with the generated reference code
-      $newProject = new BudgetProject();
-      $newProject->reference_code = $referenceCode;
-      $newProject->start_date = $validatedData['startdate'];
-      $newProject->end_date = $validatedData['enddate'];
-      $newProject->month = $validatedData['month'];
-      $newProject->project_id = $projectId; // Assuming IDs are correct
-      $newProject->unit_id = $businessUnitId;
-      $newProject->manager_id = $managerID; // If manager should be stored as a name, otherwise update this to store the ID
-      $newProject->client_id = $clientId;
-      $newProject->region = $validatedData['region'];
-      $newProject->site_name = $validatedData['sitename'];
-      $newProject->description = $validatedData['description'] ?? null; // Optional description
-      $newProject->save();
-
-      return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with(
+  
+      // Calculate indirect cost if it exists
+      if ($indirectCost->exists) {
+          $totalIndirectCost = $indirectCost->calculateTotalIndirectCost();
+      }
+  
+      // Create and save the new revenue plan
+      $revenuePlan = new RevenuePlan();
+      $revenuePlan->budget_project_id = $budgetProject->id;
+      $revenuePlan->type = $request->type;
+      $revenuePlan->contract = $request->contract;
+      $revenuePlan->project = $request->project;
+      $revenuePlan->amount = $request->amount;
+      $revenuePlan->description = $request->description;
+      $revenuePlan->status = $request->status;
+      
+      // Save the revenue plan data
+      $revenuePlan->save();
+  
+      // Run calculations after saving, passing in the pre-calculated costs
+      $revenuePlan->calculateTotalProfit();
+      $revenuePlan->calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost);
+      $revenuePlan->calculateTax();
+      $revenuePlan->calculateNetProfitAfterTax();
+      $revenuePlan->calculateProfitPercentage();
+  
+      return redirect('/pages/edit-project-budget/' .  $budgetProject->id)->with(
         'success',
-        'CAPEX added successfully!'
+        'Revenue added successfully!'
       );
-    } catch (Exception $e) {
-      return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
-    }
   }
 
 

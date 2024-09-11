@@ -22,6 +22,21 @@
     #success-alert {
         transition: opacity 0.5s ease-out;
     }
+
+    .status-approved {
+        color: #4caf50; /* Green for Approved */
+    }
+    .status-rejected {
+        color: #ff6f6f; /* Red for Rejected */
+    }
+    .status-pending {
+        color: #ff9800; /* Orange for Pending */
+    }
+    .status-default {
+        color: #000000; /* Default color */
+    }
+
+
 </style>
 <h4 class="py-3 mb-4">
     <span class="text-muted fw-light">Budget Management /</span> Add Project Budget
@@ -185,7 +200,8 @@
                     <th>Client</th>
                     <th>Project Manager</th>
                     <th>Budget Type</th>
-                    <!-- <th>Business Unit</th> -->
+                    <th>Budget Allocated</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -221,6 +237,24 @@
                 <td class="font_style">{{ $clientName }}</td>
                 <td class="font_style">{{  $userName}}</td>
                 <td class="font_style">{{ $budget->budget_type }}</td>
+                <td class="font_style" style="color: {{ is_null($budget->total_budget_allocated) ? '#ff6f6f' : '#4caf50' }};">
+                        {{ $budget->total_budget_allocated ?? 'Not Allocated' }}
+                    </td>
+                    <td class="font_style" style="color: 
+                        @if($budget->approval_status === 'approve')
+                            #4caf50; /* Green for Approved */
+                        @elseif($budget->approval_status === 'rejected')
+                            #ff6f6f; /* Red for Rejected */
+                        @elseif($budget->approval_status === 'pending')
+                            #ff9800; /* Orange for Pending */
+                        @else
+                            #000000; /* Default color for other statuses */
+                        @endif
+                    ">
+                        {{ $budget->approval_status }}
+                    </td>
+
+
                 <!-- <td class="font_style">{{ $unitName}}</td> -->
                       <td>
                       <form action="{{ route('edit-project-budget', ['project_id' => $budget->id]) }}" method="GET" style="display:inline;">
@@ -238,6 +272,7 @@
                         </form>
                     </td>
                 </tr>
+                
                 @endforeach
             </tbody>
         </table>

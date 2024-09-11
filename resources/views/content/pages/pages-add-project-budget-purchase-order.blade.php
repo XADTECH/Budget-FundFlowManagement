@@ -142,6 +142,7 @@
                     <th>Description</th>
                     <th>Prepared By</th>
                     <th>Requested By</th>
+                    <th>Budget Allocated</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -171,6 +172,8 @@
                             @else
                                 {{ number_format($budget->total_budget_allocated, 2) }}
                             @endif
+
+                            <td>{{$po->status }}</td>
                     </tr>
                     @endforeach
             </tbody>

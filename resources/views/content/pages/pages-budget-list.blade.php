@@ -107,6 +107,7 @@
                     <th>Project Manager</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th>Budget Allocate</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -144,6 +145,13 @@
                     <td class="font_style">{{ $userName}}</td>
                     <td class="font_style">{{ $budget->start_date }}</td>
                     <td class="font_style">{{ $budget->end_date }}</td>
+                    <td class="font_style">
+                    @if (is_null($budget->total_budget_allocated) || $budget->total_budget_allocated <= 0)
+                                <span style="color: red;">Budget Not Allocated</span>
+                            @else
+                                {{ number_format($budget->total_budget_allocated, 2) }}
+                            @endif
+                    </td>
                     <td class="font_style">
                         @if (strtolower($budget->approval_status)=='approved'|| strtolower($budget->approval_status)=='approve' )
                         <span class="badge bg-success">{{ $budget->approval_status}}</span>

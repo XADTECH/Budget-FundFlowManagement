@@ -30,6 +30,7 @@ return new class extends Migration
             $table->decimal('budget_utilization', 10, 2)->nullable();
             $table->decimal('budget_balance', 10, 2)->nullable();
             $table->decimal('current_request', 10, 2)->nullable();
+            $table->string('status')->default('Not Submitted')->nullable(); // New field for status
             $table->boolean('is_verified')->default(false); // Add this line for verification status
             $table->timestamps();
         });
