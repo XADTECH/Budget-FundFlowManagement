@@ -27,7 +27,7 @@ class RevenuePlan extends Model
         'tax',
         'net_profit_after_tax',
         'profit_percentage',
-        'status',
+        'approval_status',
     ];
 
     public function budgetProject()
@@ -103,7 +103,15 @@ class RevenuePlan extends Model
         $this->calculateTotalProfit();
         $this->calculateNetProfitBeforeTax();
         $this->calculateTax();
-        $this->calculateNetProfitAfterTax();
-        $this->calculateProfitPercentage();
+        $this->calculateNetProfitAfterTax();            
+    }
+
+    public static function sumTotalCost($budgetProjectId)
+    {
+       $total_cost = RevenuePlan::where('budget_project_id', $budgetProjectId)
+       ->where('approval_status', 'approved') // Only approved salaries
+       ->sum('net_profit_after_tax');
+
+       return $total_cost;
     }
 }

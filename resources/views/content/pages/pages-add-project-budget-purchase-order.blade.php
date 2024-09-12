@@ -36,7 +36,7 @@
             <button type="button" class="btn-close" aria-label="Close"></button>
         </div>
 
-                @if ($errors->any())
+        @if ($errors->any())
             <div class="alert alert-danger" id="error-alert">
                 <!-- <button type="button" class="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

@@ -39,7 +39,16 @@
 <div class="card mt-4">
 
 
-    <h5 class="card-header">PROJECT BUDGET LIST </h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">PROJECT BUDGET LIST</h5>
+        <div class="d-flex">
+            <form class="d-flex" method="GET" action="{{ route('budgets.list') }}">
+                <input type="text" name="reference_code" class="form-control me-2" placeholder="Please enter Budget Reference Code" aria-label="Search">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
     <form class="container" method="GET" action="{{ route('budgets.list') }}">
         <div class="row mb-4">
             <div class="col-md-4">

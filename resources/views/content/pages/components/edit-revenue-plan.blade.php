@@ -59,8 +59,7 @@
                                                 <th>NET PROFIT BEFORE TAX</th>
                                                 <th>TAX</th>
                                                 <th>NET PROFIT AFTER TAX</th> 
-                                                <th>Profit Percentage</th> 
-                                                <th>STATUS</th> 
+                                    
                                             </tr>
                                         </thead>
                                             <tbody>
@@ -76,8 +75,6 @@
                                                 <td>{{$revenuePlan->net_profit_before_tax}}</td>
                                                 <td>{{$revenuePlan->tax}}</td>
                                                 <td>{{$revenuePlan->net_profit_after_tax}}</td>
-                                                <td>{{$revenuePlan->profit_percentage}}</td>
-                                                <td>{{$revenuePlan->profit_percentage}}</td>
                                             </tr>    
                                         @endforeach  
                                             </tbody>

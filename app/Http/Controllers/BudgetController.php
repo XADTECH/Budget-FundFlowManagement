@@ -298,7 +298,6 @@ class BudgetController extends Controller
       $revenuePlan->project = $request->project;
       $revenuePlan->amount = $request->amount;
       $revenuePlan->description = $request->description;
-      $revenuePlan->status = $request->status;
       
       // Save the revenue plan data
       $revenuePlan->save();
@@ -373,6 +372,10 @@ class BudgetController extends Controller
 
     if ($request->filled('start_date')) {
       $budgets->where('start_date', '>=', $request->start_date);
+    }
+
+    if ($request->filled('reference_code')) {
+      $budgets->where('reference_code', $request->reference_code);
     }
 
     if ($request->filled('end_date')) {

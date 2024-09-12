@@ -111,6 +111,22 @@ Route::middleware(['checklogin'])->group(function () {
   Route::get('/pages/budget-project-report-summary/{id}', [ProjectController::class, 'showBudgetProjectReport'])->name('budget-project-report-summary');
   Route::post('/apporve-budget', [ProjectController::class, 'approveBudgetStatus'])->name('approve-status');
 
+  // Route to handle DELETE request for salary
+  Route::delete('/salaries/{id}', [ProjectController::class, 'destroy'])->name('delete.salary');
+
+  // Route to handle PUT request for updating salary
+  Route::put('/salaries/{id}', [ProjectController::class, 'update'])->name('update.salary');
+
+Route::delete('/facility/{id}', [ProjectController::class, 'facility'])->name('delete.facility');
+Route::delete('/material/{id}', [ProjectController::class, 'material'])->name('delete.material');
+Route::delete('/costOverhead/{id}', [ProjectController::class, 'costOverhead'])->name('delete.costOverhead');
+Route::delete('/financialCost/{id}', [ProjectController::class, 'financialCost'])->name('delete.financialCost');
+Route::delete('/capital-expenditures/{id}', [ProjectController::class, 'capitalExpenditure'])->name('delete.capitalExpenditure');
+Route::delete('/delete-revenue/{id}', [ProjectController::class, 'deleteRevenue'])->name('delete.deleteRevenue');
+Route::put('/pages/update-budget-project-facility-cost/{id}', [ProjectController::class, 'updateFacility'])->name('update.updateFacility');
+
+
+
   // Budget Managment
   Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
   Route::post('/pages/add-project-budget', [BudgetController::class, 'store'])->name('add-project-budget');

@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('no_of_months');
             $table->decimal('total_cost', 15, 2)->nullable();
             $table->decimal('average_cost', 15, 2)->nullable();
+            $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('approved');
             $table->timestamps();
         });
     }

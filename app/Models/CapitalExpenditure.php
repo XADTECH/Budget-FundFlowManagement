@@ -26,6 +26,7 @@ class CapitalExpenditure extends Model
         'no_of_months', // Duration of the project in months (5)
         'total_cost', // Total calculated cost (5,000 * 5 * 5 = 125,000)
         'average_cost', // Average cost per staff per month (5,000)
+        'approval_status',
       ];
 
     public function budgetProject()
@@ -81,5 +82,14 @@ class CapitalExpenditure extends Model
 
       $this->save();
       return $this->average_cost;
+  }
+
+  public static function sumTotalCost($budgetProjectId)
+  {
+     $total_cost = CapitalExpenditure::where('budget_project_id', $budgetProjectId)
+     ->where('approval_status', 'approved') // Only approved salaries
+     ->sum('total_cost');
+
+     return $total_cost;
   }
 }

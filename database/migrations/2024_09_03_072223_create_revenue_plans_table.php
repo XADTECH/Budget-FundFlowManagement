@@ -26,8 +26,8 @@ class CreateRevenuePlansTable extends Migration
             $table->decimal('net_profit_before_tax', 15, 2)->nullable();
             $table->decimal('tax', 15, 2)->nullable();
             $table->decimal('net_profit_after_tax', 15, 2)->nullable();
-            $table->decimal('profit_percentage', 5, 2)->nullable();
-            $table->string('status')->nullable();
+            $table->decimal('profit_percentage', 8, 4)->nullable();
+            $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('approved');
             $table->timestamps();
         });
     }

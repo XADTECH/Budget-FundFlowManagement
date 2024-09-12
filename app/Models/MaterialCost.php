@@ -16,6 +16,7 @@ class MaterialCost extends Model
         'budget_project_id',
         'sn', // Serial number or identifier
         'type', // Type of record (Material/Cost)
+        'contract',
         'project', // Project name
         'po', // Type of expense (e.g., OPEX)
         'expenses', // Specific expense (e.g., Salary, Materials)

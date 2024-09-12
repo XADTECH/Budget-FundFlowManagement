@@ -164,6 +164,12 @@ class ProjectController extends Controller
     $clients = BusinessClient::findOrFail($budget->project_id);
     $units = BusinessUnit::findOrFail($budget->project_id);
     // $budgets = BudgetProject::get();
+    $allProjects = Project::all();
+    $facilities = FacilityCost::all();
+    $materials = MaterialCost::all();
+    $overheads = costOverhead::all();
+    $financials = financialCost::all();
+    $capitalExpenditures = capitalExpenditure::all();
 
     $directCost = DirectCost::firstOrNew([
       'budget_project_id' => $id,
@@ -203,12 +209,15 @@ class ProjectController extends Controller
       $totalInDirectCost = $indirectCost->calculateTotalIndirectCost();
     }
 
+
     $totalSalary = Salary::where('budget_project_id', $id)->sum('total_cost');
     $totalFacilityCost = FacilityCost::where('budget_project_id', $id)->sum('total_cost');
     $totalMaterialCost = MaterialCost::where('budget_project_id', $id)->sum('total_cost');
     $totalCostOverhead = CostOverhead::where('budget_project_id', $id)->sum('total_cost');
     $totalFinancialCost = FinancialCost::where('budget_project_id', $id)->sum('total_cost');
     $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $id)->sum('total_cost');
+
+
     return view('content.pages.pages-budget-project-summary-report',   compact(
       'id',
       'clients',
@@ -225,7 +234,13 @@ class ProjectController extends Controller
       'totalFinancialCost',
       'totalNetProfitAfterTax',
       'totalCapitalExpenditure',
-      'totalNetProfitBeforeTax'
+      'totalNetProfitBeforeTax',
+      'allProjects',
+      'facilities',
+      'materials',
+      'overheads',
+      'financials',
+      'capitalExpenditures'
     ));
   }
 
@@ -250,4 +265,74 @@ class ProjectController extends Controller
       'Budget status updated successfully!'
     );
   }
+
+  // In SalaryController
+
+    public function destroy($id)
+    {
+        $salary = Salary::findOrFail($id);
+        $salary->delete();
+        return redirect()->back()->with('success', 'Salary deleted successfully.');
+    }
+
+    public function facility($id)
+    {
+        $facility = FacilityCost::findOrFail($id);
+        $facility->delete();
+        return redirect()->back()->with('success', 'Facility Cost deleted successfully.');
+    }
+
+    public function material($id)
+    {
+        $material = MaterialCost::findOrFail($id);
+        $material->delete();
+        return redirect()->back()->with('success', 'Material Cost deleted successfully.');
+    }
+
+    public function costOverhead($id)
+    {
+        $costOverhead = CostOverhead::findOrFail($id);
+        $costOverhead->delete();
+        return redirect()->back()->with('success', 'Overhead Cost deleted successfully.');
+    }
+
+    public function financialCost($id)
+    {
+        $financialCost = FinancialCost::findOrFail($id);
+        $financialCost->delete();
+        return redirect()->back()->with('success', 'Financial Cost deleted successfully.');
+    }
+
+    public function capitalExpenditure($id)
+    {
+        $financialCost = capitalExpenditure::findOrFail($id);
+        $financialCost->delete();
+        return redirect()->back()->with('success', 'Capital Cost deleted successfully.');
+    }
+
+    public function deleteRevenue($id)
+    {
+        $financialCost = RevenuePlan::findOrFail($id);
+        $financialCost->delete();
+        return redirect()->back()->with('success', 'Revenue Cost deleted successfully.');
+    }
+
+  public function update(Request $request, $id)
+  {
+      $salary = Salary::findOrFail($id);
+      $salary->update($request->all());
+      return redirect()->back()->with('success', 'Salary updated successfully.');
+  }
+
+  //update facility 
+
+  public function updateFacility(Request $request, $id)
+{
+    $facility = FacilityCost::findOrFail($id);
+    $facility->update($request->all());
+    return redirect()->back()->with('success', 'Facility cost updated successfully');
+}
+
+
+ 
 }
