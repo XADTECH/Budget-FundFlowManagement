@@ -77,6 +77,12 @@ class BudgetProject extends Model
       return $this->hasMany(CapitalExpenditure::class, 'budget_project_id');
   }
 
+    // Define the one-to-one or one-to-many relationship with TotalBudgetAllocated
+    public function totalBudgetAllocated()
+    {
+        return $this->hasOne(TotalBudgetAllocated::class, 'budget_project_id');
+    }
+
       public function getUtilization()
     {
       return $this->total_dpm_expense + $this->total_lpo_expense;

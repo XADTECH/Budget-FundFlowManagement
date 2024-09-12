@@ -33,9 +33,7 @@ return new class extends Migration {
         $table->decimal('average_cost', 15, 2)->nullable(); // Average cost per unit, if needed
 
         $table->decimal('total_budget', 15, 2)->nullable(); // Total budget allocated
-        $table->decimal('total_budget_allocated', 15, 2)->nullable(); // Total of each entry
-        $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending');
-        $table->enum('overall_approval', ['pending', 'approved', 'rejected'])->default('pending');
+        $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('approved');
         
         $table->timestamps();
     });

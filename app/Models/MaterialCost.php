@@ -26,14 +26,8 @@ class MaterialCost extends Model
         'unit_cost', // Cost per unit of the material (e.g., 100 per meter)
         'total_cost', // Total calculated cost (quantity * unit_cost)
         'average_cost', // Average cost per unit, if needed
-        'total_budget', // Total budget allocated
-        'total_budget_allocated', // Total of each entry
         'approval_status', // Approval status
-        'approved_by', // ID of the user who approved
-        'total_budget', // Total budget allocated
-        'total_budget_allocated', // Total of each entry
-        'approval_status', // Approval status
-        'approved_by', // ID of the user who approved
+
     ];
 
     public function directCost()
@@ -41,32 +35,37 @@ class MaterialCost extends Model
         return $this->belongsTo(DirectCost::class);
     }
 
-        // Update total budget and allocation
-     // Update total budget and allocation
-public function updateBudget()
-{
-    // Fetch the current total budget and total allocated budget from the database
-    $current_total_budget = MaterialCost::where('budget_project_id', $this->budget_project_id)
-                                  ->sum('total_budget');
-
-    $current_total_budget_allocated = MaterialCost::where('budget_project_id', $this->budget_project_id)
-                                            ->sum('total_budget_allocated');
-
-    // Update total budget by adding new total cost to the existing budget
-    $this->total_budget = $current_total_budget + $this->total_cost;
-
-    // Update total budget allocated similarly
-    $this->total_budget_allocated = $current_total_budget_allocated + $this->total_cost;
-
-    // Save the updated budget and allocation
-    $this->save();
-}
-    
-
     public function budgetProject()
     {
         return $this->belongsTo(BudgetProject::class);
     }
+
+       // Define the relationship with TotalBudgetAllocated based on the project
+       public function totalBudgetAllocated()
+       {
+           return $this->hasOne(TotalBudgetAllocated::class, 'budget_project_id');
+       }
+
+
+   // Update total budget and allocation
+   public function updateBudget($expenseHead)
+   {
+       // Fetch or create the total budget allocated for the project
+       $totalBudgetAllocated = new TotalBudgetAllocated();
+
+       // Sum the total cost of approved salaries for the given budget_project_id
+       $approved_total_cost = MaterialCost::where('budget_project_id', $this->budget_project_id)
+                                    ->where('approval_status', 'approved') // Only approved salaries
+                                    ->sum('total_cost');
+
+       // Update the total_budget_allocated field in the TotalBudgetAllocated table
+       $totalBudgetAllocated->total_budget_allocated = $approved_total_cost;
+       $totalBudgetAllocated->budget_project_id = $this->budget_project_id;
+       $totalBudgetAllocated->expense_head = $expenseHead;
+
+       // Save the updated data
+       $totalBudgetAllocated->save();
+   }
 
     // Calculate total cost dynamically
     public function calculateTotalCost()
@@ -88,6 +87,34 @@ public function updateBudget()
         return $this->average_cost;
     }
 
-   
+    // Approve the material entry
+    public function approve()
+    {
+        $this->approval_status = 'Approved';
+        $this->save();
+    }
+
+    // Reject the material entry
+    public function reject()
+    {
+        $this->approval_status = 'Rejected';
+        $this->save();
+    }
+
+    // Mark the material entry as pending
+    public function pending()
+    {
+        $this->approval_status = 'Pending';
+        $this->save();
+    }
+
+    public static function sumTotalCost($budgetProjectId)
+    {
+       $total_cost = MaterialCost::where('budget_project_id', $budgetProjectId)
+       ->where('approval_status', 'approved') // Only approved salaries
+       ->sum('total_cost');
+
+       return $total_cost;
+    }
     
 }

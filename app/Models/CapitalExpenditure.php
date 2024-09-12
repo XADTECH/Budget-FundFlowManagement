@@ -33,26 +33,52 @@ class CapitalExpenditure extends Model
       return $this->belongsTo(BudgetProject::class);
     }
 
-     // Calculate total cost dynamically
-     public function calculateTotalCost()
-     {
-         if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
-             $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
-         } else {
-             $this->total_cost = $this->total_cost = $this->cost_per_month * $this->no_of_months;; 
-         }
-         $this->save();
-         return $this->total_cost;
-     }
+    // Calculate total cost dynamically
+    public function calculateTotalCost()
+    {
+        // Ensure cost_per_month is a positive value
+        if ($this->cost_per_month > 0) {
+            // Case 1: Both staff and months are greater than 0
+            if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
+                $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
+            }
+            // Case 2: Staff > 0 but no months provided (default to 1 month)
+            elseif ($this->no_of_staff > 0 && $this->no_of_months == 0) {
+                $this->total_cost = $this->cost_per_month * $this->no_of_staff;
+            }
+            // Case 3: No staff but months provided (default to 1 staff member)
+            elseif ($this->no_of_staff == 0 && $this->no_of_months > 0) {
+                $this->total_cost = $this->cost_per_month * $this->no_of_months;
+            }
+            // Case 4: Both staff and months are zero, total cost should be zero
+            else {
+                $this->total_cost = $this->cost_per_month;
+            }
+        } else {
+            // Case where cost_per_month is zero or invalid, set total cost to 0
+            $this->total_cost = 0;
+        }
 
+        // Save the updated total cost to the database
+        $this->save();
+        return $this->total_cost;
+    }
+
+  // Calculate average cost dynamically
   // Calculate average cost dynamically
   public function calculateAverageCost()
   {
       if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
-        $this->average_cost = $this->cost_per_month / $this->no_of_months;; 
+          // Use no_of_staff and no_of_months for calculation
+          $this->average_cost = $this->total_cost / ($this->no_of_staff * $this->no_of_months);
+      } elseif ($this->no_of_months > 0) {
+          // Fallback to dividing total_cost by no_of_months if no_of_staff is null or 0
+          $this->average_cost = $this->total_cost / $this->no_of_months;
       } else {
-        $this->average_cost = $this->cost_per_month / $this->no_of_months;; 
+          // Default value if no_of_months is also null or 0
+          $this->average_cost = $this->total_cost; // Or another default value
       }
+
       $this->save();
       return $this->average_cost;
   }

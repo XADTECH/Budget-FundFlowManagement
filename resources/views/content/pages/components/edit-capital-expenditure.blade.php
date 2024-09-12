@@ -143,11 +143,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                            <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 500">
+                            <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 500" required>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <input type="text" class="form-control" id="description" name="description" placeholder="e.g., 5.1 Cable Detector">
+                            <input type="text" class="form-control" id="description" name="description" placeholder="e.g., 5.1 Cable Detector" required>
                         </div>
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
@@ -159,7 +159,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="months" class="form-label">Months</label>
-                            <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" required>
+                            <input type="number" class="form-control" id="months" name="months" step="any" value="0" placeholder="e.g., 12" required>
                         </div>
                         <input type="hidden" name="project_id" value="{{ $budget->id }}">
                         <button type="submit" class="btn btn-primary">Add CAPEX</button>

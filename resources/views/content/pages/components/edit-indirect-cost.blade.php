@@ -150,11 +150,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                        <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 150.00">
+                        <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 150.00" required>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" name="description" placeholder="e.g., Annual visa renewal cost or insurance coverage details">
+                        <input type="text" class="form-control" id="description" name="description" placeholder="e.g., Annual visa renewal cost or insurance coverage details" required>
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
@@ -162,11 +162,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="noOfPerson" class="form-label">No Of Person</label>
-                        <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" placeholder="e.g., 5" required>
+                        <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any" value="0" placeholder="e.g., 5" required>
                     </div>
                     <div class="mb-3">
                         <label for="months" class="form-label">Months</label>
-                        <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" required>
+                        <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" value="0" required>
                     </div>
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
                     <button type="submit" class="btn btn-primary">Add Cost Overhead</button>
@@ -219,7 +219,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                        <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 1000">
+                        <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 1000" required>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
@@ -231,7 +231,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="months" class="form-label">Months</label>
-                        <input type="number" class="form-control" id="months" name="months" step="any" placeholder="e.g., 12" required>
+                        <input type="number" class="form-control" id="months" name="months" step="any" value="0" placeholder="e.g., 12" required>
                     </div>
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
                     <button type="submit" class="btn btn-primary">Add Financial Cost</button>

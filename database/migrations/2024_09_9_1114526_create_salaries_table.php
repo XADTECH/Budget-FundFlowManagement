@@ -30,11 +30,7 @@ class CreateSalariesTable extends Migration
             $table->integer('no_of_months');
             $table->decimal('total_cost', 15, 2)->nullable();
             $table->decimal('average_cost', 15, 2)->nullable();
-            $table->decimal('total_budget', 15, 2)->nullable(); // Total budget allocated
-            $table->decimal('total_budget_allocated', 15, 2)->nullable(); // Total of each entry
-            $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->enum('overall_approval', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->unsignedBigInteger('approved_by')->nullable(); // ID of the user who approved
+            $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('approved');
             $table->timestamps();
         });
     }
