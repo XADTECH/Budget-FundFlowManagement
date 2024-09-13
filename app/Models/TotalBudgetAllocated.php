@@ -5,19 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-
 class TotalBudgetAllocated extends Model
 {
     use HasFactory;
+    // Define the table associated with the model
+    protected $table = 'total_budget_allocated';
 
-    protected $table = 'total_budget_allocated'; // Explicitly specify the table name
+    // Specify which attributes should be mass assignable
+    protected $fillable = ['budget_project_id', 'approved_budget', 'total_budget_allocated', 'total_budget_utilized', 'duration', 'expense_head', 'reference_code'];
 
-    protected $fillable = ['budget_project_id','total_budget_allocated', 'expense_head']; // Explicitly specify the table name    
+    // Specify the attributes that should be cast to native types
+    protected $casts = [
+        'approved_budget' => 'decimal:2',
+        'total_budget_allocated' => 'decimal:2',
+        'total_budget_utilized' => 'decimal:2',
+    ];
 
-    // Define the relationship with BudgetProject
+    // Define any relationships if needed
     public function budgetProject()
     {
-        return $this->hasMany(BudgetProject::class, 'budget_project_id');
+        return $this->belongsTo(BudgetProject::class, 'budget_project_id');
     }
 
     // Define the relationship with Salary

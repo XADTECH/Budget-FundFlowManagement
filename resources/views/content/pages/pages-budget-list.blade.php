@@ -37,8 +37,6 @@
 
 <!-- Projects Table -->
 <div class="card mt-4">
-
-
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">PROJECT BUDGET LIST</h5>
         <div class="d-flex">
@@ -98,13 +96,16 @@
                 <input type="date" class="form-control" id="end_date" name="end_date" value="{{ request('end_date') }}">
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="margin-bottom:20px">
             <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">Filter</button>
                 <a href="{{ route('budgets.list') }}" class="btn btn-secondary">Clear Filter</a>
             </div>
         </div>
     </form>
+</div>
+
+<div class="card mt-4">
     <div class="table-responsive text-nowrap  limited-scroll">
         <table class="table table-hover">
             <thead>
@@ -184,6 +185,6 @@
     </div>
 </div>
 
-
+<div style="margin-bottom:50px"></div>
 
 @endsection

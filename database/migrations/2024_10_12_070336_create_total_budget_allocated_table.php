@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('total_budget_allocated', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('budget_project_id'); // To link with the project
-            $table->decimal('total_budget_allocated', 15, 2)->default(0); // Total allocated budget
-            $table->string('expense_head'); // Total allocated budget
+            $table->unsignedBigInteger('budget_project_id'); 
+            $table->decimal('approved_budget', 15, 2)->default(0); 
+            $table->decimal('total_budget_allocated', 15, 2)->default(0);
+            $table->decimal('total_budget_utilized', 15, 2)->default(0);
+            $table->string('duration')->nullable();
+            $table->string('expense_head')->nullable();
+            $table->string('reference_code');
             $table->timestamps();
         });
     }

@@ -10,13 +10,20 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Project Summary Report</title>
+        <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+
         <style>
             body {
-                font-family: Arial, sans-serif;
+                font-family: 'Playfair Display', serif;
+                /* Professional serif font */
                 background-color: #f4f4f4;
                 margin: 0;
                 padding: 0;
+                line-height: 1.6;
+                color: #333;
             }
+
+
 
             .status-dropdown {
                 width: 120px;
@@ -44,7 +51,7 @@
             .section-title {
                 display: flex;
                 align-items: center;
-                color:black;
+                color: black;
                 font-weight: bolder;
             }
 
@@ -285,8 +292,8 @@
         @if ($errors->any())
             <div class="alert alert-danger" id="error-alert">
                 <!-- <button type="button" class="close" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button> -->
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button> -->
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -298,8 +305,8 @@
         @if (session('success'))
             <div class="alert alert-success" id="success-alert">
                 <!-- <button type="button" class="close" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button> -->
+                                                                                    <span aria-hidden="true">&times;</span>
+                                                                                </button> -->
                 {{ session('success') }}
             </div>
         @endif
@@ -330,6 +337,7 @@
                         <div class="team-member"><strong>Business Unit</strong> {{ @$units->source }}</div>
                         <div class="team-member"><strong>Project Name</strong>{{ @$projects->name }}</div>
                         <div class="team-member"><strong>Reference Code</strong>{{ @$budget->reference_code }}</div>
+                        <div class="team-member"><strong>Approval Status</strong><span style="color:green; font-weight:bold">{{ @$budget->approval_status }}</span></div>
                     </div>
                 </div>
             </div>
@@ -443,7 +451,7 @@
                                     <td>{{ $facility->contract ?? 'no entry' }}</td>
                                     <td>
                                         @php
-                                          $project = $allProjects->where('id', $facility->project)->first();
+                                            $project = $allProjects->where('id', $facility->project)->first();
                                         @endphp
                                         {{ $project->name }}
                                     </td>
@@ -513,7 +521,7 @@
                                     <td>{{ $material->contract ?? 'no entry' }}</td>
                                     <td>
                                         @php
-                                          $project = $allProjects->where('id', $material->project)->first();
+                                            $project = $allProjects->where('id', $material->project)->first();
                                         @endphp
                                         {{ $project->name }}
                                     </td>
@@ -586,7 +594,7 @@
                                     <td>{{ $costOverhead->contract }}</td>
                                     <td>
                                         @php
-                                          $project = $allProjects->where('id', $costOverhead->project)->first();
+                                            $project = $allProjects->where('id', $costOverhead->project)->first();
                                         @endphp
                                         {{ $project->name }}
                                     </td>
@@ -656,7 +664,7 @@
                                     <td>{{ $financialCost->contract }}</td>
                                     <td>
                                         @php
-                                          $project = $allProjects->where('id', $financialCost->project)->first();
+                                            $project = $allProjects->where('id', $financialCost->project)->first();
                                         @endphp
                                         {{ $project->name }}
                                     </td>
@@ -730,7 +738,7 @@
                                     <td>{{ $capital->contract ?? 'no entry' }}</td>
                                     <td>
                                         @php
-                                          $project = $allProjects->where('id', $capital->project)->first();
+                                            $project = $allProjects->where('id', $capital->project)->first();
                                         @endphp
                                         {{ $project->name }}
                                     </td>
@@ -803,7 +811,7 @@
                                     <td>{{ $revenuePlan->contract }}</td>
                                     <td>
                                         @php
-                                          $project = $allProjects->where('id', $revenuePlan->project)->first();
+                                            $project = $allProjects->where('id', $revenuePlan->project)->first();
                                         @endphp
                                         {{ $project->name }}
                                     </td>
@@ -936,13 +944,36 @@
                         @enderror
                     </div>
 
-                    <input type="hidden" name="project_id" value="{{ $id }}">
+                    @php
+                       $totalCost = $totalOPEX + $totalCapitalExpenditure
+                    @endphp
 
-                    <div class="col-md-12 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                    <input type="hidden" name="project_id" value="{{ $id }}">
+                    <input type="hidden" name="total_salary" value="{{ $totalSalary }}">
+                    <input type="hidden" name="total_facility_cost" value="{{ $totalFacilityCost }}">
+                    <input type="hidden" name="total_material_cost" value="{{ $totalMaterialCost }}">
+                    <input type="hidden" name="total_cost_overhead" value="{{ $totalCostOverhead }}">
+                    <input type="hidden" name="total_financial_cost" value="{{ $totalFinancialCost }}">
+                    <input type="hidden" name="total_capital_expenditure" value="{{ $totalCapitalExpenditure }}">
+                    <input type="hidden" name="total_cost" value="{{  $totalCost }}">
+                    <input type="hidden" name="expected_net_profit_after_tax" value="{{  $totalNetProfitAfterTax }}">
+                    <input type="hidden" name="expected_net_profit_before_tax" value="{{  $totalNetProfitBeforeTax }}">
+
+                    <div class="col-md-12 d-flex justify-content-start">
+                        <button type="submit" class="btn btn-primary"
+                            style="background-color:#0067aa; hover:#0067aa">Submit</button>
                     </div>
                 </div>
             </form>
+
+     @if ($budget->approval_status === 'approve')
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary"
+                        style="background-color:#0067aa; border-color:#0067aa">Allocate Budget</button>
+                </div>
+            </div>
+        @endif        
 
             <!-- Salary Update Modal -->
             <!-- Check if the salary object exists before rendering the modal -->
@@ -1082,7 +1113,7 @@
                                         <select class="form-select" id="project" name="project" required>
                                             @foreach ($allProjects as $project)
                                                 <option value="{{ $project->id }}"
-                                                    {{ $project->id == $facility->project? 'selected' : '' }}>
+                                                    {{ $project->id == $facility->project ? 'selected' : '' }}>
                                                     {{ $project->name }}</option>
                                             @endforeach
                                         </select>
@@ -1279,10 +1310,10 @@
                                         <select class="form-select" id="project-{{ $costOverhead->id }}" name="project"
                                             required>
                                             @foreach ($allProjects as $project)
-                                            <option value="{{ $project->id }}"
-                                                {{ $project->id == $costOverhead->project ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
+                                                <option value="{{ $project->id }}"
+                                                    {{ $project->id == $costOverhead->project ? 'selected' : '' }}>
+                                                    {{ $project->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -1384,11 +1415,11 @@
                                         <label for="project-{{ $financialCost->id }}" class="form-label">Project</label>
                                         <select class="form-select" id="project-{{ $financialCost->id }}"
                                             name="project" required>
-                                        @foreach ($allProjects as $project)
-                                            <option value="{{ $project->id }}"
-                                                {{ $project->id == $financialCost->project ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
+                                            @foreach ($allProjects as $project)
+                                                <option value="{{ $project->id }}"
+                                                    {{ $project->id == $financialCost->project ? 'selected' : '' }}>
+                                                    {{ $project->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -1481,7 +1512,7 @@
                                                 <option value="{{ $project->id }}"
                                                     {{ $project->id == $capital->project ? 'selected' : '' }}>
                                                     {{ $project->name }}</option>
-                                             @endforeach
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -1579,7 +1610,7 @@
                                                 <option value="{{ $project->id }}"
                                                     {{ $project->id == $revenuePlan->project ? 'selected' : '' }}>
                                                     {{ $project->name }}</option>
-                                             @endforeach
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="mb-3">

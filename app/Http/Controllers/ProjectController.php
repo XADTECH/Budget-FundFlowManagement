@@ -13,6 +13,7 @@ use App\Models\FinancialCost;
 use App\Models\IndirectCost;
 use App\Models\MaterialCost;
 use App\Models\RevenuePlan;
+use App\Models\TotalBudgetAllocated;
 use App\Models\Salary;
 use Illuminate\Http\Request;
 use App\Models\Project;
@@ -248,24 +249,57 @@ class ProjectController extends Controller
 
   public function approveBudgetStatus(Request $request)
   {
-    $validator = Validator::make($request->all(), [
-      'project_id' => 'required|integer|exists:budget_project,id',
-      'status' => 'required',
-    ]);
+    $validatedData = $request->validate([
+      'status' => 'required|string',
+      'project_id' => 'required|integer',
+      'total_salary' => 'required|numeric',
+      'total_facility_cost' => 'required|numeric',
+      'total_material_cost' => 'required|numeric',
+      'total_cost_overhead' => 'required|numeric',
+      'total_financial_cost' => 'required|numeric',
+      'total_capital_expenditure' => 'required|numeric',
+      'total_cost' => 'required|numeric',
+      'expected_net_profit_after_tax' => 'required|numeric',
+      'expected_net_profit_before_tax' => 'required|numeric',
+  ]);
 
-    if ($validator->fails()) {
-      return back()->withErrors($validator)->withInput();
-    }
+  $approvalStatus = $validatedData['status'];
+  $projectId = $validatedData['project_id'];
 
+  // Step 1: Check if approval_status is not 'approve' and delete entries
+  if ($approvalStatus !== 'approve') {
+      // Delete entries related to the project_id
+      TotalBudgetAllocated::where('budget_project_id', $projectId)->delete();
+  }
 
-    BudgetProject::findOrFail($request->project_id)->update([
-      'approval_status' => $request->status
-    ]);
+  // Step 2: If approval_status is 'approve', update or create records
+  if ($approvalStatus === 'approve') {
+      $expenses = [
+          'salary' => $validatedData['total_salary'],
+          'facility_cost' => $validatedData['total_facility_cost'],
+          'material_cost' => $validatedData['total_material_cost'],
+          'cost_overhead' => $validatedData['total_cost_overhead'],
+          'financial_cost' => $validatedData['total_financial_cost'],
+          'capital_expenditure' => $validatedData['total_capital_expenditure'],
+      ];
 
-    return redirect('/pages/budget-lists')->with(
-      'success',
-      'Budget status updated successfully!'
-    );
+      foreach ($expenses as $expenseHead => $amount) {
+          TotalBudgetAllocated::updateOrCreate(
+              [
+                  'budget_project_id' => $projectId,
+                  'expense_head' => $expenseHead,
+              ],
+              [
+                  'approved_budget' => $amount,
+                  'expense_head' => $expenseHead,
+              ]
+          );
+      }
+  }
+
+  // Return a response or redirect as needed
+  return response()->json(['message' => 'Budget updated successfully']);
+   
   }
 
   // DELETE SALARY

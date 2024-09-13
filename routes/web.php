@@ -213,6 +213,10 @@ Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::clas
     );
 
 
+    //allocate budget
+    
+    
+
 
 
 
