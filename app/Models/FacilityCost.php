@@ -18,6 +18,7 @@ class FacilityCost extends Model
         'type', // Type of record (Cost)
         'project', // Project name
         'po', // Type of expense (OPEX)
+        'contract',
         'expenses', // Specific expense (Salary)
         'description', // Description of the role or details (Project Manager)
         'status', // Status of the budget entry (New Hiring)

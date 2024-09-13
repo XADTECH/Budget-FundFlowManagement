@@ -17,6 +17,7 @@ class CostOverhead extends Model
     'sn', // Serial number or identifier
     'type', // Type of record (Cost)
     'project', // Project name
+    'contract', // Project name
     'po', // Type of expense (OPEX)
     'expenses', // Specific expense (Salary)
     'description', // Description of the role or details (Project Manager)

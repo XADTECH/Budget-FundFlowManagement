@@ -44,6 +44,8 @@
             .section-title {
                 display: flex;
                 align-items: center;
+                color:black;
+                font-weight: bolder;
             }
 
             .section-title .table-header-button {
@@ -283,8 +285,8 @@
         @if ($errors->any())
             <div class="alert alert-danger" id="error-alert">
                 <!-- <button type="button" class="close" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button> -->
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button> -->
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -296,8 +298,8 @@
         @if (session('success'))
             <div class="alert alert-success" id="success-alert">
                 <!-- <button type="button" class="close" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button> -->
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button> -->
                 {{ session('success') }}
             </div>
         @endif
@@ -366,15 +368,21 @@
                                     <td>{{ $salary->sn ?? 'no entry' }}</td>
                                     <td>{{ $salary->type ?? 'no entry' }}</td>
                                     <td>{{ $salary->contract ?? 'no entry' }}</td>
-                                    <td>{{ $salary->project ?? 'no entry' }}</td>
+                                    <td>
+
+                                        @php
+                                            $project = $allProjects->where('id', $salary->project)->first();
+                                        @endphp
+                                        {{ $project->name }}
+                                    </td>
                                     <td>{{ $salary->po ?? 'no entry' }}</td>
                                     <td>{{ $salary->expenses ?? 'no entry' }}</td>
                                     <td>{{ $salary->description ?? 'no entry' }}</td>
-                                    <td>{{ $salary->cost_per_month ?? 'no entry' }}</td>
+                                    <td>{{ number_format($salary->cost_per_month) ?? 'no entry' }}</td>
                                     <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
                                     <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
-                                    <td>{{ $salary->average_cost ?? 'no entry' }}</td>
-                                    <td>{{ $salary->total_cost ?? 'no entry' }}</td>
+                                    <td>{{ number_format($salary->average_cost) ?? 'no entry' }}</td>
+                                    <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
                                     <td>{{ $salary->status ?? 'no entry' }}</td>
                                     <td>
                                         <!-- Delete Form -->
@@ -433,7 +441,12 @@
                                     <td>{{ $facility->sn ?? 'no entry' }}</td>
                                     <td>{{ $facility->type ?? 'no entry' }}</td>
                                     <td>{{ $facility->contract ?? 'no entry' }}</td>
-                                    <td>{{ $facility->project ?? 'no entry' }}</td>
+                                    <td>
+                                        @php
+                                          $project = $allProjects->where('id', $facility->project)->first();
+                                        @endphp
+                                        {{ $project->name }}
+                                    </td>
                                     <td>{{ $facility->po ?? 'no entry' }}</td>
                                     <td>{{ $facility->expenses ?? 'no entry' }}</td>
                                     <td>{{ $facility->description ?? 'no entry' }}</td>
@@ -498,7 +511,12 @@
                                     <td>{{ $material->sn ?? 'no entry' }}</td>
                                     <td>{{ $material->type ?? 'no entry' }}</td>
                                     <td>{{ $material->contract ?? 'no entry' }}</td>
-                                    <td>{{ $material->project ?? 'no entry' }}</td>
+                                    <td>
+                                        @php
+                                          $project = $allProjects->where('id', $material->project)->first();
+                                        @endphp
+                                        {{ $project->name }}
+                                    </td>
                                     <td>{{ $material->po ?? 'no entry' }}</td>
                                     <td>{{ $material->expenses ?? 'no entry' }}</td>
                                     <td>{{ $material->description ?? 'no entry' }}</td>
@@ -566,7 +584,12 @@
                                     <td>{{ $costOverhead->sn }}</td>
                                     <td>{{ $costOverhead->type }}</td>
                                     <td>{{ $costOverhead->contract }}</td>
-                                    <td>{{ $costOverhead->project }}</td>
+                                    <td>
+                                        @php
+                                          $project = $allProjects->where('id', $costOverhead->project)->first();
+                                        @endphp
+                                        {{ $project->name }}
+                                    </td>
                                     <td>{{ $costOverhead->po }}</td>
                                     <td>{{ $costOverhead->expenses }}</td>
                                     <td>{{ $costOverhead->description }}</td>
@@ -590,7 +613,7 @@
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#updateOverHeadCostModal-{{ $costOverhead->id }}">
                                             Update
-                                        </button>                        
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -617,7 +640,7 @@
                                 <th>EXPENSE</th>
                                 <th>DESCRIPTION</th>
                                 <th>COST PER MONTH</th>
-                                <th>NO OF PERSON</th>
+
                                 <th>MONTHS</th>
                                 <th>AVERAGE COST</th>
                                 <th>TOTAL COST</th>
@@ -631,12 +654,17 @@
                                     <td>{{ $financialCost->sn }}</td>
                                     <td>{{ $financialCost->type }}</td>
                                     <td>{{ $financialCost->contract }}</td>
-                                    <td>{{ $financialCost->project }}</td>
+                                    <td>
+                                        @php
+                                          $project = $allProjects->where('id', $financialCost->project)->first();
+                                        @endphp
+                                        {{ $project->name }}
+                                    </td>
                                     <td>{{ $financialCost->po }}</td>
                                     <td>{{ $financialCost->expenses }}</td>
                                     <td>{{ $financialCost->description }}</td>
                                     <td>{{ $financialCost->cost_per_month }}</td>
-                                    <td>{{ $financialCost->no_of_staff }}</td>
+
                                     <td>{{ $financialCost->no_of_months }}</td>
                                     <td>{{ $financialCost->average_cost }}</td>
                                     <td>{{ $financialCost->total_cost }}</td>
@@ -700,13 +728,18 @@
                                     <td>{{ $capital->sn ?? 'no entry' }}</td>
                                     <td>{{ $capital->type ?? 'no entry' }}</td>
                                     <td>{{ $capital->contract ?? 'no entry' }}</td>
-                                    <td>{{ $capital->project ?? 'no entry' }}</td>
+                                    <td>
+                                        @php
+                                          $project = $allProjects->where('id', $capital->project)->first();
+                                        @endphp
+                                        {{ $project->name }}
+                                    </td>
                                     <td>{{ $capital->po ?? 'no entry' }}</td>
                                     <td>{{ $capital->expenses ?? 'no entry' }}</td>
                                     <td>{{ $capital->description ?? 'no entry' }}</td>
-                                    <td>{{ $capital->quantity ?? 'no entry' }}</td>
-                                    <td>{{ $capital->unit ?? 'no entry' }}</td>
-                                    <td>{{ $capital->unit_cost ?? 'no entry' }}</td>
+                                    <td>{{ $capital->cost_per_month ?? 'no entry' }}</td>
+                                    <td>{{ $capital->no_of_staff ?? 'no entry' }}</td>
+                                    <td>{{ $capital->no_of_months ?? 'no entry' }}</td>
                                     <td>{{ $capital->total_cost ?? 'no entry' }}</td>
                                     <td>{{ $capital->average_cost ?? 'no entry' }}</td>
                                     <td>{{ $capital->status ?? 'no entry' }}</td>
@@ -723,7 +756,7 @@
                                         </form>
                                         <!-- Update Button -->
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#updateModal-{{ $capital->id }}">
+                                            data-bs-target="#updateCapitalModal-{{ $capital->id }}">
                                             Update
                                         </button>
                                     </td>
@@ -756,7 +789,7 @@
                                 <th>NET PROFIT BEFORE TAX</th>
                                 <th>TAX</th>
                                 <th>NET PROFIT AFTER TAX</th>
-                                <th>STATUS</th>
+                                <th>ACTIONS</th>
                             </tr>
                         </thead>
                         @php
@@ -768,7 +801,12 @@
                                     <td>{{ $revenuePlan->sn }}</td>
                                     <td>{{ $revenuePlan->type }}</td>
                                     <td>{{ $revenuePlan->contract }}</td>
-                                    <td>{{ $revenuePlan->project }}</td>
+                                    <td>
+                                        @php
+                                          $project = $allProjects->where('id', $revenuePlan->project)->first();
+                                        @endphp
+                                        {{ $project->name }}
+                                    </td>
                                     <td>{{ $revenuePlan->description }}</td>
                                     <td>{{ $revenuePlan->amount }}</td>
                                     <td>{{ $revenuePlan->total_profit }}</td>
@@ -788,7 +826,7 @@
                                         </form>
                                         <!-- Update Button -->
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#updateModal-{{ $revenuePlan->id }}">
+                                            data-bs-target="#editRevenuePlan-{{ $revenuePlan->id }}">
                                             Update
                                         </button>
                                     </td>
@@ -907,95 +945,103 @@
             </form>
 
             <!-- Salary Update Modal -->
-            <div class="modal fade" id="updateModal-{{ $salary->id }}" tabindex="-1"
-                aria-labelledby="updateModalLabel-{{ $salary->id }}" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="updateModalLabel-{{ $salary->id }}">Update Salary</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{{ url('/pages/update-budget-project-salary/' . $salary->id) }}"
-                                method="POST">
-                                @csrf
-                                @method('PUT') <!-- Include this for updating resources -->
+            <!-- Check if the salary object exists before rendering the modal -->
+            @if (isset($salary))
+                <div class="modal fade" id="updateModal-{{ $salary->id }}" tabindex="-1"
+                    aria-labelledby="updateModalLabel-{{ $salary->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel-{{ $salary->id }}">Update Salary</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ url('/pages/update-budget-project-salary/' . $salary->id) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PUT') <!-- Include this for updating resources -->
 
-                                <div class="mb-3">
-                                    <label for="type-{{ $salary->id }}" class="form-label">Type</label>
-                                    <select class="form-select" id="type-{{ $salary->id }}" name="type" required>
-                                        <option value="Salary" {{ $salary->type == 'Salary' ? 'selected' : '' }}>
-                                            Salary</option>
-                                        <option value="Other" {{ $salary->type == 'Other' ? 'selected' : '' }}>Other
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="contract-{{ $salary->id }}" class="form-label">Contract</label>
-                                    <input type="text" class="form-control" id="contract-{{ $salary->id }}"
-                                        name="contract" value="{{ $salary->contract }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="project-{{ $salary->id }}" class="form-label">Project</label>
-                                    <select class="form-select" id="project-{{ $salary->id }}" name="project"
-                                        required>
-                                        @foreach ($allProjects as $project)
-                                            <option value="{{ $project->id }}"
-                                                {{ $salary->project_id == $project->id ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="po-{{ $salary->id }}" class="form-label">PO Type</label>
-                                    <select class="form-select" id="po-{{ $salary->id }}" name="po" required>
-                                        <option value="CAPEX" {{ $salary->po_type == 'CAPEX' ? 'selected' : '' }}>
-                                            CAPEX</option>
-                                        <option value="OPEX" {{ $salary->po_type == 'OPEX' ? 'selected' : '' }}>
-                                            OPEX</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="expense-{{ $salary->id }}" class="form-label">Expense Head</label>
-                                    <input type="text" class="form-control" id="expense-{{ $salary->id }}"
-                                        name="expense" value="{{ $salary->expenses }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="cost_per_month-{{ $salary->id }}" class="form-label">Cost Per
-                                        Month</label>
-                                    <input type="number" class="form-control" id="cost_per_month-{{ $salary->id }}"
-                                        name="cost_per_month" value="{{ $salary->no_of_months }}" step="0.01"
-                                        required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="description-{{ $salary->id }}" class="form-label">Description</label>
-                                    <input type="text" class="form-control" id="description-{{ $salary->id }}"
-                                        name="description" value="{{ $salary->description }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="status-{{ $salary->id }}" class="form-label">Status</label>
-                                    <input type="text" class="form-control" id="status-{{ $salary->id }}"
-                                        name="status" value="{{ $salary->status }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="noOfPerson-{{ $salary->id }}" class="form-label">No Of
-                                        Persons</label>
-                                    <input type="number" class="form-control" id="noOfPerson-{{ $salary->id }}"
-                                        name="noOfPerson" value="{{ $salary->no_of_staff }}" step="any" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="months-{{ $salary->id }}" class="form-label">Months</label>
-                                    <input type="number" class="form-control" id="months-{{ $salary->id }}"
-                                        name="months" value="{{ $salary->no_of_months }}" step="any" required>
-                                </div>
+                                    <div class="mb-3">
+                                        <label for="type-{{ $salary->id }}" class="form-label">Type</label>
+                                        <select class="form-select" id="type-{{ $salary->id }}" name="type"
+                                            required>
+                                            <option value="Salary" {{ $salary->type == 'Salary' ? 'selected' : '' }}>
+                                                Salary</option>
+                                            <option value="Other" {{ $salary->type == 'Other' ? 'selected' : '' }}>Other
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="contract-{{ $salary->id }}" class="form-label">Contract</label>
+                                        <input type="text" class="form-control" id="contract-{{ $salary->id }}"
+                                            name="contract" value="{{ $salary->contract }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="project-{{ $salary->id }}" class="form-label">Project</label>
+                                        <select class="form-select" id="project-{{ $salary->id }}" name="project"
+                                            required>
+                                            @foreach ($allProjects as $project)
+                                                <option value="{{ $project->id }}"
+                                                    {{ $salary->project == $project->id ? 'selected' : '' }}>
+                                                    {{ $project->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="po-{{ $salary->id }}" class="form-label">PO Type</label>
+                                        <select class="form-select" id="po-{{ $salary->id }}" name="po"
+                                            required>
+                                            <option value="CAPEX" {{ $salary->po == 'CAPEX' ? 'selected' : '' }}>CAPEX
+                                            </option>
+                                            <option value="OPEX" {{ $salary->po == 'OPEX' ? 'selected' : '' }}>OPEX
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="expense-{{ $salary->id }}" class="form-label">Expense Head</label>
+                                        <input type="text" class="form-control" id="expense-{{ $salary->id }}"
+                                            name="expense" value="{{ $salary->expenses }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cost_per_month-{{ $salary->id }}" class="form-label">Cost Per
+                                            Month</label>
+                                        <input type="number" class="form-control"
+                                            id="cost_per_month-{{ $salary->id }}" name="cost_per_month"
+                                            value="{{ $salary->cost_per_month }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description-{{ $salary->id }}"
+                                            class="form-label">Description</label>
+                                        <input type="text" class="form-control" id="description-{{ $salary->id }}"
+                                            name="description" value="{{ $salary->description }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="status-{{ $salary->id }}" class="form-label">Status</label>
+                                        <input type="text" class="form-control" id="status-{{ $salary->id }}"
+                                            name="status" value="{{ $salary->status }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="noOfPerson-{{ $salary->id }}" class="form-label">No Of
+                                            Persons</label>
+                                        <input type="number" class="form-control" id="noOfPerson-{{ $salary->id }}"
+                                            name="no_of_staff" value="{{ $salary->no_of_staff }}" step="any"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="months-{{ $salary->id }}" class="form-label">Months</label>
+                                        <input type="number" class="form-control" id="months-{{ $salary->id }}"
+                                            name="no_of_months" value="{{ $salary->no_of_months }}" step="any"
+                                            required>
+                                    </div>
 
-                                <button type="submit" class="btn btn-primary">Update Salary</button>
-                            </form>
+                                    <button type="submit" class="btn btn-primary">Update Salary</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
             <!-- Facility Update Modal -->
             @foreach ($facilities as $facility)
@@ -1036,7 +1082,7 @@
                                         <select class="form-select" id="project" name="project" required>
                                             @foreach ($allProjects as $project)
                                                 <option value="{{ $project->id }}"
-                                                    {{ $project->id == $facility->project_id ? 'selected' : '' }}>
+                                                    {{ $project->id == $facility->project? 'selected' : '' }}>
                                                     {{ $project->name }}</option>
                                             @endforeach
                                         </select>
@@ -1072,12 +1118,12 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="noOfPerson" class="form-label">No Of Person</label>
-                                        <input type="number" class="form-control" id="noOfPerson" name="noOfPerson"
+                                        <input type="number" class="form-control" id="noOfPerson" name="no_of_staff"
                                             value="{{ $facility->no_of_staff }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="months" class="form-label">Months</label>
-                                        <input type="number" class="form-control" id="months" name="months"
+                                        <input type="number" class="form-control" id="months" name="no_of_months"
                                             value="{{ $facility->no_of_months }}" required>
                                     </div>
                                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
@@ -1104,7 +1150,7 @@
                             </div>
                             <div class="modal-body">
                                 <form id="updateMaterialForm-{{ $material->id }}"
-                                    action="{{ url('/pages/update-budget-project-material-cost/' . $material->id) }}"
+                                    action="{{ url('/pages/update-budget-project-material/' . $material->id) }}"
                                     method="POST">
                                     @csrf
                                     @method('PUT')
@@ -1127,7 +1173,7 @@
                                         <select class="form-select" id="project" name="project" required>
                                             @foreach ($allProjects as $project)
                                                 <option value="{{ $project->id }}"
-                                                    {{ $project->id == $material->project_id ? 'selected' : '' }}>
+                                                    {{ $project->id == $material->project ? 'selected' : '' }}>
                                                     {{ $project->name }}</option>
                                             @endforeach
                                         </select>
@@ -1189,96 +1235,376 @@
 
             <!-- Cost Overhead Modal -->
             @foreach ($overheads as $costOverhead)
-            <!-- Cost Overhead Modal -->
-            <div class="modal fade" id="updateOverHeadCostModal-{{ $costOverhead->id }}" tabindex="-1"
-                aria-labelledby="updateOverHeadCostModalLabel-{{ $costOverhead->id }}" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="updateOverHeadCostModalLabel-{{ $costOverhead->id }}">
-                                Update Cost Overhead
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="updateOverHeadCostForm-{{ $costOverhead->id }}"
-                                action="{{ url('/pages/update-budget-project-overhead-cost/' . $costOverhead->id) }}"
-                                method="POST">
-                                @csrf
-                                @method('PUT')
-                                <div class="mb-3">
-                                    <label for="type-{{ $costOverhead->id }}" class="form-label">Type</label>
-                                    <select class="form-select" id="type-{{ $costOverhead->id }}" name="type" required>
-                                        <option value="overhead cost" {{ $costOverhead->type === 'overhead cost' ? 'selected' : '' }}>
-                                            Overhead Cost
-                                        </option>
-                                        <option value="Other" {{ $costOverhead->type === 'Other' ? 'selected' : '' }}>
-                                            Other
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="contract-{{ $costOverhead->id }}" class="form-label">Contract</label>
-                                    <input type="text" class="form-control" id="contract-{{ $costOverhead->id }}" name="contract"
-                                        value="{{ $costOverhead->contract }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="project-{{ $costOverhead->id }}" class="form-label">Project</label>
-                                    <select class="form-select" id="project-{{ $costOverhead->id }}" name="project" required>
-                                        @foreach ($allProjects as $project)
-                                            <option value="{{ $project->id }}" {{ $project->id === $costOverhead->project_id ? 'selected' : '' }}>
-                                                {{ $project->name }}
+                <!-- Cost Overhead Modal -->
+                <div class="modal fade" id="updateOverHeadCostModal-{{ $costOverhead->id }}" tabindex="-1"
+                    aria-labelledby="updateOverHeadCostModalLabel-{{ $costOverhead->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateOverHeadCostModalLabel-{{ $costOverhead->id }}">
+                                    Update Cost Overhead
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="updateOverHeadCostForm-{{ $costOverhead->id }}"
+                                    action="{{ url('/pages/update-budget-project-overhead-cost/' . $costOverhead->id) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-3">
+                                        <label for="type-{{ $costOverhead->id }}" class="form-label">Type</label>
+                                        <select class="form-select" id="type-{{ $costOverhead->id }}" name="type"
+                                            required>
+                                            <option value="overhead cost"
+                                                {{ $costOverhead->type === 'overhead cost' ? 'selected' : '' }}>
+                                                Overhead Cost
                                             </option>
+                                            <option value="Other"
+                                                {{ $costOverhead->type === 'Other' ? 'selected' : '' }}>
+                                                Other
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="contract-{{ $costOverhead->id }}"
+                                            class="form-label">Contract</label>
+                                        <input type="text" class="form-control"
+                                            id="contract-{{ $costOverhead->id }}" name="contract"
+                                            value="{{ $costOverhead->contract }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="project-{{ $costOverhead->id }}" class="form-label">Project</label>
+                                        <select class="form-select" id="project-{{ $costOverhead->id }}" name="project"
+                                            required>
+                                            @foreach ($allProjects as $project)
+                                            <option value="{{ $project->id }}"
+                                                {{ $project->id == $costOverhead->project ? 'selected' : '' }}>
+                                                {{ $project->name }}</option>
                                         @endforeach
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="po-{{ $costOverhead->id }}" class="form-label">PO</label>
-                                    <select class="form-select" id="po-{{ $costOverhead->id }}" name="po" required>
-                                        <option value="CAPEX" {{ $costOverhead->po === 'CAPEX' ? 'selected' : '' }}>CAPEX</option>
-                                        <option value="OPEX" {{ $costOverhead->po === 'OPEX' ? 'selected' : '' }}>OPEX</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="expenses-{{ $costOverhead->id }}" class="form-label">Expense Head</label>
-                                    <input type="text" class="form-control" id="expenses-{{ $costOverhead->id }}" name="expenses"
-                                        value="{{ $costOverhead->expenses }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="cost_per_month-{{ $costOverhead->id }}" class="form-label">Cost Per Month</label>
-                                    <input type="number" class="form-control" id="cost_per_month-{{ $costOverhead->id }}" name="cost_per_month"
-                                        step="any" value="{{ $costOverhead->cost_per_month }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="description-{{ $costOverhead->id }}" class="form-label">Description</label>
-                                    <input type="text" class="form-control" id="description-{{ $costOverhead->id }}" name="description"
-                                        value="{{ $costOverhead->description }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="status-{{ $costOverhead->id }}" class="form-label">Status</label>
-                                    <input type="text" class="form-control" id="status-{{ $costOverhead->id }}" name="status"
-                                        value="{{ $costOverhead->status }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="no_of_staff-{{ $costOverhead->id }}" class="form-label">No of Staff</label>
-                                    <input type="number" class="form-control" id="no_of_staff-{{ $costOverhead->id }}" name="no_of_staff"
-                                        step="any" value="{{ $costOverhead->no_of_staff }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="no_of_months-{{ $costOverhead->id }}" class="form-label">No of Months</label>
-                                    <input type="number" class="form-control" id="no_of_months-{{ $costOverhead->id }}" name="no_of_months"
-                                        step="any" value="{{ $costOverhead->no_of_months }}" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Update Cost Overhead</button>
-                            </form>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="po-{{ $costOverhead->id }}" class="form-label">PO</label>
+                                        <select class="form-select" id="po-{{ $costOverhead->id }}" name="po"
+                                            required>
+                                            <option value="CAPEX" {{ $costOverhead->po === 'CAPEX' ? 'selected' : '' }}>
+                                                CAPEX</option>
+                                            <option value="OPEX" {{ $costOverhead->po === 'OPEX' ? 'selected' : '' }}>
+                                                OPEX</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="expenses-{{ $costOverhead->id }}" class="form-label">Expense
+                                            Head</label>
+                                        <input type="text" class="form-control"
+                                            id="expenses-{{ $costOverhead->id }}" name="expenses"
+                                            value="{{ $costOverhead->expenses }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cost_per_month-{{ $costOverhead->id }}" class="form-label">Cost Per
+                                            Month</label>
+                                        <input type="number" class="form-control"
+                                            id="cost_per_month-{{ $costOverhead->id }}" name="cost_per_month"
+                                            step="any" value="{{ $costOverhead->cost_per_month }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description-{{ $costOverhead->id }}"
+                                            class="form-label">Description</label>
+                                        <input type="text" class="form-control"
+                                            id="description-{{ $costOverhead->id }}" name="description"
+                                            value="{{ $costOverhead->description }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="status-{{ $costOverhead->id }}" class="form-label">Status</label>
+                                        <input type="text" class="form-control" id="status-{{ $costOverhead->id }}"
+                                            name="status" value="{{ $costOverhead->status }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="no_of_staff-{{ $costOverhead->id }}" class="form-label">No of
+                                            Staff</label>
+                                        <input type="number" class="form-control"
+                                            id="no_of_staff-{{ $costOverhead->id }}" name="no_of_staff" step="any"
+                                            value="{{ $costOverhead->no_of_staff }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="no_of_months-{{ $costOverhead->id }}" class="form-label">No of
+                                            Months</label>
+                                        <input type="number" class="form-control"
+                                            id="no_of_months-{{ $costOverhead->id }}" name="no_of_months"
+                                            step="any" value="{{ $costOverhead->no_of_months }}" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update Cost Overhead</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
-        
+            @endforeach
 
+            <!-- Update Financial Cost Modal -->
 
+            @foreach ($financials as $financialCost)
+                <div class="modal fade" id="updateModal-{{ $financialCost->id }}" tabindex="-1"
+                    aria-labelledby="updateModalLabel-{{ $financialCost->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel-{{ $financialCost->id }}">Update Financial
+                                    Cost</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="updateFinancialCostForm-{{ $financialCost->id }}"
+                                    action="{{ url('/pages/update-budget-project-financial-cost/' . $financialCost->id) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-3">
+                                        <label for="type-{{ $financialCost->id }}" class="form-label">Type</label>
+                                        <select class="form-select" id="type-{{ $financialCost->id }}" name="type"
+                                            required>
+                                            <option value="financial cost"
+                                                {{ $financialCost->type === 'financial cost' ? 'selected' : '' }}>
+                                                Financial Cost</option>
+                                            <option value="Other"
+                                                {{ $financialCost->type === 'Other' ? 'selected' : '' }}>Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="contract-{{ $financialCost->id }}"
+                                            class="form-label">Contract</label>
+                                        <input type="text" class="form-control"
+                                            id="contract-{{ $financialCost->id }}" name="contract"
+                                            value="{{ $financialCost->contract }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="project-{{ $financialCost->id }}" class="form-label">Project</label>
+                                        <select class="form-select" id="project-{{ $financialCost->id }}"
+                                            name="project" required>
+                                        @foreach ($allProjects as $project)
+                                            <option value="{{ $project->id }}"
+                                                {{ $project->id == $financialCost->project ? 'selected' : '' }}>
+                                                {{ $project->name }}</option>
+                                        @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="po-{{ $financialCost->id }}" class="form-label">PO</label>
+                                        <select class="form-select" id="po-{{ $financialCost->id }}" name="po"
+                                            required>
+                                            <option value="CAPEX"
+                                                {{ $financialCost->po === 'CAPEX' ? 'selected' : '' }}>CAPEX</option>
+                                            <option value="OPEX" {{ $financialCost->po === 'OPEX' ? 'selected' : '' }}>
+                                                OPEX</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="expense-{{ $financialCost->id }}" class="form-label">Expense</label>
+                                        <input type="text" class="form-control"
+                                            id="expense-{{ $financialCost->id }}" name="expenses"
+                                            value="{{ $financialCost->expenses }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cost_per_month-{{ $financialCost->id }}" class="form-label">Cost Per
+                                            Month</label>
+                                        <input type="number" class="form-control"
+                                            id="cost_per_month-{{ $financialCost->id }}" name="cost_per_month"
+                                            value="{{ $financialCost->cost_per_month }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description-{{ $financialCost->id }}"
+                                            class="form-label">Description</label>
+                                        <input type="text" class="form-control"
+                                            id="description-{{ $financialCost->id }}" name="description"
+                                            value="{{ $financialCost->description }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="status-{{ $financialCost->id }}" class="form-label">Status</label>
+                                        <input type="text" class="form-control" id="status-{{ $financialCost->id }}"
+                                            name="status" value="{{ $financialCost->status }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="months-{{ $financialCost->id }}" class="form-label">Months</label>
+                                        <input type="number" class="form-control" id="months-{{ $financialCost->id }}"
+                                            name="no_of_months" value="{{ $financialCost->no_of_months }}" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update Financial Cost</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            <!-- Capital Expenditure Modal -->
+            @foreach ($capitalExpenditures as $capital)
+                <div class="modal fade" id="updateCapitalModal-{{ $capital->id }}" tabindex="-1"
+                    aria-labelledby="updateCapitalModalLabel-{{ $capital->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateCapitalModalLabel-{{ $capital->id }}">Update Capital
+                                    Expenditure</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="updateCapitalExpenseForm-{{ $capital->id }}"
+                                    action="{{ url('/pages/update-budget-capital-expense/' . $capital->id) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-3">
+                                        <label for="type-{{ $capital->id }}" class="form-label">Type</label>
+                                        <select class="form-select" id="type-{{ $capital->id }}" name="type"
+                                            required>
+                                            <option value="Capital Expenditure"
+                                                {{ $capital->type == 'Capital Expenditure' ? 'selected' : '' }}>Capital
+                                                Expenditure</option>
+                                            <option value="Other" {{ $capital->type == 'Other' ? 'selected' : '' }}>
+                                                Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="contract-{{ $capital->id }}" class="form-label">Contract</label>
+                                        <input type="text" class="form-control" id="contract-{{ $capital->id }}"
+                                            name="contract" value="{{ $capital->contract }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="project-{{ $capital->id }}" class="form-label">Project</label>
+                                        <select class="form-select" id="project-{{ $capital->id }}" name="project"
+                                            required>
+                                            @foreach ($allProjects as $project)
+                                                <option value="{{ $project->id }}"
+                                                    {{ $project->id == $capital->project ? 'selected' : '' }}>
+                                                    {{ $project->name }}</option>
+                                             @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="po-{{ $capital->id }}" class="form-label">PO</label>
+                                        <select class="form-select" id="po-{{ $capital->id }}" name="po"
+                                            required>
+                                            <option value="CAPEX" {{ $capital->po == 'CAPEX' ? 'selected' : '' }}>CAPEX
+                                            </option>
+                                            <option value="OPEX" {{ $capital->po == 'OPEX' ? 'selected' : '' }}>OPEX
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="expense-{{ $capital->id }}" class="form-label">Expense</label>
+                                        <input type="text" class="form-control" id="expense-{{ $capital->id }}"
+                                            name="expenses" value="{{ $capital->expenses }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cost_per_month-{{ $capital->id }}" class="form-label">Cost Per
+                                            Month</label>
+                                        <input type="number" class="form-control"
+                                            id="cost_per_month-{{ $capital->id }}" name="cost_per_month"
+                                            step="any" value="{{ $capital->cost_per_month }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description-{{ $capital->id }}"
+                                            class="form-label">Description</label>
+                                        <input type="text" class="form-control" id="description-{{ $capital->id }}"
+                                            name="description" value="{{ $capital->description }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="status-{{ $capital->id }}" class="form-label">Status</label>
+                                        <input type="text" class="form-control" id="status-{{ $capital->id }}"
+                                            name="status" value="{{ $capital->status }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="noOfPerson-{{ $capital->id }}" class="form-label">No Of
+                                            Person</label>
+                                        <input type="number" class="form-control" id="noOfPerson-{{ $capital->id }}"
+                                            name="no_of_staff " step="any" value="{{ $capital->no_of_staff }}"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="months-{{ $capital->id }}" class="form-label">Months</label>
+                                        <input type="number" class="form-control" id="months-{{ $capital->id }}"
+                                            name="no_of_months" step="any" value="{{ $capital->no_of_months }}"
+                                            required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update CAPEX</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            <!-- Revenue Plan Modal -->
+            @foreach ($revenuePlans as $revenuePlan)
+                <div class="modal fade" id="editRevenuePlan-{{ $revenuePlan->id }}" tabindex="-1"
+                    aria-labelledby="editRevenuePlanLabel-{{ $revenuePlan->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editRevenuePlanLabel-{{ $revenuePlan->id }}">Edit Revenue
+                                    Plan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="updateRevenueForm-{{ $revenuePlan->id }}"
+                                    action="{{ url('/pages/update-budget-project-revenue/' . $revenuePlan->id) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-3">
+                                        <label for="type-{{ $revenuePlan->id }}" class="form-label">Type</label>
+                                        <select class="form-select" id="type-{{ $revenuePlan->id }}" name="type"
+                                            required>
+                                            <option value="Revenue"
+                                                {{ $revenuePlan->type == 'Revenue' ? 'selected' : '' }}>Revenue</option>
+                                            <option value="Other" {{ $revenuePlan->type == 'Other' ? 'selected' : '' }}>
+                                                Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="contract-{{ $revenuePlan->id }}" class="form-label">Contract</label>
+                                        <input type="text" class="form-control" id="contract-{{ $revenuePlan->id }}"
+                                            name="contract" value="{{ $revenuePlan->contract }}"
+                                            placeholder="Enter contract details">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="project-{{ $revenuePlan->id }}" class="form-label">Project</label>
+                                        <select class="form-select" id="project-{{ $revenuePlan->id }}" name="project">
+                                            @foreach ($allProjects as $project)
+                                                <option value="{{ $project->id }}"
+                                                    {{ $project->id == $revenuePlan->project ? 'selected' : '' }}>
+                                                    {{ $project->name }}</option>
+                                             @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="amount-{{ $revenuePlan->id }}" class="form-label">Amount</label>
+                                        <input type="number" class="form-control" id="amount-{{ $revenuePlan->id }}"
+                                            name="amount" value="{{ $revenuePlan->amount }}" required
+                                            placeholder="Enter amount">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description-{{ $revenuePlan->id }}"
+                                            class="form-label">Description</label>
+                                        <input type="text" class="form-control"
+                                            id="description-{{ $revenuePlan->id }}" name="description"
+                                            value="{{ $revenuePlan->description }}" required
+                                            placeholder="Enter description">
+                                    </div>
+                                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
+
+                                    <button type="submit" class="btn btn-primary">Update Revenue</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
 
 
     </body>

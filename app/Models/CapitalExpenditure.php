@@ -16,6 +16,7 @@ class CapitalExpenditure extends Model
         'budget_project',
         'sn', // Serial number or identifier
         'type', // Type of record (Cost)
+        'contract',
         'project', // Project name
         'po', // Type of expense (OPEX)
         'expenses', // Specific expense (Salary)

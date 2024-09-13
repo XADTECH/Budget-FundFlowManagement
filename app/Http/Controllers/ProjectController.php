@@ -170,6 +170,7 @@ class ProjectController extends Controller
     $overheads = costOverhead::all();
     $financials = financialCost::all();
     $capitalExpenditures = capitalExpenditure::all();
+    $revenuePlans = RevenuePlan::all();
 
     $directCost = DirectCost::firstOrNew([
       'budget_project_id' => $id,
@@ -240,7 +241,8 @@ class ProjectController extends Controller
       'materials',
       'overheads',
       'financials',
-      'capitalExpenditures'
+      'capitalExpenditures',
+      'revenuePlans'
     ));
   }
 
@@ -266,8 +268,7 @@ class ProjectController extends Controller
     );
   }
 
-  // In SalaryController
-
+  // DELETE SALARY
     public function destroy($id)
     {
         $salary = Salary::findOrFail($id);
@@ -275,6 +276,7 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Salary deleted successfully.');
     }
 
+    // DELETE FACILITY 
     public function facility($id)
     {
         $facility = FacilityCost::findOrFail($id);
@@ -282,6 +284,7 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Facility Cost deleted successfully.');
     }
 
+    //DELETE MATERIAL
     public function material($id)
     {
         $material = MaterialCost::findOrFail($id);
@@ -289,6 +292,7 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Material Cost deleted successfully.');
     }
 
+    //DELETE OVER HEAD
     public function costOverhead($id)
     {
         $costOverhead = CostOverhead::findOrFail($id);
@@ -296,6 +300,7 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Overhead Cost deleted successfully.');
     }
 
+    //DELETE FINANCIAL COST 
     public function financialCost($id)
     {
         $financialCost = FinancialCost::findOrFail($id);
@@ -303,6 +308,7 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Financial Cost deleted successfully.');
     }
 
+    //DELETE CAPITAL EXPENDITE 
     public function capitalExpenditure($id)
     {
         $financialCost = capitalExpenditure::findOrFail($id);
@@ -310,6 +316,7 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Capital Cost deleted successfully.');
     }
 
+    //DELETE REVENUE
     public function deleteRevenue($id)
     {
         $financialCost = RevenuePlan::findOrFail($id);
@@ -317,21 +324,102 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Revenue Cost deleted successfully.');
     }
 
+  //UPDATE SALARY 
   public function update(Request $request, $id)
   {
+      // return response($request->all());
       $salary = Salary::findOrFail($id);
       $salary->update($request->all());
+      $salary->calculateTotalCost();
+      $salary->calculateAverageCost();
       return redirect()->back()->with('success', 'Salary updated successfully.');
   }
 
   //update facility 
 
-  public function updateFacility(Request $request, $id)
-{
-    $facility = FacilityCost::findOrFail($id);
-    $facility->update($request->all());
-    return redirect()->back()->with('success', 'Facility cost updated successfully');
-}
+      public function updateFacility(Request $request, $id)
+    {
+        // return response($request->all());
+        $facility = FacilityCost::findOrFail($id);
+        $facility->update($request->all());
+        $facility->calculateTotalCost();
+        $facility->calculateAverageCost();
+        return redirect()->back()->with('success', 'Facility cost updated successfully');
+    }
+
+    public function updateMaterial(Request $request, $id)
+    {
+        // return response($request->all());
+        $material = MaterialCost::findOrFail($id);
+        $material->update($request->all());
+        $material->calculateTotalCost();
+        $material->calculateAverageCost();
+        return redirect()->back()->with('success', 'Material cost updated successfully');
+    }
+
+    public function updateOverHead(Request $request, $id)
+    {
+        // return response($request->all());
+        $overhead = costOverhead::findOrFail($id);
+        $overhead->update($request->all());
+        $overhead->calculateTotalCost();
+        $overhead->calculateAverageCost();
+        return redirect()->back()->with('success', 'overhead cost updated successfully');
+    }
+
+    public function updateFinancial(Request $request, $id)
+    {
+        // return response($request->all());
+        $financialCost = FinancialCost::findOrFail($id);
+        $financialCost->update($request->all());
+        $financialCost->calculateTotalCost();
+        $financialCost->calculateAverageCost();
+        return redirect()->back()->with('success', 'Financial cost updated successfully');
+    }
+
+    public function updateCapitalExpense(Request $request, $id)
+    {
+        // return response($request->all());
+        $capitalExpenditure = capitalExpenditure::findOrFail($id);
+        $capitalExpenditure->update($request->all());
+        $capitalExpenditure->calculateTotalCost();
+        $capitalExpenditure->calculateAverageCost();
+        return redirect()->back()->with('success', 'Capital cost updated successfully');
+    }
+
+    public function updateRevenuePlan(Request $request, $id)
+    {
+      
+      // Find the related budget project
+      $budgetProject = BudgetProject::find($request->project_id);
+  
+      // Initialize DirectCost and IndirectCost for the project
+      $directCost = DirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
+      $indirectCost = IndirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
+  
+      // Initialize total costs to 0
+      $totalDirectCost = 0;
+      $totalIndirectCost = 0;
+  
+      // Calculate direct cost if it exists
+      if ($directCost->exists) {
+          $totalDirectCost = $directCost->calculateTotalDirectCost();
+      }
+  
+      // Calculate indirect cost if it exists
+      if ($indirectCost->exists) {
+          $totalIndirectCost = $indirectCost->calculateTotalIndirectCost();
+      }
+        // return response($request->all());
+        $revenuePlan = RevenuePlan::findOrFail($id);
+        $revenuePlan->update($request->all());
+        $revenuePlan->calculateTotalProfit();
+        $revenuePlan->calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost);
+        $revenuePlan->calculateTax();
+        $revenuePlan->calculateNetProfitAfterTax();
+        $revenuePlan->calculateProfitPercentage();
+        return redirect()->back()->with('success', 'Revenue updated successfully');
+    }
 
 
  

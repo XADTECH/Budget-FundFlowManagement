@@ -58,7 +58,7 @@ class DirectCostController extends Controller
       $salary->budget_project_id = $validated['project_id']; // Map to your model attribute
       $salary->calculateTotalCost();
       $salary->calculateAverageCost();
-      $salary->updateBudget("Salary");
+      // $salary->updateBudget("Salary");
       $salary->save();
 
       $cost = $directCost->calculateTotalDirectCost();

@@ -17,6 +17,7 @@ class Salary extends Model
         'sn',                    // Serial number or identifier
         'type',                  // Type of record (Cost)
         'project',               // Project name
+        'contract',
         'po',                    // Type of expense (OPEX)
         'expenses',              // Specific expense (Salary)
         'description',           // Description of the role or details (Project Manager)
