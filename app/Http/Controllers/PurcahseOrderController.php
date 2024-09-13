@@ -30,24 +30,26 @@ use Illuminate\Support\Facades\Auth;
 
 class PurcahseOrderController extends Controller
 {
-      //add / show purchase order 
-  public function addPurchaseOrder(Request $request)
-  {
-
-    
-    $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
-    $userList = User::get();
-    $loggedInUserId = Auth::id();
-    $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
+    //add / show purchase order 
+    public function addPurchaseOrder(Request $request)
+    {
 
 
-    // Retrieve budgets where manager_id matches the logged-in user ID
-    $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
-    $budgetList = BudgetProject::get();
+        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
+        $userList = User::get();
+        $loggedInUserId = Auth::id();
+        $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
 
-    return view("content.pages.pages-add-project-budget-purchase-order", compact('budgets', 'purchaseOrders', 'users', 'userList', 'budgetList'));
-    
-  }
+        // Retrieve budgets where manager_id matches the logged-in user ID
+        if (auth()->user()->role == 'Admin' || auth()->user()->role == 'admin') {
+            $budgets = BudgetProject::get();
+        } else {
+
+            $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
+        }
+        $budgetList = BudgetProject::get();
+        return view("content.pages.pages-add-project-budget-purchase-order", compact('budgets', 'purchaseOrders', 'users', 'userList', 'budgetList'));
+    }
 
     //add / show purchase order 
     public function storePurchaseOrder(Request $request)
@@ -69,29 +71,29 @@ class PurcahseOrderController extends Controller
         $monthName = $currentDate->format('M');  // Short month name (e.g. Jan, Feb)
         $year = $currentDate->format('Y');       // Full year (e.g. 2024)
         $formattedMonthYear = strtoupper($monthName . $year); // E.g. JAN2024
-        
+
         // Get current date in the desired format (MMDDYYYY)
         $formattedDate = $currentDate->format('mdY');  // E.g. 09062024
-        
+
         // Fetch the current sequence for the date or create a new one
         $poSequence = PurchaseOrderSequence::firstOrCreate(
             ['date' => $formattedDate],
             ['last_sequence' => 0]
         );
 
-           // Increment the sequence number
-           $newSerialNumber = str_pad($poSequence->last_sequence + 1, 4, '0', STR_PAD_LEFT);
-  
-           // Update the last sequence in the database
-           $poSequence->last_sequence = $newSerialNumber;
-           $poSequence->save();
+        // Increment the sequence number
+        $newSerialNumber = str_pad($poSequence->last_sequence + 1, 4, '0', STR_PAD_LEFT);
+
+        // Update the last sequence in the database
+        $poSequence->last_sequence = $newSerialNumber;
+        $poSequence->save();
 
         $referenceCode = 'PO' . $formattedDate . $newSerialNumber;
 
-    
+
         // Create a new PurchaseOrder instance
         $purchaseOrder = new PurchaseOrder();
-    
+
         // Set attributes from validated data
         $purchaseOrder->date = $validatedData['startdate'];
         $purchaseOrder->payment_term = $validatedData['payment_term'];
@@ -103,92 +105,88 @@ class PurcahseOrderController extends Controller
         $purchaseOrder->requested_by = $validatedData['project_person_id'];
         $purchaseOrder->prepared_by = Auth::id();
         $purchaseOrder->save();
-    
+
         // Return a success response
         return redirect('/pages/add-budget-project-purchase-order')->with(
             'success',
             'PO Created successfully!'
-          );
+        );
     }
 
-     //add purchase order 
-     public function editPurchaseOrder($POID)
-     {
-         $purchaseOrder = PurchaseOrder::where('po_number', $POID)->first(); // Use first() to get a single record
-         $budget = BudgetProject::where('id', $purchaseOrder->project_id)->first();
-         $clients = BusinessClient::where('id', $budget->client_id);
-         $units = BusinessUnit::where('id', $budget->unit_id);
-         $budgets = Project::where('id', $budget->project_id);
-         $requested = User::where('id', $purchaseOrder->requested_by)->first();
-         $prepared = User::where('id', $purchaseOrder->prepared_by)->first();
-         $utilization = $budget->getUtilization();
-         $poStatus = $purchaseOrder->status;
+    //add purchase order 
+    public function editPurchaseOrder($POID)
+    {
+        $purchaseOrder = PurchaseOrder::where('po_number', $POID)->first(); // Use first() to get a single record
+        $budget = BudgetProject::where('id', $purchaseOrder->project_id)->first();
+        $clients = BusinessClient::where('id', $budget->client_id);
+        $units = BusinessUnit::where('id', $budget->unit_id);
+        $budgets = Project::where('id', $budget->project_id);
+        $requested = User::where('id', $purchaseOrder->requested_by)->first();
+        $prepared = User::where('id', $purchaseOrder->prepared_by)->first();
+        $utilization = $budget->getUtilization();
+        $poStatus = $purchaseOrder->status;
 
 
-         $balanceBudget =  $budget->getRemainingBudget();
+        $balanceBudget =  $budget->getRemainingBudget();
 
-    //return response($requested);
-
-     
-         if ($purchaseOrder) {
-             // Return the view with the purchase order data if found
-             return view("content.pages.show-budget-project-purchase-order", compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared','utilization','balanceBudget', 'poStatus'));
-         } else {
-             // Redirect with an error message if not found
-             return redirect('/pages/add-budget-project-purchase-order')
-                 ->withErrors(['error' => 'Purchase Order not found!']);
-         }
-     }
-
-     //save purchase order 
-     
-     public function store(Request $request)
-{
-
-  
-    try {
-
-         // Validate the request data
-    $request->validate([
-        'poNumber' => 'required|string',
-        'items' => 'required|array', // Validate that items are an array
-        'totalAmount' => 'required|numeric',
-        'totalDiscount' => 'required|numeric',
-        'totalVAT' => 'required|numeric',
-    ]);
-
-    // Fetch the purchase order ID using poNumber
-    $purchaseOrder = PurchaseOrder::where('po_number', $request->poNumber)->firstOrFail();
-
-    // Ensure that items are properly set in the request
-    $items = json_encode($request->items); // Encode items as JSON
-
-    // Create a new PurchaseOrderItem entry
-    PurchaseOrderItem::create([
-        'purchase_order_id' => $purchaseOrder->id,
-        'po_number' => $request->poNumber,
-        'items' => $items, // Include the 'items' field in the insert
-        'total_amount' => $request->totalAmount,
-        'total_discount' => $request->totalDiscount,
-        'total_vat' => $request->totalVAT,
-        'status' => $request->status
-    ]);
-
-    $purchaseOrder->status = "submitted";
-    $purchaseOrder->save();
+        //return response($requested);
 
 
-
-    // Return success response
-    return response()->json(['message' => 'Purchase order items saved successfully!'], 200);
-   
-
-    } catch (\Exception $e) {
-        \Log::error('Error saving purchase order items: ' . $e->getMessage());
-
-        return response()->json(['message' => 'Failed to save purchase order items. ' . $e->getMessage()], 500);
+        if ($purchaseOrder) {
+            // Return the view with the purchase order data if found
+            return view("content.pages.show-budget-project-purchase-order", compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus'));
+        } else {
+            // Redirect with an error message if not found
+            return redirect('/pages/add-budget-project-purchase-order')
+                ->withErrors(['error' => 'Purchase Order not found!']);
+        }
     }
-}
 
-  
+    //save purchase order 
+
+    public function store(Request $request)
+    {
+
+
+        try {
+
+            // Validate the request data
+            $request->validate([
+                'poNumber' => 'required|string',
+                'items' => 'required|array', // Validate that items are an array
+                'totalAmount' => 'required|numeric',
+                'totalDiscount' => 'required|numeric',
+                'totalVAT' => 'required|numeric',
+            ]);
+
+            // Fetch the purchase order ID using poNumber
+            $purchaseOrder = PurchaseOrder::where('po_number', $request->poNumber)->firstOrFail();
+
+            // Ensure that items are properly set in the request
+            $items = json_encode($request->items); // Encode items as JSON
+
+            // Create a new PurchaseOrderItem entry
+            PurchaseOrderItem::create([
+                'purchase_order_id' => $purchaseOrder->id,
+                'po_number' => $request->poNumber,
+                'items' => $items, // Include the 'items' field in the insert
+                'total_amount' => $request->totalAmount,
+                'total_discount' => $request->totalDiscount,
+                'total_vat' => $request->totalVAT,
+                'status' => $request->status
+            ]);
+
+            $purchaseOrder->status = "submitted";
+            $purchaseOrder->save();
+
+
+
+            // Return success response
+            return response()->json(['message' => 'Purchase order items saved successfully!'], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error saving purchase order items: ' . $e->getMessage());
+
+            return response()->json(['message' => 'Failed to save purchase order items. ' . $e->getMessage()], 500);
+        }
+    }
 }
