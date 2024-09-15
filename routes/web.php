@@ -19,7 +19,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\DirectCostController;
-use App\Http\Controllers\InDirectCostController;                                 
+use App\Http\Controllers\InDirectCostController;
 use App\Http\Controllers\pages\MiscUnderMaintenance;
 use App\Http\Controllers\PurcahseOrderController;
 use App\Http\Controllers\authentications\LoginBasic;
@@ -121,17 +121,17 @@ Route::middleware(['checklogin'])->group(function () {
   Route::put('/pages/update-budget-project-material/{id}', [ProjectController::class, 'updateMaterial'])->name('update.updateMaterial');
 
 
-Route::delete('/facility/{id}', [ProjectController::class, 'facility'])->name('delete.facility');
-Route::delete('/material/{id}', [ProjectController::class, 'material'])->name('delete.material');
-Route::delete('/costOverhead/{id}', [ProjectController::class, 'costOverhead'])->name('delete.costOverhead');
-Route::delete('/financialCost/{id}', [ProjectController::class, 'financialCost'])->name('delete.financialCost');
-Route::delete('/capital-expenditures/{id}', [ProjectController::class, 'capitalExpenditure'])->name('delete.capitalExpenditure');
-Route::delete('/delete-revenue/{id}', [ProjectController::class, 'deleteRevenue'])->name('delete.deleteRevenue');
-Route::put('/pages/update-budget-project-facility-cost/{id}', [ProjectController::class, 'updateFacility'])->name('update.updateFacility');
-Route::put('/pages/update-budget-project-overhead-cost/{id}', [ProjectController::class, 'updateOverHead'])->name('update.updateOverHead');
-Route::put('/pages/update-budget-project-financial-cost/{id}', [ProjectController::class, 'updateFinancial'])->name('update.updateFinancial');
-Route::put('/pages/update-budget-capital-expense/{id}', [ProjectController::class, 'updateCapitalExpense'])->name('update.updateCapitalExpense');
-Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::class, 'updateRevenuePlan'])->name('update.updateRevenuePlan');
+  Route::delete('/facility/{id}', [ProjectController::class, 'facility'])->name('delete.facility');
+  Route::delete('/material/{id}', [ProjectController::class, 'material'])->name('delete.material');
+  Route::delete('/costOverhead/{id}', [ProjectController::class, 'costOverhead'])->name('delete.costOverhead');
+  Route::delete('/financialCost/{id}', [ProjectController::class, 'financialCost'])->name('delete.financialCost');
+  Route::delete('/capital-expenditures/{id}', [ProjectController::class, 'capitalExpenditure'])->name('delete.capitalExpenditure');
+  Route::delete('/delete-revenue/{id}', [ProjectController::class, 'deleteRevenue'])->name('delete.deleteRevenue');
+  Route::put('/pages/update-budget-project-facility-cost/{id}', [ProjectController::class, 'updateFacility'])->name('update.updateFacility');
+  Route::put('/pages/update-budget-project-overhead-cost/{id}', [ProjectController::class, 'updateOverHead'])->name('update.updateOverHead');
+  Route::put('/pages/update-budget-project-financial-cost/{id}', [ProjectController::class, 'updateFinancial'])->name('update.updateFinancial');
+  Route::put('/pages/update-budget-capital-expense/{id}', [ProjectController::class, 'updateCapitalExpense'])->name('update.updateCapitalExpense');
+  Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::class, 'updateRevenuePlan'])->name('update.updateRevenuePlan');
 
 
 
@@ -203,32 +203,32 @@ Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::clas
 
 
   //download pdf 
-  Route::get('/download-pdf', [PdfController::class, 'download'])->name('download.pdf');
+  Route::get('/download-pdf/{POID}', [PdfController::class, 'download'])->name('download.pdf');
 
 
   //add purchase order
   Route::get('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'addPurchaseOrder'])->name(
-        'add-budget-project-purchase-order'
+    'add-budget-project-purchase-order'
   );
 
-    //add purchase order
-    Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name(
-      'add-budget-project-purchase-order'
-    );
+  //add purchase order
+  Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name(
+    'add-budget-project-purchase-order'
+  );
 
-    //edit purchase order 
-    Route::get('/purchase-order/edit/{POID}', [PurcahseOrderController::class, 'editPurchaseOrder'])->name('purchaseOrder.edit');
-
-
-    //show purchase order
-    Route::get('/pages/show-budget-project-purchase-order', [PurcahseOrderController::class, 'showPurchaseOrder'])->name(
-            'add-budget-capital-expense'
-    );
+  //edit purchase order 
+  Route::get('/purchase-order/edit/{POID}', [PurcahseOrderController::class, 'editPurchaseOrder'])->name('purchaseOrder.edit');
 
 
-    //allocate budget
-    
-    
+  //show purchase order
+  Route::get('/pages/show-budget-project-purchase-order', [PurcahseOrderController::class, 'showPurchaseOrder'])->name(
+    'add-budget-capital-expense'
+  );
+
+
+  //allocate budget
+
+
 
 
 
@@ -288,7 +288,6 @@ Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::clas
   //user management
   Route::post('add-user', [UserController::class, 'store'])->name('add-user');
   Route::get('pages/users', [UserController::class, 'usersList'])->name('user-lists');
-
 });
 
 //check indivisual route
