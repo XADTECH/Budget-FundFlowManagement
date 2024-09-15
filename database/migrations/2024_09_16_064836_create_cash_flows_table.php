@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('cash_flows', function (Blueprint $table) {
             $table->id();
+            $table->date('date');
+            $table->string('description');
+            $table->string('category');
+            $table->string('reference_code');
+            $table->decimal('cash_inflow', 10, 2)->nullable();
+            $table->decimal('cash_outflow', 10, 2)->nullable();
+            $table->decimal('committed_budget', 10, 2)->nullable();
+            $table->decimal('balance', 10, 2)->nullable();
             $table->unsignedBigInteger('budget_project_id');
-            $table->enum('type', ['inflow', 'outflow']);
-            $table->decimal('amount', 15, 2);
-            $table->string('description')->nullable();
             $table->timestamps();
-
-            $table->foreign('budget_project_id')->references('id')->on('budget_project')->onDelete('cascade');
         });
     }
 

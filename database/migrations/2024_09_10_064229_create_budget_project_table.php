@@ -36,6 +36,7 @@ class CreateBudgetProjectTable extends Migration
       $table->decimal('total_budget_allocated', 15, 2)->nullable();
       $table->decimal('total_dpm_expense', 15, 2)->nullable();
       $table->decimal('total_lpo_expense', 15, 2)->nullable();
+      $table->unsignedBigInteger('approve_by');
       $table
         ->string('status')
         ->default('Good')

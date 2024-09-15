@@ -139,8 +139,20 @@ Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::clas
   Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
   Route::post('/pages/add-project-budget', [BudgetController::class, 'store'])->name('add-project-budget');
   Route::get('/pages/edit-project-budget/{project_id}', [BudgetController::class, 'edit'])->name('edit-project-budget');
+
+  //budget list 
+  Route::get('pages/budget-lists', [BudgetController::class, 'budgetsLists'])->name('budgets.list');
+
   // Route for handling the form submission to update the budget
   Route::put('/budget/update/{id}', [BudgetController::class, 'update'])->name('update-project-budget');
+
+  //get budget by reference code 
+  Route::get('/budget/allocate', [BudgetController::class, 'findByReferenceCode'])->name('budget.allocate');
+  Route::post('/budget/allocate', [BudgetController::class, 'allocateBudgetByFinance'])->name('budget.allocateBudgetByFinance');
+
+  //cash flow list 
+  Route::get('/pages/cash-flow-list', [BudgetController::class, 'cashflowLists'])->name('budgets.cashflowLists');
+
 
   // authentication
   //Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
@@ -188,6 +200,7 @@ Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::clas
   Route::get('/pages/show-budget-project-purchase-order', [BudgetController::class, 'showPurchaseOrder'])->name(
     'add-budget-capital-expense'
   );
+
 
   //download pdf 
   Route::get('/download-pdf', [PdfController::class, 'download'])->name('download.pdf');
@@ -276,7 +289,6 @@ Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::clas
   Route::post('add-user', [UserController::class, 'store'])->name('add-user');
   Route::get('pages/users', [UserController::class, 'usersList'])->name('user-lists');
 
-  Route::get('pages/budget-lists', [BudgetController::class, 'budgetsLists'])->name('budgets.list');
 });
 
 //check indivisual route

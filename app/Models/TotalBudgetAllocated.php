@@ -9,17 +9,20 @@ class TotalBudgetAllocated extends Model
 {
     use HasFactory;
     // Define the table associated with the model
-    protected $table = 'total_budget_allocated';
+    protected $table = 'allocated_budget';
 
-    // Specify which attributes should be mass assignable
-    protected $fillable = ['budget_project_id', 'approved_budget', 'total_budget_allocated', 'total_budget_utilized', 'duration', 'expense_head', 'reference_code'];
-
-    // Specify the attributes that should be cast to native types
-    protected $casts = [
-        'approved_budget' => 'decimal:2',
-        'total_budget_allocated' => 'decimal:2',
-        'total_budget_utilized' => 'decimal:2',
+    protected $fillable = [
+        'budget_project_id',
+        'total_salary',
+        'total_facility_cost',
+        'total_material_cost',
+        'total_cost_overhead',
+        'total_financial_cost',
+        'total_capital_expenditure',
+        'allocated_budget',
+        'reference_code',
     ];
+
 
     // Define any relationships if needed
     public function budgetProject()

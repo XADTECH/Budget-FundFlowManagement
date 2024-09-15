@@ -9,20 +9,22 @@ class CashFlow extends Model
 {
     use HasFactory;
 
-    protected $table= 'cash_flows';
+    use HasFactory;
 
     protected $fillable = [
-        'budget_project_id',
-        'type',
-        'amount',
+        'date',
         'description',
+        'category',
+        'cash_inflow',
+        'cash_outflow',
+        'committed_budget',
+        'balance',
+        'reference_code',
+        'budget_project_id', // Reference to BudgetProject
     ];
 
-    /**
-     * Get the budget project associated with the cash flow.
-     */
     public function budgetProject()
     {
-        return $this->belongsTo(BudgetProject::class);
+        return $this->belongsTo(BudgetProject::class, 'budget_project_id');
     }
 }

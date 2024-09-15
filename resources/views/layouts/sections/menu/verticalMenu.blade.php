@@ -179,8 +179,8 @@
             </ul>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="/pages/budget-lists" class="menu-link">
-                        <div>PO Report</div>
+                    <a href="/pages/cash-flow-list" class="menu-link">
+                        <div>Cash Flow Report</div>
                     </a>
                 </li>
             </ul>

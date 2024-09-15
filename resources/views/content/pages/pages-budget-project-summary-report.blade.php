@@ -958,6 +958,10 @@
                     <input type="hidden" name="total_cost" value="{{  $totalCost }}">
                     <input type="hidden" name="expected_net_profit_after_tax" value="{{  $totalNetProfitAfterTax }}">
                     <input type="hidden" name="expected_net_profit_before_tax" value="{{  $totalNetProfitBeforeTax }}">
+                    <input type="hidden" name="reference_code" value="{{  $budget->reference_code }}">
+                    <input type="hidden" name="client" value="{{ @$clients->id }}">
+                    <input type="hidden" name="source" value="{{ @$units->id }}">
+                    <input type="hidden" name="project" value="{{ @$projects->id }}">
 
                     <div class="col-md-12 d-flex justify-content-start">
                         <button type="submit" class="btn btn-primary"
@@ -966,14 +970,17 @@
                 </div>
             </form>
 
-     @if ($budget->approval_status === 'approve')
-            <div class="row">
-                <div class="col-md-12 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary"
-                        style="background-color:#0067aa; border-color:#0067aa">Allocate Budget</button>
+            @if ($budget->approval_status === 'approve')
+            <form action="{{ route('budget.allocate') }}" method="GET">
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary"
+                            style="background-color:#0067aa; border-color:#0067aa">Allocate Budget</button>
+                        <input type="hidden" name="reference_code" value="{{ $budget->reference_code }}">
+                    </div>
                 </div>
-            </div>
-        @endif        
+            </form>
+                @endif        
 
             <!-- Salary Update Modal -->
             <!-- Check if the salary object exists before rendering the modal -->

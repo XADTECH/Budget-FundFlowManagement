@@ -13,9 +13,12 @@ use App\Models\PurchaseOrderController;
 use App\Models\FacilityCost;
 use App\Models\CapitalExpenditure;
 use App\Models\MaterialCost;
+use App\Models\TotalBudgetAllocated;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
 use App\Models\DirectCost;
+use App\Models\CashFlow;
+use App\Models\ApprovedBudget;
 use App\Models\RevenuePlan;
 use App\Models\IndirectCost;
 use Illuminate\Http\Request;
@@ -314,6 +317,173 @@ class BudgetController extends Controller
         'Revenue added successfully!'
       );
   }
+
+    public function findByReferenceCode(Request $request)
+  {
+      // Get the reference code from the request
+      $referenceCode = $request->input('reference_code');
+      
+
+      // Find the ApprovedBudget by reference_code
+      $approvedBudget = ApprovedBudget::where('reference_code', $referenceCode)->first();
+      $budgetProject = BudgetProject::where('reference_code', $referenceCode)->first();
+      $allocatedBudget = TotalBudgetAllocated::where('reference_code', $referenceCode)->first();
+      
+
+      if (!$approvedBudget) {
+        return redirect()->back()->withErrors(['error' => 'No budget found with this reference code']);
+      }
+
+      // Pass the budget to the view
+      return view('content.pages.pages-allocate-budget', compact('approvedBudget','budgetProject', 'allocatedBudget'));
+  }
+
+  public function allocateBudgetByFinance(Request $request)
+  {
+  
+       // Retrieve the budget project by ID
+    $budget = BudgetProject::where('id', $request->project)->first();
+
+    // Check if the budget is already allocated
+    $allocated = TotalBudgetAllocated::where('reference_code', $budget->reference_code)->first();
+
+    // If allocation exists, redirect back with a success message
+    if ($allocated) {
+        return redirect()->back()->with('success', 'Budget is already allocated.');
+    }
+
+      // Validate input to ensure no negative numbers are submitted
+      $request->validate([
+          'salary_allocation' => 'required|numeric|min:0',
+          'facility_allocation' => 'required|numeric|min:0',
+          'material_allocation' => 'required|numeric|min:0',
+          'overhead_allocation' => 'required|numeric|min:0',
+          'financial_allocation' => 'required|numeric|min:0',
+          'capital_expenditure_allocation' => 'required|numeric|min:0',
+          'approved_salary_allocation' => 'required|numeric|min:0',
+          'approved_facility_allocation' => 'required|numeric|min:0',
+          'approved_material_allocation' => 'required|numeric|min:0',
+          'approved_overhead_allocation' => 'required|numeric|min:0',
+          'approved_financial_allocation' => 'required|numeric|min:0',
+          'approved_capital_expenditure_allocation' => 'required|numeric|min:0',
+          'project' => 'required|exists:budget_project,id',
+      ]);
+  
+      // Retrieve all allocations from the request
+      $allocations = [
+          'salary' => [
+              'allocated' => $request->input('salary_allocation'),
+              'approved' => $request->input('approved_salary_allocation'),
+          ],
+          'facility' => [
+              'allocated' => $request->input('facility_allocation'),
+              'approved' => $request->input('approved_facility_allocation'),
+          ],
+          'material' => [
+              'allocated' => $request->input('material_allocation'),
+              'approved' => $request->input('approved_material_allocation'),
+          ],
+          'overhead' => [
+              'allocated' => $request->input('overhead_allocation'),
+              'approved' => $request->input('approved_overhead_allocation'),
+          ],
+          'financial' => [
+              'allocated' => $request->input('financial_allocation'),
+              'approved' => $request->input('approved_financial_allocation'),
+          ],
+          'capital_expenditure' => [
+              'allocated' => $request->input('capital_expenditure_allocation'),
+              'approved' => $request->input('approved_capital_expenditure_allocation'),
+          ],
+      ];
+  
+      // Loop through each allocation and validate if allocated budget exceeds the approved budget
+      foreach ($allocations as $type => $budget) {
+          if ($budget['allocated'] > $budget['approved']) {
+              return back()->withErrors(["error" => "Allocated budget for {$type} cannot exceed approved budget"]);
+          }
+      }
+
+      // Calculate total allocated budget
+      $totalAllocatedBudget = array_sum(array_column($allocations, 'allocated'));
+
+      $budget = BudgetProject::where('id', $request->input('project'))->first();
+
+      // return response()->json($budget);
+  
+  
+      // Optionally update the BudgetProject model's total budget allocation
+      BudgetProject::where('id', $request->input('project'))->update([
+        'total_budget_allocated' => $totalAllocatedBudget,
+    ]);
+  
+      
+      // Store the allocation in the TotalBudgetAllocated model
+      $totalBudget = TotalBudgetAllocated::create([
+          'budget_project_id' => $budget->id,
+          'total_salary' => $allocations['salary']['allocated'],
+          'total_facility_cost' => $allocations['facility']['allocated'],
+          'total_material_cost' => $allocations['material']['allocated'],
+          'total_cost_overhead' => $allocations['overhead']['allocated'],
+          'total_financial_cost' => $allocations['financial']['allocated'],
+          'total_capital_expenditure' => $allocations['capital_expenditure']['allocated'],
+          'allocated_budget' => $totalAllocatedBudget,
+          'reference_code' => $budget->reference_code, 
+      ]);
+  
+      // Optionally update the BudgetProject model's total budget allocation
+      BudgetProject::where('id', $request->input('project'))->update([
+          'total_budget_allocated' => $totalAllocatedBudget,
+      ]);
+  
+      // Create cash flow entries for the allocations
+      CashFlow::create([
+          'date' => now(), // Adjust as needed
+          'description' => 'Initial Allocation',
+          'category' => 'Allocation',
+          'cash_inflow' => $totalAllocatedBudget, // Assuming this is an inflow
+          'cash_outflow' => 0,
+          'reference_code' => $budget->reference_code,
+          'committed_budget' => $totalAllocatedBudget,
+          'balance' => $totalAllocatedBudget,
+          'budget_project_id' => $request->input('project'),
+      ]);
+  
+      // Return success message or redirect to the appropriate page
+      return redirect()->route('budget-project-report-summary', ['id' => $budget->id])->with('success', 'Funds are Allocated for this Project');
+    }
+  
+    //show cash flow list 
+
+ // BudgetController.php
+
+public function cashflowLists(Request $request)
+{
+    // Retrieve all Budget Projects for the dropdown
+    $budgetProjects = BudgetProject::all();
+    $allProjects = Project::all();
+    $users = User::all();
+
+    // Start a query on the CashFlow model
+    $query = CashFlow::query();
+
+    // Apply filters if present in the request
+    if ($request->has('reference_code') && $request->reference_code) {
+        $query->where('reference_code', 'like', '%' . $request->reference_code . '%');
+    }
+
+    if ($request->has('budget_project_id') && $request->budget_project_id) {
+        $query->where('budget_project_id', $request->budget_project_id);
+    }
+
+    // Execute the query and get the results
+    $cashFlows = $query->get();
+
+    // Pass data to the view
+    return view('content.pages.pages-show-cashflow-list', compact('cashFlows', 'budgetProjects', 'allProjects', 'users'));
+}
+
+
 
 
   //store capital expense 
