@@ -161,7 +161,7 @@
     <div class="container">
         <!-- Download Button -->
         <div class="text-end mt-4">
-            <a href="{{ route('download.pdf',['POID'=>$purchaseOrder->po_number]) }}" class="btn" style="background-color:#1a73e8; color:white">
+            <a href="{{ route('download.pdf',['POID'=>$purchaseOrder->po_number]) }}" target="_blank" class="btn" style="background-color:#1a73e8; color:white">
                 <i class="fas fa-print"></i> Download PDF
             </a>
         </div>

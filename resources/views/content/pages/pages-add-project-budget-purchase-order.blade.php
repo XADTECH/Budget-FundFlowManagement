@@ -37,8 +37,8 @@
         </div>
 
         @if ($errors->any())
-            <div class="alert alert-danger" id="error-alert">
-                <!-- <button type="button" class="close" aria-label="Close">
+        <div class="alert alert-danger" id="error-alert">
+            <!-- <button type="button" class="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button> -->
             <ul>
@@ -97,9 +97,9 @@
                         <div class="col-sm-4">
                             <label for="project_name" class="form-label">Choose Project </label>
                             <select class="form-select" name="project_name">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($projects as $project)
-                                <option value="{{$project->id}}">{{$project->reference_code}}</option>
+                                <option disabled selected value>Choose</option>
+                                @foreach ($budgets as $budget)
+                                <option value="{{$budget->id}}">{{$budget->reference_code}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -151,30 +151,24 @@
 
                 @foreach($purchaseOrders as $po)
 
-                    @php
-                    // Convert IDs to integers
-                    $requestPersonId = (int) $po->requested_by;
-                    $preparedPersonId = (int) $po->prepared_by;
-                
-                    $requestPerson = $userList->firstWhere('id', $requestPersonId);
-                    $preparedPerson = $userList->firstWhere('id', $preparedPersonId);
-                    $budget = $budgetList->firstWhere('id', $po->project_id);
+                @php
+                $requestPerson = $users->firstWhere('id', $po->requested_by);
+                $preparedPerson = $users->firstWhere('id', $po->prepared_by);
+                $budget = $budgetList->firstWhere('id', $po->project_id);
                 @endphp
-                
 
-                    <tr>
-         
-                        <td style="color:#0067aa"><a href="{{route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">{{ $po->po_number }}</a></td>
-                
-                        <td style="color:#0067aa"><a href="{{ route('budget-project-report-summary', ['id' => $budget->id]) }}">{{ $budget->reference_code }}</a>
-                     
-                        <td>{{ $po->supplier_name }}</td>
-                        <td>{{ $po->description }}</td>
-                        <td>{{ $preparedPerson->first_name }}</td>
-                        <td>{{$requestPerson->first_name }}</td>
-                        <td>
-                            @if (is_null($budget->total_budget_allocated) || $budget->total_budget_allocated <= 0)
-                                <span style="color: red;">Budget Not Allocated</span>
+                <tr>
+
+                    <td style="color:#0067aa"><a href="{{route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">{{ $po->po_number }}</a></td>
+
+                    <td style="color:#0067aa"><a href="{{route('edit-project-budget', ['project_id' => $budget->id]) }}">{{ $budget->reference_code}}</td>
+                    <td>{{ @$po->supplier_name }}</td>
+                    <td>{{ @$po->description }}</td>
+                    <td>{{ @$preparedPerson->first_name }}</td>
+                    <td>{{@$requestPerson->first_name }}</td>
+                    <td>
+                        @if (is_null($budget->total_budget_allocated) || $budget->total_budget_allocated <= 0)
+                            <span style="color: red;">Budget Not Allocated</span>
                             @else
                             {{ number_format($budget->total_budget_allocated, 2) }}
                             @endif
