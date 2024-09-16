@@ -53,6 +53,7 @@ use App\Http\Controllers\form_elements\InputGroups;
 use App\Http\Controllers\form_layouts\VerticalForm;
 use App\Http\Controllers\form_layouts\HorizontalForm;
 use App\Http\Controllers\tables\Basic as TablesBasic;
+use GuzzleHttp\Client;
 
 // Main Page Route
 // Public route for the login page with middleware to redirect if authenticated
@@ -70,6 +71,7 @@ Route::middleware(['checklogin'])->group(function () {
   // Protected routes with custom checklogin middleware
 
   Route::get('/dashboard', [Analytics::class, 'index'])->name('dashboard-analytics');
+
 
   // layout
   Route::get('/layouts/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
