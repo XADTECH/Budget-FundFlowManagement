@@ -14,17 +14,17 @@
         /* Ensures the scrollbar is visible on the tbody */
     }
 
-    .font_style{
-        font-weight:bold;
+    .font_style {
+        font-weight: bold;
     }
 
-    #error-alert, #success-alert {
-    transition: opacity 0.5s ease-out;
+    #error-alert,
+    #success-alert {
+        transition: opacity 0.5s ease-out;
     }
-    
 </style>
 <h4 class="py-3 mb-4">
-    <span class="text-muted fw-light">Budget Management /</span> Create Purchase Order 
+    <span class="text-muted fw-light">Budget Management /</span> Create Purchase Order
 </h4>
 
 <div class="row">
@@ -41,21 +41,21 @@
                 <!-- <button type="button" class="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button> -->
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
         @if (session('success'))
-            <div class="alert alert-success" id="success-alert">
-                    <!-- <button type="button" class="close" aria-label="Close">
+        <div class="alert alert-success" id="success-alert">
+            <!-- <button type="button" class="close" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button> -->
-                {{ session('success') }}
-            </div>
+            {{ session('success') }}
+        </div>
         @endif
 
         <!-- Project Form -->
@@ -64,13 +64,13 @@
                 <h6> (PO) Create Purchase Order</h6>
                 <form action="{{ route('add-budget-project-purchase-order') }}" method="POST">
                     @csrf
-                <div class="row">
+                    <div class="row">
                         <div class="col-sm-4">
                             <label for="startdate" class="form-label"> Date</label>
                             <input type="date" id="startdate" class="form-control" name="startdate" placeholder="Enter Start Date" required />
                         </div>
                         <div class="col-sm-4">
-                        <label for="payment_term" class="form-label">Payment Term</label>
+                            <label for="payment_term" class="form-label">Payment Term</label>
                             <select id="payment_term" name="payment_term" class="form-select">
                                 <option value="net30">Net 30</option>
                                 <option value="net60">Net 60</option>
@@ -89,10 +89,10 @@
                     </div>
 
                     <div class="row mt-4">
-                            <div class="col-sm-4">
-                                <label for="supplier_address" class="form-label">Supplier Address</label>
-                                <input type="text" class="form-control" name="supplier_address" placeholder="eg: Abu Hail Dubai, UAE" />
-                            </div>
+                        <div class="col-sm-4">
+                            <label for="supplier_address" class="form-label">Supplier Address</label>
+                            <input type="text" class="form-control" name="supplier_address" placeholder="eg: Abu Hail Dubai, UAE" />
+                        </div>
 
                         <div class="col-sm-4">
                             <label for="project_name" class="form-label">Choose Project </label>
@@ -107,8 +107,8 @@
                         <div class="col-sm-4">
                             <label for="project_name" class="form-label">Choose Project Manager </label>
                             <select class="form-select" name="project_person_id">
-                            <option disabled selected value>Choose</option>
-                            @foreach ($users as $user)
+                                <option disabled selected value>Choose</option>
+                                @foreach ($users as $user)
                                 <option value="{{$user->id}}">{{$user->first_name}}</option>
                                 @endforeach
                             </select>
@@ -116,7 +116,7 @@
 
                         <div class="col-sm-6 mt-4">
                             <label for="description" class="form-label"> Description </label>
-                            <input type="text" class="form-control" name="description" placeholder="description"/>
+                            <input type="text" class="form-control" name="description" placeholder="description" />
                         </div>
                     </div>
 
@@ -129,7 +129,7 @@
     </div>
 </div>
 
-  <!-- Projects Table -->
+<!-- Projects Table -->
 <div class="card mt-4">
     <h5 class="card-header">PO List</h5>
     <div class="table-responsive text-nowrap limited-scroll">
@@ -147,9 +147,9 @@
                 </tr>
             </thead>
             <tbody id="project-table-body" class="table-border-bottom-0">
-                    <!-- Project rows will be added here -->
+                <!-- Project rows will be added here -->
 
-                    @foreach($purchaseOrders as $po)   
+                @foreach($purchaseOrders as $po)
 
                     @php
                     // Convert IDs to integers
@@ -176,12 +176,12 @@
                             @if (is_null($budget->total_budget_allocated) || $budget->total_budget_allocated <= 0)
                                 <span style="color: red;">Budget Not Allocated</span>
                             @else
-                                {{ number_format($budget->total_budget_allocated, 2) }}
+                            {{ number_format($budget->total_budget_allocated, 2) }}
                             @endif
 
-                            <td>{{$po->status }}</td>
-                    </tr>
-                    @endforeach
+                    <td>{{$po->status }}</td>
+                </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -227,27 +227,27 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    function hideAlertAfterDelay(alertId, delay) {
-        console.log('Trying to hide', alertId);
-        var alertElement = document.getElementById(alertId);
-        if (alertElement) {
-            setTimeout(function() {
-                console.log('Hiding', alertId);
-                alertElement.style.opacity = 0; // Fade out effect
+    document.addEventListener('DOMContentLoaded', function() {
+        function hideAlertAfterDelay(alertId, delay) {
+            console.log('Trying to hide', alertId);
+            var alertElement = document.getElementById(alertId);
+            if (alertElement) {
                 setTimeout(function() {
-                    alertElement.style.display = 'none'; // Hide element after fading out
-                }, 500); // Match the duration of the fade-out effect
-            }, delay);
-        } else {
-            console.log('Element not found:', alertId);
+                    console.log('Hiding', alertId);
+                    alertElement.style.opacity = 0; // Fade out effect
+                    setTimeout(function() {
+                        alertElement.style.display = 'none'; // Hide element after fading out
+                    }, 500); // Match the duration of the fade-out effect
+                }, delay);
+            } else {
+                console.log('Element not found:', alertId);
+            }
         }
-    }
 
-    // Hide alerts after 3000 ms
-    hideAlertAfterDelay('error-alert', 3000);
-    hideAlertAfterDelay('success-alert', 3000);
-});
+        // Hide alerts after 3000 ms
+        hideAlertAfterDelay('error-alert', 3000);
+        hideAlertAfterDelay('success-alert', 3000);
+    });
 </script>
 
 @endsection
