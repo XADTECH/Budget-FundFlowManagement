@@ -205,7 +205,7 @@ Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::clas
 
 
   //download pdf 
-  Route::get('/download-pdf', [PdfController::class, 'download'])->name('download.pdf');
+  Route::get('/download-pdf/{POID}', [PdfController::class, 'download'])->name('download.pdf');
 
 
   //add purchase order

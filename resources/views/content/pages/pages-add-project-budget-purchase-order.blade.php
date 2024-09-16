@@ -98,8 +98,8 @@
                             <label for="project_name" class="form-label">Choose Project </label>
                             <select class="form-select" name="project_name">
                             <option disabled selected value>Choose</option>
-                            @foreach ($budgets as $budget)
-                                <option value="{{$budget->id}}">{{$budget->reference_code}}</option>
+                            @foreach ($projects as $project)
+                                <option value="{{$project->id}}">{{$project->reference_code}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -152,16 +152,22 @@
                     @foreach($purchaseOrders as $po)   
 
                     @php
-                        $requestPerson = $users->firstWhere('id',  $po->requested_by);
-                        $preparedPerson = $users->firstWhere('id',  $po->prepared_by);
-                        $budget = $budgetList->firstWhere('id',  $po->project_id);
-                    @endphp
+                    // Convert IDs to integers
+                    $requestPersonId = (int) $po->requested_by;
+                    $preparedPersonId = (int) $po->prepared_by;
+                
+                    $requestPerson = $userList->firstWhere('id', $requestPersonId);
+                    $preparedPerson = $userList->firstWhere('id', $preparedPersonId);
+                    $budget = $budgetList->firstWhere('id', $po->project_id);
+                @endphp
+                
 
                     <tr>
          
                         <td style="color:#0067aa"><a href="{{route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">{{ $po->po_number }}</a></td>
                 
-                        <td style="color:#0067aa"><a href="{{route('edit-project-budget', ['project_id' => $budget->id]) }}">{{ $budget->reference_code}}</td>
+                        <td style="color:#0067aa"><a href="{{ route('budget-project-report-summary', ['id' => $budget->id]) }}">{{ $budget->reference_code }}</a>
+                     
                         <td>{{ $po->supplier_name }}</td>
                         <td>{{ $po->description }}</td>
                         <td>{{ $preparedPerson->first_name }}</td>

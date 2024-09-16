@@ -37,6 +37,7 @@ class PurcahseOrderController extends Controller
     
     $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
     $userList = User::get();
+    $projects = BudgetProject::all();
     $loggedInUserId = Auth::id();
     $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
 
@@ -45,7 +46,7 @@ class PurcahseOrderController extends Controller
     $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
     $budgetList = BudgetProject::get();
 
-    return view("content.pages.pages-add-project-budget-purchase-order", compact('budgets', 'purchaseOrders', 'users', 'userList', 'budgetList'));
+    return view("content.pages.pages-add-project-budget-purchase-order", compact('budgets', 'purchaseOrders', 'users', 'userList', 'budgetList', 'projects'));
     
   }
 

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('requested_by');
             $table->string('verified_by')->nullable();
-            $table->string('prepared_by')->nullable();
+            $table->unsignedBigInteger('prepared_by');
             $table->date('date');
             $table->string('payment_term');
             $table->decimal('subtotal', 10, 2)->nullable();
