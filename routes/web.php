@@ -230,13 +230,9 @@ Route::middleware(['checklogin'])->group(function () {
   Route::get('/pages/show-budget-project-purchase-order', [PurcahseOrderController::class, 'showPurchaseOrder'])->name(
     'add-budget-capital-expense'
   );
+  
 
-
-  //allocate budget
-
-
-
-
+  Route::get('/filter-purchase-orders', [PurcahseOrderController::class, 'filterPurchaseOrders'])->name('filter-purchase-orders');
 
 
 

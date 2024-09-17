@@ -175,6 +175,7 @@ class ProjectController extends Controller
     $financials = financialCost::all();
     $capitalExpenditures = capitalExpenditure::all();
     $revenuePlans = RevenuePlan::all();
+    $salaries = Salary::all();
 
     $directCost = DirectCost::firstOrNew([
       'budget_project_id' => $id,
@@ -246,7 +247,8 @@ class ProjectController extends Controller
       'overheads',
       'financials',
       'capitalExpenditures',
-      'revenuePlans'
+      'revenuePlans',
+      'salaries'
     ));
   }
 

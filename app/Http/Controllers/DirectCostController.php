@@ -161,6 +161,7 @@ class DirectCostController extends Controller
           $materialCost->direct_cost_id = $directCost->id; // Foreign key reference
           $materialCost->budget_project_id = $validated['project']; // Project name
           $materialCost->type = $validated['type'];
+          $materialCost->contract = $validated['contract'];
           $materialCost->project = $validated['project'];
           $materialCost->po = $validated['po'];
           $materialCost->expenses = $validated['expense'];

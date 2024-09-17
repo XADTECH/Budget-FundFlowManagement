@@ -184,6 +184,15 @@
                     </a>
                 </li>
             </ul>
+
+            <ul class="menu-sub">
+                <li class="menu-item">
+                    <a href="/filter-purchase-orders" class="menu-link">
+                        <div>PO Report</div>
+                    </a>
+                </li>
+            </ul>
+
         </li>
 
              <!--Finance -->

@@ -36,7 +36,7 @@ class PurcahseOrderController extends Controller
 
     
     $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
-    $userList = User::get();
+    
     $projects = BudgetProject::all();
     $loggedInUserId = Auth::id();
     $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
@@ -45,6 +45,7 @@ class PurcahseOrderController extends Controller
     // Retrieve budgets where manager_id matches the logged-in user ID
     $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
     $budgetList = BudgetProject::get();
+    $userList = User::get();
 
     return view("content.pages.pages-add-project-budget-purchase-order", compact('budgets', 'purchaseOrders', 'users', 'userList', 'budgetList', 'projects'));
     
@@ -145,10 +146,7 @@ class PurcahseOrderController extends Controller
 
     public function store(Request $request)
     {
-
-
         try {
-
             // Validate the request data
             $request->validate([
                 'poNumber' => 'required|string',
@@ -164,7 +162,10 @@ class PurcahseOrderController extends Controller
             // Ensure that items are properly set in the request
             $items = json_encode($request->items); // Encode items as JSON
 
-            // Create a new PurchaseOrderItem entry
+            $purchaseOrder->subtotal = $request->totalAmount;
+            $purchaseOrder->vat = $request->totalVAT;
+            $purchaseOrder->total_discount = $request->totalDiscount;
+
             PurchaseOrderItem::create([
                 'purchase_order_id' => $purchaseOrder->id,
                 'po_number' => $request->poNumber,
@@ -187,5 +188,38 @@ class PurcahseOrderController extends Controller
 
             return response()->json(['message' => 'Failed to save purchase order items. ' . $e->getMessage()], 500);
         }
+    }
+
+    //filter purchase order 
+
+    public function filterPurchaseOrders(Request $request)
+    {
+        $projects = BudgetProject::all();
+        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
+        $budgetList = BudgetProject::get();
+        $userList = User::get();
+
+
+        $query = PurchaseOrder::query();
+
+        if ($request->has('project_id') && $request->project_id != '') {
+            $query->where('project_id', $request->project_id);
+        }
+
+        if ($request->has('project_person_id') && $request->project_person_id != '') {
+            $query->where('requested_by', $request->project_person_id);
+        }
+
+        if ($request->has('date') && $request->date != '') {
+            $query->whereDate('date', $request->date);
+        }
+
+        if ($request->has('po_number') && $request->po_number) {
+            $query->whereDate('po_number', $request->po_number);
+        }
+
+        $purchaseOrders = $query->get();
+
+        return view('content.pages.pages-filter-purchase-order-list', compact('purchaseOrders', 'projects', 'users', 'userList', 'budgetList'));
     }
 }

@@ -984,103 +984,90 @@
 
             <!-- Salary Update Modal -->
             <!-- Check if the salary object exists before rendering the modal -->
-            @if (isset($salary))
-                <div class="modal fade" id="updateModal-{{ $salary->id }}" tabindex="-1"
-                    aria-labelledby="updateModalLabel-{{ $salary->id }}" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="updateModalLabel-{{ $salary->id }}">Update Salary</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ url('/pages/update-budget-project-salary/' . $salary->id) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('PUT') <!-- Include this for updating resources -->
-
-                                    <div class="mb-3">
-                                        <label for="type-{{ $salary->id }}" class="form-label">Type</label>
-                                        <select class="form-select" id="type-{{ $salary->id }}" name="type"
-                                            required>
-                                            <option value="Salary" {{ $salary->type == 'Salary' ? 'selected' : '' }}>
-                                                Salary</option>
-                                            <option value="Other" {{ $salary->type == 'Other' ? 'selected' : '' }}>Other
+            @foreach ($salaries as $salary)
+            <!-- Update Salary Modal -->
+            <div class="modal fade" id="updateModal-{{ $salary->id }}" tabindex="-1" aria-labelledby="updateModalLabel-{{ $salary->id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateModalLabel-{{ $salary->id }}">Update Salary</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="updateSalaryForm-{{ $salary->id }}" action="{{ url('/pages/update-budget-project-salary/' . $salary->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+        
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Type</label>
+                                    <select class="form-select" id="type" name="type" required>
+                                        <option value="Salary" {{ $salary->type == 'Salary' ? 'selected' : '' }}>Salary</option>
+                                        <option value="Other" {{ $salary->type == 'Other' ? 'selected' : '' }}>Other</option>
+                                    </select>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="contract" class="form-label">Contract</label>
+                                    <input type="text" class="form-control" id="contract" name="contract" value="{{ $salary->contract }}" required>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="project" class="form-label">Project</label>
+                                    <select class="form-select" id="project" name="project" required>
+                                        @foreach ($allProjects as $project)
+                                            <option value="{{ $project->id }}" {{ $salary->project == $project->id ? 'selected' : '' }}>
+                                                {{ $project->name }}
                                             </option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="contract-{{ $salary->id }}" class="form-label">Contract</label>
-                                        <input type="text" class="form-control" id="contract-{{ $salary->id }}"
-                                            name="contract" value="{{ $salary->contract }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="project-{{ $salary->id }}" class="form-label">Project</label>
-                                        <select class="form-select" id="project-{{ $salary->id }}" name="project"
-                                            required>
-                                            @foreach ($allProjects as $project)
-                                                <option value="{{ $project->id }}"
-                                                    {{ $salary->project == $project->id ? 'selected' : '' }}>
-                                                    {{ $project->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="po-{{ $salary->id }}" class="form-label">PO Type</label>
-                                        <select class="form-select" id="po-{{ $salary->id }}" name="po"
-                                            required>
-                                            <option value="CAPEX" {{ $salary->po == 'CAPEX' ? 'selected' : '' }}>CAPEX
-                                            </option>
-                                            <option value="OPEX" {{ $salary->po == 'OPEX' ? 'selected' : '' }}>OPEX
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="expense-{{ $salary->id }}" class="form-label">Expense Head</label>
-                                        <input type="text" class="form-control" id="expense-{{ $salary->id }}"
-                                            name="expense" value="{{ $salary->expenses }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="cost_per_month-{{ $salary->id }}" class="form-label">Cost Per
-                                            Month</label>
-                                        <input type="number" class="form-control"
-                                            id="cost_per_month-{{ $salary->id }}" name="cost_per_month"
-                                            value="{{ $salary->cost_per_month }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="description-{{ $salary->id }}"
-                                            class="form-label">Description</label>
-                                        <input type="text" class="form-control" id="description-{{ $salary->id }}"
-                                            name="description" value="{{ $salary->description }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="status-{{ $salary->id }}" class="form-label">Status</label>
-                                        <input type="text" class="form-control" id="status-{{ $salary->id }}"
-                                            name="status" value="{{ $salary->status }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="noOfPerson-{{ $salary->id }}" class="form-label">No Of
-                                            Persons</label>
-                                        <input type="number" class="form-control" id="noOfPerson-{{ $salary->id }}"
-                                            name="no_of_staff" value="{{ $salary->no_of_staff }}" step="any"
-                                            required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="months-{{ $salary->id }}" class="form-label">Months</label>
-                                        <input type="number" class="form-control" id="months-{{ $salary->id }}"
-                                            name="no_of_months" value="{{ $salary->no_of_months }}" step="any"
-                                            required>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">Update Salary</button>
-                                </form>
-                            </div>
+                                        @endforeach
+                                    </select>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="po" class="form-label">PO Type</label>
+                                    <select class="form-select" id="po" name="po" required>
+                                        <option value="CAPEX" {{ $salary->po == 'CAPEX' ? 'selected' : '' }}>CAPEX</option>
+                                        <option value="OPEX" {{ $salary->po == 'OPEX' ? 'selected' : '' }}>OPEX</option>
+                                    </select>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="expense" class="form-label">Expense Head</label>
+                                    <input type="text" class="form-control" id="expense" name="expense" value="{{ $salary->expenses }}" required>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="cost_per_month" class="form-label">Cost Per Month</label>
+                                    <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" value="{{ $salary->cost_per_month }}" required>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="description" name="description" value="{{ $salary->description }}" required>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Status</label>
+                                    <input type="text" class="form-control" id="status" name="status" value="{{ $salary->status }}" required>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="noOfPerson" class="form-label">No Of Persons</label>
+                                    <input type="number" class="form-control" id="noOfPerson" name="no_of_staff" value="{{ $salary->no_of_staff }}" required>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="months" class="form-label">Months</label>
+                                    <input type="number" class="form-control" id="months" name="no_of_months" value="{{ $salary->no_of_months }}" required>
+                                </div>
+        
+                                <button type="submit" class="btn btn-primary">Update Salary</button>
+                            </form>
                         </div>
                     </div>
                 </div>
-            @endif
-
+            </div>
+        @endforeach
+        
             <!-- Facility Update Modal -->
             @foreach ($facilities as $facility)
                 <!-- Update Facilities Modal -->

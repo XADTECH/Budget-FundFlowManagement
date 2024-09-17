@@ -160,10 +160,12 @@
 
     <div class="container">
         <!-- Download Button -->
-        <div class="text-end mt-4">
-            <a href="{{ route('download.pdf',['POID'=>$purchaseOrder->po_number]) }}" target="_blank" class="btn" style="background-color:#1a73e8; color:white">
-                <i class="fas fa-print"></i> Download PDF
-            </a>
+            <div class="text-end mt-4">
+                @if($purchaseOrder->status == 'submitted')
+                <a href="{{ route('download.pdf', ['POID' => $purchaseOrder->po_number]) }}" target="_blank" class="btn" style="background-color:#1a73e8; color:white">
+                    <i class="fas fa-print"></i> Download PDF
+                </a>
+            @endif
         </div>
         <div class="header d-flex flex-column flex-md-row justify-content-between bg-white p-3 rounded">
             <div class="d-flex flex-column">
@@ -231,15 +233,17 @@
             @php
             $isDisabled = is_null($budget->total_budget_allocated) || $poStatus === "submitted";
             @endphp
-            <button
-                type="button"
-                class="btn"
-                data-bs-toggle="modal"
-                data-bs-target="#addItemModal"
-                style="background-color:#1a73e8; color:white; {{ $isDisabled ? 'pointer-events: none; opacity: 0.5;' : '' }}"
-                {{ $isDisabled ? 'disabled' : '' }}>
-                <i class="fas fa-plus"></i> ADD ITEM
-            </button>
+                @if($purchaseOrder->status != 'submitted')
+                <button
+                    type="button"
+                    class="btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addItemModal"
+                    style="background-color:#1a73e8; color:white; {{ $isDisabled ? 'pointer-events: none; opacity: 0.5;' : '' }}"
+                    {{ $isDisabled ? 'disabled' : '' }}>
+                    <i class="fas fa-plus"></i> Add ITEM
+                </button>
+            @endif
         </div>
 
         <!-- Purchase Order Table -->
@@ -300,7 +304,7 @@
                 style="background-color:#1a73e8; color:white; {{ $isDisabled ? 'pointer-events: none; opacity: 0.5;' : '' }}"
                 {{ $isDisabled ? 'disabled' : '' }}
                 onClick="{{ $isDisabled ? '' : 'submitData()' }}">
-                <i class="fas fa-save"></i> Submit Order
+                <i class="fas fa-save"></i> {{$purchaseOrder->status == 'submitted' ? 'Submited' : 'Submit'}}
             </button>
         </div>
 
@@ -416,7 +420,9 @@
                     totalAmount: totalAmount,
                     totalDiscount: totalDiscount,
                     totalVAT: totalVAT,
-                    "status": "submitted"
+                    "status": "submitted",
+                    budget: '{{ $budget->id }}',
+                    po_number: '{{ $purchaseOrder->po_number }}',
                 };
 
                 console.log(data);

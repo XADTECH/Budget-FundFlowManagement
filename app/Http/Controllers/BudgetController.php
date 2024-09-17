@@ -436,18 +436,22 @@ class BudgetController extends Controller
           'total_budget_allocated' => $totalAllocatedBudget,
       ]);
   
-      // Create cash flow entries for the allocations
-      CashFlow::create([
-          'date' => now(), // Adjust as needed
-          'description' => 'Initial Allocation',
-          'category' => 'Allocation',
-          'cash_inflow' => $totalAllocatedBudget, // Assuming this is an inflow
-          'cash_outflow' => 0,
-          'reference_code' => $budget->reference_code,
-          'committed_budget' => $totalAllocatedBudget,
-          'balance' => $totalAllocatedBudget,
-          'budget_project_id' => $request->input('project'),
-      ]);
+            // Iterate through the allocations and save each one to the database
+      foreach ($allocations as $category => $allocation) {
+        // Create a cash flow entry for each category
+        CashFlow::create([
+            'date' => now(), // Adjust the date as needed
+            'description' => 'Initial Allocation',
+            'category' => ucfirst($category), // Capitalize the category name
+            'cash_inflow' => $allocation['allocated'],
+            'cash_outflow' => 0, // Assuming initial allocation has no outflow
+            'reference_code' => $budget->reference_code,
+            'committed_budget' => $allocation['allocated'],
+            'balance' => $allocation['allocated'], // Balance is equal to the committed budget initially
+            'budget_project_id' => $request->input('project'),
+            'project_manager' => $budget->manager_id, // Assuming you store the manager ID here
+        ]);
+      }
   
       // Return success message or redirect to the appropriate page
       return redirect()->route('budget-project-report-summary', ['id' => $budget->id])->with('success', 'Funds are Allocated for this Project');

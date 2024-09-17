@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('description');
             $table->string('supplier_address');
             $table->unsignedBigInteger('project_id');
+            $table->decimal('total_discount', 10, 2)->nullable();
             $table->unsignedBigInteger('requested_by');
             $table->string('verified_by')->nullable();
             $table->unsignedBigInteger('prepared_by');

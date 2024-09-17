@@ -98,7 +98,7 @@
                             <label for="project_name" class="form-label">Choose Project </label>
                             <select class="form-select" name="project_name">
                                 <option disabled selected value>Choose</option>
-                                @foreach ($budgets as $budget)
+                                @foreach ($budgetList as $budget)
                                 <option value="{{$budget->id}}">{{$budget->reference_code}}</option>
                                 @endforeach
                             </select>
@@ -152,8 +152,8 @@
                 @foreach($purchaseOrders as $po)
 
                 @php
-                $requestPerson = $users->firstWhere('id', $po->requested_by);
-                $preparedPerson = $users->firstWhere('id', $po->prepared_by);
+                $requestPerson = $userList->firstWhere('id', $po->requested_by);
+                $preparedPerson = $userList->firstWhere('id', $po->prepared_by);
                 $budget = $budgetList->firstWhere('id', $po->project_id);
                 @endphp
 

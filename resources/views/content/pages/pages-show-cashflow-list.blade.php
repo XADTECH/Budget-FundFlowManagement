@@ -4,7 +4,7 @@
 
 @section('content')
 
-<!-- Cash Flow Table -->
+<!-- Cash Flow Filter Form -->
 <div class="card mt-4">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">CASH FLOW LIST</h5>
@@ -37,6 +37,8 @@
     </form>
 </div>
 
+<!-- Cash Flow Table -->
+@if(request('budget_project_id') || request('reference_code'))
 <div class="card mt-4">
     <div class="table-responsive text-nowrap limited-scroll">
         <table class="table table-hover">
@@ -78,8 +80,6 @@
         </table>
     </div>
 </div>
-
-
-
+@endif
 
 @endsection
