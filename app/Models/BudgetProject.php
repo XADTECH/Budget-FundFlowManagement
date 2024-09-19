@@ -30,6 +30,7 @@ class BudgetProject extends Model
     'total_dpm_expense',
     'total_lpo_expense',
     'status',
+    'approve_by'
   ];
 
   public function directCosts()

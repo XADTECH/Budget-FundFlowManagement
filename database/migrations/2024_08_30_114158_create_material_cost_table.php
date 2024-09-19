@@ -14,12 +14,16 @@ return new class extends Migration {
         $table->id();
         $table->unsignedBigInteger('direct_cost_id');
         $table->unsignedBigInteger('budget_project_id');
-        $table->string('sn')->default('2.3'); // Default value for 'sn'
+
         $table->string('type'); // Type of record (e.g., Material/Cost)
         $table->string('project'); // Project name
-        $table->string('po'); // Type of expense (e.g., OPEX)
-        $table->string('expenses'); // Specific expense (e.g., Salary, Materials)
-        $table->string('contract')->nullable(); // Contract information, if applicable
+        $table->string('po')->default('OPEX'); // Type of expense (e.g., OPEX)
+        $table->enum('expenses', [
+          'Consumed Material',
+          'Petty Cash',
+          'NOC Payment',
+      ])->default('Consumed Material'); 
+        $table->string('material_head'); // Description of the material or details  
         $table->string('description'); // Description of the material or details
         $table->string('status'); // Status of the budget entry (e.g., New Hiring, Purchased)
         
@@ -34,6 +38,7 @@ return new class extends Migration {
 
         $table->decimal('total_budget', 15, 2)->nullable(); // Total budget allocated
         $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('approved');
+        $table->decimal('percentage_cost', 15, 2)->default(0);
         
         $table->timestamps();
     });

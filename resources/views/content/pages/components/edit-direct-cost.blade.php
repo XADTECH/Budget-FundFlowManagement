@@ -225,11 +225,7 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="contract" class="form-label">Contract</label>
-                        <input type="text" class="form-control" id="contract" name="contract"
-                            placeholder="e.g., Employment Contract" required>
-                    </div>
+               
                     <div class="mb-3">
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
@@ -247,9 +243,52 @@
                     </div>
                     <div class="mb-3">
                         <label for="expense" class="form-label">Expense Head</label>
-                        <input type="text" class="form-control" id="expense" name="expense"
-                            placeholder="e.g., Salary" required>
+                        <select class="form-select" id="expense" name="expense" required>
+                            <option value="">Select an option</option>
+                            <option value="Sr. Client Relationship Manager">Sr. Client Relationship Manager</option>
+                            <option value="Sr. Manager Operations">Sr. Manager Operations</option>
+                            <option value="Project Manager">Project Manager</option>
+                            <option value="Project Coordinator">Project Coordinator</option>
+                            <option value="Draftsman">Draftsman</option>
+                            <option value="NOC Officer">NOC Officer</option>
+                            <option value="Document Controller">Document Controller</option>
+                            <option value="HSE / QMS Coordinator">HSE / QMS Coordinator</option>
+                            <option value="HSE Engineer">HSE Engineer</option>
+                            <option value="QMS Engineer">QMS Engineer</option>
+                            <option value="Sr. Civil Project Engineer">Sr. Civil Project Engineer</option>
+                            <option value="Civil Project Engineer">Civil Project Engineer</option>
+                            <option value="Surveyor">Surveyor</option>
+                            <option value="Foreman">Foreman</option>
+                            <option value="Charge Hand">Charge Hand</option>
+                            <option value="Mason">Mason</option>
+                            <option value="Helper">Helper</option>
+                            <option value="Driver Cum Helper">Driver Cum Helper</option>
+                            <option value="3-Ton Driver">3-Ton Driver</option>
+                            <option value="Bus Driver">Bus Driver</option>
+                            <option value="other">Other</option>
+                        </select>
                     </div>
+
+                    <div class="mb-3" id="overseeing-sites-field" style="display: none;">
+                        <label for="overseeing_sites" class="form-label">Number of Overseeing Sites</label>
+                        <input type="number" class="form-control" id="overseeing_sites" name="overseeing_sites" placeholder="Enter number of sites">
+                    </div>
+                    
+                    <div class="mb-3" id="other-field" style="display: none;">
+                        <label for="other_expense" class="form-label">Other</label>
+                        <input type="text" class="form-control" id="other_expense" name="other_expense" placeholder="Specify other expense">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="visa_status" class="form-label">Visa Status</label>
+                        <select class="form-select" id="visa_status" name="visa_status" required>
+                            <option value="" disabled>Select Visa Status</option>
+                            <option value="Xad Visa" {{ old('visa_status', $model->visa_status ?? '') == 'Xad Visa' ? 'selected' : '' }}>Xad Visa</option>
+                            <option value="Contractor" {{ old('visa_status', $model->visa_status ?? '') == 'Contractor' ? 'selected' : '' }}>Contractor</option>
+                        </select>
+                    </div>
+             
+                    
                     <div class="mb-3">
                         <label for="cost_per_month" class="form-label">Cost Per Month</label>
                         <input type="number" class="form-control" id="cost_per_month" name="cost_per_month"
@@ -258,7 +297,7 @@
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <input type="text" class="form-control" id="description" name="description"
-                            placeholder="e.g., Project Manager Salary" required>
+                            placeholder="e.g., we are starting new project" required>
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
@@ -449,4 +488,29 @@
 
 
 
-<script></script>
+<script>
+    document.getElementById('expense').addEventListener('change', function() {
+        var overseeingSitesField = document.getElementById('overseeing-sites-field');
+        var otherField = document.getElementById('other-field');
+        
+        var selectedValue = this.value;
+        var showOverseeingSites = [
+            'Sr. Client Relationship Manager',
+            'Sr. Manager Operations',
+            'Project Manager',
+            'Sr. Civil Project Engineer'
+        ].includes(selectedValue);
+        
+        if (showOverseeingSites) {
+            overseeingSitesField.style.display = 'block';
+        } else {
+            overseeingSitesField.style.display = 'none';
+        }
+        
+        if (selectedValue === 'other') {
+            otherField.style.display = 'block';
+        } else {
+            otherField.style.display = 'none';
+        }
+    });
+</script>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 17, 2024 at 08:57 AM
+-- Generation Time: Sep 19, 2024 at 12:19 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -49,8 +49,7 @@ CREATE TABLE `allocated_budget` (
 --
 
 INSERT INTO `allocated_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `allocated_budget`, `total_opex`, `total_capex`, `reference_code`, `created_at`, `updated_at`) VALUES
-(10, 1, 50000.00, 15000.00, 5000.00, 300.00, 4000.00, 5000.00, 79300.00, 0.00, 0.00, 'BP091220240001', '2024-09-17 00:47:18', '2024-09-17 00:47:18'),
-(11, 2, 309800.00, 396000.00, 5330.00, 100141.00, 30000.00, 60800.00, 902071.00, 0.00, 0.00, 'BP091220240002', '2024-09-17 02:05:55', '2024-09-17 02:05:55');
+(13, 2, 200000.00, 300000.00, 4000.00, 100000.00, 20000.00, 40000.00, 664000.00, 0.00, 0.00, 'BP091220240002', '2024-09-17 07:45:57', '2024-09-17 07:45:57');
 
 -- --------------------------------------------------------
 
@@ -80,8 +79,7 @@ CREATE TABLE `approved_budget` (
 --
 
 INSERT INTO `approved_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `approved_budget`, `expected_net_profit_after_tax`, `expected_net_profit_before_tax`, `reference_code`, `created_at`, `updated_at`) VALUES
-(11, 1, 60000.00, 15000.00, 5000.00, 300.00, 4000.00, 5000.00, 305000.00, 196287.00, 215700.00, 'BP091220240001', '2024-09-17 00:46:56', '2024-09-17 00:46:56'),
-(12, 2, 309800.00, 396000.00, 5330.00, 100141.00, 30000.00, 60800.00, 1489257.00, 534339.26, 587186.00, 'BP091220240002', '2024-09-17 02:04:55', '2024-09-17 02:04:55');
+(14, 2, 309800.00, 396000.00, 5330.00, 100141.00, 30000.00, 60800.00, 1489257.00, 534339.26, 587186.00, 'BP091220240002', '2024-09-17 07:44:24', '2024-09-17 07:44:24');
 
 -- --------------------------------------------------------
 
@@ -136,8 +134,10 @@ CREATE TABLE `budget_project` (
 --
 
 INSERT INTO `budget_project` (`id`, `reference_code`, `start_date`, `end_date`, `project_id`, `unit_id`, `manager_id`, `approve_by`, `client_id`, `region`, `site_name`, `description`, `budget_type`, `country`, `month`, `approval_status`, `bal_under_over_budget`, `total_budget_allocated`, `total_dpm_expense`, `total_lpo_expense`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'BP091220240001', '2024-09-12', '2024-11-12', 1, 2, 19, 19, 1, 'Dubai', 'abu hail, dubai', 'starting new', 'Auto Workshop', 'UAE', '2024-09-01', 'approve', NULL, 79300.00, NULL, NULL, 'Good', '2024-09-12 04:02:57', '2024-09-17 00:47:18'),
-(2, 'BP091220240002', '2024-09-13', '2024-11-14', 1, 1, 19, 19, 1, 'Riyadh', 'abu hail, dubai', 'starting new', 'Fleet Management', 'KSA', '2024-09-01', 'approve', NULL, 902071.00, NULL, NULL, 'Good', '2024-09-12 06:37:30', '2024-09-17 02:05:55');
+(1, 'BP091220240001', '2024-09-12', '2024-11-12', 1, 2, 19, NULL, 1, 'Dubai', 'abu hail, dubai', 'starting new', 'Auto Workshop', 'UAE', '2024-09-01', 'reject', NULL, 0.00, NULL, NULL, 'Good', '2024-09-12 04:02:57', '2024-09-17 04:42:17'),
+(2, 'BP091220240002', '2024-09-13', '2024-11-14', 1, 1, 19, 19, 1, 'Riyadh', 'abu hail, dubai', 'starting new', 'Fleet Management', 'KSA', '2024-09-01', 'approve', NULL, 664000.00, NULL, NULL, 'Good', '2024-09-12 06:37:30', '2024-09-17 07:45:57'),
+(3, 'BP091720240001', '2024-09-17', '2024-10-18', 1, 2, 19, NULL, 1, 'Dubai', 'abu hail, dubai', 'starting new', 'Etisalat Managed Service', 'UAE', '2024-09-01', 'pending', NULL, NULL, NULL, NULL, 'Good', '2024-09-17 06:52:38', '2024-09-17 06:52:38'),
+(4, 'BP091720240002', '2024-09-18', '2024-10-18', 4, 2, 19, NULL, 1, 'Ras Al Khaimah', NULL, NULL, 'Other', 'UAE', '2024-09-17', 'pending', NULL, NULL, NULL, NULL, 'Good', '2024-09-17 07:21:20', '2024-09-17 07:22:07');
 
 -- --------------------------------------------------------
 
@@ -252,18 +252,12 @@ CREATE TABLE `cash_flows` (
 --
 
 INSERT INTO `cash_flows` (`id`, `date`, `description`, `category`, `reference_code`, `cash_inflow`, `cash_outflow`, `committed_budget`, `balance`, `budget_project_id`, `created_at`, `updated_at`) VALUES
-(8, '2024-09-17', 'Initial Allocation', 'Salary', 'BP091220240001', 50000.00, 0.00, 50000.00, 50000.00, 1, '2024-09-17 00:47:18', '2024-09-17 00:47:18'),
-(9, '2024-09-17', 'Initial Allocation', 'Facility', 'BP091220240001', 15000.00, 0.00, 15000.00, 15000.00, 1, '2024-09-17 00:47:18', '2024-09-17 00:47:18'),
-(10, '2024-09-17', 'Initial Allocation', 'Material', 'BP091220240001', 5000.00, 0.00, 5000.00, 5000.00, 1, '2024-09-17 00:47:18', '2024-09-17 00:47:18'),
-(11, '2024-09-17', 'Initial Allocation', 'Overhead', 'BP091220240001', 300.00, 0.00, 300.00, 300.00, 1, '2024-09-17 00:47:18', '2024-09-17 00:47:18'),
-(12, '2024-09-17', 'Initial Allocation', 'Financial', 'BP091220240001', 4000.00, 0.00, 4000.00, 4000.00, 1, '2024-09-17 00:47:18', '2024-09-17 00:47:18'),
-(13, '2024-09-17', 'Initial Allocation', 'Capital_expenditure', 'BP091220240001', 5000.00, 0.00, 5000.00, 5000.00, 1, '2024-09-17 00:47:18', '2024-09-17 00:47:18'),
-(14, '2024-09-17', 'Initial Allocation', 'Salary', 'BP091220240002', 309800.00, 0.00, 309800.00, 309800.00, 2, '2024-09-17 02:05:55', '2024-09-17 02:05:55'),
-(15, '2024-09-17', 'Initial Allocation', 'Facility', 'BP091220240002', 396000.00, 0.00, 396000.00, 396000.00, 2, '2024-09-17 02:05:55', '2024-09-17 02:05:55'),
-(16, '2024-09-17', 'Initial Allocation', 'Material', 'BP091220240002', 5330.00, 0.00, 5330.00, 5330.00, 2, '2024-09-17 02:05:55', '2024-09-17 02:05:55'),
-(17, '2024-09-17', 'Initial Allocation', 'Overhead', 'BP091220240002', 100141.00, 0.00, 100141.00, 100141.00, 2, '2024-09-17 02:05:55', '2024-09-17 02:05:55'),
-(18, '2024-09-17', 'Initial Allocation', 'Financial', 'BP091220240002', 30000.00, 0.00, 30000.00, 30000.00, 2, '2024-09-17 02:05:55', '2024-09-17 02:05:55'),
-(19, '2024-09-17', 'Initial Allocation', 'Capital_expenditure', 'BP091220240002', 60800.00, 0.00, 60800.00, 60800.00, 2, '2024-09-17 02:05:55', '2024-09-17 02:05:55');
+(26, '2024-09-17', 'Initial Allocation', 'Salary', 'BP091220240002', 200000.00, 0.00, 200000.00, 200000.00, 2, '2024-09-17 07:45:57', '2024-09-17 07:45:57'),
+(27, '2024-09-17', 'Initial Allocation', 'Facility', 'BP091220240002', 300000.00, 0.00, 300000.00, 300000.00, 2, '2024-09-17 07:45:57', '2024-09-17 07:45:57'),
+(28, '2024-09-17', 'Initial Allocation', 'Material', 'BP091220240002', 4000.00, 0.00, 4000.00, 4000.00, 2, '2024-09-17 07:45:57', '2024-09-17 07:45:57'),
+(29, '2024-09-17', 'Initial Allocation', 'Overhead', 'BP091220240002', 100000.00, 0.00, 100000.00, 100000.00, 2, '2024-09-17 07:45:57', '2024-09-17 07:45:57'),
+(30, '2024-09-17', 'Initial Allocation', 'Financial', 'BP091220240002', 20000.00, 0.00, 20000.00, 20000.00, 2, '2024-09-17 07:45:57', '2024-09-17 07:45:57'),
+(31, '2024-09-17', 'Initial Allocation', 'Capital_expenditure', 'BP091220240002', 40000.00, 0.00, 40000.00, 40000.00, 2, '2024-09-17 07:45:57', '2024-09-17 07:45:57');
 
 -- --------------------------------------------------------
 
@@ -324,7 +318,9 @@ CREATE TABLE `direct_cost` (
 
 INSERT INTO `direct_cost` (`id`, `budget_project_id`, `total_cost`, `created_at`, `updated_at`) VALUES
 (1, 1, NULL, '2024-09-12 04:03:55', '2024-09-12 04:03:55'),
-(2, 2, NULL, '2024-09-17 01:06:09', '2024-09-17 01:06:09');
+(2, 2, NULL, '2024-09-17 01:06:09', '2024-09-17 01:06:09'),
+(3, 3, NULL, '2024-09-17 06:57:18', '2024-09-17 06:57:18'),
+(4, 4, NULL, '2024-09-17 07:27:05', '2024-09-17 07:27:05');
 
 -- --------------------------------------------------------
 
@@ -475,7 +471,8 @@ INSERT INTO `material_cost` (`id`, `direct_cost_id`, `budget_project_id`, `sn`, 
 (4, 1, 1, '2.3', 'Material', '3', 'OPEX', 'Material', 'DU CIVIL', '100 Meter Ethernet Cable', 'purchase new stack', 100.00, 'meters', 50.00, 5000.00, 50.00, NULL, 'approved', '2024-09-13 03:08:23', '2024-09-13 03:16:53'),
 (5, 2, 2, '2.3', 'Material', '1', 'OPEX', 'Copper Wires', 'DU CIVIL', '500 meters of copper wiring for electrical work', 'new to purchase', 500.00, 'meters', 2.50, 1250.00, 2.50, NULL, 'approved', '2024-09-17 01:32:43', '2024-09-17 01:33:03'),
 (6, 2, 2, '2.3', 'Material', '1', 'OPEX', 'Facilities', NULL, 'Concrete bags for foundation laying', 'new to purchase', 100.00, 'pieces', 6.80, 680.00, 6.80, NULL, 'approved', '2024-09-17 01:35:27', '2024-09-17 01:35:27'),
-(7, 2, 2, '2.3', 'Material', '1', 'OPEX', 'Material', 'DU CIVIL', '20 pieces of 6-meter wooden beams for construction support', 'new to purchase', 200.00, 'pieces', 17.00, 3400.00, 17.00, NULL, 'approved', '2024-09-17 01:38:45', '2024-09-17 01:39:48');
+(7, 2, 2, '2.3', 'Material', '1', 'OPEX', 'Material', 'DU CIVIL', '20 pieces of 6-meter wooden beams for construction support', 'new to purchase', 200.00, 'pieces', 17.00, 3400.00, 17.00, NULL, 'approved', '2024-09-17 01:38:45', '2024-09-17 01:39:48'),
+(8, 4, 4, '2.3', 'Material', '1', 'OPEX', 'drop fibre', 'DU CIVIL', 'DF', 'purchase new stack', 2000.00, 'meters', 3.00, 6000.00, 3.00, NULL, 'approved', '2024-09-17 07:59:11', '2024-09-17 07:59:11');
 
 -- --------------------------------------------------------
 
@@ -630,7 +627,8 @@ CREATE TABLE `projects` (
 INSERT INTO `projects` (`id`, `name`, `projectdetail`, `projectremark`, `status`, `created_at`, `updated_at`) VALUES
 (1, '713h', NULL, NULL, 'Active', '2024-09-07 02:03:28', '2024-09-07 02:03:28'),
 (2, '89UY', NULL, NULL, 'Active', '2024-09-07 02:03:32', '2024-09-07 02:03:32'),
-(3, 'WR-OLT', NULL, NULL, 'Active', '2024-09-07 02:03:35', '2024-09-07 02:03:35');
+(3, 'WR-OLT', NULL, NULL, 'Active', '2024-09-07 02:03:35', '2024-09-07 02:03:35'),
+(4, 'ETI-MN', NULL, NULL, 'Active', '2024-09-17 07:16:43', '2024-09-17 07:16:43');
 
 -- --------------------------------------------------------
 
@@ -651,7 +649,8 @@ CREATE TABLE `project_budget_sequence` (
 --
 
 INSERT INTO `project_budget_sequence` (`id`, `date`, `last_sequence`, `created_at`, `updated_at`) VALUES
-(1, '09122024', 2, '2024-09-12 04:02:57', '2024-09-12 06:37:30');
+(1, '09122024', 2, '2024-09-12 04:02:57', '2024-09-12 06:37:30'),
+(2, '09172024', 2, '2024-09-17 06:52:38', '2024-09-17 07:21:20');
 
 -- --------------------------------------------------------
 
@@ -690,7 +689,8 @@ CREATE TABLE `purchase_orders` (
 --
 
 INSERT INTO `purchase_orders` (`id`, `po_number`, `supplier_name`, `description`, `supplier_address`, `project_id`, `requested_by`, `verified_by`, `prepared_by`, `date`, `payment_term`, `subtotal`, `vat`, `total_discount`, `total`, `budget_total`, `budget_utilization`, `budget_balance`, `current_request`, `status`, `is_verified`, `created_at`, `updated_at`) VALUES
-(10, 'PO091620240012', 'Innovative', 'starting new Project', 'Abu Hail, UAE', 1, 19, NULL, 33, '2024-09-17', 'net90', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Not Submitted', 0, '2024-09-16 08:22:23', '2024-09-16 08:22:23');
+(10, 'PO091620240012', 'Innovative', 'starting new Project', 'Abu Hail, UAE', 1, 19, NULL, 33, '2024-09-17', 'net90', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Not Submitted', 0, '2024-09-16 08:22:23', '2024-09-16 08:22:23'),
+(11, 'PO091720240001', 'Innovative', 'starting new', 'Abu Hail, UAE', 2, 19, NULL, 19, '2024-09-17', 'net60', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Not Submitted', 0, '2024-09-17 07:10:43', '2024-09-17 07:10:43');
 
 -- --------------------------------------------------------
 
@@ -737,7 +737,8 @@ CREATE TABLE `purchase_order_sequence` (
 --
 
 INSERT INTO `purchase_order_sequence` (`id`, `date`, `last_sequence`, `created_at`, `updated_at`) VALUES
-(1, '09162024', 12, '2024-09-16 02:17:37', '2024-09-16 08:22:23');
+(1, '09162024', 12, '2024-09-16 02:17:37', '2024-09-16 08:22:23'),
+(2, '09172024', 1, '2024-09-17 07:10:43', '2024-09-17 07:10:43');
 
 -- --------------------------------------------------------
 
@@ -771,7 +772,8 @@ CREATE TABLE `revenue_plans` (
 INSERT INTO `revenue_plans` (`id`, `budget_project_id`, `sn`, `type`, `project`, `contract`, `description`, `amount`, `total_profit`, `net_profit_before_tax`, `tax`, `net_profit_after_tax`, `profit_percentage`, `approval_status`, `created_at`, `updated_at`) VALUES
 (3, 1, 1, 'Revenue', '2', 'Civil Project', 'NOC Payment', 300000.00, 300000.00, 215700.00, 19413.00, 196287.00, 65.4290, 'approved', '2024-09-13 04:39:45', '2024-09-13 04:39:45'),
 (4, 2, 1, 'Revenue', '1', 'DU CIVIL', 'Civil Project', 1088457.00, 1388457.00, 547186.00, 49246.74, 497939.26, 45.7473, 'approved', '2024-09-17 02:03:04', '2024-09-17 02:03:04'),
-(5, 2, 1, 'Revenue', '1', 'DU CIVIL', 'NOC Payment', 40000.00, 1428457.00, 587186.00, 52846.74, 534339.26, 1335.8482, 'approved', '2024-09-17 02:04:35', '2024-09-17 02:04:35');
+(5, 2, 1, 'Revenue', '1', 'DU CIVIL', 'NOC Payment', 40000.00, 1428457.00, 587186.00, 52846.74, 534339.26, 1335.8482, 'approved', '2024-09-17 02:04:35', '2024-09-17 02:04:35'),
+(6, 4, 1, 'Revenue', '4', 'DU CIVIL', 'PO', 19999998.00, 21428455.00, 21368455.00, 1923160.95, 19445294.05, 97.2265, 'approved', '2024-09-17 08:21:45', '2024-09-17 08:21:45');
 
 -- --------------------------------------------------------
 
@@ -815,7 +817,9 @@ INSERT INTO `salaries` (`id`, `direct_cost_id`, `budget_project_id`, `sn`, `type
 (18, 2, 2, '2.1', 'Salary', 'DU CIVIL', '1', 'OPEX', 'salary', 'HSE / QMS Coordinator', 'new hiring', 3000.00, 3, 2, 18000.00, 3000.00, 'approved', '2024-09-17 01:19:27', '2024-09-17 01:19:27'),
 (19, 2, 2, '2.1', 'Salary', 'DU CIVIL', '1', 'OPEX', 'salary', 'Mason', 'new hiring', 3000.00, 1, 2, 6000.00, 3000.00, 'approved', '2024-09-17 01:20:39', '2024-09-17 01:20:39'),
 (20, 2, 2, '2.1', 'Salary', 'DU CIVIL', '1', 'OPEX', 'salary', 'Helper', 'new hiring', 1200.00, 20, 2, 48000.00, 1200.00, 'approved', '2024-09-17 01:22:21', '2024-09-17 01:22:21'),
-(21, 2, 2, '2.1', 'Salary', 'DU CIVIL', '1', 'OPEX', 'salary', 'Bus Driver', 'new hiring', 2200.00, 10, 2, 44000.00, 2200.00, 'approved', '2024-09-17 01:23:54', '2024-09-17 01:23:54');
+(21, 2, 2, '2.1', 'Salary', 'DU CIVIL', '1', 'OPEX', 'salary', 'Bus Driver', 'new hiring', 2200.00, 10, 2, 44000.00, 2200.00, 'approved', '2024-09-17 01:23:54', '2024-09-17 01:23:54'),
+(22, 3, 3, '2.1', 'Salary', 'DU CIVIL', '1', 'OPEX', 'salary', 'project manager salary', 'new hiring', 5000.00, 3, 2, 30000.00, 5000.00, 'approved', '2024-09-17 06:57:18', '2024-09-17 06:57:18'),
+(23, 4, 4, '2.1', 'Salary', 'DU CIVIL', '1', 'OPEX', 'salary', 'Mason', 'new hiring', 3000.00, 6, 3, 54000.00, 3000.00, 'approved', '2024-09-17 07:27:05', '2024-09-17 07:27:05');
 
 -- --------------------------------------------------------
 
@@ -1041,13 +1045,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `allocated_budget`
 --
 ALTER TABLE `allocated_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `approved_budget`
 --
 ALTER TABLE `approved_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `banks`
@@ -1059,7 +1063,7 @@ ALTER TABLE `banks`
 -- AUTO_INCREMENT for table `budget_project`
 --
 ALTER TABLE `budget_project`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `business_clients`
@@ -1083,7 +1087,7 @@ ALTER TABLE `capital_expenditure`
 -- AUTO_INCREMENT for table `cash_flows`
 --
 ALTER TABLE `cash_flows`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `cost_overhead`
@@ -1095,7 +1099,7 @@ ALTER TABLE `cost_overhead`
 -- AUTO_INCREMENT for table `direct_cost`
 --
 ALTER TABLE `direct_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `facility_cost`
@@ -1125,7 +1129,7 @@ ALTER TABLE `indirect_cost`
 -- AUTO_INCREMENT for table `material_cost`
 --
 ALTER TABLE `material_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -1155,19 +1159,19 @@ ALTER TABLE `planned_cash_opening_balances`
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `project_budget_sequence`
 --
 ALTER TABLE `project_budget_sequence`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_items`
@@ -1179,19 +1183,19 @@ ALTER TABLE `purchase_order_items`
 -- AUTO_INCREMENT for table `purchase_order_sequence`
 --
 ALTER TABLE `purchase_order_sequence`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `revenue_plans`
 --
 ALTER TABLE `revenue_plans`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `salaries`
 --
 ALTER TABLE `salaries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `users`
