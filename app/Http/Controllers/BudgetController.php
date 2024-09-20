@@ -7,6 +7,8 @@ use App\Models\BudgetProject;
 use App\Models\BusinessUnit;
 use App\Models\User;
 use App\Models\Project;
+use App\Models\PettyCash;
+use App\Models\NocPayment;
 use App\Models\Salary;
 use App\Models\ProjectBudgetSequence;
 use App\Models\PurchaseOrderController;
@@ -47,6 +49,7 @@ class BudgetController extends Controller
 
       $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
     }
+    
 
     return view('content.pages.pages-add-project-budget', compact('clients', 'projects', 'units', 'budgets', 'users'));
   }
@@ -122,6 +125,10 @@ class BudgetController extends Controller
     $totalCostOverhead = CostOverhead::where('budget_project_id', $project_id)->sum('total_cost');
     $totalFinancialCost = FinancialCost::where('budget_project_id', $project_id)->sum('total_cost');
     $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $project_id)->sum('total_cost');
+    
+    $existingPettyCash = PettyCash::where('project_id', $project_id)->first();
+
+    $existingNocPayment = NocPayment::where('project_id', $project_id)->first();
 
 
     // Now return the view with all necessary variables
@@ -143,7 +150,9 @@ class BudgetController extends Controller
         'totalFinancialCost',
         'totalNetProfitAfterTax',
         'totalCapitalExpenditure',
-        'totalNetProfitBeforeTax'
+        'totalNetProfitBeforeTax',
+        'existingNocPayment',
+        'existingPettyCash'
       )
     );
   }

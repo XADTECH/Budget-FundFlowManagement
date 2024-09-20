@@ -6,196 +6,232 @@ use Illuminate\Http\Request;
 use App\Models\Salary;
 use App\Models\DirectCost;
 use App\Models\FacilityCost;
+use App\Models\PettyCash;
+use App\Models\NocPayment;
 use App\Models\MaterialCost;
 use Illuminate\Support\Facades\Validator;
 
-
 class DirectCostController extends Controller
 {
-  
+    public function storeSalary(Request $request)
+    {
+        //return response()->json($request->all());
+        // Validate the incoming request
+        $validated = $request->validate([
+            'type' => 'required|string',
+            'project' => 'required|exists:projects,id', // Ensure `projects` table exists
+            'po' => 'required|string',
+            'expense' => 'required|string',
+            'cost_per_month' => 'nullable|numeric',
+            'description' => 'nullable|string',
+            'status' => 'required|string',
+            'noOfPerson' => 'required|numeric', // Number of persons
+            'months' => 'required|numeric', // Number of months
 
-  public function storeSalary(Request $request)
-  {
-      // Validate the incoming request
-      $validated = $request->validate([
-          'type' => 'required|string',
-          'project' => 'required|exists:projects,id', // Ensure `projects` table exists
-          'po' => 'required|string',
-          'expense' => 'required|string',
-          'cost_per_month' => 'nullable|numeric',
-          'description' => 'nullable|string',
-          'status' => 'required|string',
-          'noOfPerson' => 'required|numeric', // Number of persons
-          'months' => 'required|numeric', // Number of months
-          'overseeing_sites' => 'required|numeric', // Number of overseeing sites
-          'project_id' => 'required|exists:budget_project,id', // Ensure `budget_projects` table exists
-          'other_expense' => 'nullable|string', // For other types of expenses
-          'visa_status' => 'nullable|string' // For visa status
-      ]);
-  
-      // Ensure DirectCost record exists or create a new one
-      $directCost = DirectCost::firstOrNew([
-          'budget_project_id' => $validated['project_id'],
-      ]);
-  
-      if (!$directCost->exists) {
-          $directCost->save();
-      }
-  
-      // Create a new Salary record
-      $salary = new Salary();
-      $salary->direct_cost_id = $directCost->id;
-      $salary->type = $validated['type'];
-      $salary->project = $validated['project'];
-      $salary->po = $validated['po'];
-      
-      // Set the `expenses` field based on `other_expense`
-      $salary->expenses = $validated['other_expense'] ?? $validated['expense'];
-      
-      $salary->cost_per_month = $validated['cost_per_month'];
-      $salary->description = $validated['description'];
-      $salary->status = $validated['status'];
-      $salary->no_of_staff = $validated['noOfPerson']; // Map to your model attribute
-      $salary->no_of_months = $validated['months']; // Map to your model attribute
-      $salary->overseeing_sites = $validated['overseeing_sites']; // Number of sites
-      $salary->budget_project_id = $validated['project_id']; // Map to your model attribute
-      $salary->visa_status = $validated['visa_status']; // Set visa status
-  
-      // Calculate total and average cost
-      $salary->calculateTotalCost();
-      $salary->calculateAverageCost();
-  
-      // Save the salary record
-      $salary->save();
-  
-      // Update the budget for the project
-      // $salary->updateBudget("Salary");
-  
-      // Recalculate the total direct cost for the project
-      $cost = $directCost->calculateTotalDirectCost();
-  
-      // Redirect back to the edit page with a success message
-      return redirect('/pages/edit-project-budget/' . $validated['project_id'])
-          ->with('success', 'Salary added successfully!');
-  }
-  
-  
+            'project_id' => 'required|exists:budget_project,id', // Ensure `budget_projects` table exists
+            'other_expense' => 'nullable|string', // For other types of expenses
+            'visa_status' => 'nullable|string', // For visa status
+        ]);
 
+        // Ensure DirectCost record exists or create a new one
+        $directCost = DirectCost::firstOrNew([
+            'budget_project_id' => $validated['project_id'],
+        ]);
+
+        if (!$directCost->exists) {
+            $directCost->save();
+        }
+
+        // Create a new Salary record
+        $salary = new Salary();
+        $salary->direct_cost_id = $directCost->id;
+        $salary->type = $validated['type'];
+        $salary->project = $validated['project'];
+        $salary->po = $validated['po'];
+
+        // Set the `expenses` field based on `other_expense`
+        $salary->expenses = $validated['other_expense'] ?? $validated['expense'];
+
+        $salary->cost_per_month = $validated['cost_per_month'];
+        $salary->description = $validated['description'];
+        $salary->status = $validated['status'];
+        $salary->no_of_staff = $validated['noOfPerson']; // Map to your model attribute
+        $salary->no_of_months = $validated['months']; // Map to your model attribute
+        $salary->overseeing_sites = $request->overseeing_sites ?? 0;
+        $salary->budget_project_id = $validated['project_id']; // Map to your model attribute
+        $salary->visa_status = $validated['visa_status']; // Set visa status
+
+        // Calculate total and average cost
+        $salary->calculateTotalCost();
+        $salary->calculateAverageCost();
+
+        // Save the salary record
+        $salary->save();
+
+        // Update the budget for the project
+        // $salary->updateBudget("Salary");
+
+        // Recalculate the total direct cost for the project
+        $cost = $directCost->calculateTotalDirectCost();
+
+        // Redirect back to the edit page with a success message
+        return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('success', 'Salary added successfully!');
+    }
 
     public function storeFacility(Request $request)
     {
-      // Return the request data as JSON for debugging purposes
-      // You may want to remove this line in production
-      //return response()->json($request->all());
+        // return response()->json($request->all());
 
-      // Validate the incoming request
-      $validated = $request->validate([
-        'type' => 'required|string',
-        'contract' => 'required|string',
-        'project' => 'required|exists:projects,id', // Ensure `projects` table exists
-        'po' => 'required|string',
-        'expense' => 'required|string',
-        'cost_per_month' => 'nullable|numeric',
-        'description' => 'required|string',
-        'status' => 'required|string',
-        'months' => 'required|numeric', // Renamed to `no_of_months`
-        'project_id' => 'required|string', // Ensure `budget_projects` table exists
-      ]);
+        // Validate the incoming request
+        $validated = $request->validate([
+            'type' => 'required|string',
+            'project' => 'required|exists:projects,id',
+            'po' => 'required|string',
+            'expense' => 'required|string',
+            'cost_per_month' => 'nullable|numeric',
+            'description' => 'required|string',
+            'status' => 'required|string',
+            'other_expense' => 'nullable|string', // For other types of expenses
+            'months' => 'required|numeric', // Renamed to `no_of_months`
+            'project_id' => 'required|string',
+        ]);
 
-      $directCost = DirectCost::firstOrNew([
-        'budget_project_id' => $validated['project_id'],
-      ]);
+        $directCost = DirectCost::firstOrNew([
+            'budget_project_id' => $validated['project_id'],
+        ]);
 
-      // If it was not found in the database, create it and save
-      if (!$directCost->exists) {
-        $directCost->save();
-      }
+        // If it was not found in the database, create it and save
+        if (!$directCost->exists) {
+            $directCost->save();
+        }
 
-      // Create a new salary record
-      $salary = new FacilityCost();
-      $salary->direct_cost_id = $directCost->id;
-      $salary->type = $validated['type'];
-      $salary->contract = $validated['contract'];
-      $salary->project = $validated['project'];
-      $salary->po = $validated['po'];
-      $salary->expenses = $validated['expense'];
-      $salary->cost_per_month = $validated['cost_per_month'];
-      $salary->description = $validated['description'];
-      $salary->status = $validated['status'];
-      $salary->no_of_staff = $request->noOfPerson; // Map to your model attribute
-      $salary->no_of_months = $validated['months']; // Map to your model attribute
-      $salary->budget_project_id = $validated['project_id']; // Map to your model attribute
-      $salary->calculateTotalCost();
-      $salary->calculateAverageCost();
-      $salary->save();
+        // Create a new facility cost record
+        $facility = new FacilityCost();
+        $facility->direct_cost_id = $directCost->id;
+        $facility->type = $validated['type'];
+        $facility->project = $validated['project'];
+        $facility->po = $validated['po'];
+        $facility->expenses = $validated['other_expense'] ?? $validated['expense'];
+        $facility->cost_per_month = $validated['cost_per_month'];
+        $facility->description = $validated['description'];
+        $facility->status = $validated['status'];
+        $facility->no_of_staff = $request->noOfPerson; // Map to your model attribute
+        $facility->no_of_months = $validated['months'];
+        $facility->budget_project_id = $validated['project_id'];
 
-      $cost = $directCost->calculateTotalDirectCost();
+        $facility->calculateTotalCost();
+        $facility->calculateAverageCost();
+        // $facility->calculatePercentageCost();
+        $facility->save();
 
-      //return response()->json($cost);
+        // Update total direct cost
+        $cost = $directCost->calculateTotalDirectCost();
 
-      // Redirect back to the edit page with a success message
-      return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with(
-        'success',
-        'Facility Cost added successfully!'
-      );
+        // Redirect back to the edit page with a success message
+        return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('success', 'Facility Cost added successfully!');
     }
 
-
-  
-      public function storeMaterial(Request $request)
+    public function storeMaterial(Request $request)
     {
-       try{
-                  // Validate the incoming request
+        try {
+
+            // return response()->json($request->all());
+            // Validate the incoming request
             $validated = $request->validate([
-              'type' => 'required|string',
-              'contract' => 'required|string',
-              'project' => 'required|exists:projects,id', // Ensure `projects` table exists
-              'po' => 'required|string',
-              'expense' => 'required|string',
-              'quantity' => 'required|numeric', // Ensure quantity is present
-              'unit' => 'required|string', // Ensure unit is present
-              'unit_cost' => 'required|numeric', // Ensure unit cost is present
-              'description' => 'nullable|string',
-              'status' => 'required|string',
-              'project_id' => 'required|exists:budget_project,id', // Ensure `budget_projects` table exists
-          ]);
+                'type' => 'required|string',
+                'project' => 'required|exists:projects,id', // Ensure `projects` table exists
+                'po' => 'required|string',
+                'expense' => 'required|string',
+                'project_id' => 'required|exists:budget_project,id', // Ensure `budget_projects` table exists
 
-          $directCost = DirectCost::firstOrNew([
-              'budget_project_id' => $validated['project_id'],
-          ]);
+                'material_head' => 'string|nullable',
+                'quantity' => 'numeric|nullable',
+                'unit' => 'string|nullable',
+                'unit_cost' => 'numeric|nullable',
+                'description' => 'nullable|string',
+                'status' => 'string|nullable',
 
-          // If it was not found in the database, create it and save
-          if (!$directCost->exists) {
-              $directCost->save();
-          }
+                // Field for petty cash expense type
+                'petty_cash_amount' => 'numeric|nullable',
 
-          // Create a new material cost record
-          $materialCost = new MaterialCost();
-          $materialCost->direct_cost_id = $directCost->id; // Foreign key reference
-          $materialCost->budget_project_id = $validated['project']; // Project name
-          $materialCost->type = $validated['type'];
-          $materialCost->project = $validated['project'];
-          $materialCost->po = $validated['po'];
-          $materialCost->expenses = $validated['expense'];
-          $materialCost->quantity = $validated['quantity']; // Quantity of material
-          $materialCost->unit = $validated['unit']; // Unit of measurement
-          $materialCost->unit_cost = $validated['unit_cost']; // Cost per unit
-          $materialCost->description = $validated['description'];
-          $materialCost->status = $validated['status'];
-          $materialCost->budget_project_id = $validated['project_id']; // Budget project ID
-          $materialCost->calculateTotalCost(); // Calculate total cost
-          $materialCost->calculateAverageCost(); // Calculate average cost
-          $materialCost->save();
+                // Field for NOC payment expense type
+                'noc_amount' => 'numeric|nullable',
+            ]);
 
-          // Redirect back to the edit page with a success message
-          return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with(
-              'success',
-              'Material Cost added successfully!'
-          );
-       }catch (Exception $e) {
-          return redirect('/pages/edit-project-budget/' . $validated['project_id'])
-              ->with('message', $e->getMessage());
-      }
+            // Find or create a new DirectCost for the project
+            $directCost = DirectCost::firstOrNew([
+                'budget_project_id' => $validated['project_id'],
+            ]);
+
+            // If DirectCost was not found, create it and save
+            if (!$directCost->exists) {
+                $directCost->save();
+            }
+
+            // Conditionally store fields based on the expense type
+            if ($validated['expense'] === 'consumed_material') {
+                $materialCost = new MaterialCost();
+                $materialCost->expenses = $validated['material_head'];
+                $materialCost->quantity = $validated['quantity'];
+                $materialCost->unit = $validated['unit'];
+                $materialCost->unit_cost = $validated['unit_cost'];
+                $materialCost->description = $validated['description'];
+                $materialCost->status = $validated['status'];
+                $materialCost->direct_cost_id = $directCost->id; // Foreign key reference
+                $materialCost->budget_project_id = $validated['project_id']; // Budget project ID
+                $materialCost->project = $validated['project']; // Set project field
+                $materialCost->type = $validated['type'];
+                $materialCost->po = $validated['po'];
+
+                // Create a new MaterialCost record
+            
+                // Calculate total and average cost
+                $materialCost->calculateTotalCost();
+                $materialCost->calculateAverageCost();
+                $materialCost->calculateAverageCostPercentage();
+
+                // Save the material cost
+                $materialCost->save();
+
+                // Redirect back to the edit page with a success message
+                return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('success', 'Material Cost added successfully!');
+            } elseif ($validated['expense'] === 'petty_cash') {
+                // Check if the petty cash amount already exists for the project
+                $existingPettyCash = PettyCash::where('project_id', $validated['project_id'])
+                    ->where('amount', $validated['petty_cash_amount'])
+                    ->first();
+
+                if ($existingPettyCash) {
+                    return redirect('/pages/edit-project-budget/' . $validated['project_id'])->withErrors(['amount' => 'Amount already exists for this project.']);
+                }
+
+                PettyCash::create([
+                    'project_id' => $validated['project_id'],
+                    'description' => 'Amount for Petty Cash',
+                    'amount' => $validated['petty_cash_amount'],
+                ]);
+
+                return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('success', 'Petty Cash added successfully!');
+            } elseif ($validated['expense'] === 'noc_payment') {
+                // Check if the NOC amount already exists for the project
+                $existingNocPayment = NocPayment::where('project_id', $validated['project_id'])
+                    ->where('amount', $validated['noc_amount'])
+                    ->first();
+
+                if ($existingNocPayment) {
+                    return redirect('/pages/edit-project-budget/' . $validated['project_id'])->withErrors(['amount' => 'Amount already exists for this project.']);
+                }
+
+                NocPayment::create([
+                    'project_id' => $validated['project_id'],
+                    'description' => 'Amount for NOC Payment',
+                    'amount' => $validated['noc_amount'],
+                ]);
+
+                return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('success', 'NOC Payment added successfully!');
+            }
+        } catch (Exception $e) {
+            return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('message', $e->getMessage());
+        }
     }
-
 }

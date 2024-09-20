@@ -14,11 +14,9 @@ class FacilityCost extends Model
     protected $fillable = [
         'direct_cost', // Foreign key reference to DirectCost
         'budget_project',
-        'sn', // Serial number or identifier
         'type', // Type of record (Cost)
         'project', // Project name
         'po', // Type of expense (OPEX)
-        'contract',
         'expenses', // Specific expense (Salary)
         'description', // Description of the role or details (Project Manager)
         'status', // Status of the budget entry (New Hiring)
@@ -28,6 +26,7 @@ class FacilityCost extends Model
         'total_cost', // Total calculated cost (5,000 * 5 * 5 = 125,000)
         'average_cost', // Average cost per staff per month (5,000)
         'approval_status', // Approval status
+        'percentage_cost'
     ];
 
     public function directCost()
@@ -48,72 +47,67 @@ class FacilityCost extends Model
 
     // Calculate total cost dynamically
     public function calculateTotalCost()
-    {
-        // Ensure cost_per_month is a positive value
-        if ($this->cost_per_month > 0) {
-            // Case 1: Both staff and months are greater than 0
-            if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
-                $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
-            }
-            // Case 2: Staff > 0 but no months provided (default to 1 month)
-            elseif ($this->no_of_staff > 0 && $this->no_of_months == 0) {
-                $this->total_cost = $this->cost_per_month * $this->no_of_staff;
-            }
-            // Case 3: No staff but months provided (default to 1 staff member)
-            elseif ($this->no_of_staff == 0 && $this->no_of_months > 0) {
-                $this->total_cost = $this->cost_per_month * $this->no_of_months;
-            }
-            // Case 4: Both staff and months are zero, total cost should be zero
-            else {
-                $this->total_cost = $this->cost_per_month;
-            }
-        } else {
-            // Case where cost_per_month is zero or invalid, set total cost to 0
-            $this->total_cost = 0;
+{
+    // Calculate total cost based on no_of_staff and no_of_months
+    if ($this->cost_per_month > 0) {
+        if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
+            // Both staff and months are greater than zero
+            $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
+        } elseif ($this->no_of_staff == 0 && $this->no_of_months == 0) {
+            // Both are zero, set total cost to cost_per_month
+            $this->total_cost = $this->cost_per_month;
+        } elseif ($this->no_of_staff == 0) {
+            // No staff, calculate total cost based on months
+            $this->total_cost = $this->cost_per_month * $this->no_of_months;
+        } elseif ($this->no_of_months == 0) {
+            // No months, calculate total cost based on staff
+            $this->total_cost = $this->cost_per_month * $this->no_of_staff;
         }
-
-        // Save the updated total cost to the database
-        $this->save();
-        return $this->total_cost;
+    } else {
+        $this->total_cost = 0; // If cost_per_month is zero or invalid
     }
 
-   // Update total budget and allocation
-   public function updateBudget($expenseHead)
-   {
-       // Fetch or create the total budget allocated for the project
-       $totalBudgetAllocated = new TotalBudgetAllocated();
+    // Calculate percentage based on total cost if it's greater than zero
+    if ($this->total_cost > 0) {
+        $this->percentage_cost = $this->cost_per_month / $this->total_cost; // Store as a decimal
+    } else {
+        $this->percentage_cost = 0; // Set to 0 if total cost is 0
+    }
 
-       // Sum the total cost of approved salaries for the given budget_project_id
-       $approved_total_cost = FacilityCost::where('budget_project_id', $this->budget_project_id)
-                                    ->where('approval_status', 'approved') // Only approved salaries
-                                    ->sum('total_cost');
+    // Save the updated total cost and percentage cost to the database
+    $this->save();
+    
+    return $this->total_cost;
+}
 
-       // Update the total_budget_allocated field in the TotalBudgetAllocated table
-       $totalBudgetAllocated->total_budget_allocated = $approved_total_cost;
-       $totalBudgetAllocated->budget_project_id = $this->budget_project_id;
-       $totalBudgetAllocated->expense_head = $expenseHead;
-
-       // Save the updated data
-       $totalBudgetAllocated->save();
-   }
 
     // Calculate average cost dynamically
-    public function calculateAverageCost()
-    {
-        if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
-            // Use no_of_staff and no_of_months for calculation
-            $this->average_cost = $this->total_cost / ($this->no_of_staff * $this->no_of_months);
-        } elseif ($this->no_of_months > 0) {
-            // Fallback to dividing total_cost by no_of_months if no_of_staff is null or 0
-            $this->average_cost = $this->total_cost / $this->no_of_months;
-        } else {
-            // Default value if no_of_months is also null or 0
-            $this->average_cost = $this->total_cost; // Or another default value
-        }
+   // Calculate average cost dynamically
+public function calculateAverageCost()
+{
+    // Initialize average_cost to 0
+    $this->average_cost = 0;
 
-        $this->save();
-        return $this->average_cost;
+    if ($this->no_of_staff > 0 && $this->no_of_months > 0) {
+        // Both staff and months are greater than zero
+        $this->average_cost = $this->total_cost / ($this->no_of_staff * $this->no_of_months);
+    } elseif ($this->no_of_staff > 0 && $this->no_of_months == 0) {
+        // Only no_of_staff is greater than zero
+        $this->average_cost = $this->total_cost / $this->no_of_staff;
+    } elseif ($this->no_of_staff == 0 && $this->no_of_months > 0) {
+        // Only no_of_months is greater than zero
+        $this->average_cost = $this->total_cost / $this->no_of_months;
+    } elseif ($this->no_of_staff == 0 && $this->no_of_months == 0) {
+        // Both are zero; handle accordingly (e.g., set average_cost to total_cost)
+        $this->average_cost = $this->total_cost; // Or another appropriate default value
     }
+
+    $this->save();
+    return $this->average_cost;
+}
+
+
+
 
     // Approve the salary entry
     public function approve($userId)

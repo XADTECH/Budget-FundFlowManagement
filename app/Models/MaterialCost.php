@@ -14,9 +14,9 @@ class MaterialCost extends Model
     protected $fillable = [
         'direct_cost_id', // Foreign key reference to DirectCost
         'budget_project_id',
-        'sn', // Serial number or identifier
+
         'type', // Type of record (Material/Cost)
-        'contract',
+
         'project', // Project name
         'po', // Type of expense (e.g., OPEX)
         'expenses', // Specific expense (e.g., Salary, Materials)
@@ -28,6 +28,8 @@ class MaterialCost extends Model
         'total_cost', // Total calculated cost (quantity * unit_cost)
         'average_cost', // Average cost per unit, if needed
         'approval_status', // Approval status
+        'percentage_cost',
+        'material_head'
 
     ];
 
@@ -87,6 +89,18 @@ class MaterialCost extends Model
         }
         return $this->average_cost;
     }
+
+    // Calculate average cost percentage
+        public function calculateAverageCostPercentage()
+        {
+            if ($this->total_cost > 0) {
+                $this->percentage_cost = $this->average_cost / $this->total_cost;
+                $this->save();
+            } else {
+                $this->percentage_cost = 0;
+            }
+            return $this->percentage_cost;
+        }
 
     // Approve the material entry
     public function approve()

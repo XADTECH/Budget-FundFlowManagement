@@ -18,6 +18,7 @@ class Salary extends Model
         'project',               // Project name
         'po',                    // Type of expense (OPEX)
         'expenses',              // Specific expense (Salary)
+        'other_expense',
         'description',           // Description of the role or details (Project Manager)
         'status',                // Status of the budget entry (New Hiring)
         'cost_per_month',        // Salary cost per staff member per month (e.g., 5,000)
@@ -48,29 +49,44 @@ class Salary extends Model
       }
 
         // Calculate total cost dynamically
-    public function calculateTotalCost()
-    {
-        // Ensure cost_per_month is a positive value
-        if ($this->cost_per_month > 0) {
-            // Calculate total cost for the given months and staff
-            $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
-        } else {
-            // If cost_per_month is zero or invalid, set total cost to 0
-            $this->total_cost = 0;
+        public function calculateTotalCost()
+        {
+            // Ensure cost_per_month is a positive value
+            if ($this->cost_per_month > 0) {
+                // Calculate total cost for the given months and staff
+                $this->total_cost = $this->cost_per_month * $this->no_of_staff * $this->no_of_months;
+            } else {
+                // If cost_per_month is zero or invalid, set total cost to 0
+                $this->total_cost = 0;
+            }
+        
+            // If overseeing_sites is greater than 0, calculate cost per site and percentage cost per site
+            if ($this->overseeing_sites > 0) {
+                $cost_per_site = $this->total_cost / $this->overseeing_sites;
+        
+                // Calculate percentage cost per site as a decimal (e.g., 0.20 for 20%)
+                $this->percentage_cost = $cost_per_site / $this->total_cost; // This will store 0.20 instead of 20%
+            } else {
+                // If there are no overseeing sites, calculate the percentage cost based on salary, months, and staff
+                // Here, you calculate a general worker percentage cost, which could be based on their share of the overall budget
+        
+                // Example: Assume that each worker contributes equally based on total number of workers and months worked
+                // We can take 1 worker's contribution (cost_per_month * no_of_months) and divide it by the total_cost
+                $individual_worker_cost = $this->cost_per_month * $this->no_of_months;
+                
+                if ($this->total_cost > 0) {
+                    $this->percentage_cost = $individual_worker_cost / $this->total_cost; // Calculate percentage based on overall cost
+                } else {
+                    $this->percentage_cost = 0; // If total cost is 0, set percentage cost to 0
+                }
+            }
+        
+            // Save the updated total cost and percentage cost to the database
+            $this->save();
+            
+            return $this->total_cost;
         }
-
-        // Calculate cost per site and percentage cost per site
-        if ($this->overseeing_sites > 0) {
-            $cost_per_site = $this->total_cost / $this->overseeing_sites;
-            $this->percentage_cost = ($cost_per_site / $this->total_cost) * 100;
-        } else {
-            $this->percentage_cost = 0;
-        }
-
-        // Save the updated total cost and percentage cost to the database
-        $this->save();
-        return $this->total_cost;
-    }
+        
  
      // Calculate average cost dynamically
      public function calculateAverageCost()

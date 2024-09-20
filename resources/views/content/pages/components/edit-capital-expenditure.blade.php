@@ -111,17 +111,8 @@
                     <div class="modal-body">
                         <form id="addNewCapitalExpenseForm" action="{{ url('/pages/add-budget-capital-expense') }}" method="POST">
                         @csrf
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Type</label>
-                            <select class="form-select" id="type" name="type" required>
-                                <option value="Capital Expenditure">Capital Expenditure</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contract" class="form-label">Contract</label>
-                            <input type="text" class="form-control" id="contract" name="contract" placeholder="e.g., Du Civil" required>
-                        </div>
+          
+                  
                         <div class="mb-3">
                             <label for="project" class="form-label">Project</label>
                             <select class="form-select" id="project" name="project" required>
@@ -138,12 +129,21 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="expense" class="form-label">Expense</label>
-                            <input type="text" class="form-control" id="expense" name="expense" placeholder="e.g., Tools, Cable Detector" required>
+                            <label for="expense" class="form-label">Equipment</label>
+                            <select class="form-control" id="expense" name="expense" required>
+                                <option value="">Select a Equipment</option>
+                                <option value="Cable Detector">Cable Detector</option>
+                                <option value="Plate Compactor">Plate Compactor</option>
+                                <option value="Generator 5 kva"> Generator 5 kva</option>
+                                <option value="Jack Hammer">Jack Hammer</option>
+                                <option value="Cable Pulling Rod 200m"> Cable Pulling Rod 200m</option>
+                                <option value="Cable Pulling Rod 300m"> Cable Pulling Rod 300m</option>
+                                <option value="Cable Pulling Rod 500m 16mm">Cable Pulling Rod 500m 16mm</option>
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                            <input type="number" class="form-control" id="cost_per_month" name="cost_per_month" placeholder="e.g., 500" required>
+                            <label for="total_number" class="form-label">Total No</label>
+                            <input type="number" class="form-control" id="total_number" name="total_number" placeholder="e.g., 1,2,3" required>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
@@ -153,14 +153,8 @@
                             <label for="status" class="form-label">Status</label>
                             <input type="text" class="form-control" id="status" name="status" placeholder="e.g., new, old" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="noOfPerson" class="form-label">No Of Person</label>
-                            <input type="number" value="0" class="form-control" id="noOfPerson" name="noOfPerson" step="any" placeholder="e.g., 5" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="months" class="form-label">Months</label>
-                            <input type="number" class="form-control" id="months" name="months" step="any" value="0" placeholder="e.g., 12" required>
-                        </div>
+             
+                    
                         <input type="hidden" name="project_id" value="{{ $budget->id }}">
                         <button type="submit" class="btn btn-primary">Add CAPEX</button>
                         </form>

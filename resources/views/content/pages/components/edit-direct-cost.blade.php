@@ -59,37 +59,44 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>SN</th>
                                         <th>TYPE</th>
-                                        <th>CONTRACT</th>
                                         <th>PROJECT</th>
                                         <th>PO</th>
-                                        <th>EXPENSE</th>
+                                        <th>EXPENSE HEAD</th>
+                                        <th>STATUS</th>
                                         <th>DESCRIPTION</th>
+                                        <th>SITE OVERSEEING</th>
                                         <th>COST PER MONTH</th>
                                         <th>NO OF PERSON</th>
                                         <th>MONTHS</th>
                                         <th>AVERAGE COST</th>
                                         <th>TOTAL COST</th>
-                                        <th>STATUS</th>
+                                        <th>Visa Status</th>
+                                        <th>%</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->salaries as $salary)
                                         <tr>
-                                            <td>{{ $salary->sn ?? 'no entry' }}</td>
+
+                                            @php
+                                                $project = $projects->where('id', $salary->project)->first();
+                                            @endphp
+
                                             <td>{{ $salary->type ?? 'no entry' }}</td>
-                                            <td>{{ $salary->contract ?? 'no entry' }}</td>
-                                            <td>{{ $salary->project ?? 'no entry' }}</td>
+                                            <td>{{ $project->name ?? 'no entry' }}</td>
                                             <td>{{ $salary->po ?? 'no entry' }}</td>
                                             <td>{{ $salary->expenses ?? 'no entry' }}</td>
+                                            <td>{{ $salary->status ?? 'no entry' }}</td>
                                             <td>{{ $salary->description ?? 'no entry' }}</td>
-                                            <td>{{ $salary->cost_per_month ?? 'no entry' }}</td>
+                                            <td>{{ $salary->overseeing_sites ?? 'no entry' }}</td>
+                                            <td>{{ number_format($salary->cost_per_month) ?? 'no entry' }}</td>
                                             <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
                                             <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
-                                            <td>{{ $salary->average_cost ?? 'no entry' }}</td>
-                                            <td>{{ $salary->total_cost ?? 'no entry' }}</td>
-                                            <td>{{ $salary->status ?? 'no entry' }}</td>
+                                            <td>{{ number_format($salary->average_cost) ?? 'no entry' }}</td>
+                                            <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
+                                            <td>{{ $salary->visa_status ?? 'no entry' }}</td>
+                                            <td>{{ $salary->percentage_cost ?? 'no entry' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -110,38 +117,38 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>SN</th>
                                         <th>TYPE</th>
-                                        <th>CONTRACT</th>
                                         <th>PROJECT</th>
                                         <th>PO</th>
-                                        <th>EXPENSE</th>
+                                        <th>EXPENSE HEAD</th>
+                                        <th>STATUS</th>
                                         <th>DESCRIPTION</th>
-
                                         <th>COST PER MONTH</th>
                                         <th>NO OF PERSON</th>
                                         <th>MONTHS</th>
                                         <th>AVERAGE COST</th>
                                         <th>TOTAL COST</th>
-                                        <th>STATUS</th>
+                                        <th>%</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->facilityCosts as $facility)
                                         <tr>
-                                            <td>{{ $facility->sn ?? 'no entry' }}</td>
+                                            @php
+                                                $project = $projects->where('id', $facility->project)->first();
+                                            @endphp
                                             <td>{{ $facility->type ?? 'no entry' }}</td>
-                                            <td>{{ $facility->contract ?? 'no entry' }}</td>
-                                            <td>{{ $facility->project ?? 'no entry' }}</td>
+                                            <td>{{ $project->name ?? 'no entry' }}</td>
                                             <td>{{ $facility->po ?? 'no entry' }}</td>
                                             <td>{{ $facility->expenses ?? 'no entry' }}</td>
+                                            <td>{{ $facility->status ?? 'no entry' }}</td>
                                             <td>{{ $facility->description ?? 'no entry' }}</td>
-                                            <td>{{ $facility->cost_per_month ?? 'no entry' }}</td>
+                                            <td>{{ number_format($facility->cost_per_month) ?? 'no entry' }}</td>
                                             <td>{{ $facility->no_of_staff ?? 'no entry' }}</td>
                                             <td>{{ $facility->no_of_months ?? 'no entry' }}</td>
-                                            <td>{{ $facility->average_cost ?? 'no entry' }}</td>
-                                            <td>{{ $facility->total_cost ?? 'no entry' }}</td>
-                                            <td>{{ $facility->status ?? 'no entry' }}</td>
+                                            <td>{{ number_format($facility->average_cost) ?? 'no entry' }}</td>
+                                            <td>{{ number_format($facility->total_cost) ?? 'no entry' }}</td>
+                                            <td>{{ $facility->percentage_cost ?? 'no entry' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -155,44 +162,53 @@
                             <button class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#addNewMaterialModal">ADD NEW</button>
                         </div>
-                        <p>Total Material Cost : <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($totalMaterialCost, 0) }}<span>
-                        </p>
+                        <span>Total Material Cost: <span style="color:#0067aa; font-weight:bold">{{ number_format($totalMaterialCost ?? 0) }}</span></span><br>
+
+                        <span>Petty Cash Fund: <span style="color:#0067aa; font-weight:bold">{{ number_format($existingPettyCash->amount ?? 0) }}</span></span><br>
+                        
+                        <span>NOC Payment Amount: <span style="color:#0067aa; font-weight:bold">{{ number_format($existingNocPayment->amount ?? 0) }}</span></span>
+                        
+
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>SN</th>
+
                                         <th>TYPE</th>
-                                        <th>CONTRACT</th>
+        
                                         <th>PROJECT</th>
                                         <th>PO</th>
                                         <th>EXPENSE HEAD</th>
+                                        <th>STATUS</th>
                                         <th>DESCRIPTION</th>
                                         <th>QUANITITY</th>
                                         <th>UNIT</th>
                                         <th>UNIT COST</th>
                                         <th>TOTAL COST</th>
                                         <th>AVERAGE COST</th>
-                                        <th>STATUS</th>
+                                        <th>%</th>
+                                    
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->materialCosts as $material)
+                                        @php
+                                            $project = $projects->where('id', $material->project)->first();
+                                        @endphp
+
                                         <tr>
-                                            <td>{{ $material->sn ?? 'no entry' }}</td>
                                             <td>{{ $material->type ?? 'no entry' }}</td>
-                                            <td>{{ $material->contract ?? 'no entry' }}</td>
-                                            <td>{{ $material->project ?? 'no entry' }}</td>
+                                            <td>{{ $project->name ?? 'no entry' }}</td>
                                             <td>{{ $material->po ?? 'no entry' }}</td>
                                             <td>{{ $material->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $material->description ?? 'no entry' }}</td>
-                                            <td>{{ $material->quantity ?? 'no entry' }}</td>
-                                            <td>{{ $material->unit ?? 'no entry' }}</td>
-                                            <td>{{ $material->unit_cost ?? 'no entry' }}</td>
-                                            <td>{{ $material->total_cost ?? 'no entry' }}</td>
-                                            <td>{{ $material->average_cost ?? 'no entry' }}</td>
                                             <td>{{ $material->status ?? 'no entry' }}</td>
+                                            <td>{{ $material->description ?? 'no entry' }}</td>
+                                            <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
+                                            <td>{{ $material->unit ?? 'no entry' }}</td>
+                                            <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}</td>
+                                            <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}</td>
+                                            <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}</td>
+                                            <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -225,7 +241,7 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-               
+
                     <div class="mb-3">
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
@@ -271,24 +287,30 @@
 
                     <div class="mb-3" id="overseeing-sites-field" style="display: none;">
                         <label for="overseeing_sites" class="form-label">Number of Overseeing Sites</label>
-                        <input type="number" class="form-control" id="overseeing_sites" name="overseeing_sites" placeholder="Enter number of sites">
+                        <input type="number" class="form-control" id="overseeing_sites" name="overseeing_sites"
+                            placeholder="Enter number of sites">
                     </div>
-                    
+
                     <div class="mb-3" id="other-field" style="display: none;">
                         <label for="other_expense" class="form-label">Other</label>
-                        <input type="text" class="form-control" id="other_expense" name="other_expense" placeholder="Specify other expense">
+                        <input type="text" class="form-control" id="other_expense" name="other_expense"
+                            placeholder="Specify other expense">
                     </div>
 
                     <div class="mb-3">
                         <label for="visa_status" class="form-label">Visa Status</label>
                         <select class="form-select" id="visa_status" name="visa_status" required>
                             <option value="" disabled>Select Visa Status</option>
-                            <option value="Xad Visa" {{ old('visa_status', $model->visa_status ?? '') == 'Xad Visa' ? 'selected' : '' }}>Xad Visa</option>
-                            <option value="Contractor" {{ old('visa_status', $model->visa_status ?? '') == 'Contractor' ? 'selected' : '' }}>Contractor</option>
+                            <option value="Xad Visa"
+                                {{ old('visa_status', $model->visa_status ?? '') == 'Xad Visa' ? 'selected' : '' }}>Xad
+                                Visa</option>
+                            <option value="Contractor"
+                                {{ old('visa_status', $model->visa_status ?? '') == 'Contractor' ? 'selected' : '' }}>
+                                Contractor</option>
                         </select>
                     </div>
-             
-                    
+
+
                     <div class="mb-3">
                         <label for="cost_per_month" class="form-label">Cost Per Month</label>
                         <input type="number" class="form-control" id="cost_per_month" name="cost_per_month"
@@ -344,11 +366,7 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="contract" class="form-label">Contract</label>
-                        <input type="text" class="form-control" id="contract" name="contract"
-                            placeholder="eg, Annual Maintenance Contract" required>
-                    </div>
+
                     <div class="mb-3">
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
@@ -366,9 +384,23 @@
                     </div>
                     <div class="mb-3">
                         <label for="expense" class="form-label">Expense Head</label>
-                        <input type="text" class="form-control" id="expense" name="expense"
-                            placeholder="eg, Facility Cost" required>
+                        <select class="form-select" id="facilityExpense" name="expense" required>
+                            <option value="">Select an option</option>
+                            <option value="Accommodation">Accommodation</option>
+                            <option value="Fuel">Fuel</option>
+                            <option value="SIM">SIM</option>
+                            <option value="other">Other</option>
+                        </select>
                     </div>
+
+                    <div class="mb-3" id="otherFacilityExpenseField" style="display: none;">
+                        <label for="other_expense" class="form-label">Other</label>
+                        <input type="text" class="form-control" id="other_expense" name="other_expense"
+                            placeholder="Specify other expense">
+                    </div>
+
+
+
                     <div class="mb-3">
                         <label for="cost_per_month" class="form-label">Cost Per Month</label>
                         <input type="number" class="form-control" id="cost_per_month"
@@ -424,11 +456,7 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="contract" class="form-label">Contract</label>
-                        <input type="text" class="form-control" id="contract" name="contract"
-                            placeholder="e.g., Annual Maintenance Contract" required>
-                    </div>
+
                     <div class="mb-3">
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
@@ -444,40 +472,73 @@
                             <option selected value="OPEX">OPEX</option>
                         </select>
                     </div>
+
                     <div class="mb-3">
-                        <label for="expense" class="form-label">Expense Head</label>
-                        <input type="text" class="form-control" id="expense" name="expense"
-                            placeholder="e.g., Ethernet Cables" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" step="any"
-                            placeholder="e.g., 100" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="unit" class="form-label">Unit</label>
-                        <select class="form-select" id="unit" name="unit" required>
-                            <option value="meters">Meters</option>
-                            <option value="feet">Feet</option>
-                            <option value="rolls">Rolls</option>
-                            <option value="pieces">Pieces</option>
+                        <label for="expenseHead" class="form-label">Expense Head</label>
+                        <select class="form-select" id="materialexpenseHead" name="expense" required>
+                            <option value="" disabled selected>Select an option</option>
+                            <option value="consumed_material">Consumed Material</option>
+                            <option value="petty_cash">Petty Cash</option>
+                            <option value="noc_payment">NOC Payment</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="unit_cost" class="form-label">Unit Cost</label>
-                        <input type="number" class="form-control" id="unit_cost" name="unit_cost" step="any"
-                            placeholder="e.g., 50.00" required>
+
+                    <!-- Fields for Consumed Material -->
+                    <div id="consumedMaterialFields" style="display:none">
+                        <div class="mb-3">
+                            <label for="material_head" class="form-label">Material Head</label>
+                            <input type="text" class="form-control" id="material_head" name="material_head" step="any"
+                                placeholder="e.g... Wire, Cable, Material ..">
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" step="any"
+                                placeholder="e.g., 100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="unit" class="form-label">Unit</label>
+                            <select class="form-select" id="unit" name="unit">
+                                <option value="meters">Meters</option>
+                                <option value="feet">Feet</option>
+                                <option value="rolls">Rolls</option>
+                                <option value="pieces">Pieces</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="unit_cost" class="form-label">Unit Cost</label>
+                            <input type="number" class="form-control" id="unit_cost" name="unit_cost" step="any"
+                                placeholder="e.g., 50.00">
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description" name="description"
+                                placeholder="e.g., 100-meter Ethernet cable">
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <input type="text" class="form-control" id="status" name="status"
+                                placeholder="e.g., Purchased, in stock">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" name="description"
-                            placeholder="e.g., 100-meter Ethernet cable" required>
+
+                    <!-- Fields for Petty Cash -->
+                    <div id="pettyCashFields" style="display:none">
+                        <div class="mb-3">
+                            <label for="petty_cash_amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="petty_cash_amount" name="petty_cash_amount"
+                                step="any" placeholder="Enter Petty Cash">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
-                        <input type="text" class="form-control" id="status" name="status"
-                            placeholder="e.g., Purchased, in stock other" required>
+
+                    <!-- Fields for NOC Payment -->
+                    <div id="nocPaymentFields" style="display:none">
+                        <div class="mb-3">
+                            <label for="noc_amount" class="form-label">NOC Description</label>
+                            <input type="text" class="form-control" id="noc_amount" name="noc_amount"
+                                placeholder="Enter NOC Amount">
+                        </div>
                     </div>
+
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
                     <button type="submit" class="btn btn-primary">Add Material Cost</button>
                 </form>
@@ -489,28 +550,64 @@
 
 
 <script>
-    document.getElementById('expense').addEventListener('change', function() {
-        var overseeingSitesField = document.getElementById('overseeing-sites-field');
-        var otherField = document.getElementById('other-field');
-        
-        var selectedValue = this.value;
-        var showOverseeingSites = [
-            'Sr. Client Relationship Manager',
-            'Sr. Manager Operations',
-            'Project Manager',
-            'Sr. Civil Project Engineer'
-        ].includes(selectedValue);
-        
-        if (showOverseeingSites) {
-            overseeingSitesField.style.display = 'block';
-        } else {
-            overseeingSitesField.style.display = 'none';
-        }
-        
-        if (selectedValue === 'other') {
-            otherField.style.display = 'block';
-        } else {
-            otherField.style.display = 'none';
+
+document.addEventListener("DOMContentLoaded", function() {
+    const materialExpenseSelect = document.getElementById('materialexpenseHead');
+    const consumedMaterialFields = document.getElementById('consumedMaterialFields');
+    const pettyCashFields = document.getElementById('pettyCashFields');
+    const nocPaymentFields = document.getElementById('nocPaymentFields');
+    
+    // Hide all conditional fields initially
+    consumedMaterialFields.style.display = 'none';
+    pettyCashFields.style.display = 'none';
+    nocPaymentFields.style.display = 'none';
+
+    // On material expense selection change
+    materialExpenseSelect.addEventListener('change', function() {
+        const selectedValue = this.value;
+
+        // Hide all fields first
+        consumedMaterialFields.style.display = 'none';
+        pettyCashFields.style.display = 'none';
+        nocPaymentFields.style.display = 'none';
+
+        // Remove required attributes to avoid validation issues
+        document.querySelectorAll('#consumedMaterialFields input, #pettyCashFields input, #nocPaymentFields input')
+            .forEach(input => input.removeAttribute('required'));
+
+        // Show and enable validation for relevant fields
+        if (selectedValue === 'consumed_material') {
+            consumedMaterialFields.style.display = 'block';
+            consumedMaterialFields.querySelectorAll('input').forEach(input => input.setAttribute('required', 'required'));
+        } else if (selectedValue === 'petty_cash') {
+            pettyCashFields.style.display = 'block';
+            pettyCashFields.querySelector('input').setAttribute('required', 'required');
+        } else if (selectedValue === 'noc_payment') {
+            nocPaymentFields.style.display = 'block';
+            nocPaymentFields.querySelector('input').setAttribute('required', 'required');
         }
     });
+
+    // Handle form submission
+    const form = document.getElementById('addNewMaterialForm');
+    form.addEventListener('submit', function(event) {
+        // Ensure the currently visible fields are focusable and valid
+        const visibleFields = form.querySelectorAll('input[required], select[required]');
+        let isValid = true;
+
+        visibleFields.forEach(field => {
+            if (!field.checkValidity()) {
+                field.focus();
+                isValid = false;
+                return false;  // Stop the loop if invalid
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+});
+
+
 </script>

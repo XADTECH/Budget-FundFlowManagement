@@ -14,14 +14,7 @@ return new class extends Migration {
       $table->string('type');
       $table->string('project');
       $table->string('po')->default('OPEX'); // Set the default value to 'OPEX'
-      $table->enum('expenses', [
-        'fuel',
-        'sim',
-        'Maintenance',
-        'WareHouse',
-        'Accomodation',
-        'other'
-    ])->default('Fuel');       
+      $table->string('expenses');      
       $table->string('description');
       $table->string('status');
       $table->decimal('cost_per_month', 10, 2);

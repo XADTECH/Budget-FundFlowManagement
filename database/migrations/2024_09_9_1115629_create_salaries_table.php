@@ -20,30 +20,9 @@ class CreateSalariesTable extends Migration
             $table->string('type');
             $table->string('project');
             $table->string('po')->default('OPEX'); // Set the default value to 'OPEX'
-            $table->enum('expenses', [
-                'Sr. Client Relationship Manager',
-                'Sr. Manager Operations',
-                'Project Manager',
-                'Project Coordinator',
-                'Draftsman',
-                'NOC Officer',
-                'Document Controller',
-                'HSE / QMS Coordinator',
-                'HSE Engineer',
-                'QMS Engineer',
-                'Sr. Civil Project Engineer',
-                'Civil Project Engineer',
-                'Surveyor',
-                'Foreman',
-                'Charge Hand',
-                'Mason',
-                'Helper',
-                'Driver Cum Helper',
-                '3-Ton Driver',
-                'Bus Driver',
-                'other'
-            ])->default('Sr. Client Relationship Manager'); 
+            $table->string('expenses'); 
             $table->string('description');
+            $table->string('other_expense')->nullable();
             $table->string('status');
             $table->string('visa_status')->default("xad_visa");
             $table->decimal('cost_per_month', 10, 2);
