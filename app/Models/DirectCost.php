@@ -39,14 +39,26 @@ class DirectCost extends Model
       return $this->hasMany(RevenuePlan::class, 'budget_project_id');
   }
 
-  public function calculateTotalDirectCost()
+  public function pettyCash()
   {
-    // Calculate totals from related models
-    $salariesTotal = $this->salaries()->sum('total_cost');
-    $facilitiesTotal = $this->facilitiesCosts()->sum('total_cost');
-    $materialTotal = $this->materialCosts()->sum('total_cost');
-
-    // Return the sum of all totals
-    return $salariesTotal + $facilitiesTotal + $materialTotal;
+      return $this->hasMany(PettyCash::class, 'project_id');
   }
+
+  public function nocPayment()
+  {
+      return $this->hasMany(NocPayment::class, 'project_id');
+  }
+
+  public function calculateTotalDirectCost()
+    {
+        // Calculate totals from related models
+        $salariesTotal = $this->salaries()->sum('total_cost');
+        $facilitiesTotal = $this->facilitiesCosts()->sum('total_cost');
+        $materialTotal = $this->materialCosts()->sum('total_cost');
+        $pettyCashTotal = $this->pettyCash()->sum('amount');
+        $nocPaymentTotal = $this->nocPayment()->sum('amount');
+
+        // Return the sum of all totals
+        return $salariesTotal + $facilitiesTotal + $materialTotal + $pettyCashTotal + $nocPaymentTotal;
+    }
 }

@@ -39,6 +39,7 @@
         /* Color of the scrollbar track */
     }
 </style>
+
 <div class="container mt-4">
     <div class="card mt-4">
         <div class="card-body">
@@ -162,12 +163,18 @@
                             <button class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#addNewMaterialModal">ADD NEW</button>
                         </div>
-                        <span>Total Material Cost: <span style="color:#0067aa; font-weight:bold">{{ number_format($totalMaterialCost ?? 0) }}</span></span><br>
+                        @php
+                            $Mcost = $totalMaterialCost + $existingPettyCash->amount + $existingNocPayment->amount;
+                        @endphp
+                        <span>Total Material Cost: <span
+                                style="color:#0067aa; font-weight:bold">{{ number_format($Mcost ?? 0) }}</span></span><br>
 
-                        <span>Petty Cash Fund: <span style="color:#0067aa; font-weight:bold">{{ number_format($existingPettyCash->amount ?? 0) }}</span></span><br>
-                        
-                        <span>NOC Payment Amount: <span style="color:#0067aa; font-weight:bold">{{ number_format($existingNocPayment->amount ?? 0) }}</span></span>
-                        
+                        <span>Petty Cash Fund: <span
+                                style="color:#0067aa; font-weight:bold">{{ number_format($existingPettyCash->amount ?? 0) }}</span></span><br>
+
+                        <span>NOC Payment Amount: <span
+                                style="color:#0067aa; font-weight:bold">{{ number_format($existingNocPayment->amount ?? 0) }}</span></span>
+
 
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
@@ -175,7 +182,7 @@
                                     <tr>
 
                                         <th>TYPE</th>
-        
+
                                         <th>PROJECT</th>
                                         <th>PO</th>
                                         <th>EXPENSE HEAD</th>
@@ -187,7 +194,7 @@
                                         <th>TOTAL COST</th>
                                         <th>AVERAGE COST</th>
                                         <th>%</th>
-                                    
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -205,10 +212,14 @@
                                             <td>{{ $material->description ?? 'no entry' }}</td>
                                             <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
                                             <td>{{ $material->unit ?? 'no entry' }}</td>
-                                            <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}</td>
-                                            <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}</td>
-                                            <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}</td>
-                                            <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}</td>
+                                            <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}
+                                            </td>
+                                            <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}
+                                            </td>
+                                            <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}
+                                            </td>
+                                            <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -487,13 +498,13 @@
                     <div id="consumedMaterialFields" style="display:none">
                         <div class="mb-3">
                             <label for="material_head" class="form-label">Material Head</label>
-                            <input type="text" class="form-control" id="material_head" name="material_head" step="any"
-                                placeholder="e.g... Wire, Cable, Material ..">
+                            <input type="text" class="form-control" id="material_head" name="material_head"
+                                step="any" placeholder="e.g... Wire, Cable, Material ..">
                         </div>
                         <div class="mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity" step="any"
-                                placeholder="e.g., 100">
+                            <input type="number" class="form-control" id="quantity" name="quantity"
+                                step="any" placeholder="e.g., 100">
                         </div>
                         <div class="mb-3">
                             <label for="unit" class="form-label">Unit</label>
@@ -506,8 +517,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="unit_cost" class="form-label">Unit Cost</label>
-                            <input type="number" class="form-control" id="unit_cost" name="unit_cost" step="any"
-                                placeholder="e.g., 50.00">
+                            <input type="number" class="form-control" id="unit_cost" name="unit_cost"
+                                step="any" placeholder="e.g., 50.00">
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
@@ -525,8 +536,8 @@
                     <div id="pettyCashFields" style="display:none">
                         <div class="mb-3">
                             <label for="petty_cash_amount" class="form-label">Amount</label>
-                            <input type="number" class="form-control" id="petty_cash_amount" name="petty_cash_amount"
-                                step="any" placeholder="Enter Petty Cash">
+                            <input type="number" class="form-control" id="petty_cash_amount"
+                                name="petty_cash_amount" step="any" placeholder="Enter Petty Cash">
                         </div>
                     </div>
 
@@ -550,64 +561,106 @@
 
 
 <script>
-
-document.addEventListener("DOMContentLoaded", function() {
-    const materialExpenseSelect = document.getElementById('materialexpenseHead');
-    const consumedMaterialFields = document.getElementById('consumedMaterialFields');
-    const pettyCashFields = document.getElementById('pettyCashFields');
-    const nocPaymentFields = document.getElementById('nocPaymentFields');
     
-    // Hide all conditional fields initially
-    consumedMaterialFields.style.display = 'none';
-    pettyCashFields.style.display = 'none';
-    nocPaymentFields.style.display = 'none';
+        function facilityExpenseHandling() {
 
-    // On material expense selection change
-    materialExpenseSelect.addEventListener('change', function() {
-        const selectedValue = this.value;
+            const facilityExpenseSelect = document.getElementById('facilityExpense');
+            const otherFacilityExpenseField = document.getElementById('otherFacilityExpenseField');
 
-        // Hide all fields first
-        consumedMaterialFields.style.display = 'none';
-        pettyCashFields.style.display = 'none';
-        nocPaymentFields.style.display = 'none';
+            facilityExpenseSelect.addEventListener('change', function() {
+                otherFacilityExpenseField.style.display = (this.value === 'other') ? 'block' : 'none';
+            });
 
-        // Remove required attributes to avoid validation issues
-        document.querySelectorAll('#consumedMaterialFields input, #pettyCashFields input, #nocPaymentFields input')
-            .forEach(input => input.removeAttribute('required'));
-
-        // Show and enable validation for relevant fields
-        if (selectedValue === 'consumed_material') {
-            consumedMaterialFields.style.display = 'block';
-            consumedMaterialFields.querySelectorAll('input').forEach(input => input.setAttribute('required', 'required'));
-        } else if (selectedValue === 'petty_cash') {
-            pettyCashFields.style.display = 'block';
-            pettyCashFields.querySelector('input').setAttribute('required', 'required');
-        } else if (selectedValue === 'noc_payment') {
-            nocPaymentFields.style.display = 'block';
-            nocPaymentFields.querySelector('input').setAttribute('required', 'required');
         }
-    });
 
-    // Handle form submission
-    const form = document.getElementById('addNewMaterialForm');
-    form.addEventListener('submit', function(event) {
-        // Ensure the currently visible fields are focusable and valid
-        const visibleFields = form.querySelectorAll('input[required], select[required]');
-        let isValid = true;
+        function materialExpensehandling() {
+            const materialExpenseSelect = document.getElementById('materialexpenseHead');
+            const consumedMaterialFields = document.getElementById('consumedMaterialFields');
+            const pettyCashFields = document.getElementById('pettyCashFields');
+            const nocPaymentFields = document.getElementById('nocPaymentFields');
 
-        visibleFields.forEach(field => {
-            if (!field.checkValidity()) {
-                field.focus();
-                isValid = false;
-                return false;  // Stop the loop if invalid
+            // Hide all conditional fields initially
+            consumedMaterialFields.style.display = 'none';
+            pettyCashFields.style.display = 'none';
+            nocPaymentFields.style.display = 'none';
+
+            // On material expense selection change
+            materialExpenseSelect.addEventListener('change', function() {
+                const selectedValue = this.value;
+
+                // Hide all fields first
+                consumedMaterialFields.style.display = 'none';
+                pettyCashFields.style.display = 'none';
+                nocPaymentFields.style.display = 'none';
+
+                // Remove required attributes to avoid validation issues
+                document.querySelectorAll(
+                        '#consumedMaterialFields input, #pettyCashFields input, #nocPaymentFields input'
+                    )
+                    .forEach(input => input.removeAttribute('required'));
+
+                // Show and enable validation for relevant fields
+                if (selectedValue === 'consumed_material') {
+                    consumedMaterialFields.style.display = 'block';
+                    consumedMaterialFields.querySelectorAll('input').forEach(input => input
+                        .setAttribute(
+                            'required', 'required'));
+                } else if (selectedValue === 'petty_cash') {
+                    pettyCashFields.style.display = 'block';
+                    pettyCashFields.querySelector('input').setAttribute('required', 'required');
+                } else if (selectedValue === 'noc_payment') {
+                    nocPaymentFields.style.display = 'block';
+                    nocPaymentFields.querySelector('input').setAttribute('required', 'required');
+                }
+            });
+
+        }
+
+        function salaryExpenseHandling() {
+            const expenseSelect = document.getElementById('expense');
+            const overseeingSitesField = document.getElementById('overseeing-sites-field');
+            const otherField = document.getElementById('other-field');
+
+            expenseSelect.addEventListener('change', function() {
+                var selectedValue = this.value;
+                var showOverseeingSites = [
+                    'Sr. Client Relationship Manager',
+                    'Sr. Manager Operations',
+                    'Project Manager',
+                    'Sr. Civil Project Engineer'
+                ].includes(selectedValue);
+
+                // Show or hide the overseeing sites field
+                overseeingSitesField.style.display = showOverseeingSites ? 'block' : 'none';
+
+                // Show or hide the other field
+                otherField.style.display = (selectedValue === 'other') ? 'block' : 'none';
+            });
+        }
+
+        facilityExpenseHandling();
+        materialExpensehandling();
+        salaryExpenseHandling();
+
+
+        // Handle form submission
+        const form = document.getElementById('addNewMaterialForm');
+        form.addEventListener('submit', function(event) {
+            // Ensure the currently visible fields are focusable and valid
+            const visibleFields = form.querySelectorAll('input[required], select[required]');
+            let isValid = true;
+
+            visibleFields.forEach(field => {
+                if (!field.checkValidity()) {
+                    field.focus();
+                    isValid = false;
+                    return false; // Stop the loop if invalid
+                }
+            });
+
+            if (!isValid) {
+                event.preventDefault();
             }
         });
-
-        if (!isValid) {
-            event.preventDefault();
-        }
-    });
-});
-
-
+   
 </script>
