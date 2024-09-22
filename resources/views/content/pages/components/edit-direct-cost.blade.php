@@ -41,6 +41,10 @@
 </style>
 
 <div class="container mt-4">
+    <div id="responseAlertnew" class="alert alert-info alert-dismissible fade show" role="alert" style="display:none; width:80%; margin:10px auto">
+        <span id="alertMessagenew"></span>
+        <button type="button" class="btn-close" aria-label="Close"></button>
+    </div>
     <div class="card mt-4">
         <div class="card-body">
             <div class="dropdown-section">
@@ -74,31 +78,42 @@
                                         <th>TOTAL COST</th>
                                         <th>Visa Status</th>
                                         <th>%</th>
+                                        <th>Action</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->salaries as $salary)
-                                        <tr>
+                                    <tr>
 
-                                            @php
-                                                $project = $projects->where('id', $salary->project)->first();
-                                            @endphp
+                                        @php
+                                        $project = $projects->where('id', $salary->project)->first();
+                                        @endphp
 
-                                            <td>{{ $salary->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $salary->po ?? 'no entry' }}</td>
-                                            <td>{{ $salary->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $salary->status ?? 'no entry' }}</td>
-                                            <td>{{ $salary->description ?? 'no entry' }}</td>
-                                            <td>{{ $salary->overseeing_sites ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->cost_per_month) ?? 'no entry' }}</td>
-                                            <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
-                                            <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->average_cost) ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
-                                            <td>{{ $salary->visa_status ?? 'no entry' }}</td>
-                                            <td>{{ $salary->percentage_cost ?? 'no entry' }}</td>
-                                        </tr>
+                                        <td>{{ $salary->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $salary->po ?? 'no entry' }}</td>
+                                        <td>{{ $salary->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $salary->status ?? 'no entry' }}</td>
+                                        <td>{{ $salary->description ?? 'no entry' }}</td>
+                                        <td>{{ $salary->overseeing_sites ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->cost_per_month) ?? 'no entry' }}</td>
+                                        <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
+                                        <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->average_cost) ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
+                                        <td>{{ $salary->visa_status ?? 'no entry' }}</td>
+                                        <td>{{ $salary->percentage_cost ?? 'no entry' }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item editSalaryBtn" data-id="{{$salary->id}}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item delete-btn" data-id="{{$salary->id}}"><i class="bx bx-trash me-1"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -130,27 +145,37 @@
                                         <th>AVERAGE COST</th>
                                         <th>TOTAL COST</th>
                                         <th>%</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->facilityCosts as $facility)
-                                        <tr>
-                                            @php
-                                                $project = $projects->where('id', $facility->project)->first();
-                                            @endphp
-                                            <td>{{ $facility->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $facility->po ?? 'no entry' }}</td>
-                                            <td>{{ $facility->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $facility->status ?? 'no entry' }}</td>
-                                            <td>{{ $facility->description ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->cost_per_month) ?? 'no entry' }}</td>
-                                            <td>{{ $facility->no_of_staff ?? 'no entry' }}</td>
-                                            <td>{{ $facility->no_of_months ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->average_cost) ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->total_cost) ?? 'no entry' }}</td>
-                                            <td>{{ $facility->percentage_cost ?? 'no entry' }}</td>
-                                        </tr>
+                                    <tr>
+                                        @php
+                                        $project = $projects->where('id', $facility->project)->first();
+                                        @endphp
+                                        <td>{{ $facility->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $facility->po ?? 'no entry' }}</td>
+                                        <td>{{ $facility->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $facility->status ?? 'no entry' }}</td>
+                                        <td>{{ $facility->description ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->cost_per_month) ?? 'no entry' }}</td>
+                                        <td>{{ $facility->no_of_staff ?? 'no entry' }}</td>
+                                        <td>{{ $facility->no_of_months ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->average_cost) ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->total_cost) ?? 'no entry' }}</td>
+                                        <td>{{ $facility->percentage_cost ?? 'no entry' }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item edit-btn" data-userid="${user.id}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item delete-btn" data-id="${user.id}"><i class="bx bx-trash me-1"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -164,7 +189,7 @@
                                 data-bs-target="#addNewMaterialModal">ADD NEW</button>
                         </div>
                         @php
-                            $Mcost = $totalMaterialCost + $existingPettyCash->amount + $existingNocPayment->amount;
+                        $Mcost = $totalMaterialCost + $existingPettyCash->amount + $existingNocPayment->amount;
                         @endphp
                         <span>Total Material Cost: <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($Mcost ?? 0) }}</span></span><br>
@@ -194,33 +219,43 @@
                                         <th>TOTAL COST</th>
                                         <th>AVERAGE COST</th>
                                         <th>%</th>
+                                        <th>Action</th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->materialCosts as $material)
-                                        @php
-                                            $project = $projects->where('id', $material->project)->first();
-                                        @endphp
+                                    @php
+                                    $project = $projects->where('id', $material->project)->first();
+                                    @endphp
 
-                                        <tr>
-                                            <td>{{ $material->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $material->po ?? 'no entry' }}</td>
-                                            <td>{{ $material->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $material->status ?? 'no entry' }}</td>
-                                            <td>{{ $material->description ?? 'no entry' }}</td>
-                                            <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
-                                            <td>{{ $material->unit ?? 'no entry' }}</td>
-                                            <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td>{{ $material->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $material->po ?? 'no entry' }}</td>
+                                        <td>{{ $material->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $material->status ?? 'no entry' }}</td>
+                                        <td>{{ $material->description ?? 'no entry' }}</td>
+                                        <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
+                                        <td>{{ $material->unit ?? 'no entry' }}</td>
+                                        <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item edit-btn" data-userid="${user.id}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item delete-btn" data-id="${user.id}"><i class="bx bx-trash me-1"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -257,7 +292,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -382,7 +417,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -472,7 +507,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -558,109 +593,380 @@
     </div>
 </div>
 
+<!-- Edit Salary Modal -->
+<div class="modal fade" id="editSalaryModal" tabindex="-1" aria-labelledby="editSalaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSalaryModalLabel">Edit Salary</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editSalaryForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" id="edit_salary_id" name="id">
+                    <div class="mb-3">
+                        <label for="edit_type" class="form-label">Type</label>
+                        <select class="form-select" id="edit_type" name="type" required>
+                            <option value="Salary">Salary</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_project" class="form-label">Project</label>
+                        <select class="form-select" id="edit_project" name="project" required>
+                            @foreach ($projects as $project)
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_po" class="form-label">PO Type</label>
+                        <select class="form-select" id="edit_po" name="po" required>
+                            <option value="CAPEX">CAPEX</option>
+                            <option value="OPEX">OPEX</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_expense" class="form-label">Expense Head</label>
+                        <select class="form-select" id="edit_expense" name="expenses" required>
+                            <option value="">Select an option</option>
+                            <option value="Sr. Client Relationship Manager">Sr. Client Relationship Manager</option>
+                            <option value="Sr. Manager Operations">Sr. Manager Operations</option>
+                            <option value="Project Manager">Project Manager</option>
+                            <option value="Project Coordinator">Project Coordinator</option>
+                            <option value="Draftsman">Draftsman</option>
+                            <option value="NOC Officer">NOC Officer</option>
+                            <option value="Document Controller">Document Controller</option>
+                            <option value="HSE / QMS Coordinator">HSE / QMS Coordinator</option>
+                            <option value="HSE Engineer">HSE Engineer</option>
+                            <option value="QMS Engineer">QMS Engineer</option>
+                            <option value="Sr. Civil Project Engineer">Sr. Civil Project Engineer</option>
+                            <option value="Civil Project Engineer">Civil Project Engineer</option>
+                            <option value="Surveyor">Surveyor</option>
+                            <option value="Foreman">Foreman</option>
+                            <option value="Charge Hand">Charge Hand</option>
+                            <option value="Mason">Mason</option>
+                            <option value="Helper">Helper</option>
+                            <option value="Driver Cum Helper">Driver Cum Helper</option>
+                            <option value="3-Ton Driver">3-Ton Driver</option>
+                            <option value="Bus Driver">Bus Driver</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="edit_overseeing-sites-field" style="display: none;">
+                        <label for="edit_overseeing_sites" class="form-label">Number of Overseeing Sites</label>
+                        <input type="number" class="form-control" id="edit_overseeing_sites" name="overseeing_sites"
+                            placeholder="Enter number of sites">
+                    </div>
+
+                    <div class="mb-3" id="edit_other-field" style="display: none;">
+                        <label for="edit_other_expense" class="form-label">Other</label>
+                        <input type="text" class="form-control" id="edit_other_expense" name="other_expense"
+                            placeholder="Specify other expense">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_visa_status" class="form-label">Visa Status</label>
+                        <select class="form-select" id="edit_visa_status" name="visa_status" required>
+                            <option value="" disabled>Select Visa Status</option>
+                            <option value="Xad Visa">Xad Visa</option>
+                            <option value="Contractor">Contractor</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_cost_per_month" class="form-label">Cost Per Month</label>
+                        <input type="number" class="form-control" id="edit_cost_per_month" name="cost_per_month"
+                            placeholder="e.g., 5000.00" step="0.01" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_description" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="edit_description" name="description"
+                            placeholder="e.g., we are starting new project" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_status" class="form-label">Status</label>
+                        <input type="text" class="form-control" id="edit_status" name="status"
+                            placeholder="e.g., New Hiring" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_noOfPerson" class="form-label">No Of Persons</label>
+                        <input type="number" class="form-control" id="edit_noOfPerson" name="no_of_staff" step="any"
+                            placeholder="e.g., 5" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_months" class="form-label">Months</label>
+                        <input type="number" class="form-control" id="edit_months" name="no_of_months" step="any"
+                            placeholder="e.g., 12" required>
+                    </div>
+
+                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
+
+                    <button type="submit" class="btn btn-primary">Update Salary</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>
-    
-        function facilityExpenseHandling() {
+    function facilityExpenseHandling() {
 
-            const facilityExpenseSelect = document.getElementById('facilityExpense');
-            const otherFacilityExpenseField = document.getElementById('otherFacilityExpenseField');
+        const facilityExpenseSelect = document.getElementById('facilityExpense');
+        const otherFacilityExpenseField = document.getElementById('otherFacilityExpenseField');
 
-            facilityExpenseSelect.addEventListener('change', function() {
-                otherFacilityExpenseField.style.display = (this.value === 'other') ? 'block' : 'none';
-            });
+        facilityExpenseSelect.addEventListener('change', function() {
+            otherFacilityExpenseField.style.display = (this.value === 'other') ? 'block' : 'none';
+        });
 
-        }
+    }
 
-        function materialExpensehandling() {
-            const materialExpenseSelect = document.getElementById('materialexpenseHead');
-            const consumedMaterialFields = document.getElementById('consumedMaterialFields');
-            const pettyCashFields = document.getElementById('pettyCashFields');
-            const nocPaymentFields = document.getElementById('nocPaymentFields');
+    function materialExpensehandling() {
+        const materialExpenseSelect = document.getElementById('materialexpenseHead');
+        const consumedMaterialFields = document.getElementById('consumedMaterialFields');
+        const pettyCashFields = document.getElementById('pettyCashFields');
+        const nocPaymentFields = document.getElementById('nocPaymentFields');
 
-            // Hide all conditional fields initially
+        // Hide all conditional fields initially
+        consumedMaterialFields.style.display = 'none';
+        pettyCashFields.style.display = 'none';
+        nocPaymentFields.style.display = 'none';
+
+        // On material expense selection change
+        materialExpenseSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+
+            // Hide all fields first
             consumedMaterialFields.style.display = 'none';
             pettyCashFields.style.display = 'none';
             nocPaymentFields.style.display = 'none';
 
-            // On material expense selection change
-            materialExpenseSelect.addEventListener('change', function() {
-                const selectedValue = this.value;
+            // Remove required attributes to avoid validation issues
+            document.querySelectorAll(
+                    '#consumedMaterialFields input, #pettyCashFields input, #nocPaymentFields input'
+                )
+                .forEach(input => input.removeAttribute('required'));
 
-                // Hide all fields first
-                consumedMaterialFields.style.display = 'none';
-                pettyCashFields.style.display = 'none';
-                nocPaymentFields.style.display = 'none';
-
-                // Remove required attributes to avoid validation issues
-                document.querySelectorAll(
-                        '#consumedMaterialFields input, #pettyCashFields input, #nocPaymentFields input'
-                    )
-                    .forEach(input => input.removeAttribute('required'));
-
-                // Show and enable validation for relevant fields
-                if (selectedValue === 'consumed_material') {
-                    consumedMaterialFields.style.display = 'block';
-                    consumedMaterialFields.querySelectorAll('input').forEach(input => input
-                        .setAttribute(
-                            'required', 'required'));
-                } else if (selectedValue === 'petty_cash') {
-                    pettyCashFields.style.display = 'block';
-                    pettyCashFields.querySelector('input').setAttribute('required', 'required');
-                } else if (selectedValue === 'noc_payment') {
-                    nocPaymentFields.style.display = 'block';
-                    nocPaymentFields.querySelector('input').setAttribute('required', 'required');
-                }
-            });
-
-        }
-
-        function salaryExpenseHandling() {
-            const expenseSelect = document.getElementById('expense');
-            const overseeingSitesField = document.getElementById('overseeing-sites-field');
-            const otherField = document.getElementById('other-field');
-
-            expenseSelect.addEventListener('change', function() {
-                var selectedValue = this.value;
-                var showOverseeingSites = [
-                    'Sr. Client Relationship Manager',
-                    'Sr. Manager Operations',
-                    'Project Manager',
-                    'Sr. Civil Project Engineer'
-                ].includes(selectedValue);
-
-                // Show or hide the overseeing sites field
-                overseeingSitesField.style.display = showOverseeingSites ? 'block' : 'none';
-
-                // Show or hide the other field
-                otherField.style.display = (selectedValue === 'other') ? 'block' : 'none';
-            });
-        }
-
-        facilityExpenseHandling();
-        materialExpensehandling();
-        salaryExpenseHandling();
-
-
-        // Handle form submission
-        const form = document.getElementById('addNewMaterialForm');
-        form.addEventListener('submit', function(event) {
-            // Ensure the currently visible fields are focusable and valid
-            const visibleFields = form.querySelectorAll('input[required], select[required]');
-            let isValid = true;
-
-            visibleFields.forEach(field => {
-                if (!field.checkValidity()) {
-                    field.focus();
-                    isValid = false;
-                    return false; // Stop the loop if invalid
-                }
-            });
-
-            if (!isValid) {
-                event.preventDefault();
+            // Show and enable validation for relevant fields
+            if (selectedValue === 'consumed_material') {
+                consumedMaterialFields.style.display = 'block';
+                consumedMaterialFields.querySelectorAll('input').forEach(input => input
+                    .setAttribute(
+                        'required', 'required'));
+            } else if (selectedValue === 'petty_cash') {
+                pettyCashFields.style.display = 'block';
+                pettyCashFields.querySelector('input').setAttribute('required', 'required');
+            } else if (selectedValue === 'noc_payment') {
+                nocPaymentFields.style.display = 'block';
+                nocPaymentFields.querySelector('input').setAttribute('required', 'required');
             }
         });
-   
+
+    }
+
+    function salaryExpenseHandling() {
+        const expenseSelect = document.getElementById('expense');
+        const overseeingSitesField = document.getElementById('overseeing-sites-field');
+        const otherField = document.getElementById('other-field');
+
+        expenseSelect.addEventListener('change', function() {
+            var selectedValue = this.value;
+            var showOverseeingSites = [
+                'Sr. Client Relationship Manager',
+                'Sr. Manager Operations',
+                'Project Manager',
+                'Sr. Civil Project Engineer'
+            ].includes(selectedValue);
+
+            // Show or hide the overseeing sites field
+            overseeingSitesField.style.display = showOverseeingSites ? 'block' : 'none';
+
+            // Show or hide the other field
+            otherField.style.display = (selectedValue === 'other') ? 'block' : 'none';
+        });
+    }
+
+    facilityExpenseHandling();
+    materialExpensehandling();
+    salaryExpenseHandling();
+
+
+    // Handle form submission
+    const form = document.getElementById('addNewMaterialForm');
+    form.addEventListener('submit', function(event) {
+        // Ensure the currently visible fields are focusable and valid
+        const visibleFields = form.querySelectorAll('input[required], select[required]');
+        let isValid = true;
+
+        visibleFields.forEach(field => {
+            if (!field.checkValidity()) {
+                field.focus();
+                isValid = false;
+                return false; // Stop the loop if invalid
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+    // Function to open the modal for editing an existing salary
+    function openEditSalaryModal(id) {
+        // Fetch the salary data and populate the form
+        $.ajax({
+            url: `/pages/get-salary-data/${id}`,
+            type: 'GET',
+            success: function(data) {
+                $('#edit_salary_id').val(data.id);
+                $('#edit_type').val(data.type);
+                $('#edit_project').val(data.project);
+                $('#edit_po').val(data.po);
+                $('#edit_expense').val(data.expenses);
+                $('#edit_visa_status').val(data.visa_status);
+                $('#edit_cost_per_month').val(data.cost_per_month);
+                $('#edit_description').val(data.description);
+                $('#edit_status').val(data.status);
+                $('#edit_noOfPerson').val(data.no_of_staff);
+                $('#edit_months').val(data.no_of_months);
+
+                // Handle conditional fields
+                if (['Sr. Client Relationship Manager', 'Sr. Manager Operations', 'Project Manager', 'Sr. Civil Project Engineer'].includes(data.expense)) {
+                    $('#edit_overseeing-sites-field').show();
+                    $('#edit_overseeing_sites').val(data.overseeing_sites);
+                } else {
+                    $('#edit_overseeing-sites-field').hide();
+                }
+
+                if (data.expense === 'other') {
+                    $('#edit_other-field').show();
+                    $('#edit_other_expense').val(data.other_expense);
+                } else {
+                    $('#edit_other-field').hide();
+                }
+
+                $('#editSalaryModal').modal('show');
+            },
+            error: function() {
+                alert('Error fetching salary data');
+            }
+        });
+    }
+
+    // Event listener for edit form submission
+    $('#editSalaryForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var id = $('#edit_salary_id').val();
+
+        $.ajax({
+            type: "POST",
+            url: `/pages/update-budget-project-salary/${id}`,
+            data: form.serialize(),
+            success: function(data) {
+                if (data.success) {
+                    showAlert('success', 'record updated successfully.');
+                    $('#editSalaryModal').modal('hide');
+                    // Refresh the salary table or update the specific row
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000)
+                } else {
+                    alert('Error updating salary data');
+                }
+            },
+            error: function() {
+                alert('Error updating salary data');
+            }
+        });
+    });
+
+    // Event listener for expense field to show/hide conditional fields
+    $('#edit_expense').on('change', function() {
+        var selectedValue = $(this).val();
+        if (['Sr. Client Relationship Manager', 'Sr. Manager Operations', 'Project Manager', 'Sr. Civil Project Engineer'].includes(selectedValue)) {
+            $('#edit_overseeing-sites-field').show();
+        } else {
+            $('#edit_overseeing-sites-field').hide();
+        }
+
+        if (selectedValue === 'other') {
+            $('#edit_other-field').show();
+        } else {
+            $('#edit_other-field').hide();
+        }
+    });
+
+    // Add click event listeners to your edit buttons
+    $('.editSalaryBtn').on('click', function() {
+        var id = $(this).data('id');
+        openEditSalaryModal(id);
+    });
+
+
+
+
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const userId = this.getAttribute('data-id');
+
+            // Confirm deletion with the user
+            if (confirm('Are you sure you want to delete this project record?')) {
+                deleteSalary(userId); // Call the function to delete the record
+            }
+        });
+    });
+
+    function deleteSalary(id) {
+        fetch('/api/delete-salary', { // Replace with your actual API endpoint
+                method: 'POST',
+                body: JSON.stringify({
+                    id: id
+                }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', data.success);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000)
+                } else {
+                    showAlert('danger', data.message || 'An error occurred while deleting the User record.');
+                }
+            })
+            .catch(error => {
+                console.error('Network error:', error);
+                showAlert('danger', 'A network error occurred. Please try again.');
+            });
+    }
+
+    function showAlert(type, message) {
+        const alertBox = document.getElementById('responseAlertnew');
+        const alertMessage = document.getElementById('alertMessagenew');
+        alertBox.className = `alert alert-${type} alert-dismissible fade show`;
+        alertMessage.textContent = message;
+        alertBox.style.display = 'block';
+
+        // Hide the alert after 3 seconds
+        setTimeout(() => {
+            alertBox.style.display = 'none';
+        }, 3000);
+    }
 </script>
