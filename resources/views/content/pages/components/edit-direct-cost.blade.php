@@ -46,7 +46,7 @@
             <div class="dropdown-section">
                 <h3 class="dropdown-header">Direct Cost ▼</h3>
                 <div class="dropdown-content">
-                    <h5>Total Direct Cost - {{ $totalDirectCost }}</h5>
+                    <h5>Total Direct Cost - {{ number_format($totalDirectCost) }}</h5>
                     <!-- Salary Section -->
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">

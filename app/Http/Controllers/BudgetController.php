@@ -122,7 +122,7 @@ class BudgetController extends Controller
     $totalSalary = Salary::where('budget_project_id', $project_id)->sum('total_cost');
     $totalFacilityCost = FacilityCost::where('budget_project_id', $project_id)->sum('total_cost');
     $totalMaterialCost = MaterialCost::where('budget_project_id', $project_id)->sum('total_cost');
-    $totalCostOverhead = CostOverhead::where('budget_project_id', $project_id)->sum('total_cost');
+    $totalCostOverhead = CostOverhead::where('budget_project_id', $project_id)->sum('amount');
     $totalFinancialCost = FinancialCost::where('budget_project_id', $project_id)->sum('total_cost');
     $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $project_id)->sum('total_cost');
     
