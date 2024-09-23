@@ -9,6 +9,7 @@ use App\Models\FacilityCost;
 use App\Models\PettyCash;
 use App\Models\NocPayment;
 use App\Models\MaterialCost;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 
 class DirectCostController extends Controller
@@ -184,7 +185,7 @@ class DirectCostController extends Controller
                 $materialCost->po = $validated['po'];
 
                 // Create a new MaterialCost record
-            
+
                 // Calculate total and average cost
                 $materialCost->calculateTotalCost();
                 $materialCost->calculateAverageCost();
@@ -232,6 +233,79 @@ class DirectCostController extends Controller
             }
         } catch (Exception $e) {
             return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('message', $e->getMessage());
+        }
+    }
+
+
+    public function getSalaryData($id)
+    {
+        $salary = Salary::findOrFail($id);
+        return response()->json($salary);
+    }
+
+    public function updateSalary(Request $request, $id)
+    {
+        $salary = Salary::findOrFail($id);
+        $salary->update($request->all());
+        $salary->calculateTotalCost();
+        $salary->calculateAverageCost();
+        return response()->json(['success' => true]);
+    }
+
+    // FacilityCostController
+    public function getFacilityData($id)
+    {
+        $facility = FacilityCost::findOrFail($id);
+        return response()->json($facility);
+    }
+
+    public function updateFacility(Request $request, $id)
+    {
+        $facility = FacilityCost::findOrFail($id);
+        $facility->update($request->all());
+        return response()->json(['success' => true]);
+    }
+
+    // MaterialCostController
+    public function getMaterialData($id)
+    {
+        $material = MaterialCost::findOrFail($id);
+        return response()->json($material);
+    }
+
+    public function updateMaterial(Request $request, $id)
+    {
+        $material = MaterialCost::findOrFail($id);
+        $material->update($request->all());
+        return response()->json(['success' => true]);
+    }
+
+
+    public function deleteSalary(Request $request)
+    {
+        try {
+            // Validate that project_id is provided
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            // Find the project record by ID
+            $project = Salary::find($request->input('id'));
+
+            if (!$project) {
+                return response()->json(['message' => ' record not found.'], 404);
+            }
+
+            // Delete the project record
+            $project->delete();
+
+            return response()->json(['success' => 'User deleted successfully']);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
         }
     }
 }

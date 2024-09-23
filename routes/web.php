@@ -173,6 +173,15 @@ Route::middleware(['checklogin'])->group(function () {
     'add-budget-project-salary'
   );
 
+  Route::get('/pages/get-salary-data/{id}', [DirectCostController::class, 'getSalaryData']);
+  Route::put('/pages/update-budget-project-salary/{id}', [DirectCostController::class, 'updateSalary']);
+
+  Route::get('/pages/get-facility-data/{id}', [DirectCostController::class, 'getFacilityData']);
+  Route::post('/pages/update-facility/{id}', [DirectCostController::class, 'updateFacility']);
+
+  Route::get('/pages/get-material-data/{id}', [DirectCostController::class, 'getMaterialData']);
+  Route::post('/pages/update-material/{id}', [DirectCostController::class, 'updateMaterial']);
+
   //material cost
   Route::post('/pages/add-budget-project-material-cost', [DirectCostController::class, 'storeMaterial'])->name(
     'add-budget-project-salary'
@@ -230,7 +239,7 @@ Route::middleware(['checklogin'])->group(function () {
   Route::get('/pages/show-budget-project-purchase-order', [PurcahseOrderController::class, 'showPurchaseOrder'])->name(
     'add-budget-capital-expense'
   );
-  
+
 
   Route::get('/filter-purchase-orders', [PurcahseOrderController::class, 'filterPurchaseOrders'])->name('filter-purchase-orders');
 

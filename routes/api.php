@@ -1,6 +1,7 @@
 
 <?php
 
+use App\Http\Controllers\DirectCostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlannedCashController;
@@ -68,3 +69,6 @@ Route::post('/delete-user', [UserController::class, 'deleteRecord'])->name('dele
 
 //save purchase order 
 Route::post('/save-purchase-order', [PurcahseOrderController::class, 'store'])->name('save-purchase-order');
+
+
+Route::post('/delete-salary', [DirectCostController::class, 'deleteSalary'])->name('delete-salary');
