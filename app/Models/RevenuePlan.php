@@ -34,30 +34,23 @@ class RevenuePlan extends Model
         return $this->belongsTo(IndirectCost::class);
     }
 
-    // Calculate net profit before tax
     public function calculateTotalProfit()
     {
-        // Calculate total profit
-        $this->total_profit = $this->sum('amount');
+        // Retrieve the total of all previous records' total_profit
+        $currentTotalProfit = RevenuePlan::sum('amount');
+    
+        // Add the current amount to the total profit
+        $this->total_profit = $currentTotalProfit + $this->amount;
+    
+        // Save the updated total profit for the current record
         $this->save();
     }
-
-
+    
 
     public function calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost)
     {
         // Calculate total costs
         $totalCost = $totalDirectCost + $totalIndirectCost;
-
-        dd('Total Profit: ' . $this->total_profit, 'Total Cost: ' . $totalCost);
-
-
-        // Check if total profit is less than total costs
-        if ($this->total_profit < $totalCost) {
-            throw ValidationException::withMessages([
-                'profit_error' => 'Expected profit is less than the total cost.',
-            ]);
-        }
 
         // Calculate net profit before tax
         $this->net_profit_before_tax = $this->total_profit - $totalCost;

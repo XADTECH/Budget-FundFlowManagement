@@ -266,7 +266,7 @@ class BudgetController extends Controller
             // Perform remaining calculations
             $revenuePlan->calculateTax();
             $revenuePlan->calculateNetProfitAfterTax();
-            $revenuePlan->calculateProfitPercentage();
+            //$revenuePlan->calculateProfitPercentage();
 
             // Save the revenue plan data
             $revenuePlan->save();
@@ -276,7 +276,7 @@ class BudgetController extends Controller
         } catch (\Exception $e) {
             // Handle other exceptions if needed
             $revenuePlan->delete();
-            return back()->withErrors(['profit_error' => 'Expected profit is less than total costs.']);
+            return back()->withErrors(['profit_error' => $e->getMessage()]);
         }
 
         return redirect('/pages/edit-project-budget/' . $budgetProject->id)->with('success', 'Revenue added successfully!');
