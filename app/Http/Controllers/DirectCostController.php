@@ -263,23 +263,163 @@ class DirectCostController extends Controller
     {
         $facility = FacilityCost::findOrFail($id);
         $facility->update($request->all());
+        $facility->calculateTotalCost();
+        $facility->calculateAverageCost();;
         return response()->json(['success' => true]);
     }
 
     // MaterialCostController
     public function getMaterialData($id)
     {
-        $material = MaterialCost::findOrFail($id);
-        return response()->json($material);
+        try {
+            // First, try to find the material cost
+            $materialCost = MaterialCost::find($id);
+
+            if ($materialCost) {
+                return response()->json([
+                    'id' => $materialCost->id,
+                    'type' => $materialCost->type,
+                    'project' => $materialCost->project,
+                    'po' => $materialCost->po,
+                    'expense' => 'consumed_material',
+                    'material_head' => $materialCost->expenses,
+                    'quantity' => $materialCost->quantity,
+                    'unit' => $materialCost->unit,
+                    'unit_cost' => $materialCost->unit_cost,
+                    'description' => $materialCost->description,
+                    'status' => $materialCost->status,
+                    'total_cost' => $materialCost->total_cost,
+                    'average_cost' => $materialCost->average_cost,
+                    'percentage_cost' => $materialCost->percentage_cost,
+                ]);
+            }
+
+            // If not found, try to find petty cash
+            $pettyCash = PettyCash::find($id);
+            if ($pettyCash) {
+                return response()->json([
+                    'id' => $pettyCash->id,
+                    'type' => 'Material', // Assuming this is always 'Material' for petty cash
+                    'project' => $pettyCash->project_id,
+                    'po' => null, // Assuming petty cash doesn't have a PO
+                    'expense' => 'petty_cash',
+                    'petty_cash_amount' => $pettyCash->amount,
+                    'description' => $pettyCash->description,
+                ]);
+            }
+
+            // If not found, try to find NOC payment
+            $nocPayment = NocPayment::find($id);
+            if ($nocPayment) {
+                return response()->json([
+                    'id' => $nocPayment->id,
+                    'type' => 'Material', // Assuming this is always 'Material' for NOC payment
+                    'project' => $nocPayment->project_id,
+                    'po' => null, // Assuming NOC payment doesn't have a PO
+                    'expense' => 'noc_payment',
+                    'noc_amount' => $nocPayment->amount,
+                    'description' => $nocPayment->description,
+                ]);
+            }
+
+            // If no record is found
+            return response()->json(['error' => 'Record not found'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function updateMaterial(Request $request, $id)
     {
-        $material = MaterialCost::findOrFail($id);
-        $material->update($request->all());
-        return response()->json(['success' => true]);
-    }
+        try {
+            // Validate the incoming request
+            $validated = $request->validate([
+                'type' => 'required|string',
+                'project' => 'required|exists:projects,id',
+                'po' => 'required|string',
+                'expense' => 'required|string',
+                'project_id' => 'required|exists:budget_project,id',
 
+                'material_head' => 'string|nullable',
+                'quantity' => 'numeric|nullable',
+                'unit' => 'string|nullable',
+                'unit_cost' => 'numeric|nullable',
+                'description' => 'nullable|string',
+                'status' => 'string|nullable',
+
+                // Field for petty cash expense type
+                'petty_cash_amount' => 'numeric|nullable',
+
+                // Field for NOC payment expense type
+                'noc_amount' => 'numeric|nullable',
+            ]);
+
+            if ($validated['expense'] === 'consumed_material') {
+                $materialCost = MaterialCost::findOrFail($id);
+                $materialCost->expenses = $validated['material_head'];
+                $materialCost->quantity = $validated['quantity'];
+                $materialCost->unit = $validated['unit'];
+                $materialCost->unit_cost = $validated['unit_cost'];
+                $materialCost->description = $validated['description'];
+                $materialCost->status = $validated['status'];
+                $materialCost->project = $validated['project'];
+                $materialCost->type = $validated['type'];
+                $materialCost->po = $validated['po'];
+
+                // Recalculate total and average cost
+                $materialCost->calculateTotalCost();
+                $materialCost->calculateAverageCost();
+                $materialCost->calculateAverageCostPercentage();
+
+                // Save the updated material cost
+                $materialCost->save();
+
+                return response()->json(['success' => true, 'message' => 'Material Cost updated successfully!']);
+            } elseif ($validated['expense'] === 'petty_cash') {
+                $pettyCash = PettyCash::where('project_id', $validated['project_id'])->firstOrFail();
+
+                // Check if the new amount is different from the existing one
+                if ($pettyCash->amount != $validated['petty_cash_amount']) {
+                    $existingPettyCash = PettyCash::where('project_id', $validated['project_id'])
+                        ->where('amount', $validated['petty_cash_amount'])
+                        ->where('id', '!=', $pettyCash->id)
+                        ->first();
+
+                    if ($existingPettyCash) {
+                        return response()->json(['success' => false, 'message' => 'Amount already exists for this project.'], 422);
+                    }
+                }
+
+                $pettyCash->amount = $validated['petty_cash_amount'];
+                $pettyCash->save();
+
+                return response()->json(['success' => true, 'message' => 'Petty Cash updated successfully!']);
+            } elseif ($validated['expense'] === 'noc_payment') {
+                $nocPayment = NocPayment::where('project_id', $validated['project_id'])->firstOrFail();
+
+                // Check if the new amount is different from the existing one
+                if ($nocPayment->amount != $validated['noc_amount']) {
+                    $existingNocPayment = NocPayment::where('project_id', $validated['project_id'])
+                        ->where('amount', $validated['noc_amount'])
+                        ->where('id', '!=', $nocPayment->id)
+                        ->first();
+
+                    if ($existingNocPayment) {
+                        return response()->json(['success' => false, 'message' => 'Amount already exists for this project.'], 422);
+                    }
+                }
+
+                $nocPayment->amount = $validated['noc_amount'];
+                $nocPayment->save();
+
+                return response()->json(['success' => true, 'message' => 'NOC Payment updated successfully!']);
+            }
+
+            return response()->json(['success' => false, 'message' => 'Invalid expense type.'], 422);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 
     public function deleteSalary(Request $request)
     {
@@ -306,6 +446,66 @@ class DirectCostController extends Controller
             return response()->json(['success' => 'User deleted successfully']);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
+        }
+    }
+    public function deleteFacilities(Request $request)
+    {
+        try {
+            // Validate that project_id is provided
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            // Find the project record by ID
+            $project = FacilityCost::find($request->input('id'));
+
+            if (!$project) {
+                return response()->json(['message' => ' record not found.'], 404);
+            }
+
+            // Delete the project record
+            $project->delete();
+
+            return response()->json(['success' => 'User deleted successfully']);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
+        }
+    }
+
+    public function deleteMaterial(Request $request)
+    {
+
+        try {
+            $id = $request->input('id');
+            // First, try to find and delete the material cost
+            $materialCost = MaterialCost::find($id);
+            if ($materialCost) {
+                $materialCost->delete();
+                return response()->json(['success' => true, 'message' => 'Material Cost deleted successfully.']);
+            }
+
+            // If not found, try to find and delete petty cash
+            $pettyCash = PettyCash::find($id);
+            if ($pettyCash) {
+                $pettyCash->delete();
+                return response()->json(['success' => true, 'message' => 'Petty Cash record deleted successfully.']);
+            }
+
+            // If not found, try to find and delete NOC payment
+            $nocPayment = NocPayment::find($id);
+            if ($nocPayment) {
+                $nocPayment->delete();
+                return response()->json(['success' => true, 'message' => 'NOC Payment record deleted successfully.']);
+            }
+
+            // If no record is found
+            return response()->json(['success' => 'User deleted successfully']);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while deleting the record: ' . $e->getMessage()], 500);
         }
     }
 }

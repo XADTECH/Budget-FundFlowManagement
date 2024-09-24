@@ -177,10 +177,10 @@ Route::middleware(['checklogin'])->group(function () {
   Route::put('/pages/update-budget-project-salary/{id}', [DirectCostController::class, 'updateSalary']);
 
   Route::get('/pages/get-facility-data/{id}', [DirectCostController::class, 'getFacilityData']);
-  Route::post('/pages/update-facility/{id}', [DirectCostController::class, 'updateFacility']);
+  Route::put('/pages/update-facility/{id}', [DirectCostController::class, 'updateFacility']);
 
   Route::get('/pages/get-material-data/{id}', [DirectCostController::class, 'getMaterialData']);
-  Route::post('/pages/update-material/{id}', [DirectCostController::class, 'updateMaterial']);
+  Route::put('/pages/update-material/{id}', [DirectCostController::class, 'updateMaterial']);
 
   //material cost
   Route::post('/pages/add-budget-project-material-cost', [DirectCostController::class, 'storeMaterial'])->name(
