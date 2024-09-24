@@ -4,106 +4,66 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Salary;
+use App\Models\FacilityCost;
+use App\Models\MaterialCost;
+use App\Models\PettyCash;
+use App\Models\NOCPayment;
 
 class FinancialCost extends Model
 {
-  use HasFactory;
+    use HasFactory;
 
-  protected $table = 'financial_cost';
+    protected $table = 'financial_cost';
 
-  protected $fillable = [
-    'in_direct_cost_id', // Foreign key reference to DirectCost
-    'budget_project',
-    'sn', // Serial number or identifier
-    'type', // Type of record (Cost)
-    'project', // Project name
-    'contract',
-    'po', // Type of expense (OPEX)
-    'expenses', // Specific expense (Salary)
-    'description', // Description of the role or details (Project Manager)
-    'status', // Status of the budget entry (New Hiring)
-    'cost_per_month', // Salary cost per staff member per month (5,000)
-    'no_of_staff', // Number of staff members (5)
-    'no_of_months', // Duration of the project in months (5)
-    'total_cost', // Total calculated cost (5,000 * 5 * 5 = 125,000)
-    'average_cost', // Average cost per staff per month (5,000)
-    'approval_status'
-  ];
+    protected $fillable = [
+        'in_direct_cost_id', // Foreign key reference to DirectCost
+        'budget_project_id',
+        'percentage',
+        'type', // Type of record (Cost)
+        'project', // Project name
+        'po', // Type of expense (OPEX)
+        'expenses', // Specific expense (Salary)
+        'total_cost', // Total calculated cost (5,000 * 5 * 5 = 125,000)
+    ];
 
-  public function IndirectCost()
-  {
-    return $this->belongsTo(IndirectCost::class);
-  }
-
-  public function budgetProject()
-  {
-    return $this->belongsTo(BudgetProject::class);
-  }
-
-     // Define the relationship with TotalBudgetAllocated based on the project
-     public function totalBudgetAllocated()
-     {
-         return $this->hasOne(TotalBudgetAllocated::class, 'budget_project_id');
-     }
-
-// Calculate total cost dynamically
-public function calculateTotalCost()
-{
-    // Ensure cost_per_month is a positive value
-    if ($this->cost_per_month > 0) {
-        // Case 1: No_of_months is greater than 0
-        if ($this->no_of_months > 0) {
-            $this->total_cost = $this->cost_per_month * $this->no_of_months;
-        }
-        // Case 2: No_of_months is 0, default total cost to cost_per_month
-        else {
-            $this->total_cost = $this->cost_per_month;
-        }
-    } else {
-        // Case where cost_per_month is zero or invalid, set total cost to 0
-        $this->total_cost = 0;
+    public function IndirectCost()
+    {
+        return $this->belongsTo(IndirectCost::class);
     }
 
-    // Save the updated total cost to the database
-    $this->save();
-    return $this->total_cost;
-}
-
-// Calculate average cost dynamically
-public function calculateAverageCost()
-{
-    // Handle the case where no_of_months is greater than 0
-    if ($this->no_of_months > 0) {
-        $this->average_cost = $this->total_cost / $this->no_of_months;
-    } else {
-        // Default average cost if no_of_months is zero or invalid
-        $this->average_cost = $this->total_cost; // Or another default value
+    public function budgetProject()
+    {
+        return $this->belongsTo(BudgetProject::class);
     }
 
-    // Save the updated average cost to the database
-    $this->save();
-    return $this->average_cost;
-}
+    use HasFactory;
 
-   // Update total budget and allocation
-   public function updateBudget($expenseHead)
-   {
-       // Fetch or create the total budget allocated for the project
-       $totalBudgetAllocated = new TotalBudgetAllocated();
 
-       // Sum the total cost of approved salaries for the given budget_project_id
-       $approved_total_cost = FinancialCost::where('budget_project_id', $this->budget_project_id)
-                                    ->where('approval_status', 'approved') // Only approved salaries
-                                    ->sum('total_cost');
+    // Define the relationship with TotalBudgetAllocated based on the project
+    public function totalBudgetAllocated()
+    {
+        return $this->hasOne(TotalBudgetAllocated::class, 'budget_project_id');
+    }
 
-       // Update the total_budget_allocated field in the TotalBudgetAllocated table
-       $totalBudgetAllocated->total_budget_allocated = $approved_total_cost;
-       $totalBudgetAllocated->budget_project_id = $this->budget_project_id;
-       $totalBudgetAllocated->expense_head = $expenseHead;
+  public function calculateTotalCost($budgetProjectId)
+    {
+        // Get total costs for related subunits using budget_project_id
+        $salaryTotal = Salary::where('budget_project_id', $budgetProjectId)->sum('total_cost');
+        $materialTotal = MaterialCost::where('budget_project_id', $budgetProjectId)->sum('total_cost');
+        $facilityTotal = FacilityCost::where('budget_project_id', $budgetProjectId)->sum('total_cost');
+        $pettyCashTotal = PettyCash::where('project_id', $budgetProjectId)->sum('amount');
+        $nocPaymentTotal = NocPayment::where('project_id', $budgetProjectId)->sum('amount');
 
-       // Save the updated data
-       $totalBudgetAllocated->save();
-   }
+        $percentage = $this->total_cost / 100;
+
+        // Aggregate all totals
+        $overallTotalCost = $percentage * ($salaryTotal + $materialTotal + $facilityTotal + $pettyCashTotal + $nocPaymentTotal);
+
+        return $overallTotalCost;
+    }
+    
+
 
     // Approve the material entry
     public function approve()
@@ -128,10 +88,10 @@ public function calculateAverageCost()
 
     public static function sumTotalCost($budgetProjectId)
     {
-       $total_cost = FinancialCost::where('budget_project_id', $budgetProjectId)
-       ->where('approval_status', 'approved') // Only approved salaries
-       ->sum('total_cost');
+        $total_cost = FinancialCost::where('budget_project_id', $budgetProjectId)
+            ->where('approval_status', 'approved') // Only approved salaries
+            ->sum('total_cost');
 
-       return $total_cost;
+        return $total_cost;
     }
 }

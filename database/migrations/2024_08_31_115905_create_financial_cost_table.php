@@ -14,20 +14,12 @@ return new class extends Migration {
       $table->id();
       $table->unsignedBigInteger('in_direct_cost_id');
       $table->unsignedBigInteger('budget_project_id');
-      $table->string('sn')->default('2.5'); // Default value for 'sn'
       $table->string('type');
-      $table->string('contract');
+      $table->string('po'); 
       $table->string('project');
-      $table->string('po');
       $table->string('expenses');
-      $table->string('description');
-      $table->string('status');
-      $table->decimal('cost_per_month', 10, 2);
-      $table->integer('no_of_months');
+      $table->string('percentage');
       $table->decimal('total_cost', 15, 2)->nullable();
-      $table->decimal('average_cost', 15, 2)->nullable();
-      $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('approved');
-
       $table->timestamps();
     });
   }

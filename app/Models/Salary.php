@@ -27,7 +27,8 @@ class Salary extends Model
         'total_cost',            // Total calculated cost (e.g., 5,000 * 5 * 5 = 125,000)
         'average_cost',          // Average cost per staff per month (e.g., 5,000)
         'approval_status',       // Approval status
-        'percentage_cost'
+        'percentage_cost',
+        'visa_status'
     ];
 
     // Relationship to DirectCost

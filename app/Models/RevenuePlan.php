@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\BudgetProject;
 use App\Models\DirectCost;
 use App\Models\IndirectCost;
+use Illuminate\Validation\ValidationException; // Correct import
+
+
 
 class RevenuePlan extends Model
 {
@@ -14,21 +17,7 @@ class RevenuePlan extends Model
 
     protected $table = 'revenue_plans';
 
-    protected $fillable = [
-        'budget_project_id',
-        'sn',
-        'type',
-        'contract',
-        'project',
-        'description',
-        'amount',
-        'total_profit',
-        'net_profit_before_tax',
-        'tax',
-        'net_profit_after_tax',
-        'profit_percentage',
-        'approval_status',
-    ];
+    protected $fillable = ['budget_project_id', 'sn', 'type', 'contract', 'project', 'description', 'amount', 'total_profit', 'net_profit_before_tax', 'tax', 'net_profit_after_tax', 'profit_percentage', 'approval_status'];
 
     public function budgetProject()
     {
@@ -37,32 +26,43 @@ class RevenuePlan extends Model
 
     public function directCost()
     {
-      return $this->belongsTo(DirectCost::class);
+        return $this->belongsTo(DirectCost::class);
     }
 
     public function IndirectCost()
     {
-      return $this->belongsTo(IndirectCost::class);
+        return $this->belongsTo(IndirectCost::class);
     }
 
-        // Calculate net profit before tax 
-        public function calculateTotalProfit()
-        {
-            // Calculate total profit
-            $this->total_profit = $this->sum('amount');
-            $this->save();
-            
-            return $this->total_profit;
-        }
-  
-
-    // Calculate net profit before tax 
-    public function calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost)
+    // Calculate net profit before tax
+    public function calculateTotalProfit()
     {
         // Calculate total profit
-        $this->net_profit_before_tax = $this->total_profit - ($totalDirectCost + $totalIndirectCost);
+        $this->total_profit = $this->sum('amount');
         $this->save();
-        
+    }
+
+
+
+    public function calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost)
+    {
+        // Calculate total costs
+        $totalCost = $totalDirectCost + $totalIndirectCost;
+
+        dd('Total Profit: ' . $this->total_profit, 'Total Cost: ' . $totalCost);
+
+
+        // Check if total profit is less than total costs
+        if ($this->total_profit < $totalCost) {
+            throw ValidationException::withMessages([
+                'profit_error' => 'Expected profit is less than the total cost.',
+            ]);
+        }
+
+        // Calculate net profit before tax
+        $this->net_profit_before_tax = $this->total_profit - $totalCost;
+        $this->save();
+
         return $this->net_profit_before_tax;
     }
 
@@ -103,15 +103,15 @@ class RevenuePlan extends Model
         $this->calculateTotalProfit();
         $this->calculateNetProfitBeforeTax();
         $this->calculateTax();
-        $this->calculateNetProfitAfterTax();            
+        $this->calculateNetProfitAfterTax();
     }
 
     public static function sumTotalCost($budgetProjectId)
     {
-       $total_cost = RevenuePlan::where('budget_project_id', $budgetProjectId)
-       ->where('approval_status', 'approved') // Only approved salaries
-       ->sum('net_profit_after_tax');
+        $total_cost = RevenuePlan::where('budget_project_id', $budgetProjectId)
+            ->where('approval_status', 'approved') // Only approved salaries
+            ->sum('net_profit_after_tax');
 
-       return $total_cost;
+        return $total_cost;
     }
 }

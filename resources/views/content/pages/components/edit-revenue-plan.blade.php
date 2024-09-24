@@ -57,7 +57,7 @@
                                                 <th>AMOUNT</th>
                                                 <th>TOTAL PROFIT</th>
                                                 <th>NET PROFIT BEFORE TAX</th>
-                                                <th>TAX</th>
+                                                <th>TAXED AMOUNT</th>
                                                 <th>NET PROFIT AFTER TAX</th> 
                                     
                                             </tr>
@@ -70,11 +70,11 @@
                                                 <td>{{$revenuePlan->contract}}</td>
                                                 <td>{{$revenuePlan->project}}</td>
                                                 <td>{{$revenuePlan->description}}</td>
-                                                <td>{{$revenuePlan->amount}}</td>
-                                                <td>{{$revenuePlan->total_profit}}</td>
-                                                <td>{{$revenuePlan->net_profit_before_tax}}</td>
-                                                <td>{{$revenuePlan->tax}}</td>
-                                                <td>{{$revenuePlan->net_profit_after_tax}}</td>
+                                                <td>{{ number_format($revenuePlan->amount, 0) }}</td>
+                                                <td>{{ number_format($revenuePlan->total_profit, 0) }}</td>
+                                                <td>{{ number_format($revenuePlan->net_profit_before_tax, 0) }}</td>
+                                                <td>{{ number_format($revenuePlan->tax, 0) }}</td>
+                                                <td>{{ number_format($revenuePlan->net_profit_after_tax, 0) }}</td>
                                             </tr>    
                                         @endforeach  
                                             </tbody>
@@ -105,10 +105,7 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="contract" class="form-label">Contract</label>
-                        <input type="text" class="form-control" id="contract" name="contract" placeholder="Enter contract details (e.g., Civil Project)">
-                    </div>
+               
                     <div class="mb-3">
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project">

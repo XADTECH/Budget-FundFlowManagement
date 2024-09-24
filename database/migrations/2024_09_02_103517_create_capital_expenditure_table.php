@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,20 +13,18 @@ return new class extends Migration
         Schema::create('capital_expenditure', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('budget_project_id');
-            $table->string('sn')->default('4.1'); // Default value for 'sn'
-            $table->string('type')->nullable();;
-            $table->string('contract')->nullable();;
-            $table->string('project')->nullable();;
+
+            $table->string('type')->nullable();
+
+            $table->string('project')->nullable();
             $table->string('po');
             $table->string('expenses');
+            $table->integer('total_number');
+            $table->integer('cost');
             $table->string('description');
-            $table->string('status')->nullable();
-            $table->decimal('cost_per_month', 10, 2);
-            $table->integer('no_of_staff');
-            $table->integer('no_of_months');
+            $table->string('status');
             $table->decimal('total_cost', 15, 2)->nullable();
-            $table->decimal('average_cost', 15, 2)->nullable();
-            $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('approved');
+
             $table->timestamps();
         });
     }

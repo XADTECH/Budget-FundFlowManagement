@@ -41,7 +41,7 @@ class IndirectCost extends Model
   public function calculateTotalIndirectCost()
   {
     // Calculate totals from related models
-    $costOverheadsTotal = $this->costOverheads()->sum('total_cost');
+    $costOverheadsTotal = $this->costOverheads()->sum('amount');
     $financialCostsTotal = $this->financialCosts()->sum('total_cost');
 
     // Return the sum of all totals
