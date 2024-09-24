@@ -170,8 +170,8 @@
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item edit-btn" data-userid="${user.id}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                    <a class="dropdown-item delete-btn" data-id="${user.id}"><i class="bx bx-trash me-1"></i> Delete</a>
+                                                    <a class="dropdown-item edit-btn editFacilitesBtn" data-id="{{$facility->id}}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item deletefacilities" data-id="{{$facility->id}}"><i class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -250,8 +250,8 @@
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item edit-btn" data-userid="${user.id}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                    <a class="dropdown-item delete-btn" data-id="${user.id}"><i class="bx bx-trash me-1"></i> Delete</a>
+                                                    <a class="dropdown-item editMaterialBtn" data-id="{{$material->id}}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item delete-btn" data-id="{{$material->id}}"><i class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -719,6 +719,199 @@
     </div>
 </div>
 
+<div class="modal fade" id="editFacilitiesModal" tabindex="-1" aria-labelledby="editFacilitiesModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewFacilitiesModalLabel">Add New Facilities Cost</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editFacilitiesForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="Facility Cost">Facility Cost</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="project" class="form-label">Project</label>
+                        <select class="form-select" id="project" name="project" required>
+                            @foreach ($projects as $project)
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="po" class="form-label">PO</label>
+                        <select class="form-select" id="po" name="po" required>
+                            <option value="CAPEX">CAPEX</option>
+                            <option selected value="OPEX">OPEX</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expense" class="form-label">Expense Head</label>
+                        <select class="form-select editfaci" id="facilityExpense" name="expenses" required>
+                            <option value="">Select an option</option>
+                            <option value="Accommodation">Accommodation</option>
+                            <option value="Fuel">Fuel</option>
+                            <option value="SIM">SIM</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="otherFacilityExpenseField" style="display: none;">
+                        <label for="other_expense" class="form-label">Other</label>
+                        <input type="text" class="form-control" id="other_expense" name="other_expense"
+                            placeholder="Specify other expense">
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <label for="cost_per_month" class="form-label">Cost Per Month</label>
+                        <input type="number" class="form-control" id="faci_cost_per_month"
+                            placeholder="eg,cost per month" name="cost_per_month" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="editfacilitydescription" name="description"
+                            placeholder="eg, Fuel, SIM, Accomodation" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <input type="text" class="form-control" id="editstatus" name="status"
+                            placeholder="eg, new old upgrade " required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="noOfPerson" class="form-label">No Of Person</label>
+                        <input type="number" class="form-control" value="0" id="editfacilitynoOfPerson" name="no_of_staff"
+                            step="any" placeholder="eg, no of person or blank" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="months" class="form-label">Months</label>
+                        <input type="number" class="form-control" id="eidtfacilitymonths" value="0" name="no_of_months"
+                            step="any" placeholder="eg, no of months" required>
+                    </div>
+                    <input type="hidden" id="edit_facility_id" name="id">
+                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
+                    <button type="submit" class="btn btn-primary">Update Facilities Cost</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editMaterialModal" tabindex="-1" aria-labelledby="editMaterialModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMaterialModalLabel">Edit Material Cost</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editMaterialForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" id="edit_material_id" name="id">
+                    <div class="mb-3">
+                        <label for="edit_material_type" class="form-label">Type</label>
+                        <select class="form-select" id="edit_material_type" name="type" required>
+                            <option value="Material">Material</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_material_project" class="form-label">Project</label>
+                        <select class="form-select" id="edit_material_project" name="project" required>
+                            @foreach ($projects as $project)
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_material_po" class="form-label">PO</label>
+                        <select class="form-select" id="edit_material_po" name="po" required>
+                            <option value="CAPEX">CAPEX</option>
+                            <option value="OPEX">OPEX</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_material_expense" class="form-label">Expense Head</label>
+                        <select class="form-select" id="edit_material_expense" name="expense" required>
+                            <option value="consumed_material">Consumed Material</option>
+                            <option value="petty_cash">Petty Cash</option>
+                            <option value="noc_payment">NOC Payment</option>
+                        </select>
+                    </div>
+
+                    <!-- Fields for Consumed Material -->
+                    <div id="edit_consumedMaterialFields">
+                        <div class="mb-3">
+                            <label for="edit_material_head" class="form-label">Material Head</label>
+                            <input type="text" class="form-control" id="edit_material_head" name="material_head">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="edit_quantity" name="quantity">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_unit" class="form-label">Unit</label>
+                            <select class="form-select" id="edit_unit" name="unit">
+                                <option value="meters">Meters</option>
+                                <option value="feet">Feet</option>
+                                <option value="rolls">Rolls</option>
+                                <option value="pieces">Pieces</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_unit_cost" class="form-label">Unit Cost</label>
+                            <input type="number" class="form-control" id="edit_unit_cost" name="unit_cost" step="any">
+                        </div>
+                    </div>
+
+                    <!-- Fields for Petty Cash -->
+                    <div id="edit_pettyCashFields" style="display:none">
+                        <div class="mb-3">
+                            <label for="edit_petty_cash_amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="edit_petty_cash_amount" name="petty_cash_amount" step="any">
+                        </div>
+                    </div>
+
+                    <!-- Fields for NOC Payment -->
+                    <div id="edit_nocPaymentFields" style="display:none">
+                        <div class="mb-3">
+                            <label for="edit_noc_amount" class="form-label">NOC Description</label>
+                            <input type="text" class="form-control" id="edit_noc_amount" name="noc_amount">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_material_description" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="edit_material_description" name="description" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_material_status" class="form-label">Status</label>
+                        <input type="text" class="form-control" id="edit_material_status" name="status" required>
+                    </div>
+
+                    <input type="hidden" name="project_id" value="{{ $budget->id }}">
+                    <button type="submit" class="btn btn-primary">Update Material Cost</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     function facilityExpenseHandling() {
@@ -914,6 +1107,75 @@
     });
 
 
+    function openEditFacilitesModal(id) {
+        // Fetch the salary data and populate the form
+        $.ajax({
+            url: `/pages/get-facility-data/${id}`,
+            type: 'GET',
+            success: function(data) {
+                $('#edit_facility_id').val(data.id);
+                $('#type').val(data.type);
+                $('#project').val(data.project);
+                $('#edit_po').val(data.po);
+                $('.editfaci').val(data.expenses);
+                $('#editstatus').val(data.status);
+                $('#faci_cost_per_month').val(data.cost_per_month);
+                $('#editfacilitydescription').val(data.description);
+                $('#edit_status').val(data.status);
+                $('#editfacilitynoOfPerson').val(data.no_of_staff);
+                $('#eidtfacilitymonths').val(data.no_of_months);
+
+                // Handle conditional fields
+                // if (['Facility Cost', 'Other'].includes(data.type)) {
+                //     $('#edit_overseeing_sites').val(data.overseeing_sites);
+                // }
+
+                if (data.expense === 'other') {
+                    $('#otherFacilityExpenseField').show();
+                    $('#other_expense').val(data.other_expense);
+                } else {
+                    $('#otherFacilityExpenseField').hide();
+                }
+
+                $('#editFacilitiesModal').modal('show');
+            },
+            error: function() {
+                alert('Error fetching salary data');
+            }
+        });
+    }
+
+    $('#editFacilitiesForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var id = $('#edit_facility_id').val();
+
+        $.ajax({
+            type: "POST",
+            url: `/pages/update-facility/${id}`,
+            data: form.serialize(),
+            success: function(data) {
+                if (data.success) {
+                    showAlert('success', 'record updated successfully.');
+                    $('#editFacilitiesModal').modal('hide');
+                    // Refresh the salary table or update the specific row
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000)
+                } else {
+                    alert('Error updating salary data');
+                }
+            },
+            error: function() {
+                alert('Error updating salary data');
+            }
+        });
+    });
+
+    $('.editFacilitesBtn').on('click', function() {
+        var id = $(this).data('id');
+        openEditFacilitesModal(id);
+    });
 
 
     document.querySelectorAll('.delete-btn').forEach(button => {
@@ -969,4 +1231,131 @@
             alertBox.style.display = 'none';
         }, 3000);
     }
+
+    document.querySelectorAll('.deletefacilities').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const userId = this.getAttribute('data-id');
+
+            // Confirm deletion with the user
+            if (confirm('Are you sure you want to delete this project record?')) {
+                deleteFacilities(userId); // Call the function to delete the record
+            }
+        });
+    });
+
+    function deleteFacilities(id) {
+        fetch('/api/delete-facilities', { // Replace with your actual API endpoint
+                method: 'POST',
+                body: JSON.stringify({
+                    id: id
+                }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', data.success);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000)
+                } else {
+                    showAlert('danger', data.message || 'An error occurred while deleting the User record.');
+                }
+            })
+            .catch(error => {
+                console.error('Network error:', error);
+                showAlert('danger', 'A network error occurred. Please try again.');
+            });
+    }
+
+    function openEditMaterialModal(id) {
+        $.ajax({
+            url: `/pages/get-material-data/${id}`,
+            type: 'GET',
+            success: function(data) {
+               // Populate your form fields based on the returned data
+            $('#edit_material_id').val(data.id);
+            $('#edit_material_type').val(data.type);
+            $('#edit_material_project').val(data.project);
+            $('#edit_material_po').val(data.po);
+            $('#edit_material_expense').val(data.expense);
+
+            // Show/hide fields based on the expense type
+            if (data.expense === 'consumed_material') {
+                $('#edit_consumedMaterialFields').show();
+                $('#edit_pettyCashFields, #edit_nocPaymentFields').hide();
+                $('#edit_material_head').val(data.material_head);
+                $('#edit_quantity').val(data.quantity);
+                $('#edit_unit').val(data.unit);
+                $('#edit_unit_cost').val(data.unit_cost);
+                $('#edit_material_description').val(data.description);
+                $('#edit_material_status').val(data.status);
+            } else if (data.expense === 'petty_cash') {
+                $('#edit_pettyCashFields').show();
+                $('#edit_consumedMaterialFields, #edit_nocPaymentFields').hide();
+                $('#edit_petty_cash_amount').val(data.petty_cash_amount);
+                $('#edit_material_description').val(data.description);
+            } else if (data.expense === 'noc_payment') {
+                $('#edit_nocPaymentFields').show();
+                $('#edit_consumedMaterialFields, #edit_pettyCashFields').hide();
+                $('#edit_noc_amount').val(data.noc_amount);
+                $('#edit_material_description').val(data.description);
+            }
+
+            $('#editMaterialModal').modal('show');
+            },
+            error: function() {
+                alert('Error fetching material data');
+            }
+        });
+    }
+
+    $('#editMaterialForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var id = $('#edit_material_id').val();
+
+        $.ajax({
+            type: "POST",
+            url: `/pages/update-material/${id}`,
+            data: form.serialize(),
+            success: function(data) {
+                if (data.success) {
+                    showAlert('success', 'Material cost updated successfully.');
+                    $('#editMaterialModal').modal('hide');
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000);
+                } else {
+                    alert('Error updating material data');
+                }
+            },
+            error: function() {
+                alert('Error updating material data');
+            }
+        });
+    });
+
+    $('#edit_material_expense').on('change', function() {
+        var selectedValue = $(this).val();
+        $('#edit_consumedMaterialFields, #edit_pettyCashFields, #edit_nocPaymentFields').hide();
+        if (selectedValue === 'consumed_material') {
+            $('#edit_consumedMaterialFields').show();
+        } else if (selectedValue === 'petty_cash') {
+            $('#edit_pettyCashFields').show();
+        } else if (selectedValue === 'noc_payment') {
+            $('#edit_nocPaymentFields').show();
+        }
+    });
+
+    // Add click event listeners to your edit buttons
+    $('.editMaterialBtn').on('click', function() {
+        var id = $(this).data('id');
+        openEditMaterialModal(id);
+    });
 </script>
