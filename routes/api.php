@@ -73,3 +73,4 @@ Route::post('/save-purchase-order', [PurcahseOrderController::class, 'store'])->
 
 Route::post('/delete-salary', [DirectCostController::class, 'deleteSalary'])->name('delete-salary');
 Route::post('/delete-facilities', [DirectCostController::class, 'deleteFacilities'])->name('delete-facilities');
+Route::post('/delete-material', [DirectCostController::class, 'deleteMaterial'])->name('delete-facilities');

@@ -475,4 +475,37 @@ class DirectCostController extends Controller
             return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
         }
     }
+
+    public function deleteMaterial(Request $request)
+    {
+
+        try {
+            $id = $request->input('id');
+            // First, try to find and delete the material cost
+            $materialCost = MaterialCost::find($id);
+            if ($materialCost) {
+                $materialCost->delete();
+                return response()->json(['success' => true, 'message' => 'Material Cost deleted successfully.']);
+            }
+
+            // If not found, try to find and delete petty cash
+            $pettyCash = PettyCash::find($id);
+            if ($pettyCash) {
+                $pettyCash->delete();
+                return response()->json(['success' => true, 'message' => 'Petty Cash record deleted successfully.']);
+            }
+
+            // If not found, try to find and delete NOC payment
+            $nocPayment = NocPayment::find($id);
+            if ($nocPayment) {
+                $nocPayment->delete();
+                return response()->json(['success' => true, 'message' => 'NOC Payment record deleted successfully.']);
+            }
+
+            // If no record is found
+            return response()->json(['success' => 'User deleted successfully']);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while deleting the record: ' . $e->getMessage()], 500);
+        }
+    }
 }

@@ -251,7 +251,7 @@
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item editMaterialBtn" data-id="{{$material->id}}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                    <a class="dropdown-item delete-btn" data-id="{{$material->id}}"><i class="bx bx-trash me-1"></i> Delete</a>
+                                                    <a class="dropdown-item deleteMaterialBtn" data-id="{{$material->id}}"><i class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -1278,36 +1278,36 @@
             url: `/pages/get-material-data/${id}`,
             type: 'GET',
             success: function(data) {
-               // Populate your form fields based on the returned data
-            $('#edit_material_id').val(data.id);
-            $('#edit_material_type').val(data.type);
-            $('#edit_material_project').val(data.project);
-            $('#edit_material_po').val(data.po);
-            $('#edit_material_expense').val(data.expense);
+                // Populate your form fields based on the returned data
+                $('#edit_material_id').val(data.id);
+                $('#edit_material_type').val(data.type);
+                $('#edit_material_project').val(data.project);
+                $('#edit_material_po').val(data.po);
+                $('#edit_material_expense').val(data.expense);
 
-            // Show/hide fields based on the expense type
-            if (data.expense === 'consumed_material') {
-                $('#edit_consumedMaterialFields').show();
-                $('#edit_pettyCashFields, #edit_nocPaymentFields').hide();
-                $('#edit_material_head').val(data.material_head);
-                $('#edit_quantity').val(data.quantity);
-                $('#edit_unit').val(data.unit);
-                $('#edit_unit_cost').val(data.unit_cost);
-                $('#edit_material_description').val(data.description);
-                $('#edit_material_status').val(data.status);
-            } else if (data.expense === 'petty_cash') {
-                $('#edit_pettyCashFields').show();
-                $('#edit_consumedMaterialFields, #edit_nocPaymentFields').hide();
-                $('#edit_petty_cash_amount').val(data.petty_cash_amount);
-                $('#edit_material_description').val(data.description);
-            } else if (data.expense === 'noc_payment') {
-                $('#edit_nocPaymentFields').show();
-                $('#edit_consumedMaterialFields, #edit_pettyCashFields').hide();
-                $('#edit_noc_amount').val(data.noc_amount);
-                $('#edit_material_description').val(data.description);
-            }
+                // Show/hide fields based on the expense type
+                if (data.expense === 'consumed_material') {
+                    $('#edit_consumedMaterialFields').show();
+                    $('#edit_pettyCashFields, #edit_nocPaymentFields').hide();
+                    $('#edit_material_head').val(data.material_head);
+                    $('#edit_quantity').val(data.quantity);
+                    $('#edit_unit').val(data.unit);
+                    $('#edit_unit_cost').val(data.unit_cost);
+                    $('#edit_material_description').val(data.description);
+                    $('#edit_material_status').val(data.status);
+                } else if (data.expense === 'petty_cash') {
+                    $('#edit_pettyCashFields').show();
+                    $('#edit_consumedMaterialFields, #edit_nocPaymentFields').hide();
+                    $('#edit_petty_cash_amount').val(data.petty_cash_amount);
+                    $('#edit_material_description').val(data.description);
+                } else if (data.expense === 'noc_payment') {
+                    $('#edit_nocPaymentFields').show();
+                    $('#edit_consumedMaterialFields, #edit_pettyCashFields').hide();
+                    $('#edit_noc_amount').val(data.noc_amount);
+                    $('#edit_material_description').val(data.description);
+                }
 
-            $('#editMaterialModal').modal('show');
+                $('#editMaterialModal').modal('show');
             },
             error: function() {
                 alert('Error fetching material data');
@@ -1357,5 +1357,43 @@
     $('.editMaterialBtn').on('click', function() {
         var id = $(this).data('id');
         openEditMaterialModal(id);
+    });
+
+    function deleteMaterial(id) {
+        if (confirm('Are you sure you want to delete this material cost record?')) {
+            fetch('/api/delete-material', { // Replace with your actual API endpoint
+                    method: 'POST',
+                    body: JSON.stringify({
+                        id: id
+                    }),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('success', data.success);
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 2000)
+                    } else {
+                        showAlert('danger', data.message || 'An error occurred while deleting the User record.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Network error:', error);
+                    showAlert('danger', 'A network error occurred. Please try again.');
+                });
+        }
+    }
+
+    // Add click event listeners to your delete buttons
+    $('.deleteMaterialBtn').on('click', function() {
+        var id = $(this).data('id');
+        deleteMaterial(id);
     });
 </script>
