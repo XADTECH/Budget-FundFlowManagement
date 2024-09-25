@@ -15,6 +15,7 @@ use App\Http\Controllers\pages\AccountSettingsConnections;
 use App\Http\Controllers\pages\MiscError;
 use App\Http\Controllers\PlannedCashController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\PdfController;
@@ -103,6 +104,13 @@ Route::middleware(['checklogin'])->group(function () {
     'cash-receive-amount'
   );
   Route::get('/pages/plan-cash-report', [PlannedCashController::class, 'plancashReport'])->name('plan-cash-report');
+
+  
+  // Route to display the Cash Flow form
+Route::get('/pages/cashflow/create', [CashFlowController::class, 'create'])->name('cashflow.create');
+
+// Route to handle form submission (storing the Cash Flow)
+Route::post('/cashflow/store', [CashFlowController::class, 'store'])->name('cashflow.storeDPM');
 
   //project management
   Route::get('/pages/add-project-name', [ProjectController::class, 'showaddProjectView'])->name('add-project-name');

@@ -46,7 +46,7 @@
             </li>
         @endif
 
-        <!-- Cash Flow Management -->
+        {{-- <!-- Cash Flow Management -->
         @if (Auth::user()->role == 'Finance Manager' || Auth::user()->role == 'Admin')
             <li class="menu-item {{ request()->is('pages/add-opening-balance') || request()->is('pages/allocate-cash') || request()->is('pages/cash-receive-amount') || request()->is('pages/plan-cash-report') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -76,7 +76,24 @@
                     </li>
                 </ul>
             </li>
-        @endif
+        @endif --}}
+
+        @if (Auth::user()->role == 'Finance Manager' || Auth::user()->role == 'Admin')
+        <li class="menu-item {{ request()->is('pages/cashflow/create') || request()->is('pages/allocate-cash') || request()->is('pages/cash-receive-amount') || request()->is('pages/plan-cash-report') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-money"></i>
+                <div>Manage DPM</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->is('pages/cashflow/create') ? 'active' : '' }}">
+                    <a href="/pages/cashflow/create" class="menu-link">
+                        <div>Add Expense</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    @endif
+    
 
         <!-- Purchase Order -->
         @if (Auth::user()->role == 'Admin')

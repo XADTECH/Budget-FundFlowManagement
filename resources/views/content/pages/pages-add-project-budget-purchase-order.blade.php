@@ -161,8 +161,11 @@
 
                     <td style="color:#0067aa"><a href="{{route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">{{ $po->po_number }}</a></td>
 
-                    <td style="color:#0067aa"><a href="{{route('edit-project-budget', ['project_id' => $budget->id]) }}">{{ $budget->reference_code}}</td>
-                    <td>{{ @$po->supplier_name }}</td>
+                    <td style="color:#0067aa">
+                        <a href="{{ route('budget-project-report-summary', ['id' => $budget->id]) }}">
+                            {{ $budget->reference_code }}
+                        </a>
+                    </td>                    <td>{{ @$po->supplier_name }}</td>
                     <td>{{ @$po->description }}</td>
                     <td>{{ @$preparedPerson->first_name }}</td>
                     <td>{{@$requestPerson->first_name }}</td>
