@@ -36,6 +36,8 @@ class CashFlowController extends Controller
                                   ->where('category', $request->category)
                                   ->orderBy('date', 'desc')
                                   ->first();
+
+        
       
           // Calculate the balance
           $balance = $lastCashFlow ? $lastCashFlow->balance - $request->cash_outflow : 0;
@@ -75,7 +77,7 @@ class CashFlowController extends Controller
           ]);
       
           // Deduct the cash outflow from the corresponding category budget
-          $this->deductCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_outflow);
+          $this->deductCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_outflow, $lastCashFlow);
       
           return redirect()->back()->with('success', 'DPM recorded and cash flow updated.');
         }
@@ -94,7 +96,7 @@ class CashFlowController extends Controller
                   return $allocatedBudgetEntry->total_cost_overhead;
               case 'Financial':
                   return $allocatedBudgetEntry->total_financial_cost;
-              case 'capital_expenditure':
+              case 'Capital Expenditure':
                   return $allocatedBudgetEntry->total_capital_expenditure;
               default:
                   return 0; // Or throw an error for an invalid category
@@ -102,26 +104,32 @@ class CashFlowController extends Controller
       }
       
       // Helper method to deduct cash outflow from the corresponding category budget
-      private function deductCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category, $cashOutflow)
+      private function deductCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category, $cashOutflow, $lastCashFlow)
       {
           switch ($category) {
               case 'Salary':
                   $allocatedBudgetEntry->total_salary -= $cashOutflow;
+                  $lastCashFlow->balance -= $cashOutflow;
                   break;
               case 'Facility':
                   $allocatedBudgetEntry->total_facility_cost -= $cashOutflow;
+                  $lastCashFlow->balance -= $cashOutflow;
                   break;
               case 'Material':
                   $allocatedBudgetEntry->total_material_cost -= $cashOutflow;
+                  $lastCashFlow->balance -= $cashOutflow;
                   break;
               case 'Overhead':
                   $allocatedBudgetEntry->total_cost_overhead -= $cashOutflow;
+                  $lastCashFlow->balance -= $cashOutflow;
                   break;
               case 'Financial':
                   $allocatedBudgetEntry->total_financial_cost -= $cashOutflow;
+                  $lastCashFlow->balance -= $cashOutflow;
                   break;
-              case 'capital_expenditure':
+              case 'Capital Expenditure':
                   $allocatedBudgetEntry->total_capital_expenditure -= $cashOutflow;
+                  $lastCashFlow->balance -= $cashOutflow;
                   break;
           }
       

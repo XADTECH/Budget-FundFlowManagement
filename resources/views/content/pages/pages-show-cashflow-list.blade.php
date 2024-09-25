@@ -6,7 +6,7 @@
 
     <style>
         .table-striped tbody tr:nth-of-type(odd) {
-            background-color: #f9f9f9;
+            background-color: #c8d1da !important;
             /* Light gray for odd rows */
         }
 
@@ -55,7 +55,7 @@
     @if (request('budget_project_id') || request('reference_code'))
         <div class="card mt-4">
             <div class="table-responsive text-nowrap limited-scroll">
-                <table class="table table-hover table-striped">
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -94,7 +94,14 @@
                 </table>
             </div>
         </div>
+    @else
+    
     @endif
 
+    @if(!request('budget_project_id') && !request('reference_code'))
+        <div class="alert alert-info mt-4">
+            Please apply filters to view the Cash Flow List.
+        </div>
+    @endif
 
 @endsection

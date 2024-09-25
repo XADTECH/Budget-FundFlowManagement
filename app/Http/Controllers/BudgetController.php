@@ -311,7 +311,8 @@ class BudgetController extends Controller
 
         // If allocation exists, redirect back with a success message
         if ($allocated) {
-            return redirect()->back()->with('success', 'Budget is already allocated.');
+            $errors = ['Budget has already been allocated for this project.', 'Please check the budget details.'];
+            return redirect()->back()->withErrors($errors);
         }
 
         // Validate input to ensure no negative numbers are submitted
@@ -353,7 +354,7 @@ class BudgetController extends Controller
                 'allocated' => $request->input('financial_allocation'),
                 'approved' => $request->input('approved_financial_allocation'),
             ],
-            'capital_expenditure' => [
+            'Capital Expenditure' => [
                 'allocated' => $request->input('capital_expenditure_allocation'),
                 'approved' => $request->input('approved_capital_expenditure_allocation'),
             ],
@@ -386,7 +387,7 @@ class BudgetController extends Controller
             'total_material_cost' => $allocations['material']['allocated'],
             'total_cost_overhead' => $allocations['overhead']['allocated'],
             'total_financial_cost' => $allocations['financial']['allocated'],
-            'total_capital_expenditure' => $allocations['capital_expenditure']['allocated'],
+            'total_capital_expenditure' => $allocations['Capital Expenditure']['allocated'],
             'allocated_budget' => $totalAllocatedBudget,
             'reference_code' => $budget->reference_code,
         ]);
@@ -421,8 +422,6 @@ class BudgetController extends Controller
 
     //show cash flow list
 
-    // BudgetController.php
-
     public function cashflowLists(Request $request)
     {
         // Retrieve all Budget Projects for the dropdown
@@ -447,6 +446,32 @@ class BudgetController extends Controller
 
         // Pass data to the view
         return view('content.pages.pages-show-cashflow-list', compact('cashFlows', 'budgetProjects', 'allProjects', 'users'));
+    }
+
+    public function showAllocatedBudgets(Request $request)
+    {
+
+        $budgetProjects = BudgetProject::all();
+      
+        
+        // Fetch budget projects and filter based on query parameters
+        $query = TotalBudgetAllocated::query();
+
+          // Apply filters if present in the request
+          if ($request->has('reference_code') && $request->reference_code) {
+            $query->where('reference_code', 'like', '%' . $request->reference_code . '%');
+        }
+
+
+        if ($request->has('budget_project_id')) {
+            $query->where('budget_project_id', $request->input('budget_project_id'));
+        }
+
+        // Get the filtered results
+        $allocatedBudgets = $query->get();
+
+        // Pass data to the view
+        return view('content.pages.pages-show-allocated-budgets', compact('budgetProjects','allocatedBudgets'));
     }
 
     //store capital expense

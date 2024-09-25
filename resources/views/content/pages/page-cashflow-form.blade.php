@@ -85,7 +85,7 @@
                                 <option value="Material" {{ old('category') == 'Material' ? 'selected' : '' }}>Material</option>
                                 <option value="Overhead" {{ old('category') == 'Overhead' ? 'selected' : '' }}>Overhead</option>
                                 <option value="Financial" {{ old('category') == 'Financial' ? 'selected' : '' }}>Financial</option>
-                                <option value="Capital_expenditure" {{ old('category') == 'Capital_expenditure' ? 'selected' : '' }}>Capital Expenditure</option>
+                                <option value="Capital Expenditure" {{ old('category') == 'Capital Expenditure' ? 'selected' : '' }}>Capital Expenditure</option>
                             </select>
                         </div>
                     </div>

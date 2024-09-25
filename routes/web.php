@@ -159,6 +159,8 @@ Route::post('/cashflow/store', [CashFlowController::class, 'store'])->name('cash
   //get budget by reference code 
   Route::get('/budget/allocate', [BudgetController::class, 'findByReferenceCode'])->name('budget.allocate');
   Route::post('/budget/allocate', [BudgetController::class, 'allocateBudgetByFinance'])->name('budget.allocateBudgetByFinance');
+  Route::get('/pages/show-allocated-budgets', [BudgetController::class, 'showAllocatedBudgets'])->name('show-allocated-budgets');
+
 
   //cash flow list 
   Route::get('/pages/cash-flow-list', [BudgetController::class, 'cashflowLists'])->name('budgets.cashflowLists');

@@ -79,21 +79,22 @@
         @endif --}}
 
         @if (Auth::user()->role == 'Finance Manager' || Auth::user()->role == 'Admin')
-        <li class="menu-item {{ request()->is('pages/cashflow/create') || request()->is('pages/allocate-cash') || request()->is('pages/cash-receive-amount') || request()->is('pages/plan-cash-report') ? 'active open' : '' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-money"></i>
-                <div>Manage DPM</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item {{ request()->is('pages/cashflow/create') ? 'active' : '' }}">
-                    <a href="/pages/cashflow/create" class="menu-link">
-                        <div>Add Expense</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-    @endif
-    
+            <li
+                class="menu-item {{ request()->is('pages/cashflow/create') || request()->is('pages/allocate-cash') || request()->is('pages/cash-receive-amount') || request()->is('pages/plan-cash-report') ? 'active open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-money"></i>
+                    <div>Manage DPM</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item {{ request()->is('pages/cashflow/create') ? 'active' : '' }}">
+                        <a href="/pages/cashflow/create" class="menu-link">
+                            <div>Add Expense</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endif
+
 
         <!-- Purchase Order -->
         @if (Auth::user()->role == 'Admin')
@@ -103,7 +104,8 @@
                     <div>Manage Purchase Order</div>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item {{ request()->is('pages/add-budget-project-purchase-order') ? 'active' : '' }}">
+                    <li
+                        class="menu-item {{ request()->is('pages/add-budget-project-purchase-order') ? 'active' : '' }}">
                         <a href="/pages/add-budget-project-purchase-order" class="menu-link">
                             <div>Add Purchase Order</div>
                         </a>
@@ -131,7 +133,8 @@
 
         <!-- User Management -->
         @if (Auth::user()->role == 'Admin')
-            <li class="menu-item {{ request()->is('pages/users') || request()->is('pages/add-user') ? 'active open' : '' }}">
+            <li
+                class="menu-item {{ request()->is('pages/users') || request()->is('pages/add-user') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-user"></i>
                     <div>User Management</div>
@@ -153,7 +156,8 @@
 
         <!-- Report -->
         @if (Auth::user()->role == 'Finance Manager' || Auth::user()->role == 'Admin')
-            <li class="menu-item {{ request()->is('pages/budget-lists') || request()->is('pages/cash-flow-list') || request()->is('filter-purchase-orders') ? 'active open' : '' }}">
+            <li
+                class="menu-item {{ request()->is('pages/budget-lists') || request()->is('pages/cash-flow-list') || request()->routeIs('show-allocated-budgets') || request()->is('filter-purchase-orders') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-pen"></i>
                     <div>Report</div>
@@ -172,6 +176,11 @@
                     <li class="menu-item {{ request()->is('filter-purchase-orders') ? 'active' : '' }}">
                         <a href="/filter-purchase-orders" class="menu-link">
                             <div>PO Report</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ request()->routeIs('show-allocated-budgets') ? 'active' : '' }}">
+                        <a href="{{ route('show-allocated-budgets') }}" class="menu-link">
+                            <div>Allocated Budgets</div>
                         </a>
                     </li>
                 </ul>
