@@ -245,11 +245,21 @@ class DirectCostController extends Controller
 
     public function updateSalary(Request $request, $id)
     {
+        $redirect = false;
+        if ($request->isajax == 'false') {
+            $redirect = true;
+        }
         $salary = Salary::findOrFail($id);
         $salary->update($request->all());
         $salary->calculateTotalCost();
         $salary->calculateAverageCost();
-        return response()->json(['success' => true]);
+
+        if ($redirect) {
+            return redirect()->back()->with('success', "Record Updated Sucessfully");
+        } else {
+
+            return response()->json(['success' => true]);
+        }
     }
 
     // FacilityCostController
@@ -425,6 +435,10 @@ class DirectCostController extends Controller
     {
         try {
             // Validate that project_id is provided
+            $redirect = false;
+            if ($request->isajax == 'false') {
+                $redirect = true;
+            }
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
             ]);
@@ -442,8 +456,11 @@ class DirectCostController extends Controller
 
             // Delete the project record
             $project->delete();
-
-            return response()->json(['success' => 'User deleted successfully']);
+            if ($redirect) {
+                return redirect()->back()->with('success', "Record Updated Sucessfully");
+            } else {
+                return response()->json(['success' => 'User deleted successfully']);
+            }
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
         }
