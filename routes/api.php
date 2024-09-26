@@ -2,6 +2,7 @@
 <?php
 
 use App\Http\Controllers\DirectCostController;
+use App\Http\Controllers\InDirectCostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlannedCashController;
@@ -74,3 +75,5 @@ Route::post('/save-purchase-order', [PurcahseOrderController::class, 'store'])->
 Route::post('/delete-salary', [DirectCostController::class, 'deleteSalary'])->name('delete-salary');
 Route::post('/delete-facilities', [DirectCostController::class, 'deleteFacilities'])->name('delete-facilities');
 Route::post('/delete-material', [DirectCostController::class, 'deleteMaterial'])->name('delete-facilities');
+Route::post('/delete-costoverhead', [InDirectCostController::class, 'deleteCostOverHead'])->name('delete-cost');
+Route::post('/delete-financial', [InDirectCostController::class, 'deleteFinancial'])->name('delete-financial');

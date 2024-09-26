@@ -1041,7 +1041,7 @@
                     $('#edit_overseeing-sites-field').hide();
                 }
 
-                if (data.expense === 'other') {
+                if (data.expenses === 'other') {
                     $('#edit_other-field').show();
                     $('#edit_other_expense').val(data.other_expense);
                 } else {
@@ -1219,18 +1219,6 @@
             });
     }
 
-    function showAlert(type, message) {
-        const alertBox = document.getElementById('responseAlertnew');
-        const alertMessage = document.getElementById('alertMessagenew');
-        alertBox.className = `alert alert-${type} alert-dismissible fade show`;
-        alertMessage.textContent = message;
-        alertBox.style.display = 'block';
-
-        // Hide the alert after 3 seconds
-        setTimeout(() => {
-            alertBox.style.display = 'none';
-        }, 3000);
-    }
 
     document.querySelectorAll('.deletefacilities').forEach(button => {
         button.addEventListener('click', function(e) {
@@ -1396,4 +1384,18 @@
         var id = $(this).data('id');
         deleteMaterial(id);
     });
+
+
+    function showAlert(type, message) {
+        const alertBox = document.getElementById('responseAlertnew');
+        const alertMessage = document.getElementById('alertMessagenew');
+        alertBox.className = `alert alert-${type} alert-dismissible fade show`;
+        alertMessage.textContent = message;
+        alertBox.style.display = 'block';
+
+        // Hide the alert after 3 seconds
+        setTimeout(() => {
+            alertBox.style.display = 'none';
+        }, 3000);
+    }
 </script>
