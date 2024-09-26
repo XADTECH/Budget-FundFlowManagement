@@ -20,14 +20,13 @@ class CashFlowController extends Controller
 
       public function store(Request $request)
       {
-
-        //return response($request->all());
           // Validate request data
           $request->validate([
               'date' => 'required|date',
               'description' => 'required|string',
               'category' => 'required|string',
-              'cash_outflow' => 'required|numeric',
+              'cash_outflow' => 'nullable|numeric', // Allow null for outflow
+              'cash_inflow' => 'nullable|numeric', // Allow null for inflow
               'budget_project_id' => 'required|integer',
           ]);
       
@@ -36,15 +35,14 @@ class CashFlowController extends Controller
                                   ->where('category', $request->category)
                                   ->orderBy('date', 'desc')
                                   ->first();
-
-        
       
-          // Calculate the balance
-          $balance = $lastCashFlow ? $lastCashFlow->balance - $request->cash_outflow : 0;
+          // Calculate the initial balance
+          $balance = $lastCashFlow ? $lastCashFlow->balance : 0;
       
           // Get the allocated budget for the project and category
           $allocatedBudgetEntry = TotalBudgetAllocated::where('budget_project_id', $request->budget_project_id)
                                                       ->first();
+
       
           if (!$allocatedBudgetEntry) {
               return redirect()->back()->withErrors(['budget_not_found' => 'No allocated budget found for this project.'])->withInput();
@@ -53,11 +51,23 @@ class CashFlowController extends Controller
           // Assuming there is a method to get the total allocated budget for the specific category
           $allocatedBudget = $this->getCategoryBudget($allocatedBudgetEntry, $request->category);
 
-          //return response($request->cash_outflow);
-          
-          // Check if there's enough budget for the transaction
-          if ($request->cash_outflow > $allocatedBudget) {
-              return redirect()->back()->withErrors(['insufficient_budget' => 'Insufficient budget for this transaction.'])->withInput();
+      
+          // Handle cash outflow
+          if ($request->cash_outflow > 0) {
+              // Check if there's enough budget for the cash outflow
+              if ($request->cash_outflow > $allocatedBudget) {
+                  return redirect()->back()->withErrors(['insufficient_budget' => 'Insufficient budget for this cash outflow transaction.'])->withInput();
+              }
+            //   return response($lastCashFlow);
+              $balance -= $request->cash_outflow; // Deduct cash outflow from balance
+                // return response($lastCashFlow);
+              $this->deductCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_outflow, $lastCashFlow);
+          }
+      
+          // Handle cash inflow
+          if ($request->cash_inflow > 0) {
+              $balance += $request->cash_inflow; // Add cash inflow to balance
+              $this->addCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_inflow, $lastCashFlow);
           }
       
           // Generate a unique reference code (e.g., DPM followed by current timestamp)
@@ -68,21 +78,17 @@ class CashFlowController extends Controller
               'date' => $request->date,
               'description' => $request->description,
               'category' => $request->category,
-              'cash_inflow' => 0.00,  // No inflow for DPM
-              'cash_outflow' => $request->cash_outflow,
+              'cash_inflow' => $request->cash_inflow ?? 0.00, // Ensure cash inflow is recorded
+              'cash_outflow' => $request->cash_outflow ?? 0.00, // Ensure cash outflow is recorded
               'committed_budget' => $lastCashFlow ? $lastCashFlow->committed_budget : 0,
               'balance' => $balance,
               'reference_code' => $referenceCode,  // Reference code generated dynamically
               'budget_project_id' => $request->budget_project_id,
           ]);
       
-          // Deduct the cash outflow from the corresponding category budget
-          $this->deductCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_outflow, $lastCashFlow);
-      
           return redirect()->back()->with('success', 'DPM recorded and cash flow updated.');
-        }
-      
-      // Helper method to get the total allocated budget for the specific category
+      }
+
       private function getCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category)
       {
           switch ($category) {
@@ -103,33 +109,82 @@ class CashFlowController extends Controller
           }
       }
       
-      // Helper method to deduct cash outflow from the corresponding category budget
+      // Helper method to add cash inflow to the corresponding category budget
+      private function addCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category, $cashInflow, $lastCashFlow)
+      {
+          switch ($category) {
+              case 'Salary':
+                  $allocatedBudgetEntry->total_salary += $cashInflow;
+                  $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+                  $lastCashFlow->save();
+                  break;
+              case 'Facility':
+                  $allocatedBudgetEntry->total_facility_cost += $cashInflow;
+                  $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+                  $lastCashFlow->save();
+                  break;
+              case 'Material':
+                  $allocatedBudgetEntry->total_material_cost += $cashInflow;
+                  $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+                  $lastCashFlow->save();
+                  break;
+              case 'Overhead':
+                  $allocatedBudgetEntry->total_cost_overhead += $cashInflow;
+                  $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+                  $lastCashFlow->save();
+                  break;
+              case 'Financial':
+                  $allocatedBudgetEntry->total_financial_cost += $cashInflow;
+                  $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+                  $lastCashFlow->save();
+                  break;
+              case 'Capital Expenditure':
+                  $allocatedBudgetEntry->total_capital_expenditure += $cashInflow;
+                  $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+                  $lastCashFlow->save();
+                  break;
+          }
+      
+          // Save the updated allocated budget entry
+          $allocatedBudgetEntry->save();
+      }
+      
+      // Helper method to add cash Outflow to the corresponding category budget
+        
       private function deductCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category, $cashOutflow, $lastCashFlow)
       {
+
+    
           switch ($category) {
               case 'Salary':
                   $allocatedBudgetEntry->total_salary -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
+                  $lastCashFlow->save();
                   break;
               case 'Facility':
                   $allocatedBudgetEntry->total_facility_cost -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
+                  $lastCashFlow->save();
                   break;
               case 'Material':
                   $allocatedBudgetEntry->total_material_cost -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
+                  $lastCashFlow->save();
                   break;
               case 'Overhead':
                   $allocatedBudgetEntry->total_cost_overhead -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
+                  $lastCashFlow->save();
                   break;
               case 'Financial':
                   $allocatedBudgetEntry->total_financial_cost -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
+                  $lastCashFlow->save();
                   break;
               case 'Capital Expenditure':
                   $allocatedBudgetEntry->total_capital_expenditure -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
+                  $lastCashFlow->save();
                   break;
           }
       

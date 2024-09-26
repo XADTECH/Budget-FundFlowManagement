@@ -5,15 +5,7 @@
 @section('content')
 
     <style>
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: #c8d1da !important;
-            /* Light gray for odd rows */
-        }
 
-        .table-striped tbody tr.cash-outflow {
-            background-color: tomato;
-            /* Tomato color for cash outflow */
-        }
     </style>
 
     <!-- Cash Flow Filter Form -->
@@ -70,15 +62,19 @@
                         </tr>
                     </thead>
                     <tbody id="cashflow-table-body" class="table-border-bottom-0">
-                        @foreach ($cashFlows as $cashFlow)
-                            <tr class="{{ $cashFlow->cash_outflow > 0 ? 'table-danger' : '' }}">
+                        @foreach ($cashFlows as $index => $cashFlow)  <!-- Add $index to get the current iteration -->
+                            <tr>
                                 <td>{{ $cashFlow->date }}</td>
                                 <td>{{ $cashFlow->description }}</td>
                                 <td>{{ $cashFlow->category }}</td>
-                                <td>{{ number_format($cashFlow->cash_inflow, 2) }}</td>
-                                <td>{{ number_format($cashFlow->cash_outflow, 2) }}</td>
-                                <td>{{ number_format($cashFlow->committed_budget, 2) }}</td>
-                                <td>{{ number_format($cashFlow->balance, 2) }}</td>
+                                <td class="{{ $index >= 6 && $cashFlow->cash_inflow > 0 ? 'text-primary' : '' }}">
+                                    {{ number_format($cashFlow->cash_inflow, 0) }}
+                                </td>
+                                <td class="{{ $index >= 6 && $cashFlow->cash_outflow > 0 ? 'text-danger' : '' }}">
+                                    {{ number_format($cashFlow->cash_outflow, 0) }}
+                                </td>
+                                <td>{{ number_format($cashFlow->committed_budget, 0) }}</td>
+                                <td>{{ number_format($cashFlow->balance, 0) }}</td>
                                 <td>{{ $cashFlow->reference_code }}</td>
                                 @php
                                     $project = $budgetProjects->firstWhere('id', $cashFlow->budget_project_id);
@@ -91,14 +87,14 @@
                             </tr>
                         @endforeach
                     </tbody>
+                    
                 </table>
             </div>
         </div>
     @else
-    
     @endif
 
-    @if(!request('budget_project_id') && !request('reference_code'))
+    @if (!request('budget_project_id') && !request('reference_code'))
         <div class="alert alert-info mt-4">
             Please apply filters to view the Cash Flow List.
         </div>

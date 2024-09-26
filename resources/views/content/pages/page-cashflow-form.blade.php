@@ -92,10 +92,22 @@
 
                     <div class="row mt-4">
                         <div class="col-sm-6">
-                            <label for="cash_outflow" class="form-label">Cash Amount</label>
-                            <input type="number" step="0.01" id="cash_outflow" class="form-control" name="cash_outflow" value="{{ old('cash_outflow') }}" placeholder="Enter Cash Outflow Amount" required />
+                            <label for="cash_outflow_display" class="form-label">Cash Outflow Amount</label>
+                            <input type="text" class="form-control" id="cash_outflow_display" name="cash_outflow_display"
+                                   value="{{ old('cash_outflow') ? number_format(old('cash_outflow'), 2) : '' }}"
+                                   placeholder="Enter Cash Outflow Amount" oninput="formatNumber(this, 'cash_outflow_hidden')"  />
+                            <input type="hidden" id="cash_outflow_hidden" name="cash_outflow"
+                                   value="{{ old('cash_outflow') }}">
                         </div>
                         <div class="col-sm-6">
+                            <label for="cash_inflow_display" class="form-label">Cash Inflow Amount</label>
+                            <input type="text" class="form-control" id="cash_inflow_display" name="cash_inflow_display"
+                                   value="{{ old('cash_inflow') ? number_format(old('cash_inflow'), 2) : '' }}"
+                                   placeholder="Enter Cash Inflow Amount" oninput="formatNumber(this, 'cash_inflow_hidden')"  />
+                            <input type="hidden" id="cash_inflow_hidden" name="cash_inflow"
+                                   value="{{ old('cash_inflow') }}">
+                        </div>
+                        <div class="col-sm-6 mt-2">
                             <label for="budget_project_id" class="form-label">Budget Project</label>
                             <select class="form-select" name="budget_project_id" required>
                                 <option disabled selected value>Choose Project</option>
@@ -117,3 +129,26 @@
     </div>
 </div>
 @endsection
+
+<script>
+    function formatNumber(input, hiddenFieldId) {
+        // Remove non-digit characters (except for decimal point)
+        let value = input.value.replace(/[^0-9.]/g, '');
+
+        if (value) {
+            let parts = value.split('.');
+            let integerPart = parseInt(parts[0]).toLocaleString('en-US');
+            let formattedValue = integerPart;
+
+            if (parts[1] !== undefined) {
+                formattedValue += '.' + parts[1].slice(0, 2); // Allow up to 2 decimal places
+            }
+
+            input.value = formattedValue;
+            document.getElementById(hiddenFieldId).value = value;
+        } else {
+            input.value = '';
+            document.getElementById(hiddenFieldId).value = '';
+        }
+    }
+</script>

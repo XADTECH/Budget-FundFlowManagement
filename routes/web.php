@@ -144,7 +144,6 @@ Route::post('/cashflow/store', [CashFlowController::class, 'store'])->name('cash
   Route::put('/pages/update-budget-project-revenue/{id}', [ProjectController::class, 'updateRevenuePlan'])->name('update.updateRevenuePlan');
 
 
-
   // Budget Managment
   Route::get('/pages/add-project-budget', [BudgetController::class, 'index'])->name('add-project-budget');
   Route::post('/pages/add-project-budget', [BudgetController::class, 'store'])->name('add-project-budget');
