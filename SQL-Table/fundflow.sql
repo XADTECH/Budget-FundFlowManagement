@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 25, 2024 at 03:01 PM
+-- Generation Time: Sep 26, 2024 at 12:15 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -49,7 +49,7 @@ CREATE TABLE `allocated_budget` (
 --
 
 INSERT INTO `allocated_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `allocated_budget`, `total_opex`, `total_capex`, `reference_code`, `created_at`, `updated_at`) VALUES
-(2, 1, 400000.00, 100000.00, 10000.00, 70000.00, 50000.00, 30000.00, 670000.00, 0.00, 0.00, 'BP091920240003', '2024-09-25 07:34:52', '2024-09-25 07:42:49');
+(6, 1, 500000.00, 100000.00, 150000.00, 80000.00, 50000.00, 40000.00, 920000.00, 0.00, 0.00, 'BP091920240003', '2024-09-26 05:54:57', '2024-09-26 05:59:28');
 
 -- --------------------------------------------------------
 
@@ -79,7 +79,7 @@ CREATE TABLE `approved_budget` (
 --
 
 INSERT INTO `approved_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `approved_budget`, `expected_net_profit_after_tax`, `expected_net_profit_before_tax`, `reference_code`, `created_at`, `updated_at`) VALUES
-(1, 1, 562000.02, 142000.00, 150000.00, 85121.56, 60130.00, 59000.00, 1169000.00, 96231.06, 105748.42, 'BP091920240003', '2024-09-24 01:31:51', '2024-09-24 01:31:51');
+(5, 1, 562000.02, 142000.00, 150000.00, 85121.56, 60130.00, 59000.00, 1169000.00, 96231.06, 105748.42, 'BP091920240003', '2024-09-26 05:54:15', '2024-09-26 05:54:15');
 
 -- --------------------------------------------------------
 
@@ -134,7 +134,7 @@ CREATE TABLE `budget_project` (
 --
 
 INSERT INTO `budget_project` (`id`, `reference_code`, `start_date`, `end_date`, `project_id`, `unit_id`, `manager_id`, `client_id`, `region`, `site_name`, `description`, `budget_type`, `country`, `month`, `approval_status`, `bal_under_over_budget`, `total_budget_allocated`, `total_dpm_expense`, `total_lpo_expense`, `approve_by`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'BP091920240003', '2024-09-12', '2024-10-12', 1, 2, 19, 2, 'Jeddah', 'abu hail, dubai', 'starting new Project', 'Etisalat Managed Service', 'KSA', '2024-09-19', 'approve', NULL, 670000.00, NULL, NULL, 33, 'Good', '2024-09-19 07:15:32', '2024-09-25 07:34:52');
+(1, 'BP091920240003', '2024-09-12', '2024-10-12', 1, 2, 19, 2, 'Jeddah', 'abu hail, dubai', 'starting new Project', 'Etisalat Managed Service', 'KSA', '2024-09-19', 'approve', NULL, 920000.00, NULL, NULL, 33, 'Good', '2024-09-19 07:15:32', '2024-09-26 05:54:57');
 
 -- --------------------------------------------------------
 
@@ -240,13 +240,14 @@ CREATE TABLE `cash_flows` (
 --
 
 INSERT INTO `cash_flows` (`id`, `date`, `description`, `category`, `reference_code`, `cash_inflow`, `cash_outflow`, `committed_budget`, `balance`, `budget_project_id`, `created_at`, `updated_at`) VALUES
-(10, '2024-09-25', 'Initial Allocation', 'Salary', 'BP091920240003', 400000.00, 0.00, 400000.00, 400000.00, 1, '2024-09-25 07:34:52', '2024-09-25 07:34:52'),
-(11, '2024-09-25', 'Initial Allocation', 'Facility', 'BP091920240003', 100000.00, 0.00, 100000.00, 100000.00, 1, '2024-09-25 07:34:52', '2024-09-25 07:34:52'),
-(12, '2024-09-25', 'Initial Allocation', 'Material', 'BP091920240003', 10000.00, 0.00, 10000.00, 10000.00, 1, '2024-09-25 07:34:52', '2024-09-25 07:34:52'),
-(13, '2024-09-25', 'Initial Allocation', 'Overhead', 'BP091920240003', 70000.00, 0.00, 70000.00, 70000.00, 1, '2024-09-25 07:34:52', '2024-09-25 07:34:52'),
-(14, '2024-09-25', 'Initial Allocation', 'Financial', 'BP091920240003', 50000.00, 0.00, 50000.00, 50000.00, 1, '2024-09-25 07:34:52', '2024-09-25 07:34:52'),
-(15, '2024-09-25', 'Initial Allocation', 'Capital Expenditure', 'BP091920240003', 40000.00, 0.00, 40000.00, 40000.00, 1, '2024-09-25 07:34:52', '2024-09-25 07:34:52'),
-(16, '2024-09-25', 'purchase of equipment', 'Capital Expenditure', 'DPM1727264530', 0.00, 10000.00, 40000.00, 30000.00, 1, '2024-09-25 07:42:10', '2024-09-25 07:42:10');
+(42, '2024-09-26', 'Initial Allocation', 'Salary', 'BP091920240003', 500000.00, 0.00, 500000.00, 500000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
+(43, '2024-09-26', 'Initial Allocation', 'Facility', 'BP091920240003', 100000.00, 0.00, 100000.00, 100000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
+(44, '2024-09-26', 'Initial Allocation', 'Material', 'BP091920240003', 150000.00, 0.00, 150000.00, 150000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
+(45, '2024-09-26', 'Initial Allocation', 'Overhead', 'BP091920240003', 80000.00, 0.00, 80000.00, 80000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
+(46, '2024-09-26', 'Initial Allocation', 'Financial', 'BP091920240003', 50000.00, 0.00, 50000.00, 50000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:59:28'),
+(47, '2024-09-26', 'Initial Allocation', 'Capital Expenditure', 'BP091920240003', 40000.00, 0.00, 40000.00, 40000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
+(48, '2024-09-26', 'payment of financial loan', 'Financial', 'DPM1727344680', 0.00, 2000.00, 50000.00, 48000.00, 1, '2024-09-26 05:58:00', '2024-09-26 05:58:00'),
+(49, '2024-09-26', 'Monthly Interest Earned on Savings', 'Financial', 'DPM1727344768', 2000.00, 0.00, 50000.00, 50000.00, 1, '2024-09-26 05:59:28', '2024-09-26 05:59:28');
 
 -- --------------------------------------------------------
 
@@ -1055,13 +1056,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `allocated_budget`
 --
 ALTER TABLE `allocated_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `approved_budget`
 --
 ALTER TABLE `approved_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `banks`
@@ -1097,7 +1098,7 @@ ALTER TABLE `capital_expenditure`
 -- AUTO_INCREMENT for table `cash_flows`
 --
 ALTER TABLE `cash_flows`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `cost_overhead`
