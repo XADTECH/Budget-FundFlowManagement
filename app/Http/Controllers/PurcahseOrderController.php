@@ -125,7 +125,7 @@ class PurcahseOrderController extends Controller
         $prepared = User::where('id', $purchaseOrder->prepared_by)->first();
         $utilization = $budget->getUtilization();
         $poStatus = $purchaseOrder->status;
-
+        $materials = MaterialCost::where('budget_project_id', $purchaseOrder->project_id)->get();
 
         $balanceBudget =  $budget->getRemainingBudget();
 
@@ -134,7 +134,7 @@ class PurcahseOrderController extends Controller
 
         if ($purchaseOrder) {
             // Return the view with the purchase order data if found
-            return view("content.pages.show-budget-project-purchase-order", compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus'));
+            return view("content.pages.show-budget-project-purchase-order", compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus', 'materials'));
         } else {
             // Redirect with an error message if not found
             return redirect('/pages/add-budget-project-purchase-order')
