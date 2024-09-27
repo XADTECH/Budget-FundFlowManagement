@@ -105,12 +105,12 @@ Route::middleware(['checklogin'])->group(function () {
   );
   Route::get('/pages/plan-cash-report', [PlannedCashController::class, 'plancashReport'])->name('plan-cash-report');
 
-  
-  // Route to display the Cash Flow form
-Route::get('/pages/cashflow/create', [CashFlowController::class, 'create'])->name('cashflow.create');
 
-// Route to handle form submission (storing the Cash Flow)
-Route::post('/cashflow/store', [CashFlowController::class, 'store'])->name('cashflow.storeDPM');
+  // Route to display the Cash Flow form
+  Route::get('/pages/cashflow/create', [CashFlowController::class, 'create'])->name('cashflow.create');
+
+  // Route to handle form submission (storing the Cash Flow)
+  Route::post('/cashflow/store', [CashFlowController::class, 'store'])->name('cashflow.storeDPM');
 
   //project management
   Route::get('/pages/add-project-name', [ProjectController::class, 'showaddProjectView'])->name('add-project-name');
@@ -191,6 +191,12 @@ Route::post('/cashflow/store', [CashFlowController::class, 'store'])->name('cash
   Route::get('/pages/get-material-data/{id}', [DirectCostController::class, 'getMaterialData']);
   Route::put('/pages/update-material/{id}', [DirectCostController::class, 'updateMaterial']);
 
+
+  Route::get('/pages/get-costoverhead-data/{id}', [InDirectCostController::class, 'getCostOverHeadData']);
+  Route::put('/pages/update-costoverhead/{id}', [InDirectCostController::class, 'updateCostOverhead']);
+
+  Route::get('/pages/get-financial-data/{id}', [InDirectCostController::class, 'getFinancialData']);
+  Route::put('/pages/update-financial/{id}', [InDirectCostController::class, 'updateFinancial']);
   //material cost
   Route::post('/pages/add-budget-project-material-cost', [DirectCostController::class, 'storeMaterial'])->name(
     'add-budget-project-salary'
