@@ -8,6 +8,7 @@ use App\Models\BusinessUnit;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\PettyCash;
+use App\Models\IndirectCost;
 use App\Models\NocPayment;
 use App\Models\Salary;
 use App\Models\ProjectBudgetSequence;
@@ -22,7 +23,6 @@ use App\Models\DirectCost;
 use App\Models\CashFlow;
 use App\Models\ApprovedBudget;
 use App\Models\RevenuePlan;
-use App\Models\IndirectCost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -62,12 +62,12 @@ class BudgetController extends Controller
             ->where('id', $project_id)
             ->first();
 
-        // Retrieve additional data for the view
-        $projects = Project::get();
-        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
-        $clients = BusinessClient::get();
-        $units = BusinessUnit::get();
-        $budgets = BudgetProject::get();
+        // Retrieve the budget project with the specified ID and related data
+        $project = Project::where('id', $project_id)->first();
+
+        // Initialize total costs to 0
+        $totalDirectCost = 0;
+        $totalInDirectCost = 0;
 
         $directCost = DirectCost::firstOrNew([
             'budget_project_id' => $project_id,
@@ -76,6 +76,178 @@ class BudgetController extends Controller
         $indirectCost = IndirectCost::firstOrNew([
             'budget_project_id' => $project_id,
         ]);
+
+        // Calculate direct cost if it exists
+        if ($directCost->exists) {
+            $totalDirectCost = $directCost->calculateTotalDirectCost();
+        }
+
+        // Calculate indirect cost if it exists
+        if ($indirectCost->exists) {
+            $totalInDirectCost = $indirectCost->calculateTotalIndirectCost();
+        }
+
+        $FinancialType = [
+            'Risk' => 'Risk',
+            'Financial Cost' => 'Financial Cost',
+        ];
+        
+        $FinancialAmount = [
+            'Risk' => '0.05',
+            'Financial Cost' => '0.01',
+        ];
+
+        $type = [
+            'HO Cost' => 'HO Cost',
+            'Annual Benefit' => 'Annual Benefit',
+            'Insurance Cost' => 'Insurance Cost',
+            'Visa Renewal' => 'Visa Renewal',
+            'Depreciation Tools' => 'Depreciation Tools',
+        ];
+
+        // Define amounts for each type
+        $amounts = [
+            'HO Cost' => 574,
+            'Annual Benefit' => 0.15,
+            'Insurance Cost' => 92,
+            'Visa Renewal' => 208,
+            'Depreciation Tools' => 0,
+        ];
+
+        $costOverhead = CostOverhead::where('budget_project_id', $project_id)->first();
+        $salaryExists = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $project_id)->exists();
+        $financialExists = FinancialCost::where('budget_project_id', $project_id)->exists();
+
+        if ($salaryExists) {
+            if ($costOverhead == null) {
+                // Create new records if no cost overhead exists
+                foreach ($type as $key => $expenseHead) {
+                    $costOverhead = new CostOverhead();
+                    $costOverhead->calculateBasedOnExpenseHead(
+                        $costOverhead,
+                        $expenseHead, // Use the current expense head
+                        $indirectCost, // Indirect cost ID
+                        'OverHead Cost', // Cost type
+                        
+                        $budget->project_id,
+                        'OPEX', // PO
+                    
+                        $amounts[$key], // Access the amount
+                        $project_id, // Budget project ID
+                    );
+                }
+            } else {
+                // Update existing records
+                foreach ($type as $key => $expenseHead) {
+                    // Retrieve existing CostOverhead based on budget_project_id and expense head
+                    $existingCostOverhead = CostOverhead::where('budget_project_id', $project_id)->where('expenses', $expenseHead)->first();
+
+                    if ($existingCostOverhead) {
+                        // Perform calculations based on the expense head
+                        switch ($expenseHead) {
+                            case 'HO Cost':
+                                $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $project_id)->sum('percentage_cost');
+                                $existingCostOverhead->amount = $amounts[$key] * $sumAmount;
+                                break;
+
+                            case 'Annual Benefit':
+                                // Sum total_cost for all salaries related to the project
+                                $sumAmount = Salary::where('budget_project_id', $project_id)->sum('percentage_cost');
+                                $existingCostOverhead->amount = $amounts[$key] * $sumAmount;
+                     
+                                break;
+
+                            case 'Insurance Cost':
+                                $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $project_id)->sum('percentage_cost');
+                                $existingCostOverhead->amount = $amounts[$key] * $sumAmount;
+                                break;
+
+                            case 'Visa Renewal':
+                                $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $project_id)->sum('percentage_cost');
+                                $existingCostOverhead->amount = $amounts[$key] * $sumAmount;
+                    
+                                break;
+
+                            case 'Depreciation Tools':
+                                // Sum total_cost for capital expenditures related to the project and divide by 24
+                                $sumAmount = CapitalExpenditure::where('budget_project_id', $project_id)->sum('total_cost') / 24;
+                                $existingCostOverhead->amount = $sumAmount;
+                                break;
+                        }
+
+                        // Update other necessary fields
+                        $existingCostOverhead->in_direct_cost_id = $indirectCost->id;
+                        $existingCostOverhead->type = 'OverHead Cost';
+                        $existingCostOverhead->project = $project_id;
+                        $existingCostOverhead->po = 'OPEX'; // Adjust as necessary
+
+                        // Save the updated record
+                        $existingCostOverhead->save();
+                    }
+                }
+            }
+        }
+
+        if($totalDirectCost > 0) 
+        {
+                if ($financialExists == null) {
+                    // Create new records if no cost overhead exists
+                    foreach ($FinancialType as $key => $expenseHead) {
+                        $financial = new FinancialCost();
+                        $financial->addFinancialCost(
+                            $expenseHead, // Use the current expense head
+                            'Financial Cost', // Cost type
+                            'OPEX', // PO
+                            $FinancialAmount [$key], // Access the amount
+                            $budget->project_id,
+                            $project_id, // Budget project ID
+                            $totalDirectCost
+                        );
+                    }
+                } else {
+                    foreach ($FinancialType as $key => $expenseHead) {
+                        // Retrieve the first matching FinancialCost record
+                        $existingFinancial = FinancialCost::where('budget_project_id', $project_id)
+                                                          ->where('expenses', $expenseHead)
+                                                          ->first(); // Use first() instead of get()
+                
+                        if ($existingFinancial) {
+                            // Perform specific calculations based on the expense head
+                            switch ($expenseHead) {
+                                case 'Risk':
+                                    $existingFinancial->total_cost = $FinancialAmount[$key] * $totalDirectCost;
+                                    $existingFinancial->percentage = 0; 
+                                    break;
+                
+                                case 'Financial Cost':
+                                    $existingFinancial->total_cost = $FinancialAmount[$key] * $totalDirectCost;
+                                    $existingFinancial->percentage = 0; 
+                                    break;
+                            }
+                
+                            // Update the common fields
+                            $existingFinancial->type = 'Financial Cost';
+                            $existingFinancial->project = $budget->project_id;
+                            $existingFinancial->po = 'OPEX';
+                            $existingFinancial->expenses = $expenseHead;
+                            $existingFinancial->budget_project_id = $project_id;
+                
+                            // Save the updated record
+                            $existingFinancial->save();
+                        }
+                    }
+                }
+                
+
+         }
+
+        // Retrieve additional data for the view
+        $projects = Project::get();
+        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
+        $clients = BusinessClient::get();
+        $units = BusinessUnit::get();
+        $budgets = BudgetProject::get();
+        $overHeads = CostOverhead::where('budget_project_id', $project_id)->first();
 
         // Retrieve the most recent RevenuePlan record
         $latestRevenuePlan = RevenuePlan::where('budget_project_id', $project_id)->latest('created_at')->first();
@@ -91,20 +263,7 @@ class BudgetController extends Controller
             $totalNetProfitBeforeTax = 0; // Or handle accordingly
         }
 
-        // Initialize total costs to 0
-        $totalDirectCost = 0;
-        $totalInDirectCost = 0;
-
-        // Calculate direct cost if it exists
-        if ($directCost->exists) {
-            $totalDirectCost = $directCost->calculateTotalDirectCost();
-        }
-
-        // Calculate indirect cost if it exists
-        if ($indirectCost->exists) {
-            $totalInDirectCost = $indirectCost->calculateTotalIndirectCost();
-        }
-
+     
         $totalSalary = Salary::where('budget_project_id', $project_id)->sum('total_cost');
         $totalFacilityCost = FacilityCost::where('budget_project_id', $project_id)->sum('total_cost');
         $totalMaterialCost = MaterialCost::where('budget_project_id', $project_id)->sum('total_cost');
@@ -116,8 +275,7 @@ class BudgetController extends Controller
 
         $existingNocPayment = NocPayment::where('project_id', $project_id)->first();
 
-        // Now return the view with all necessary variables
-        return view('content.pages.pages-edit-project-budget', compact('clients', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'existingNocPayment', 'existingPettyCash'));
+        return view('content.pages.pages-edit-project-budget', compact('clients', 'overHeads', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'existingNocPayment', 'existingPettyCash'));
     }
 
     /**
@@ -428,6 +586,9 @@ class BudgetController extends Controller
         $budgetProjects = BudgetProject::all();
         $allProjects = Project::all();
         $users = User::all();
+        $allocatedBudgets = TotalBudgetAllocated::all();
+
+        // return response($allocatedBudgets);
 
         // Start a query on the CashFlow model
         $query = CashFlow::query();
@@ -445,23 +606,20 @@ class BudgetController extends Controller
         $cashFlows = $query->get();
 
         // Pass data to the view
-        return view('content.pages.pages-show-cashflow-list', compact('cashFlows', 'budgetProjects', 'allProjects', 'users'));
+        return view('content.pages.pages-show-cashflow-list', compact('cashFlows', 'allocatedBudgets', 'budgetProjects', 'allProjects', 'users'));
     }
 
     public function showAllocatedBudgets(Request $request)
     {
-
         $budgetProjects = BudgetProject::all();
-      
-        
+
         // Fetch budget projects and filter based on query parameters
         $query = TotalBudgetAllocated::query();
 
-          // Apply filters if present in the request
-          if ($request->has('reference_code') && $request->reference_code) {
+        // Apply filters if present in the request
+        if ($request->has('reference_code') && $request->reference_code) {
             $query->where('reference_code', 'like', '%' . $request->reference_code . '%');
         }
-
 
         if ($request->has('budget_project_id')) {
             $query->where('budget_project_id', $request->input('budget_project_id'));
@@ -471,7 +629,7 @@ class BudgetController extends Controller
         $allocatedBudgets = $query->get();
 
         // Pass data to the view
-        return view('content.pages.pages-show-allocated-budgets', compact('budgetProjects','allocatedBudgets'));
+        return view('content.pages.pages-show-allocated-budgets', compact('budgetProjects', 'allocatedBudgets'));
     }
 
     //store capital expense

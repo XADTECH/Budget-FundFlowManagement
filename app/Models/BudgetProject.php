@@ -6,77 +6,56 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BudgetProject extends Model
 {
-  use HasFactory;
+    use HasFactory;
 
-  protected $table = 'budget_project';
+    protected $table = 'budget_project';
 
-  protected $fillable = [
-    'reference_code',
-    'start_date',
-    'end_date',
-    'project_name',
-    'business_unit',
-    'manager_id',
-    'client',
-    'region',
-    'country',
-    'description',
-    'budget_type',
-    'site_name',
-    'month',
-    'approval_status',
-    'bal_under_over_budget',
-    'total_budget_allocated',
-    'total_dpm_expense',
-    'total_lpo_expense',
-    'status',
-    'approve_by'
-  ];
+    protected $fillable = ['reference_code', 'start_date', 'end_date', 'project_name', 'business_unit', 'manager_id', 'client', 'region', 'country', 'description', 'budget_type', 'site_name', 'month', 'approval_status', 'bal_under_over_budget', 'total_budget_allocated', 'total_dpm_expense', 'total_lpo_expense', 'status', 'approve_by'];
 
-  public function directCosts()
-  {
-    return $this->hasMany(DirectCost::class, 'budget_project_id');
-  }
+    public function directCosts()
+    {
+        return $this->hasMany(DirectCost::class, 'budget_project_id');
+    }
 
-  public function indirectCosts()
-  {
-    return $this->hasMany(IndirectCost::class, 'budget_project_id');
-  }
+    public function indirectCosts()
+    {
+        return $this->hasMany(IndirectCost::class, 'budget_project_id');
+    }
 
-  public function salaries()
-  {
-    return $this->hasMany(Salary::class, 'budget_project_id');
-  }
+    public function salaries()
+    {
+        return $this->hasMany(Salary::class, 'budget_project_id');
+    }
 
-  public function facilityCosts()
-  {
-    return $this->hasMany(FacilityCost::class, 'budget_project_id');
-  }
+    public function facilityCosts()
+    {
+        return $this->hasMany(FacilityCost::class, 'budget_project_id');
+    }
 
-  public function materialCosts()
-  {
-    return $this->hasMany(MaterialCost::class, 'budget_project_id');
-  }
+    public function materialCosts()
+    {
+        return $this->hasMany(MaterialCost::class, 'budget_project_id');
+    }
 
-  public function costOverheads()
-  {
-    return $this->hasMany(CostOverhead::class, 'budget_project_id');
-  }
+    public function costOverheads()
+    {
+        return $this->hasMany(CostOverhead::class, 'budget_project_id');
+    }
 
-  public function financialCosts()
-  {
-    return $this->hasMany(FinancialCost::class, 'budget_project_id');
-  }
+    public function financialCosts()
+    {
+        return $this->hasMany(FinancialCost::class, 'budget_project_id');
+    }
 
-  public function revenuePlans()
-  {
-      return $this->hasMany(RevenuePlan::class, 'budget_project_id');
-  }
+    public function revenuePlans()
+    {
+        return $this->hasMany(RevenuePlan::class, 'budget_project_id');
+    }
 
-  public function capitalExpenditures()
-  {
-      return $this->hasMany(CapitalExpenditure::class, 'budget_project_id');
-  }
+    public function capitalExpenditures()
+    {
+        return $this->hasMany(CapitalExpenditure::class, 'budget_project_id');
+    }
 
     // Define the one-to-one or one-to-many relationship with TotalBudgetAllocated
     public function totalBudgetAllocated()
@@ -84,29 +63,53 @@ class BudgetProject extends Model
         return $this->hasOne(TotalBudgetAllocated::class, 'budget_project_id');
     }
 
-      public function getUtilization()
+    // Method to calculate utilization (total expenses)
+    public function getUtilization()
     {
-      return $this->total_dpm_expense + $this->total_lpo_expense;
-    }
+        // Access the related TotalBudgetAllocated record
+        $budgetAllocated = $this->totalBudgetAllocated;
 
-        public function getUtilizationPercentage()
-    {
-        if ($this->total_budget_allocated == 0) {
-            return 0; // To avoid division by zero
+        // Check if there's related budget allocation data
+        if ($budgetAllocated) {
+            return $budgetAllocated->total_dpm + $budgetAllocated->total_lpo;
         }
 
-        $totalExpenses = $this->total_dpm_expense + $this->total_lpo_expense;
-        return ($totalExpenses / $this->total_budget_allocated) * 100;
+        // Return 0 if there's no related budget allocation
+        return 0;
     }
+    // Method to calculate Remaining Budget
+    public function getRemainingBudget()
+    {
+        $budgetAllocated = $this->totalBudgetAllocated;
 
-        // Method to calculate Remaining Budget
-        public function getRemainingBudget()
-        {
+        // Check if there's related budget allocation data
+        if ($budgetAllocated) {
             // Remaining budget is total budget allocated minus total expenses
-            return $this->total_budget_allocated - $this->getUtilization();
+            return $budgetAllocated->allocated_budget - $this->getUtilization();
         }
 
-      // Method to allocate budget
+        // Return null or 0 if there's no related budget allocation
+        return null;
+    }
+    public function getUtilizationPercentage()
+    {
+        // Access the related TotalBudgetAllocated record
+        $budgetAllocated = $this->totalBudgetAllocated;
+
+        // Check if there's related budget allocation data
+        if ($budgetAllocated && $budgetAllocated->budget_allocated != 0) {
+            // Calculate total expenses from TotalBudgetAllocated
+            $totalExpenses = $budgetAllocated->total_dpm + $budgetAllocated->total_lpo;
+
+            // Return the utilization percentage
+            return ($totalExpenses / $budgetAllocated->total_budget_allocated) * 100;
+        }
+
+        // Return 0 if no budget is allocated or no related record
+        return 0;
+    }
+
+    // Method to allocate budget
     public function allocateBudget($amount)
     {
         $this->total_budget_allocated += $amount;
@@ -120,51 +123,50 @@ class BudgetProject extends Model
             'description' => 'Budget allocation',
         ]);
     }
-    
-        public function processPurchaseOrder(PurchaseOrder $purchaseOrder)
-        {
-            if ($this->canCoverExpense($purchaseOrder->total_amount)) {
-                $this->deductExpense($purchaseOrder->total_amount, 'Purchase Order');
-                $purchaseOrder->status = 'Approved';
-                $purchaseOrder->save();
-                return true;
-            }
-            $purchaseOrder->status = 'Rejected';
+
+    public function processPurchaseOrder(PurchaseOrder $purchaseOrder)
+    {
+        if ($this->canCoverExpense($purchaseOrder->total_amount)) {
+            $this->deductExpense($purchaseOrder->total_amount, 'Purchase Order');
+            $purchaseOrder->status = 'Approved';
             $purchaseOrder->save();
-            return false;
+            return true;
         }
-    
-        public function logDailyPaymentExpense($amount)
-        {
-            if ($this->canCoverExpense($amount)) {
-                $this->deductExpense($amount, 'Daily Payment Expense');
-                return true;
-            }
-            return false;
+        $purchaseOrder->status = 'Rejected';
+        $purchaseOrder->save();
+        return false;
+    }
+
+    public function logDailyPaymentExpense($amount)
+    {
+        if ($this->canCoverExpense($amount)) {
+            $this->deductExpense($amount, 'Daily Payment Expense');
+            return true;
         }
-    
-        protected function deductExpense($amount, $description)
-        {
-            if ($this->current_balance >= $amount) {
-                $this->current_balance -= $amount;
-                $this->save();
-    
-                // Record cash outflow
-                CashFlow::create([
-                    'budget_project_id' => $this->id,
-                    'type' => 'outflow',
-                    'amount' => $amount,
-                    'description' => $description,
-                ]);
-    
-                return true;
-            }
-            return false;
+        return false;
+    }
+
+    protected function deductExpense($amount, $description)
+    {
+        if ($this->current_balance >= $amount) {
+            $this->current_balance -= $amount;
+            $this->save();
+
+            // Record cash outflow
+            CashFlow::create([
+                'budget_project_id' => $this->id,
+                'type' => 'outflow',
+                'amount' => $amount,
+                'description' => $description,
+            ]);
+
+            return true;
         }
-    
-        public function canCoverExpense($amount)
-        {
-            return $this->current_balance >= $amount;
-        }
-    
+        return false;
+    }
+
+    public function canCoverExpense($amount)
+    {
+        return $this->current_balance >= $amount;
+    }
 }

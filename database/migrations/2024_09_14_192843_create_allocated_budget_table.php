@@ -21,8 +21,8 @@ return new class extends Migration
             $table->decimal('total_financial_cost', 15, 2)->default(0);
             $table->decimal('total_capital_expenditure', 15, 2)->default(0);
             $table->decimal('allocated_budget', 15, 2)->default(0);  
-            $table->decimal('total_opex', 15, 2)->default(0);      
-            $table->decimal('total_capex', 15, 2)->default(0);   
+            $table->decimal('total_dpm', 15, 2)->default(0);  
+            $table->decimal('total_lpo', 15, 2)->default(0);   
             $table->string('reference_code');
             $table->timestamps();
         });

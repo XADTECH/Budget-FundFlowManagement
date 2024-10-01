@@ -62,8 +62,58 @@ class FinancialCost extends Model
 
         return $overallTotalCost;
     }
-    
 
+    public function addFinancialCost($expenseHead, $type, $po, $amount, $project, $budget_project_id,$totalDirectCost)
+    {
+
+        // dd($expenseHead, $type, $po, $amount, $project, $budget_project_id,$totalDirectCost);
+        $indirectCost = IndirectCost::where('budget_project_id', $budget_project_id)->first();
+
+        if ($indirectCost === null) {
+            // Create a new IndirectCost
+            $cost = new IndirectCost();
+            $cost->budget_project_id = $budget_project_id;
+            $cost->save();
+
+            // Assign the new IndirectCost's ID to $costOverhead
+            $this->in_direct_cost_id = $cost->id;
+        } else {
+            // If $indirectCost is not null, assign its ID to $this
+            $this->in_direct_cost_id = $indirectCost->id;
+        }
+
+        $this->type = $type;
+        $this->project = $project;
+        $this->po = $po;
+        $this->expenses = $expenseHead;
+        $this->budget_project_id = $budget_project_id;
+
+        switch ($expenseHead) {
+            case 'Risk':
+                $this->total_cost = $amount * $totalDirectCost ?? 0;
+                $this->percentage = 0; 
+                break;
+
+            case 'Financial Cost':
+                // Sum total_cost for all salaries related to the project
+                $this->total_cost = $amount * $totalDirectCost ?? 0;
+                $this->percentage = 0; 
+                break;
+
+            case 'Other':
+                // Set the amount directly for 'Other' expenses
+                $this->total_cost = $amount;
+                break;
+
+            default:
+                // Default calculation if no specific expense head is selected
+                $this->total_cost = $amount;
+                break;
+        }
+
+        $this->save();
+    }
+    
 
     // Approve the material entry
     public function approve()

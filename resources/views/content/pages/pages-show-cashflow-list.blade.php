@@ -57,13 +57,21 @@
                             <th>Cash Outflow</th>
                             <th>Committed Budget</th>
                             <th>Balance</th>
-                            <th>Reference Code</th>
+                            <th>Total DPM</th>
+                            <th>Total LPO</th>
+                            {{-- <th>Reference Code</th> --}}
                             <th>Project Manager</th>
                         </tr>
                     </thead>
                     <tbody id="cashflow-table-body" class="table-border-bottom-0">
-                        @foreach ($cashFlows as $index => $cashFlow)  <!-- Add $index to get the current iteration -->
+                        @foreach ($cashFlows as $index => $cashFlow)
+                            <!-- Add $index to get the current iteration -->
                             <tr>
+                                @php
+                                    $project = $budgetProjects->firstWhere('id', $cashFlow->budget_project_id);
+                                    $user = $users->firstWhere('id', $project->manager_id);
+                                    $dpm = $allocatedBudgets->firstWhere('budget_project_id',  $cashFlow->budget_project_id);
+                                @endphp
                                 <td>{{ $cashFlow->date }}</td>
                                 <td>{{ $cashFlow->description }}</td>
                                 <td>{{ $cashFlow->category }}</td>
@@ -75,11 +83,10 @@
                                 </td>
                                 <td>{{ number_format($cashFlow->committed_budget, 0) }}</td>
                                 <td>{{ number_format($cashFlow->balance, 0) }}</td>
-                                <td>{{ $cashFlow->reference_code }}</td>
-                                @php
-                                    $project = $budgetProjects->firstWhere('id', $cashFlow->budget_project_id);
-                                    $user = $users->firstWhere('id', $project->manager_id);
-                                @endphp
+                                <td>{{ number_format($dpm->total_dpm, 0) }}</td>
+                                <td>{{ number_format($dpm->total_lpo, 0) }}</td>
+                                {{-- <td>{{ $cashFlow->reference_code }}</td> --}}
+
                                 <td>{{ $user->first_name ?? 'N/A' }}</td>
                                 <td>
                                     <!-- Actions (e.g., view, edit, delete) -->
@@ -87,7 +94,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                    
+
                 </table>
             </div>
         </div>

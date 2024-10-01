@@ -527,10 +527,10 @@
 
                 // Update balance
                 const requestAmount = parseFloat(document.getElementById('totalAmount').innerText);
-                document.getElementById('total_request_amount').innerText = requestAmount.toFixed(0).toLocaleString();;
+                document.getElementById('total_request_amount').innerText = requestAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
                 const balanceBudgetElement = document.getElementById('balance_budget');
                 const balanceBudget = parseFloat(balanceBudgetElement.innerText.replace(/,/g, '')) || 0;
-                document.getElementById('total_balance_for_budget').innerText = (balanceBudget - requestAmount).toFixed(0).toLocaleString();
+                document.getElementById('total_balance_for_budget').innerText = (balanceBudget - requestAmount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
             }
 
             // Function to remove an item

@@ -54,6 +54,8 @@ use App\Http\Controllers\form_elements\InputGroups;
 use App\Http\Controllers\form_layouts\VerticalForm;
 use App\Http\Controllers\form_layouts\HorizontalForm;
 use App\Http\Controllers\tables\Basic as TablesBasic;
+use App\Http\Controllers\SupplierPriceController;
+
 use GuzzleHttp\Client;
 
 // Main Page Route
@@ -61,6 +63,11 @@ use GuzzleHttp\Client;
 Route::get('/', [LoginBasic::class, 'index'])
   ->name('auth-login-basic')
   ->middleware('redirectIfAuthenticated');
+
+//import suppliers 
+Route::post('/supplier-import', [SupplierPriceController::class, 'import'])->name('supplier-import');
+Route::get('/supplier-import', [SupplierPriceController::class, 'showImport'])->name('supplier-import');
+
 
 Route::post('/login-user', [AuthenticateController::class, 'loginUser'])->name('login-user');
 

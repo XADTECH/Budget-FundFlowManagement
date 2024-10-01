@@ -116,37 +116,39 @@ class CashFlowController extends Controller
               case 'Salary':
                   $allocatedBudgetEntry->total_salary += $cashInflow;
                   $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-                  $lastCashFlow->save();
                   break;
               case 'Facility':
                   $allocatedBudgetEntry->total_facility_cost += $cashInflow;
                   $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-                  $lastCashFlow->save();
+       
                   break;
               case 'Material':
                   $allocatedBudgetEntry->total_material_cost += $cashInflow;
                   $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-                  $lastCashFlow->save();
+              
                   break;
               case 'Overhead':
                   $allocatedBudgetEntry->total_cost_overhead += $cashInflow;
                   $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-                  $lastCashFlow->save();
+        
                   break;
               case 'Financial':
                   $allocatedBudgetEntry->total_financial_cost += $cashInflow;
                   $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-                  $lastCashFlow->save();
+         
                   break;
               case 'Capital Expenditure':
                   $allocatedBudgetEntry->total_capital_expenditure += $cashInflow;
                   $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-                  $lastCashFlow->save();
+         
                   break;
           }
       
           // Save the updated allocated budget entry
           $allocatedBudgetEntry->save();
+          //save the cash flow 
+          $lastCashFlow->save();
+
       }
       
       // Helper method to add cash Outflow to the corresponding category budget
@@ -158,38 +160,41 @@ class CashFlowController extends Controller
           switch ($category) {
               case 'Salary':
                   $allocatedBudgetEntry->total_salary -= $cashOutflow;
+                  $allocatedBudgetEntry->total_dpm += $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
-                  $lastCashFlow->save();
+            
                   break;
               case 'Facility':
                   $allocatedBudgetEntry->total_facility_cost -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
-                  $lastCashFlow->save();
+          
                   break;
               case 'Material':
                   $allocatedBudgetEntry->total_material_cost -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
-                  $lastCashFlow->save();
+    
                   break;
               case 'Overhead':
                   $allocatedBudgetEntry->total_cost_overhead -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
-                  $lastCashFlow->save();
+      
                   break;
               case 'Financial':
                   $allocatedBudgetEntry->total_financial_cost -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
-                  $lastCashFlow->save();
+         
                   break;
               case 'Capital Expenditure':
                   $allocatedBudgetEntry->total_capital_expenditure -= $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
-                  $lastCashFlow->save();
+         
                   break;
           }
       
           // Save the updated allocated budget entry
           $allocatedBudgetEntry->save();
+          //save the entry for cash flow
+          $lastCashFlow->save();
       }
  
     

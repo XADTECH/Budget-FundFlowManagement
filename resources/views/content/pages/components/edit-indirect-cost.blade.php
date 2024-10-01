@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
 <div class="container mt-4">
     <div class="card mt-4">
         <div class="card-body">
@@ -9,8 +12,12 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Cost Overhead</h3>
-                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addNewCostOverheadModal">ADD NEW</button>
+                            {{-- <button class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#addNewCostOverheadModal">ADD NEW</button> --}}
+                            <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
+                                onclick="location.reload()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
                         </div>
                         <p>Total overhead Cost : <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($totalCostOverhead) }}<span>
@@ -24,23 +31,23 @@
                                         <th>PROJECT</th>
                                         <th>EXPENSE</th>
                                         <th>AMOUNT</th>
-                                        <th>ACTION</th>
+                                        {{-- <th>ACTION</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->costOverheads as $overhead)
-                                    @php
-                                    $project = $projects->where('id', $overhead->project)->first();
-                                    @endphp
+                                        @php
+                                            $project = $projects->where('id', $overhead->project)->first();
+                                        @endphp
 
-                                    <tr>
-                                        <td>{{ $overhead->type ?? 'no entry' }}</td>
-                                        <td>{{ $overhead->po ?? 'no entry' }}</td>
-                                        <td>{{ $project->name ?? 'no entry' }}</td>
-                                        <td>{{ $overhead->expenses ?? 'no entry' }}</td>
-                                        <td>{{ number_format($overhead->amount) ?? 'no entry' }}</td>
+                                        <tr>
+                                            <td>{{ $overhead->type ?? 'no entry' }}</td>
+                                            <td>{{ $overhead->po ?? 'no entry' }}</td>
+                                            <td>{{ $project->name ?? 'no entry' }}</td>
+                                            <td>{{ $overhead->expenses ?? 'no entry' }}</td>
+                                            <td>{{ number_format($overhead->amount, 2) ?? 'no entry' }}</td>
 
-                                        <td>
+                                            {{-- <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                                     data-bs-toggle="dropdown"><i
@@ -52,34 +59,10 @@
                                                             class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
                                             </div>
-                                        </td>
-                                    </tr>
+                                        </td> --}}
+                                        </tr>
                                     @endforeach
-                                    <!-- <tr>
-                                        <td>{{ $costOverheads[0]->type ?? 'no entry' }}</td>
-                                        <td>{{ $costOverheads[0]->po ?? 'no entry' }}</td>
-                                        <td>{{ $project->name ?? 'no entry' }}</td>
-                                        <td>Depreciation Tools</td>
-                                        <td>{{ number_format($costOverheads[0]->depreciationTools($costOverheads[0]->budget_project_id)) ?? 'no entry' }}
-                                        </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"><i
-                                                        class="bx bx-dots-vertical-rounded"></i></button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item edit-btn" data-userid="${user.id}"
-                                                        data-firstname="${user.first_name}"
-                                                        data-lastname="${user.last_name}"
-                                                        data-phonenumber="${user.phone_number}"
-                                                        data-email="${user.email}" data-role="${user.role}"><i
-                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                    <a class="dropdown-item delete-btn" data-id="${user.id}"><i
-                                                            class="bx bx-trash me-1"></i> Delete</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr> -->
+
                                 </tbody>
                             </table>
                         </div>
@@ -88,8 +71,8 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Financial Cost</h3>
-                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addNewFinancialCostModal">ADD NEW</button>
+                            {{-- <button class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#addNewFinancialCostModal">ADD NEW</button> --}}
                         </div>
                         <p>Total Financial Cost : <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($totalFinancialCost, 0) }}<span>
@@ -103,23 +86,23 @@
                                         <th>PROJECT</th>
                                         <th>EXPENSE</th>
                                         <th>AMOUNT</th>
-                                        <th>ACTION</th>
+                                        {{-- <th>ACTION</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->financialCosts as $financial)
-                                    @php
-                                    $project = $projects->where('id', $financial->project)->first();
-                                    @endphp
+                                        @php
+                                            $project = $projects->where('id', $financial->project)->first();
+                                        @endphp
 
-                                    <tr>
-                                        <td>{{ $financial->type ?? 'no entry' }}</td>
-                                        <td>{{ $financial->po ?? 'no entry' }}</td>
-                                        <td>{{ $project->name ?? 'no entry' }}</td>
-                                        <td>{{ $financial->expenses ?? 'no entry' }}</td>
-                                        <td>{{ number_format($financial->total_cost) ?? 'no entry' }}</td>
+                                        <tr>
+                                            <td>{{ $financial->type ?? 'no entry' }}</td>
+                                            <td>{{ $financial->po ?? 'no entry' }}</td>
+                                            <td>{{ $project->name ?? 'no entry' }}</td>
+                                            <td>{{ $financial->expenses ?? 'no entry' }}</td>
+                                            <td>{{ number_format($financial->total_cost, 0) ?? 'no entry' }}</td>
 
-                                        <td>
+                                            {{-- <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                                     data-bs-toggle="dropdown"><i
@@ -131,8 +114,8 @@
                                                             class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
                                             </div>
-                                        </td>
-                                    </tr>
+                                        </td> --}}
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -170,7 +153,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -242,7 +225,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -280,7 +263,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="editCostOverheadModal" tabindex="-1" aria-labelledby="editCostOverheadModal" aria-hidden="true">
+<div class="modal fade" id="editCostOverheadModal" tabindex="-1" aria-labelledby="editCostOverheadModal"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -303,7 +287,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="edit_cost_project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -352,7 +336,8 @@
     </div>
 </div>
 
-<div class="modal fade" id="editNewFinancialCostModal" tabindex="-1" aria-labelledby="editNewFinancialCostModal" aria-hidden="true">
+<div class="modal fade" id="editNewFinancialCostModal" tabindex="-1" aria-labelledby="editNewFinancialCostModal"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -375,7 +360,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="financial_project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -441,7 +426,8 @@
                 $('#edit_cost_po').val(data.po);
                 $('#overhead-edit-expense').val(data.expenses);
                 $('#cost_amount').val(data.amount);
-                if (!['HO Cost', 'Annual Benefit', 'Insurance Cost', 'Visa Renewal', 'Other'].includes(data.expenses)) {
+                if (!['HO Cost', 'Annual Benefit', 'Insurance Cost', 'Visa Renewal', 'Other'].includes(data
+                        .expenses)) {
                     $('#overhead-edit-expense').val("Other");
                     $('#overhead-edit-other-expense').show();
                     $('#other_cost_expense').val(data.expenses);

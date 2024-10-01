@@ -59,4 +59,6 @@ class TotalBudgetAllocated extends Model
     {
         return $this->hasMany(FinancialCost::class, 'budget_project_id');
     }
+
+    
 }

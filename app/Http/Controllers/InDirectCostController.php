@@ -41,8 +41,10 @@ class InDirectCostController extends Controller
       $indirectCost->save();
     }
 
+    // return response($validated['expense']);
+
     // Assuming you have a method to check if the value exists
-    $existingValue = CostOverhead::where('project', $validated['project'])
+    $existingValue = CostOverhead::where('budget_project_id', $validated['project_id'])
       ->where('expenses', $validated['expense'])
       ->first();
 
