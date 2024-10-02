@@ -157,7 +157,7 @@
                 <td style="text-align: left;  padding: 8px; width: 50%;">
                 </td>
 
-                <td style="border: 1px solid #000; padding: 8px;  width: 50%;">VAT: {{$purchaseOrder->vat}}</td>
+                <td style="border: 1px solid #000; padding: 8px;  width: 50%;">VAT: {{$purchaseOrderItem->total_vat}}</td>
 
             </tr>
             <tr>
@@ -165,7 +165,7 @@
 
 
                 </td>
-                <td style="border: 1px solid #000; padding: 8px;  width: 50%;">Total Discount : {{$purchaseOrder->total_discount}} </td>
+                <td style="border: 1px solid #000; padding: 8px;  width: 50%;">Total Discount : {{$purchaseOrderItem->total_discount}} </td>
             </tr>
         </table>
     </div>
@@ -184,10 +184,10 @@
                 <td style="text-align: left;  padding: 8px; width: 70%;">
 
                 </td>
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Total Budget:</b> @if(is_null($budget->total_budget_allocated))
+                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Total Budget:</b> @if(is_null($purchaseOrderItem->allocated_budget_amount))
                     <span style="color: red; font-weight: bold;">Not Assigned</span>
                     @else
-                    {{ $budget->total_budget_allocated }}
+                    {{ number_format($purchaseOrderItem->allocated_budget_amount) }}
                     @endif
                 </td>
 
@@ -196,21 +196,21 @@
                 <td style="text-align: left;  padding: 8px; width: 70%;">
 
                 </td>
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Utilization:</b> {{number_format($utilization)}}</td>
+                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Utilization:</b> {{number_format($purchaseOrderItem->budget_utilization)}}</td>
 
             </tr>
             <tr>
                 <td style="text-align: left;  padding: 8px; width: 70%;">
 
                 </td>
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Balance Budget: </b>{{number_format($balanceBudget)}}</td>
+                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Balance Budget: </b>{{number_format($purchaseOrderItem->balance_budget)}}</td>
 
             </tr>
             <tr>
                 <td style="text-align: left;  padding: 8px; width: 70%;">
 
                 </td>
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Current Request: {{number_format($purchaseOrder->subtotal,2)}}</b> </td>
+                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Current Request: {{number_format($purchaseOrderItem->amount_requested)}}</b> </td>
 
             </tr>
             <tr>
@@ -218,10 +218,7 @@
 
                 </td>
 
-                @php
-                $balance = $balanceBudget - $purchaseOrder->subtotal;
-                @endphp
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Balance: {{ number_format($balance) }}</b> </td>
+                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Balance: {{ number_format($purchaseOrderItem->total_balance) }}</b> </td>
 
             </tr>
             <tr>

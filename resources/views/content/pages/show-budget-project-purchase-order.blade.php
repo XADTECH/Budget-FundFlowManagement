@@ -324,7 +324,7 @@
                     </tr>
                     <tr>
                         <td class="label">Utilization:</td>
-                        <td class="value">{{ number_format($utilization) }}</td>
+                        <td class="value" id="utilize">{{ number_format($utilization) }}</td>
                     </tr>
                     <tr>
                         <td class="label">Balance Budget:</td>
@@ -402,10 +402,11 @@
                                             data-description="{{ $material->description }}"
                                             data-quantity="{{ $material->quantity }}"
                                             data-unit-cost="{{ $material->unit_cost }}">
-                                            {{ $material->expenses }}
+                                            {{ $material->expenses }} - {{ $material->description }}
                                         </option>
                                     @endforeach
                                 </select>
+
                             </div>
 
                             <div class="mb-3">
@@ -436,19 +437,19 @@
             const addItemBtn = document.getElementById('addItemBtn');
             const materialBudget = parseFloat(document.getElementById('materialBudget').textContent.replace(/,/g, ''));
             const totalRequestedAmountDisplay = document.getElementById('totalRequestedAmount');
-        
+
             function calculateTotalCost() {
-                alert("called");
+
                 const quantity = parseFloat(quantityInput.value) || 0;
                 const unitPrice = parseFloat(unitPriceInput.value) || 0;
                 const totalCost = quantity * unitPrice;
-        
+
                 // Update the total requested amount display
                 totalRequestedAmountDisplay.textContent = totalCost.toLocaleString('en-US', {
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0
                 });
-        
+
                 // Check if the total cost exceeds the material budget
                 if (totalCost > materialBudget) {
                     addItemBtn.disabled = true; // Disable button
@@ -457,30 +458,30 @@
                     addItemBtn.disabled = false; // Enable button
                 }
             }
-        
+
             // Get the PO number from the hidden input field
             const poNumber = document.getElementById('poNumber').textContent.trim();
-        
+
             // Initialize purchase order items array
             let purchaseOrderItems = JSON.parse(localStorage.getItem(`purchaseOrder_${poNumber}`)) || [];
-        
+
             // Load data and render table on page load
             document.addEventListener('DOMContentLoaded', () => {
                 renderTable();
             });
-        
+
             // Add item event
             document.getElementById('addItemBtn').addEventListener('click', () => {
                 const item = document.getElementById('item').value;
                 const description = document.getElementById('description').value;
                 const quantity = parseFloat(document.getElementById('quantity').value);
                 const unitPrice = parseFloat(document.getElementById('unit_price').value);
-        
+
                 if (!item || isNaN(quantity) || isNaN(unitPrice)) {
                     alert("Please fill out all fields correctly.");
                     return;
                 }
-        
+
                 purchaseOrderItems.push({
                     item,
                     description,
@@ -493,21 +494,21 @@
                 document.getElementById('addItemForm').reset();
                 $('#addItemModal').modal('hide');
             });
-        
+
             // Save items to local storage
             const saveToLocalStorage = () => {
                 localStorage.setItem(`purchaseOrder_${poNumber}`, JSON.stringify(purchaseOrderItems));
             };
-        
+
             // Render the purchase order table
             const renderTable = () => {
                 const tableBody = document.getElementById('purchaseOrderItems');
                 tableBody.innerHTML = '';
-        
+
                 let subtotal = 0;
                 purchaseOrderItems.forEach((orderItem, index) => {
                     subtotal += orderItem.itemTotal;
-        
+
                     tableBody.insertAdjacentHTML('beforeend', `
                         <tr>
                             <td>${orderItem.item}</td>
@@ -519,65 +520,79 @@
                         </tr>
                     `);
                 });
-        
+
                 document.getElementById('subtotal').textContent = subtotal.toFixed(2);
                 updateTotals();
             };
-        
+
             // Remove an item from the list
             const removeItem = (index) => {
                 purchaseOrderItems.splice(index, 1);
                 saveToLocalStorage();
                 renderTable();
             };
-        
+
             // Update totals for discount, VAT, and amount
             const updateTotals = () => {
                 const subtotal = parseFloat(document.getElementById('subtotal').textContent) || 0;
                 const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
                 const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
-        
+
                 const totalDiscount = subtotal * (discountValue / 100);
                 const totalVAT = (subtotal - totalDiscount) * (vatValue / 100);
                 const totalAmount = (subtotal - totalDiscount + totalVAT).toFixed(2);
-        
-                document.getElementById('totalDiscount').textContent = Math.floor(totalDiscount).toLocaleString('en-US'); // Removes .00
-document.getElementById('totalVAT').textContent = Math.floor(totalVAT).toLocaleString('en-US'); // Removes .00
-document.getElementById('totalAmount').textContent = Math.floor(totalAmount).toLocaleString('en-US'); // Removes .00
 
-        
-                const requestAmount = parseFloat(totalAmount);
-                const balanceBudget = parseFloat(document.getElementById('balance_budget').textContent.replace(/,/g, '')) || 0;
-        
+                document.getElementById('totalDiscount').textContent = totalDiscount.toFixed(2);
+                document.getElementById('totalVAT').textContent = totalVAT.toFixed(2);
+                document.getElementById('totalAmount').textContent = totalAmount;
+
+                var requestAmount = parseFloat(totalAmount);
+                var balanceBudget = parseFloat(document.getElementById('balance_budget').textContent.replace(/,/g, '')) ||
+                    0;
+
                 document.getElementById('total_request_amount').textContent = requestAmount.toLocaleString();
-                document.getElementById('total_balance_for_budget').textContent = (balanceBudget - requestAmount).toLocaleString();
+                document.getElementById('total_balance_for_budget').textContent = (balanceBudget - requestAmount)
+                    .toLocaleString();
             };
-        
+
             // Update totals on input change
             document.getElementById('discountInput').addEventListener('input', updateTotals);
             document.getElementById('vatInput').addEventListener('input', updateTotals);
-        
+
             // Submit data to the server
             const submitData = () => {
                 const totalAmount = parseFloat(document.getElementById('totalAmount').textContent) || 0;
-        
+
                 if (totalAmount > 0) {
+                    const totalBudget = @json($totalBudget);
                     const data = {
-                        poNumber: poNumber,
                         items: purchaseOrderItems,
-                        totalAmount: totalAmount,
-                        totalDiscount: parseFloat(document.getElementById('totalDiscount').textContent) || 0,
-                        totalVAT: parseFloat(document.getElementById('totalVAT').textContent) || 0,
+                        totalAmount: parseFloat(totalAmount), // Ensure totalAmount is a float
+                        requestAmount: parseFloat(totalAmount), // Ensure requestAmount is a float
+                        balanceBudget: parseFloat(document.getElementById('balance_budget').textContent
+                            .replace(/,/g, '')), // Remove commas and convert to float
+                        total_balanceBudget: parseFloat(document.getElementById('total_balance_for_budget').textContent
+                            .replace(/,/g, '')), // Remove commas and convert to float
+                        totalDiscount: parseFloat(document.getElementById('totalDiscount').textContent.replace(/,/g,
+                            '')) || 0, // Remove commas and convert to float
+                        totalVAT: parseFloat(document.getElementById('totalVAT').textContent.replace(/,/g, '')) ||
+                            0, // Remove commas and convert to float
                         status: "submitted",
-                        budget: '{{ $budget->id }}',
-                        po_number: '{{ $purchaseOrder->po_number }}',
+                        budget: '{{ $budget->id }}', // Assuming this is already a number or ID
+                        poNumber: '{{ $purchaseOrder->po_number }}', // Assuming this is a string
+                        utilization: parseFloat(document.getElementById('utilize').textContent.replace(/,/g, '')) ||
+                            0, // Remove commas and convert to float
+                        totalBudget: parseFloat(totalBudget.replace(/,/g, '')) // Remove commas and convert to float
                     };
-        
+
+                    console.log(data)
+
                     fetch('/api/save-purchase-order', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
                             },
                             body: JSON.stringify(data)
                         })
@@ -594,7 +609,7 @@ document.getElementById('totalAmount').textContent = Math.floor(totalAmount).toL
                     alert("Total amount must be greater than 0.");
                 }
             };
-        
+
             // Handle category and item selection changes
             document.getElementById('category').addEventListener('change', function() {
                 const selectedCategory = this.value;
@@ -602,7 +617,7 @@ document.getElementById('totalAmount').textContent = Math.floor(totalAmount).toL
                 const itemDropdown = document.getElementById('item');
                 itemContainer.style.display = selectedCategory ? 'block' : 'none';
                 itemDropdown.innerHTML = '<option value="">Select an item</option>';
-        
+
                 let items = [];
                 switch (selectedCategory) {
                     case 'material':
@@ -622,7 +637,7 @@ document.getElementById('totalAmount').textContent = Math.floor(totalAmount).toL
                         updateBudget({{ $budget->capital_expenses ?? 0 }});
                         break;
                 }
-        
+
                 items.forEach(item => {
                     itemDropdown.insertAdjacentHTML('beforeend', `
                         <option value="${item.id}" data-description="${item.description}" data-quantity="${item.quantity}" data-unit-cost="${item.unit_cost}">
@@ -631,32 +646,32 @@ document.getElementById('totalAmount').textContent = Math.floor(totalAmount).toL
                     `);
                 });
             });
-        
+
             // Update budget display
             const updateBudget = (amount) => {
                 const budgetCell = document.querySelector('.value');
                 budgetCell.innerHTML = amount === 0 ? '<span style="color: red; font-weight: bold;">Not Assigned</span>' :
                     number_format(amount);
             };
-        
+
             // Format number with commas
             const number_format = (number) => new Intl.NumberFormat().format(number);
-        
+
             // Populate item details when selecting an item
             document.getElementById('item').addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
                 document.getElementById('description').value = selectedOption.getAttribute('data-description');
                 document.getElementById('quantity').value = selectedOption.getAttribute('data-quantity');
                 document.getElementById('unit_price').value = selectedOption.getAttribute('data-unit-cost');
-        
+
                 // Call calculateTotalCost when an item is selected
                 calculateTotalCost();
             });
-        
+
             // Event listeners to recalculate total cost when quantity or unit price changes
             quantityInput.addEventListener('input', calculateTotalCost);
             unitPriceInput.addEventListener('input', calculateTotalCost);
         </script>
-        
+
 
     @endsection

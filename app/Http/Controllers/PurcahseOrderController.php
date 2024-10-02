@@ -144,7 +144,7 @@ class PurcahseOrderController extends Controller
         $facilityBudget = $totalBudgetAllocated?->total_facility_cost;
         $materialBudget = $totalBudgetAllocated?->total_material_cost;
         $totalBudget = $totalBudgetAllocated?->allocated_budget;
-        
+
         // Fetch capital expenditures (as a collection)
         $capitalExpensesTotal = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->pluck('total_capital_expenditure');
 
@@ -176,17 +176,50 @@ class PurcahseOrderController extends Controller
             $purchaseOrder->vat = $request->totalVAT;
             $purchaseOrder->total_discount = $request->totalDiscount;
 
+            // $data = $request->all();
+            // $types = [];
+
+            // foreach ($data as $key => $value) {
+            //     $types[$key] = gettype($value); // Get the type of each request item
+            // }
+
+            // return response()->json([
+            //     'data' => $data, // Show the request data
+            //     'types' => $types, // Show the data types of each field
+            // ]);
+
+            // return response($request->totalBudget);
+
             PurchaseOrderItem::create([
                 'purchase_order_id' => $purchaseOrder->id,
                 'po_number' => $request->poNumber,
-                'items' => $items, // Include the 'items' field in the insert
-                'total_amount' => $request->totalAmount,
-                'total_discount' => $request->totalDiscount,
-                'total_vat' => $request->totalVAT,
+                'items' => json_encode($request->items), // Convert array to JSON
+                'allocated_budget_amount' => (float) $request->totalBudget, // Directly cast to float
+                'budget_utilization' => (float) $request->utilization, // Directly cast to float
+                'total_discount' => (float) $request->totalDiscount, // Directly cast to float
+                'total_vat' => (float) $request->totalVAT, // Directly cast to float
+                'balance_budget' => $request->balanceBudget, // Directly cast to float
+                'amount_requested' => (float) $request->requestAmount, // Directly cast to float
+                'total_balance' => (float) $request->total_balanceBudget, // Directly cast to float
+       
                 'status' => $request->status,
             ]);
 
+            // Fetch the total budget allocated record
+            $totalBudgetAllocated = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->first();
+
+            // Check if the record exists
+            if ($totalBudgetAllocated) {
+                // Update total_lpo by adding the total_amount
+                $totalBudgetAllocated->total_lpo += $request->totalAmount; 
+                $totalBudgetAllocated->total_material_cost -= $request->totalAmount; 
+
+                // Save the updated record
+                $totalBudgetAllocated->save();
+            }
+
             $purchaseOrder->status = 'submitted';
+            $purchaseOrder->is_verified = 1;
             $purchaseOrder->save();
 
             // Return success response
