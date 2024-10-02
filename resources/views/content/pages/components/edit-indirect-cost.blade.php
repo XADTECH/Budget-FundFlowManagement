@@ -36,96 +36,96 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->costOverheads as $overhead)
-                                        @php
-                                            $project = $projects->where('id', $overhead->project)->first();
-                                        @endphp
+                                    @php
+                                    $project = $projects->where('id', $overhead->project)->first();
+                                    @endphp
 
-                                        <tr>
-                                            <td>{{ $overhead->type ?? 'no entry' }}</td>
-                                            <td>{{ $overhead->po ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $overhead->expenses ?? 'no entry' }}</td>
-                                            <td>{{ number_format($overhead->amount, 2) ?? 'no entry' }}</td>
+                                    <tr>
+                                        <td>{{ $overhead->type ?? 'no entry' }}</td>
+                                        <td>{{ $overhead->po ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $overhead->expenses ?? 'no entry' }}</td>
+                                        <td>{{ number_format($overhead->amount, 2) ?? 'no entry' }}</td>
 
-                                            {{-- <td>
+                                        {{-- <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                                     data-bs-toggle="dropdown"><i
                                                         class="bx bx-dots-vertical-rounded"></i></button>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item editcostBtn" data-id="{{$overhead->id}}"><i
-                                                            class=" bx bx-edit-alt me-1"></i> Edit</a>
-                                                    <a class="dropdown-item deletecostbtn" data-id="{{$overhead->id}}"><i
-                                                            class="bx bx-trash me-1"></i> Delete</a>
-                                                </div>
-                                            </div>
-                                        </td> --}}
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-                            </table>
+                                            class=" bx bx-edit-alt me-1"></i> Edit</a>
+                                        <a class="dropdown-item deletecostbtn" data-id="{{$overhead->id}}"><i
+                                                class="bx bx-trash me-1"></i> Delete</a>
                         </div>
                     </div>
+                    </td> --}}
+                    </tr>
+                    @endforeach
 
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h3>Financial Cost</h3>
-                            {{-- <button class="btn btn-primary" data-bs-toggle="modal"
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>Financial Cost</h3>
+                    {{-- <button class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#addNewFinancialCostModal">ADD NEW</button> --}}
-                        </div>
-                        <p>Total Financial Cost : <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($totalFinancialCost, 0) }}<span>
-                        </p>
-                        <div class="table-responsive text-nowrap limited-scroll mt-2">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>TYPE</th>
-                                        <th>PO</th>
-                                        <th>PROJECT</th>
-                                        <th>EXPENSE</th>
-                                        <th>AMOUNT</th>
-                                        {{-- <th>ACTION</th> --}}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($budget->financialCosts as $financial)
-                                        @php
-                                            $project = $projects->where('id', $financial->project)->first();
-                                        @endphp
+                </div>
+                <p>Total Financial Cost : <span
+                        style="color:#0067aa; font-weight:bold">{{ number_format($totalFinancialCost, 0) }}<span>
+                </p>
+                <div class="table-responsive text-nowrap limited-scroll mt-2">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>TYPE</th>
+                                <th>PO</th>
+                                <th>PROJECT</th>
+                                <th>EXPENSE</th>
+                                <th>AMOUNT</th>
+                                {{-- <th>ACTION</th> --}}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($budget->financialCosts as $financial)
+                            @php
+                            $project = $projects->where('id', $financial->project)->first();
+                            @endphp
 
-                                        <tr>
-                                            <td>{{ $financial->type ?? 'no entry' }}</td>
-                                            <td>{{ $financial->po ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $financial->expenses ?? 'no entry' }}</td>
-                                            <td>{{ number_format($financial->total_cost, 0) ?? 'no entry' }}</td>
+                            <tr>
+                                <td>{{ $financial->type ?? 'no entry' }}</td>
+                                <td>{{ $financial->po ?? 'no entry' }}</td>
+                                <td>{{ $project->name ?? 'no entry' }}</td>
+                                <td>{{ $financial->expenses ?? 'no entry' }}</td>
+                                <td>{{ number_format($financial->total_cost, 0) ?? 'no entry' }}</td>
 
-                                            {{-- <td>
+                                {{-- <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                                     data-bs-toggle="dropdown"><i
                                                         class="bx bx-dots-vertical-rounded"></i></button>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item editfinancialbtn" data-id="{{$financial->id}}"><i
-                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                    <a class="dropdown-item deletefinancialbtn" data-id="{{$financial->id}}"><i
-                                                            class="bx bx-trash me-1"></i> Delete</a>
-                                                </div>
-                                            </div>
-                                        </td> --}}
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-
-                        </div>
-                    </div>
+                                    class="bx bx-edit-alt me-1"></i> Edit</a>
+                                <a class="dropdown-item deletefinancialbtn" data-id="{{$financial->id}}"><i
+                                        class="bx bx-trash me-1"></i> Delete</a>
                 </div>
             </div>
+            </td> --}}
+            </tr>
+            @endforeach
+            </tbody>
+            </table>
+
         </div>
     </div>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 <!-- Cost Overhead Modal -->
@@ -153,7 +153,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -225,7 +225,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -277,7 +277,7 @@
                     @method('PUT')
                     <div v class="mb-3">
                         <label for="type" class="form-label">Type</label>
-                        <select class="form-select" id="edit_cost_type" name="type" required>
+                        <select class="form-select" id="edit_overhead_type" name="type" required>
                             <option value="overhead cost">Overhead Cost</option>
                             <option value="Other">Other</option>
                         </select>
@@ -287,7 +287,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="edit_cost_project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -360,7 +360,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="financial_project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -414,14 +414,14 @@
         overheadExpenseHandling();
     });
 
-    function openEditSalaryModal(id) {
+    function openEditCostOverHeadModal(id) {
         // Fetch the salary data and populate the form
         $.ajax({
             url: `/pages/get-costoverhead-data/${id}`,
             type: 'GET',
             success: function(data) {
                 $('#edit_cost_id').val(data.id);
-                $('#edit_cost_type').val(data.type);
+                $('#edit_overhead_type').val(data.type);
                 $('#edit_cost_project').val(data.project);
                 $('#edit_cost_po').val(data.po);
                 $('#overhead-edit-expense').val(data.expenses);
@@ -472,7 +472,7 @@
 
     $('.editcostBtn').on('click', function() {
         var id = $(this).data('id');
-        openEditSalaryModal(id);
+        openEditCostOverHeadModal(id);
     });
 
     function openEditFinancialModal(id) {
@@ -547,12 +547,12 @@
 
             // Confirm deletion with the user
             if (confirm('Are you sure you want to delete this project record?')) {
-                deleteSalary(userId); // Call the function to delete the record
+                deleteCostOverHead(userId); // Call the function to delete the record
             }
         });
     });
 
-    function deleteSalary(id) {
+    function deleteCostOverHead(id) {
         fetch('/api/delete-costoverhead', { // Replace with your actual API endpoint
                 method: 'POST',
                 body: JSON.stringify({

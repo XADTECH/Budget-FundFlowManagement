@@ -459,7 +459,7 @@ class DirectCostController extends Controller
             if ($redirect) {
                 return redirect()->back()->with('success', "Record Updated Sucessfully");
             } else {
-                return response()->json(['success' => 'User deleted successfully']);
+                return response()->json(['success' => 'Deleted successfully']);
             }
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
@@ -487,7 +487,7 @@ class DirectCostController extends Controller
             // Delete the project record
             $project->delete();
 
-            return response()->json(['success' => 'User deleted successfully']);
+            return response()->json(['success' => ' eleted successfully']);
         } catch (Exception $e) {
             return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
         }

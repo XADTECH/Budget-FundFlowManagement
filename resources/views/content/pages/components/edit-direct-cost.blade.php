@@ -86,46 +86,46 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->salaries as $salary)
-                                        <tr>
+                                    <tr>
 
-                                            @php
-                                                $project = $projects->where('id', $salary->project)->first();
-                                            @endphp
+                                        @php
+                                        $project = $projects->where('id', $salary->project)->first();
+                                        @endphp
 
-                                            <td>{{ $salary->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $salary->po ?? 'no entry' }}</td>
-                                            <td>{{ $salary->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $salary->status ?? 'no entry' }}</td>
-                                            <td>{{ $salary->description ?? 'no entry' }}</td>
-                                            <td>{{ $salary->overseeing_sites ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->cost_per_month) ?? 'no entry' }}</td>
-                                            <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
-                                            <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->average_cost) ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
-                                            <td>{{ $salary->visa_status ?? 'no entry' }}</td>
-                                            <td>{{ $salary->percentage_cost ?? 'no entry' }}</td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown"><i
-                                                            class="bx bx-dots-vertical-rounded"></i></button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item editSalaryBtn"
-                                                            data-id="{{ $salary->id }}"
-                                                            data-firstname="${user.first_name}"
-                                                            data-lastname="${user.last_name}"
-                                                            data-phonenumber="${user.phone_number}"
-                                                            data-email="${user.email}" data-role="${user.role}"><i
-                                                                class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                        <a class="dropdown-item delete-btn"
-                                                            data-id="{{ $salary->id }}"><i
-                                                                class="bx bx-trash me-1"></i> Delete</a>
-                                                    </div>
+                                        <td>{{ $salary->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $salary->po ?? 'no entry' }}</td>
+                                        <td>{{ $salary->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $salary->status ?? 'no entry' }}</td>
+                                        <td>{{ $salary->description ?? 'no entry' }}</td>
+                                        <td>{{ $salary->overseeing_sites ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->cost_per_month) ?? 'no entry' }}</td>
+                                        <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
+                                        <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->average_cost) ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
+                                        <td>{{ $salary->visa_status ?? 'no entry' }}</td>
+                                        <td>{{ $salary->percentage_cost ?? 'no entry' }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                    data-bs-toggle="dropdown"><i
+                                                        class="bx bx-dots-vertical-rounded"></i></button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item editSalaryBtn"
+                                                        data-id="{{ $salary->id }}"
+                                                        data-firstname="${user.first_name}"
+                                                        data-lastname="${user.last_name}"
+                                                        data-phonenumber="${user.phone_number}"
+                                                        data-email="${user.email}" data-role="${user.role}"><i
+                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item deletesalary-btn"
+                                                        data-id="{{ $salary->id }}"><i
+                                                            class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -162,38 +162,38 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->facilityCosts as $facility)
-                                        <tr>
-                                            @php
-                                                $project = $projects->where('id', $facility->project)->first();
-                                            @endphp
-                                            <td>{{ $facility->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $facility->po ?? 'no entry' }}</td>
-                                            <td>{{ $facility->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $facility->status ?? 'no entry' }}</td>
-                                            <td>{{ $facility->description ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->cost_per_month) ?? 'no entry' }}</td>
-                                            <td>{{ $facility->no_of_staff ?? 'no entry' }}</td>
-                                            <td>{{ $facility->no_of_months ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->average_cost) ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->total_cost) ?? 'no entry' }}</td>
-                                            <td>{{ $facility->percentage_cost ?? 'no entry' }}</td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown"><i
-                                                            class="bx bx-dots-vertical-rounded"></i></button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item edit-btn editFacilitesBtn"
-                                                            data-id="{{ $facility->id }}"><i
-                                                                class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                        <a class="dropdown-item deletefacilities"
-                                                            data-id="{{ $facility->id }}"><i
-                                                                class="bx bx-trash me-1"></i> Delete</a>
-                                                    </div>
+                                    <tr>
+                                        @php
+                                        $project = $projects->where('id', $facility->project)->first();
+                                        @endphp
+                                        <td>{{ $facility->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $facility->po ?? 'no entry' }}</td>
+                                        <td>{{ $facility->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $facility->status ?? 'no entry' }}</td>
+                                        <td>{{ $facility->description ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->cost_per_month) ?? 'no entry' }}</td>
+                                        <td>{{ $facility->no_of_staff ?? 'no entry' }}</td>
+                                        <td>{{ $facility->no_of_months ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->average_cost) ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->total_cost) ?? 'no entry' }}</td>
+                                        <td>{{ $facility->percentage_cost ?? 'no entry' }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                    data-bs-toggle="dropdown"><i
+                                                        class="bx bx-dots-vertical-rounded"></i></button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item edit-btn editFacilitesBtn"
+                                                        data-id="{{ $facility->id }}"><i
+                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item deletefacilities"
+                                                        data-id="{{ $facility->id }}"><i
+                                                            class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -207,10 +207,10 @@
                                 data-bs-target="#addNewMaterialModal">ADD NEW</button>
                         </div>
                         @php
-                            $Mcost =
-                                $totalMaterialCost +
-                                ($existingPettyCash->amount ?? 0) +
-                                ($existingNocPayment->amount ?? 0);
+                        $Mcost =
+                        $totalMaterialCost +
+                        ($existingPettyCash->amount ?? 0) +
+                        ($existingNocPayment->amount ?? 0);
                         @endphp
                         <span>Total Material Cost: <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($Mcost ?? 0) }}</span></span><br>
@@ -246,47 +246,47 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->materialCosts as $material)
-                                        @php
-                                            $project = $projects->where('id', $material->project)->first();
-                                        @endphp
+                                    @php
+                                    $project = $projects->where('id', $material->project)->first();
+                                    @endphp
 
-                                        <tr>
-                                            <td>{{ $material->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $material->po ?? 'no entry' }}</td>
-                                            <td>{{ $material->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $material->status ?? 'no entry' }}</td>
-                                            <td>{{ $material->description ?? 'no entry' }}</td>
-                                            <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
-                                            <td>{{ $material->unit ?? 'no entry' }}</td>
-                                            <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}
-                                            </td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown"><i
-                                                            class="bx bx-dots-vertical-rounded"></i></button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item editMaterialBtn"
-                                                            data-id="{{ $material->id }}"
-                                                            data-firstname="${user.first_name}"
-                                                            data-lastname="${user.last_name}"
-                                                            data-phonenumber="${user.phone_number}"
-                                                            data-email="${user.email}" data-role="${user.role}"><i
-                                                                class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                        <a class="dropdown-item deleteMaterialBtn"
-                                                            data-id="{{ $material->id }}"><i
-                                                                class="bx bx-trash me-1"></i> Delete</a>
-                                                    </div>
+                                    <tr>
+                                        <td>{{ $material->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $material->po ?? 'no entry' }}</td>
+                                        <td>{{ $material->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $material->status ?? 'no entry' }}</td>
+                                        <td>{{ $material->description ?? 'no entry' }}</td>
+                                        <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
+                                        <td>{{ $material->unit ?? 'no entry' }}</td>
+                                        <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                    data-bs-toggle="dropdown"><i
+                                                        class="bx bx-dots-vertical-rounded"></i></button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item editMaterialBtn"
+                                                        data-id="{{ $material->id }}"
+                                                        data-firstname="${user.first_name}"
+                                                        data-lastname="${user.last_name}"
+                                                        data-phonenumber="${user.phone_number}"
+                                                        data-email="${user.email}" data-role="${user.role}"><i
+                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item deleteMaterialBtn"
+                                                        data-id="{{ $material->id }}"><i
+                                                            class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -323,7 +323,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -460,7 +460,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -557,7 +557,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -673,7 +673,7 @@
                         <label for="edit_project" class="form-label">Project</label>
                         <select class="form-select" id="edit_project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -798,7 +798,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -887,7 +887,7 @@
                         <label for="edit_material_project" class="form-label">Project</label>
                         <select class="form-select" id="edit_material_project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -1268,7 +1268,7 @@ function formatNumber(input, hiddenFieldId) {
     });
 
 
-    document.querySelectorAll('.delete-btn').forEach(button => {
+    document.querySelectorAll('.deletesalary-btn').forEach(button => {
         button.addEventListener('click', function(e) {
             const userId = this.getAttribute('data-id');
 
@@ -1454,7 +1454,7 @@ function formatNumber(input, hiddenFieldId) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showAlert('success', data.success);
+                        showAlert('success', data.message);
                         setTimeout(() => {
                             window.location.reload()
                         }, 2000)
