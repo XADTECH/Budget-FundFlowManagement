@@ -95,7 +95,8 @@
                             <label for="cash_outflow_display" class="form-label">Cash Outflow Amount</label>
                             <input type="text" class="form-control" id="cash_outflow_display" name="cash_outflow_display"
                                    value="{{ old('cash_outflow') ? number_format(old('cash_outflow'), 2) : '' }}"
-                                   placeholder="Enter Cash Outflow Amount" oninput="formatNumber(this, 'cash_outflow_hidden')"  />
+                                   placeholder="Enter Cash Outflow Amount" 
+                                   oninput="formatNumber(this, 'cash_outflow_hidden'); toggleFields()" />
                             <input type="hidden" id="cash_outflow_hidden" name="cash_outflow"
                                    value="{{ old('cash_outflow') }}">
                         </div>
@@ -103,7 +104,8 @@
                             <label for="cash_inflow_display" class="form-label">Cash Inflow Amount</label>
                             <input type="text" class="form-control" id="cash_inflow_display" name="cash_inflow_display"
                                    value="{{ old('cash_inflow') ? number_format(old('cash_inflow'), 2) : '' }}"
-                                   placeholder="Enter Cash Inflow Amount" oninput="formatNumber(this, 'cash_inflow_hidden')"  />
+                                   placeholder="Enter Cash Inflow Amount" 
+                                   oninput="formatNumber(this, 'cash_inflow_hidden'); toggleFields()" />
                             <input type="hidden" id="cash_inflow_hidden" name="cash_inflow"
                                    value="{{ old('cash_inflow') }}">
                         </div>
@@ -150,5 +152,14 @@
             input.value = '';
             document.getElementById(hiddenFieldId).value = '';
         }
+    }
+
+    function toggleFields() {
+        const cashOutflowInput = document.getElementById('cash_outflow_display');
+        const cashInflowInput = document.getElementById('cash_inflow_display');
+
+        // Disable or enable inputs based on their values
+        cashOutflowInput.disabled = cashInflowInput.value !== '';
+        cashInflowInput.disabled = cashOutflowInput.value !== '';
     }
 </script>

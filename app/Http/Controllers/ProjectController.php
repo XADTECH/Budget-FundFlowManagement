@@ -144,6 +144,7 @@ class ProjectController extends Controller
   public function showBudgetProjectReport($id)
   {
 
+
     // Optionally, fetch project details using the ID
     // $project = Project::findOrFail($id);
 
@@ -162,12 +163,19 @@ class ProjectController extends Controller
       ->where('id', $id)
       ->first();
 
+
+
     // Retrieve additional data for the view
     $projects = Project::findOrFail($budget->project_id);
+    
+ 
     $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
-    $clients = BusinessClient::findOrFail($budget->project_id);
-    $units = BusinessUnit::findOrFail($budget->project_id);
-    // $budgets = BudgetProject::get();
+
+
+
+    $clients = BusinessClient::findOrFail($budget->client_id);
+    $units = BusinessUnit::findOrFail($budget->unit_id);
+    
     $allProjects = Project::all();
     $facilities = FacilityCost::all();
     $materials = MaterialCost::all();
@@ -176,6 +184,8 @@ class ProjectController extends Controller
     $capitalExpenditures = capitalExpenditure::all();
     $revenuePlans = RevenuePlan::all();
     $salaries = Salary::all();
+
+  
 
     $directCost = DirectCost::firstOrNew([
       'budget_project_id' => $id,
@@ -224,7 +234,7 @@ class ProjectController extends Controller
     $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $id)->sum('total_cost');
 
 
-    return view('content.pages.pages-budget-project-summary-report',   compact(
+    return view('content.pages.pages-budget-project-summary-report', compact(
       'id',
       'clients',
       'projects',

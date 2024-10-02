@@ -237,8 +237,6 @@ class BudgetController extends Controller
                         }
                     }
                 }
-                
-
          }
 
         // Retrieve additional data for the view
@@ -644,7 +642,7 @@ class BudgetController extends Controller
             'description' => 'required|string',
             'status' => 'nullable|string',
             'total_number' => 'required|numeric',
-            'cost' => 'required|numeric',
+            'cost' => 'required|nullable',
             'project_id' => 'required|exists:budget_project,id',
         ]);
 
@@ -659,7 +657,7 @@ class BudgetController extends Controller
         $capitalExpenditure->description = $validated['description'];
         $capitalExpenditure->status = $validated['status'];
         $capitalExpenditure->total_number = $validated['total_number'];
-        $capitalExpenditure->cost = $validated['cost'];
+        $capitalExpenditure->cost = floatval($validated['cost']);
 
         // Calculate total cost if necessary
         $capitalExpenditure->calculateTotalCost();

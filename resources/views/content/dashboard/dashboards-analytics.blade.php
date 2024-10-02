@@ -3,19 +3,19 @@
 @section('title', 'Dashboard - Analytics')
 
 @section('vendor-style')
-<link rel="stylesheet" href="{{asset('assets/vendor/libs/apex-charts/apex-charts.css')}}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}">
 @endsection
 
 @section('vendor-script')
-<script src="{{asset('assets/vendor/libs/apex-charts/apexcharts.js')}}"></script>
+    <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
 @endsection
 
 @section('page-script')
-<script src="{{asset('assets/js/dashboards-analytics.js')}}"></script>
+    <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
 @endsection
 
 @section('content')
-<div class="row">
+    {{-- <div class="row">
   <div class="col-lg-8 mb-4 order-0">
     <div class="card">
       <div class="d-flex align-items-end row">
@@ -457,5 +457,10 @@
     </div>
   </div>
   <!--/ Transactions -->
-</div>
+</div> --}}
+
+    <div style="display: flex; justify-content: center; align-items: center; height: 100%; background-color:white">
+        <img src="{{ asset('assets/img/xad/xad.jfif') }}" alt="Centered Image" style="max-width: 100%; max-height: 100%;">
+        <h4>XAD Budget Management</h4>
+    </div>
 @endsection

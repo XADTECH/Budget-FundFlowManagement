@@ -20,6 +20,7 @@ use App\Models\FinancialCost;
 use App\Models\DirectCost;
 use App\Models\RevenuePlan;
 use App\Models\IndirectCost;
+use App\Models\TotalBudgetAllocated;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderItem;
 use Illuminate\Support\Facades\Validator;
@@ -27,34 +28,28 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
-
 class PurcahseOrderController extends Controller
 {
-    //add / show purchase order 
+    //add / show purchase order
     public function addPurchaseOrder(Request $request)
     {
+        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
 
-    
-    $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
-    
-    $projects = BudgetProject::all();
-    $loggedInUserId = Auth::id();
-    $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
+        $projects = BudgetProject::all();
+        $loggedInUserId = Auth::id();
+        $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
 
+        // Retrieve budgets where manager_id matches the logged-in user ID
+        $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
+        $budgetList = BudgetProject::get();
+        $userList = User::get();
 
-    // Retrieve budgets where manager_id matches the logged-in user ID
-    $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
-    $budgetList = BudgetProject::get();
-    $userList = User::get();
+        return view('content.pages.pages-add-project-budget-purchase-order', compact('budgets', 'purchaseOrders', 'users', 'userList', 'budgetList', 'projects'));
+    }
 
-    return view("content.pages.pages-add-project-budget-purchase-order", compact('budgets', 'purchaseOrders', 'users', 'userList', 'budgetList', 'projects'));
-    
-  }
-
-    //add / show purchase order 
+    //add / show purchase order
     public function storePurchaseOrder(Request $request)
     {
-
         //return response()->json($request->all());
         // Validate incoming request
         $validatedData = $request->validate([
@@ -64,22 +59,19 @@ class PurcahseOrderController extends Controller
             'supplier_address' => 'nullable|string|max:255',
             'project_name' => 'nullable|integer',
             'description' => 'nullable|string',
-            'project_person_id' => 'nullable|integer' // Use 'integer' or 'numeric'
+            'project_person_id' => 'nullable|integer', // Use 'integer' or 'numeric'
         ]);
 
         $currentDate = Carbon::now();
-        $monthName = $currentDate->format('M');  // Short month name (e.g. Jan, Feb)
-        $year = $currentDate->format('Y');       // Full year (e.g. 2024)
+        $monthName = $currentDate->format('M'); // Short month name (e.g. Jan, Feb)
+        $year = $currentDate->format('Y'); // Full year (e.g. 2024)
         $formattedMonthYear = strtoupper($monthName . $year); // E.g. JAN2024
 
         // Get current date in the desired format (MMDDYYYY)
-        $formattedDate = $currentDate->format('mdY');  // E.g. 09062024
+        $formattedDate = $currentDate->format('mdY'); // E.g. 09062024
 
         // Fetch the current sequence for the date or create a new one
-        $poSequence = PurchaseOrderSequence::firstOrCreate(
-            ['date' => $formattedDate],
-            ['last_sequence' => 0]
-        );
+        $poSequence = PurchaseOrderSequence::firstOrCreate(['date' => $formattedDate], ['last_sequence' => 0]);
 
         // Increment the sequence number
         $newSerialNumber = str_pad($poSequence->last_sequence + 1, 4, '0', STR_PAD_LEFT);
@@ -89,7 +81,6 @@ class PurcahseOrderController extends Controller
         $poSequence->save();
 
         $referenceCode = 'PO' . $formattedDate . $newSerialNumber;
-
 
         // Create a new PurchaseOrder instance
         $purchaseOrder = new PurchaseOrder();
@@ -107,42 +98,61 @@ class PurcahseOrderController extends Controller
         $purchaseOrder->save();
 
         // Return a success response
-        return redirect('/pages/add-budget-project-purchase-order')->with(
-            'success',
-            'PO Created successfully!'
-        );
+        return redirect('/pages/add-budget-project-purchase-order')->with('success', 'PO Created successfully!');
     }
 
-    //add purchase order 
+    //add purchase order
     public function editPurchaseOrder($POID)
     {
-        $purchaseOrder = PurchaseOrder::where('po_number', $POID)->first(); // Use first() to get a single record
+        // Fetching the Purchase Order
+        $purchaseOrder = PurchaseOrder::where('po_number', $POID)->first();
+
+        // Fetch salary, facility, and material budgets using nullable operator
+        $totalBudgetAllocated = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->first();
+
+        // Check if purchase order exists before proceeding
+        if (!$purchaseOrder) {
+            return redirect('/pages/add-budget-project-purchase-order')->withErrors(['error' => 'Purchase Order not found!']);
+        }
+
+        if (!$totalBudgetAllocated) {
+            return redirect('/pages/add-budget-project-purchase-order')->withErrors(['error' => 'Budget is Not Allocated For this Project']);
+        }
+
+        // Fetching related data using relationships and first()
         $budget = BudgetProject::where('id', $purchaseOrder->project_id)->first();
-        $clients = BusinessClient::where('id', $budget->client_id);
-        $units = BusinessUnit::where('id', $budget->unit_id);
-        $budgets = Project::where('id', $budget->project_id);
-        $requested = User::where('id', $purchaseOrder->requested_by)->first();
-        $prepared = User::where('id', $purchaseOrder->prepared_by)->first();
+        $clients = BusinessClient::where('id', $budget->client_id)->first(); // fetching client details
+        $units = BusinessUnit::where('id', $budget->unit_id)->first(); // fetching unit details
+        $budgets = Project::where('id', $budget->project_id)->first(); // fetching project details
+        $requested = User::where('id', $purchaseOrder->requested_by)->first(); // fetching user who requested
+        $prepared = User::where('id', $purchaseOrder->prepared_by)->first(); // fetching user who prepared
+
+        // Retrieve utilization and budget details
         $utilization = $budget->getUtilization();
         $poStatus = $purchaseOrder->status;
+
+        // Fetch materials, salaries, facilities, and capital expenses
         $materials = MaterialCost::where('budget_project_id', $purchaseOrder->project_id)->get();
+        $salaries = Salary::where('budget_project_id', $purchaseOrder->project_id)->get();
+        $facilities = FacilityCost::where('budget_project_id', $purchaseOrder->project_id)->get();
+        $capitalExpenses = CapitalExpenditure::where('budget_project_id', $purchaseOrder->project_id)->get();
 
-        $balanceBudget =  $budget->getRemainingBudget();
+        // Calculate budget utilization details
+        $balanceBudget = $budget->getRemainingBudget();
 
-        //return response($requested);
+        $salaryBudget = $totalBudgetAllocated?->total_salary;
+        $facilityBudget = $totalBudgetAllocated?->total_facility_cost;
+        $materialBudget = $totalBudgetAllocated?->total_material_cost;
+        $totalBudget = $totalBudgetAllocated?->allocated_budget;
+        
+        // Fetch capital expenditures (as a collection)
+        $capitalExpensesTotal = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->pluck('total_capital_expenditure');
 
-
-        if ($purchaseOrder) {
-            // Return the view with the purchase order data if found
-            return view("content.pages.show-budget-project-purchase-order", compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus', 'materials'));
-        } else {
-            // Redirect with an error message if not found
-            return redirect('/pages/add-budget-project-purchase-order')
-                ->withErrors(['error' => 'Purchase Order not found!']);
-        }
+        // Returning the view with compact data
+        return view('content.pages.show-budget-project-purchase-order', compact('purchaseOrder', 'capitalExpensesTotal', 'salaryBudget', 'facilityBudget', 'materialBudget', 'capitalExpenses', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus', 'materials', 'salaries', 'facilities', 'totalBudget'));
     }
 
-    //save purchase order 
+    //save purchase order
 
     public function store(Request $request)
     {
@@ -173,13 +183,11 @@ class PurcahseOrderController extends Controller
                 'total_amount' => $request->totalAmount,
                 'total_discount' => $request->totalDiscount,
                 'total_vat' => $request->totalVAT,
-                'status' => $request->status
+                'status' => $request->status,
             ]);
 
-            $purchaseOrder->status = "submitted";
+            $purchaseOrder->status = 'submitted';
             $purchaseOrder->save();
-
-
 
             // Return success response
             return response()->json(['message' => 'Purchase order items saved successfully!'], 200);
@@ -190,7 +198,7 @@ class PurcahseOrderController extends Controller
         }
     }
 
-    //filter purchase order 
+    //filter purchase order
 
     public function filterPurchaseOrders(Request $request)
     {
@@ -198,9 +206,9 @@ class PurcahseOrderController extends Controller
         $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
         $budgetList = BudgetProject::get();
         $userList = User::get();
-
-
         $query = PurchaseOrder::query();
+
+        $totalBudgetAllocated = TotalBudgetAllocated::all();
 
         if ($request->has('project_id') && $request->project_id != '') {
             $query->where('project_id', $request->project_id);
@@ -220,6 +228,6 @@ class PurcahseOrderController extends Controller
 
         $purchaseOrders = $query->get();
 
-        return view('content.pages.pages-filter-purchase-order-list', compact('purchaseOrders', 'projects', 'users', 'userList', 'budgetList'));
+        return view('content.pages.pages-filter-purchase-order-list', compact('purchaseOrders', 'projects', 'users', 'userList', 'budgetList', 'totalBudgetAllocated'));
     }
 }

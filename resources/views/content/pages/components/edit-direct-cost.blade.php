@@ -388,11 +388,23 @@
                     </div>
 
 
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label for="cost_per_month" class="form-label">Cost Per Month</label>
                         <input type="number" class="form-control" id="cost_per_month" name="cost_per_month"
                             placeholder="e.g., 5000.00" step="0.01" required>
+                    </div> --}}
+
+                    <div class="mb-3">
+                        <label for="cost_per_month_display" class="form-label">Cost Per Month</label>
+                        <input type="text" class="form-control" id="cost_per_month_display"
+                            name="cost_per_month_display"
+                            value="{{ old('cost_per_month') ? number_format(old('cost_per_month'), 2) : '' }}"
+                            placeholder="e.g., 5000.00" oninput="formatNumber(this, 'cost_per_month_hidden')"
+                            required />
+                        <input type="hidden" id="cost_per_month_hidden" name="cost_per_month"
+                            value="{{ old('cost_per_month') }}">
                     </div>
+
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <input type="text" class="form-control" id="description" name="description"
@@ -479,10 +491,17 @@
 
 
                     <div class="mb-3">
-                        <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                        <input type="number" class="form-control" id="cost_per_month"
-                            placeholder="eg,cost per month" name="cost_per_month" required>
+                        <label for="facility_cost_per_month_display" class="form-label">Cost Per Month</label>
+                        <input type="text" class="form-control" id="facility_cost_per_month_display"
+                            name="cost_per_month_display"
+                            value="{{ old('cost_per_month') ? number_format(old('cost_per_month'), 2) : '' }}"
+                            placeholder="e.g., 5000.00" oninput="formatNumber(this, 'facility_cost_per_month_hidden')"
+                            required />
+                        <input type="hidden" id="facility_cost_per_month_hidden" name="cost_per_month"
+                            value="{{ old('cost_per_month') }}">
                     </div>
+
+
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <input type="text" class="form-control" id="description" name="description"
@@ -582,9 +601,13 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="unit_cost" class="form-label">Unit Cost</label>
-                            <input type="number" class="form-control" id="unit_cost" name="unit_cost"
-                                step="any" placeholder="e.g., 50.00">
+                            <label for="unit_cost_display" class="form-label">Unit Cost</label>
+                            <input type="text" class="form-control" id="unit_cost_display"
+                                name="unit_cost_display"
+                                value="{{ old('unit_cost') ? number_format(old('unit_cost'), 2) : '' }}"
+                                placeholder="e.g., 50.00" oninput="formatNumber(this, 'unit_cost_hidden')" />
+                            <input type="hidden" id="unit_cost_hidden" name="unit_cost"
+                                value="{{ old('unit_cost') }}">
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
@@ -951,6 +974,32 @@
 
 
 <script>
+function formatNumber(input, hiddenFieldId) {
+    // Remove non-digit characters (except for decimal point)
+    let value = input.value.replace(/[^0-9.]/g, '');
+
+    if (value) {
+        let parts = value.split('.');
+        let integerPart = parseInt(parts[0]).toLocaleString('en-US');
+        let formattedValue = integerPart;
+
+        if (parts[1] !== undefined) {
+            formattedValue += '.' + parts[1].slice(0, 2); // Allow up to 2 decimal places
+        }
+
+        input.value = formattedValue;
+        document.getElementById(hiddenFieldId).value = value;
+
+        // Log the value for debugging
+        console.log("Formatted Value:", formattedValue);
+        console.log("Hidden Field Value:", value);
+    } else {
+        input.value = '';
+        document.getElementById(hiddenFieldId).value = '';
+    }
+}
+
+
     function facilityExpenseHandling() {
 
         const facilityExpenseSelect = document.getElementById('facilityExpense');

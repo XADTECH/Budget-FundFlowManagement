@@ -166,28 +166,32 @@ class CashFlowController extends Controller
                   break;
               case 'Facility':
                   $allocatedBudgetEntry->total_facility_cost -= $cashOutflow;
+                  $allocatedBudgetEntry->total_dpm += $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
           
                   break;
               case 'Material':
                   $allocatedBudgetEntry->total_material_cost -= $cashOutflow;
+                  $allocatedBudgetEntry->total_dpm += $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
     
                   break;
               case 'Overhead':
                   $allocatedBudgetEntry->total_cost_overhead -= $cashOutflow;
+                  $allocatedBudgetEntry->total_dpm += $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
       
                   break;
               case 'Financial':
                   $allocatedBudgetEntry->total_financial_cost -= $cashOutflow;
+                  $allocatedBudgetEntry->total_dpm += $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
          
                   break;
               case 'Capital Expenditure':
                   $allocatedBudgetEntry->total_capital_expenditure -= $cashOutflow;
+                  $allocatedBudgetEntry->total_dpm += $cashOutflow;
                   $lastCashFlow->balance -= $cashOutflow;
-         
                   break;
           }
       

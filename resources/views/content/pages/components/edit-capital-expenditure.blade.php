@@ -190,10 +190,12 @@
 
                     <div class="mb-3">
                         <label for="cost" class="form-label">Cost</label>
-                        <input type="number" class="form-control" id="cost" name="cost"
-                            placeholder="Enter Cost ..." required>
+                        <input type="text" class="form-control" id="cost" name="cost"
+                            placeholder="Enter Cost ..." required oninput="formatNumber(this, 'cost_hidden')">
+                        <!-- Hidden field to store the raw numeric value -->
+                        <input type="hidden" id="cost_hidden" name="cost_hidden">
                     </div>
-
+                    
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <input type="text" class="form-control" id="description" name="description"
@@ -218,6 +220,33 @@
 
 
 <script>
+    
+    function formatNumber(input, hiddenFieldId) {
+    // Remove non-digit characters (except for decimal point)
+    let value = input.value.replace(/[^0-9.]/g, '');
+
+    if (value) {
+        let parts = value.split('.');
+        let integerPart = parseInt(parts[0]).toLocaleString('en-US');
+        let formattedValue = integerPart;
+
+        if (parts[1] !== undefined) {
+            formattedValue += '.' + parts[1].slice(0, 2); // Allow up to 2 decimal places
+        }
+
+        input.value = formattedValue;
+        document.getElementById(hiddenFieldId).value = value;
+
+        // Log the value for debugging
+        console.log("Formatted Value:", formattedValue);
+        console.log("Hidden Field Value:", value);
+    } else {
+        input.value = '';
+        document.getElementById(hiddenFieldId).value = '';
+    }
+}
+
+
     // Set up the event listener when the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
         function overheadExpenseHandling() {

@@ -313,11 +313,13 @@
                     <tr>
                         <td class="label">Total Budget:</td>
                         <td class="value">
-                            @if (is_null($budget->total_budget_allocated))
-                                <span style="color: red; font-weight: bold;">Not Assigned</span>
-                            @else
-                                {{ number_format($budget->total_budget_allocated) }}
-                            @endif
+                            <span id="budgetDisplay">
+                                @if (is_null($totalBudget))
+                                    <span style="color: red; font-weight: bold;">Not Assigned</span>
+                                @else
+                                    {{ number_format($totalBudget) }}
+                                @endif
+                            </span>
                         </td>
                     </tr>
                     <tr>
@@ -351,14 +353,9 @@
                     </table>
                 </div>
             </div>
-
-            {{-- <div style="display: flex; flex-direction: column; align-items: flex-end; width: 100%; margin-top: 2rem;">
-                <hr style="width: 18rem; border: 2px solid black !important; margin: 0;">
-                <strong>Approved By: Chief Executive Officer</strong>
-            </div> --}}
-
-
         </div>
+
+
 
         <!-- Modal for adding items -->
         <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel"
@@ -370,13 +367,36 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body custom-modal-body">
+                        <!-- Display Material Budget -->
+                        <div class="mb-3">
+                            <strong>Material Budget: </strong><span
+                                id="materialBudget">{{ number_format($materialBudget, 0) }}</span>
+                        </div>
+
+                        <!-- Display Total Requested Amount -->
+                        <div class="mb-3">
+                            <strong>Total Requested Amount: </strong><span id="totalRequestedAmount">0</span>
+                        </div>
+
                         <form id="addItemForm">
+                            <!-- Category Selection -->
                             <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-control" id="category" name="category" required>
+                                    <option value="">Select a category</option>
+                                    <option value="material">Material</option>
+                                    {{-- <option value="salary">Salary</option>
+                            <option value="facilities">Facilities</option>
+                            <option value="capital_expenses">Capital Expenses</option> --}}
+                                </select>
+                            </div>
+
+                            <!-- Item Selection -->
+                            <div class="mb-3" id="itemContainer" style="display:none;">
                                 <label for="item" class="form-label">Item #</label>
                                 <select class="form-control" id="item" name="item" required>
                                     <option value="" data-description="" data-quantity="" data-unit-cost="">Select
                                         an item</option>
-                                    <!-- Dynamically populate options with item data from server -->
                                     @foreach ($materials as $material)
                                         <option value="{{ $material->id }}"
                                             data-description="{{ $material->description }}"
@@ -387,6 +407,7 @@
                                     @endforeach
                                 </select>
                             </div>
+
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
                                 <textarea class="form-control" id="description" name="description" required></textarea>
@@ -399,7 +420,7 @@
                                 <label for="unit_price" class="form-label">Unit Price</label>
                                 <input type="number" class="form-control" id="unit_price" name="unit_price" required>
                             </div>
-                            <button id="addItemBtn" type="button" class="btn btn-primary">Add Item</button>
+                            <button id="addItemBtn" type="button" class="btn btn-primary" disabled>Add Item</button>
                         </form>
                     </div>
                 </div>
@@ -407,39 +428,151 @@
         </div>
 
 
+
         <script>
-            // Get the PO number from the hidden input field or wherever it's set
-            var poNumber = document.getElementById('poNumber').textContent.trim();
-
-            console.log(poNumber)
-
+            // Get elements
+            const quantityInput = document.getElementById('quantity');
+            const unitPriceInput = document.getElementById('unit_price');
+            const addItemBtn = document.getElementById('addItemBtn');
+            const materialBudget = parseFloat(document.getElementById('materialBudget').textContent.replace(/,/g, ''));
+            const totalRequestedAmountDisplay = document.getElementById('totalRequestedAmount');
+        
+            function calculateTotalCost() {
+                alert("called");
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const unitPrice = parseFloat(unitPriceInput.value) || 0;
+                const totalCost = quantity * unitPrice;
+        
+                // Update the total requested amount display
+                totalRequestedAmountDisplay.textContent = totalCost.toLocaleString('en-US', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+        
+                // Check if the total cost exceeds the material budget
+                if (totalCost > materialBudget) {
+                    addItemBtn.disabled = true; // Disable button
+                    alert("There is not enough budget.");
+                } else {
+                    addItemBtn.disabled = false; // Enable button
+                }
+            }
+        
+            // Get the PO number from the hidden input field
+            const poNumber = document.getElementById('poNumber').textContent.trim();
+        
             // Initialize purchase order items array
-            let purchaseOrderItems = [];
+            let purchaseOrderItems = JSON.parse(localStorage.getItem(`purchaseOrder_${poNumber}`)) || [];
+        
+            // Load data and render table on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                renderTable();
+            });
+        
+            // Add item event
+            document.getElementById('addItemBtn').addEventListener('click', () => {
+                const item = document.getElementById('item').value;
+                const description = document.getElementById('description').value;
+                const quantity = parseFloat(document.getElementById('quantity').value);
+                const unitPrice = parseFloat(document.getElementById('unit_price').value);
+        
+                if (!item || isNaN(quantity) || isNaN(unitPrice)) {
+                    alert("Please fill out all fields correctly.");
+                    return;
+                }
+        
+                purchaseOrderItems.push({
+                    item,
+                    description,
+                    quantity,
+                    unitPrice,
+                    itemTotal: quantity * unitPrice
+                });
+                saveToLocalStorage();
+                renderTable();
+                document.getElementById('addItemForm').reset();
+                $('#addItemModal').modal('hide');
+            });
+        
+            // Save items to local storage
+            const saveToLocalStorage = () => {
+                localStorage.setItem(`purchaseOrder_${poNumber}`, JSON.stringify(purchaseOrderItems));
+            };
+        
+            // Render the purchase order table
+            const renderTable = () => {
+                const tableBody = document.getElementById('purchaseOrderItems');
+                tableBody.innerHTML = '';
+        
+                let subtotal = 0;
+                purchaseOrderItems.forEach((orderItem, index) => {
+                    subtotal += orderItem.itemTotal;
+        
+                    tableBody.insertAdjacentHTML('beforeend', `
+                        <tr>
+                            <td>${orderItem.item}</td>
+                            <td>${orderItem.description}</td>
+                            <td>${orderItem.quantity}</td>
+                            <td>${orderItem.unitPrice.toFixed(2)}</td>
+                            <td>${orderItem.itemTotal.toFixed(2)}</td>
+                            <td><button class="btn btn-danger" onclick="removeItem(${index})">Remove</button></td>
+                        </tr>
+                    `);
+                });
+        
+                document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+                updateTotals();
+            };
+        
+            // Remove an item from the list
+            const removeItem = (index) => {
+                purchaseOrderItems.splice(index, 1);
+                saveToLocalStorage();
+                renderTable();
+            };
+        
+            // Update totals for discount, VAT, and amount
+            const updateTotals = () => {
+                const subtotal = parseFloat(document.getElementById('subtotal').textContent) || 0;
+                const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
+                const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
+        
+                const totalDiscount = subtotal * (discountValue / 100);
+                const totalVAT = (subtotal - totalDiscount) * (vatValue / 100);
+                const totalAmount = (subtotal - totalDiscount + totalVAT).toFixed(2);
+        
+                document.getElementById('totalDiscount').textContent = Math.floor(totalDiscount).toLocaleString('en-US'); // Removes .00
+document.getElementById('totalVAT').textContent = Math.floor(totalVAT).toLocaleString('en-US'); // Removes .00
+document.getElementById('totalAmount').textContent = Math.floor(totalAmount).toLocaleString('en-US'); // Removes .00
 
-            function submitData() {
-                let totalAmount = parseFloat(document.getElementById('totalAmount').textContent) || 0;
-                let totalDiscount = parseFloat(document.getElementById('totalDiscount').textContent) || 0;
-                let totalVAT = parseFloat(document.getElementById('totalVAT').textContent) || 0;
-
+        
+                const requestAmount = parseFloat(totalAmount);
+                const balanceBudget = parseFloat(document.getElementById('balance_budget').textContent.replace(/,/g, '')) || 0;
+        
+                document.getElementById('total_request_amount').textContent = requestAmount.toLocaleString();
+                document.getElementById('total_balance_for_budget').textContent = (balanceBudget - requestAmount).toLocaleString();
+            };
+        
+            // Update totals on input change
+            document.getElementById('discountInput').addEventListener('input', updateTotals);
+            document.getElementById('vatInput').addEventListener('input', updateTotals);
+        
+            // Submit data to the server
+            const submitData = () => {
+                const totalAmount = parseFloat(document.getElementById('totalAmount').textContent) || 0;
+        
                 if (totalAmount > 0) {
-                    // Retrieve items from local storage
-                    const storedItems = JSON.parse(localStorage.getItem(`purchaseOrder_${poNumber}`)) || [];
-
-
-                    // Prepare data for submission
                     const data = {
                         poNumber: poNumber,
-                        items: storedItems,
+                        items: purchaseOrderItems,
                         totalAmount: totalAmount,
-                        totalDiscount: totalDiscount,
-                        totalVAT: totalVAT,
-                        "status": "submitted",
+                        totalDiscount: parseFloat(document.getElementById('totalDiscount').textContent) || 0,
+                        totalVAT: parseFloat(document.getElementById('totalVAT').textContent) || 0,
+                        status: "submitted",
                         budget: '{{ $budget->id }}',
                         po_number: '{{ $purchaseOrder->po_number }}',
                     };
-
-                    console.log(data);
-
+        
                     fetch('/api/save-purchase-order', {
                             method: 'POST',
                             headers: {
@@ -451,159 +584,79 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.message === 'Purchase order items saved successfully!') {
-                                // Redirect to the specified page
                                 window.location.href = '/pages/add-budget-project-purchase-order';
                             } else {
-                                // Handle unexpected responses or errors
                                 console.error('Unexpected response:', data);
                             }
                         })
-                        .catch(error => {
-                            console.log(error);
-                        });
-
+                        .catch(console.error);
                 } else {
-                    alert("Total amount is less than or equal to 0.");
+                    alert("Total amount must be greater than 0.");
                 }
-            }
-
-
-            // Function to load data from local storage
-            function loadFromLocalStorage(poNumber) {
-                const storedItems = JSON.parse(localStorage.getItem(`purchaseOrder_${poNumber}`));
-                if (storedItems) {
-                    purchaseOrderItems.push(...storedItems);
-                    renderTable();
+            };
+        
+            // Handle category and item selection changes
+            document.getElementById('category').addEventListener('change', function() {
+                const selectedCategory = this.value;
+                const itemContainer = document.getElementById('itemContainer');
+                const itemDropdown = document.getElementById('item');
+                itemContainer.style.display = selectedCategory ? 'block' : 'none';
+                itemDropdown.innerHTML = '<option value="">Select an item</option>';
+        
+                let items = [];
+                switch (selectedCategory) {
+                    case 'material':
+                        items = @json($materials);
+                        updateBudget({{ $budget->material_budget ?? 0 }});
+                        break;
+                    case 'salary':
+                        items = @json($salaries);
+                        updateBudget({{ $budget->salary_budget ?? 0 }});
+                        break;
+                    case 'facilities':
+                        items = @json($facilities);
+                        updateBudget({{ $budget->facility_budget ?? 0 }});
+                        break;
+                    case 'capital_expenses':
+                        items = @json($capitalExpenses);
+                        updateBudget({{ $budget->capital_expenses ?? 0 }});
+                        break;
                 }
-            }
-
-            // Function to save data to local storage
-            function saveToLocalStorage(poNumber) {
-                localStorage.setItem(`purchaseOrder_${poNumber}`, JSON.stringify(purchaseOrderItems));
-            }
-
-            // Function to render the table
-            function renderTable() {
-                const tableBody = document.getElementById('purchaseOrderItems');
-                tableBody.innerHTML = '';
-
-                let subtotal = 0;
-
-                purchaseOrderItems.forEach((orderItem, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                <td>${orderItem.item}</td>
-                <td>${orderItem.description}</td>
-                <td>${orderItem.quantity}</td>
-                <td>${orderItem.unitPrice.toFixed(2)}</td>
-                <td>${orderItem.itemTotal.toFixed(2)}</td>
-                <td><button class="btn btn-danger" onclick="removeItem(${index})">Remove</button></td>
-            `;
-                    tableBody.appendChild(row);
-
-                    subtotal += orderItem.itemTotal;
+        
+                items.forEach(item => {
+                    itemDropdown.insertAdjacentHTML('beforeend', `
+                        <option value="${item.id}" data-description="${item.description}" data-quantity="${item.quantity}" data-unit-cost="${item.unit_cost}">
+                            ${item.expenses}
+                        </option>
+                    `);
                 });
-
-                document.getElementById('subtotal').innerText = subtotal.toFixed(2);
-
-                // Recalculate totals when discount or VAT inputs change
-                updateTotals();
-            }
-
-            // Function to update totals based on discount and VAT
-            function updateTotals() {
-                const subtotal = parseFloat(document.getElementById('subtotal').innerText) || 0;
-                const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
-                const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
-
-                // Calculate total discount and VAT
-                const totalDiscount = subtotal * (discountValue / 100);
-                const totalVAT = (subtotal - totalDiscount) * (vatValue / 100);
-
-                // Update totals in the document
-                document.getElementById('totalDiscount').innerText = totalDiscount.toFixed(2);
-                document.getElementById('totalVAT').innerText = totalVAT.toFixed(2);
-                document.getElementById('totalAmount').innerText = (subtotal - totalDiscount + totalVAT).toFixed(2);
-
-                // Update balance
-                const requestAmount = parseFloat(document.getElementById('totalAmount').innerText);
-                document.getElementById('total_request_amount').innerText = requestAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-                const balanceBudgetElement = document.getElementById('balance_budget');
-                const balanceBudget = parseFloat(balanceBudgetElement.innerText.replace(/,/g, '')) || 0;
-                document.getElementById('total_balance_for_budget').innerText = (balanceBudget - requestAmount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-            }
-
-            // Function to remove an item
-            function removeItem(index) {
-                if (index >= 0 && index < purchaseOrderItems.length) {
-                    // Remove item at the specified index
-                    purchaseOrderItems.splice(index, 1);
-                    saveToLocalStorage(poNumber); // Save updated items
-                    renderTable(); // Re-render the table
-                } else {
-                    console.error('Invalid index for removal');
-                }
-            }
-
-            document.getElementById('addItemBtn').addEventListener('click', function() {
-                const item = document.getElementById('item').value;
-                const description = document.getElementById('description').value;
-                const quantity = parseFloat(document.getElementById('quantity').value);
-                const unitPrice = parseFloat(document.getElementById('unit_price').value);
-
-                if (!item || isNaN(quantity) || isNaN(unitPrice)) {
-                    alert("Please fill out all fields correctly.");
-                    return;
-                }
-
-                // Calculate item total
-                const itemTotal = quantity * unitPrice;
-
-                // Add item to the list
-                purchaseOrderItems.push({
-                    item,
-                    description,
-                    quantity,
-                    unitPrice,
-                    itemTotal
-                });
-
-                // Save to local storage
-                saveToLocalStorage(poNumber);
-
-                // Re-render the table with the new data
-                renderTable();
-
-                // Reset the form and close the modal
-                document.getElementById('addItemForm').reset();
-                $('#addItemModal').modal('hide');
             });
-
-
-            // Event listeners to update totals dynamically
-            document.getElementById('discountInput').addEventListener('input', updateTotals);
-            document.getElementById('vatInput').addEventListener('input', updateTotals);
-
-            // Load purchase order items from local storage when the page loads
-            loadFromLocalStorage(poNumber);
-
-
+        
+            // Update budget display
+            const updateBudget = (amount) => {
+                const budgetCell = document.querySelector('.value');
+                budgetCell.innerHTML = amount === 0 ? '<span style="color: red; font-weight: bold;">Not Assigned</span>' :
+                    number_format(amount);
+            };
+        
+            // Format number with commas
+            const number_format = (number) => new Intl.NumberFormat().format(number);
+        
+            // Populate item details when selecting an item
             document.getElementById('item').addEventListener('change', function() {
-                // Get the selected option
-                var selectedOption = this.options[this.selectedIndex];
-
-                // Get the associated data attributes
-                var description = selectedOption.getAttribute('data-description');
-                var quantity = selectedOption.getAttribute('data-quantity');
-                var unitCost = selectedOption.getAttribute('data-unit-cost');
-
-                console.log(description, quantity, unitCost);
-
-                // Set the values in the corresponding fields
-                document.getElementById('description').value = description;
-                document.getElementById('quantity').value = quantity;
-                document.getElementById('unit_price').value = unitCost;
+                const selectedOption = this.options[this.selectedIndex];
+                document.getElementById('description').value = selectedOption.getAttribute('data-description');
+                document.getElementById('quantity').value = selectedOption.getAttribute('data-quantity');
+                document.getElementById('unit_price').value = selectedOption.getAttribute('data-unit-cost');
+        
+                // Call calculateTotalCost when an item is selected
+                calculateTotalCost();
             });
+        
+            // Event listeners to recalculate total cost when quantity or unit price changes
+            quantityInput.addEventListener('input', calculateTotalCost);
+            unitPriceInput.addEventListener('input', calculateTotalCost);
         </script>
+        
 
     @endsection
