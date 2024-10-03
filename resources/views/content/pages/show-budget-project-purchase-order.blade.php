@@ -222,12 +222,12 @@
                         <h6 class="text-white p-2" style="background-color:#1a73e8">Project Detail</h6>
                         <p><strong>Project:</strong> {{ $budget->reference_code }}</p>
                         <p><strong>Requested By:</strong>{{ $requested->first_name }}</p>
-                        <p>
+                        {{-- <p>
                             <strong>Verified By:</strong>
                             <span style="color: {{ $prepared->verified_by ? 'black' : 'red' }}">
                                 {{ $prepared->verified_by ?? 'not verified' }}
                             </span>
-                        </p>
+                        </p> --}}
                         <p><strong>Prepared By:</strong> {{ $prepared->first_name }}</p>
                     </div>
                 </div>
@@ -306,53 +306,56 @@
                     <i class="fas fa-save"></i> {{ $purchaseOrder->status == 'submitted' ? 'Submited' : 'Submit' }}
                 </button>
             </div>
-
-            <div class="budget-verification-box mt-4">
-                <h5>Budget Department Verification</h5>
-                <table>
-                    <tr>
-                        <td class="label">Total Budget:</td>
-                        <td class="value">
-                            <span id="budgetDisplay">
-                                @if (is_null($totalBudget))
-                                    <span style="color: red; font-weight: bold;">Not Assigned</span>
-                                @else
-                                    {{ number_format($totalBudget) }}
-                                @endif
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="label">Utilization:</td>
-                        <td class="value" id="utilize">{{ number_format($utilization) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Balance Budget:</td>
-                        <td id="balance_budget" class="value" value="{{ number_format($balanceBudget) }}">
-                            {{ number_format($balanceBudget) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Current Request:</td>
-                        <td id="total_request_amount" class="value"></td>
-                    </tr>
-                    <tr>
-                        <td class="label">Balance:</td>
-                        <td id="total_balance_for_budget" class="value"></td>
-                    </tr>
-                </table>
-                <div class="signature-box mt-3">
+            @if ($purchaseOrder->status !== 'submitted')
+                <div class="budget-verification-box mt-4">
+                    <h5>Budget Department Verification</h5>
                     <table>
                         <tr>
-                            <td class="signature-line">{{ $prepared->first_name }}</td>
-                            <td class="signature-line">{{ $budget->month }}</td>
+                            <td class="label">Total Budget:</td>
+                            <td class="value">
+                                <span id="budgetDisplay">
+                                    @if (is_null($totalBudget))
+                                        <span style="color: red; font-weight: bold;">Not Assigned</span>
+                                    @else
+                                        {{ number_format($totalBudget) }}
+                                    @endif
+                                </span>
+                            </td>
                         </tr>
                         <tr>
-                            <td>Name & Signature</td>
-                            <td>Date</td>
+                            <td class="label">Utilization:</td>
+                            <td class="value" id="utilize">{{ number_format($utilization) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Balance Budget:</td>
+                            <td id="balance_budget" class="value">
+                                {{ number_format($balanceBudget) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">Current Request:</td>
+                            <td id="total_request_amount" class="value"></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Balance:</td>
+                            <td id="total_balance_for_budget" class="value"></td>
                         </tr>
                     </table>
+                    <div class="signature-box mt-3">
+                        <table>
+                            <tr>
+                                <td class="signature-line">{{ $prepared->first_name }}</td>
+                                <td class="signature-line">{{ $budget->month }}</td>
+                            </tr>
+                            <tr>
+                                <td>Name & Signature</td>
+                                <td>Date</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            @endif
+
         </div>
 
 
@@ -482,12 +485,17 @@
                     return;
                 }
 
+                const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
+                const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
+
                 purchaseOrderItems.push({
                     item,
                     description,
                     quantity,
                     unitPrice,
-                    itemTotal: quantity * unitPrice
+                    itemTotal: quantity * unitPrice,
+                    discountValue,
+                    vatValue
                 });
                 saveToLocalStorage();
                 renderTable();
@@ -516,6 +524,7 @@
                             <td>${orderItem.quantity}</td>
                             <td>${orderItem.unitPrice.toFixed(2)}</td>
                             <td>${orderItem.itemTotal.toFixed(2)}</td>
+                            
                             <td><button class="btn btn-danger" onclick="removeItem(${index})">Remove</button></td>
                         </tr>
                     `);
