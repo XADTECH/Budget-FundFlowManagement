@@ -8,7 +8,16 @@
 </form>
 
 @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
+@if(session()->has('failures'))
+<div class="alert alert-danger">
+    <ul>
+        @foreach(session()->get('failures') as $failure)
+        <li>Row {{ $failure->row() }}: {{ $failure->errors()[0] }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif
