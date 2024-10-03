@@ -134,6 +134,10 @@ Route::middleware(['checklogin'])->group(function () {
   // Route to handle PUT request for updating salary
   Route::put('/pages/update-budget-project-salary/{id}', [ProjectController::class, 'update'])->name('update.salary');
 
+  //delete project budget 
+  Route::delete('/budgets/{id}', [BudgetController::class, 'destroy'])->name('budgets.destroy');
+
+
   //update material 
   Route::put('/pages/update-budget-project-material/{id}', [ProjectController::class, 'updateMaterial'])->name('update.updateMaterial');
 

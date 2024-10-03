@@ -37,7 +37,7 @@ class RevenuePlan extends Model
     public function calculateTotalProfit()
     {
         // Retrieve the total of all previous records' total_profit
-        $currentTotalProfit = RevenuePlan::sum('amount');
+        $currentTotalProfit = RevenuePlan::where('budget_project_id', $this->budget_project_id)->sum('amount');
     
         // Add the current amount to the total profit
         $this->total_profit = $currentTotalProfit + $this->amount;
@@ -45,6 +45,7 @@ class RevenuePlan extends Model
         // Save the updated total profit for the current record
         $this->save();
     }
+    
     
 
     public function calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost)
@@ -91,7 +92,7 @@ class RevenuePlan extends Model
     }
 
     // Run all calculations
-    public function runCalculations()
+    public function runCalculations($budgetProjectId)
     {
         $this->calculateTotalProfit();
         $this->calculateNetProfitBeforeTax();

@@ -5,6 +5,9 @@
 @section('content')
 
 <style>
+
+    
+
     .limited-scroll {
         max-height: 200px;
         /* Set the maximum height as needed */
@@ -149,7 +152,7 @@
                     <div class="row mt-4">
                         <div class="col-sm-6">
                             <label for="sitename" class="form-label">Site Name</label>
-                            <input type="text" class="form-control" name="sitename" value="{{ old('sitename', $budget->sitename) }}" placeholder="Please enter site name" />
+                            <input type="text" class="form-control" name="sitename" value="{{ old('sitename', $budget->site_name) }}" placeholder="Please enter site name" />
                         </div>
 
                         <div class="col-sm-6">

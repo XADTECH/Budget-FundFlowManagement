@@ -87,7 +87,7 @@
                                             <td>{{ $capital->po ?? 'no entry' }}</td>
                                             <td>{{ $capital->expenses ?? 'no entry' }}</td>
                                             <td>{{ $capital->total_number ?? 'no entry' }}</td>
-                                            <td>{{ $capital->cost ?? 'no entry' }}</td>
+                                            <td>{{ number_format($capital->cost)?? 'no entry' }}</td>
                                             <td>{{ number_format($capital->total_cost) ?? 'no entry' }}</td>
                                             <td>{{ $capital->description ?? 'no entry' }}</td>
                                             <td>{{ $capital->status ?? 'no entry' }}</td>

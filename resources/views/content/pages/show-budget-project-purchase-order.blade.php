@@ -297,6 +297,7 @@
 
             <!-- Button to trigger POST request -->
             <div class="text-end mt-4">
+                <div id="purchaseOrder" data-status="{{ $purchaseOrder->status }}"></div>
                 @php
                     $isDisabled = is_null($budget->total_budget_allocated) || $poStatus === 'submitted';
                 @endphp
@@ -441,6 +442,7 @@
             const materialBudget = parseFloat(document.getElementById('materialBudget').textContent.replace(/,/g, ''));
             const totalRequestedAmountDisplay = document.getElementById('totalRequestedAmount');
 
+            //calculate cost 
             function calculateTotalCost() {
 
                 const quantity = parseFloat(quantityInput.value) || 0;
@@ -467,6 +469,8 @@
 
             // Initialize purchase order items array
             let purchaseOrderItems = JSON.parse(localStorage.getItem(`purchaseOrder_${poNumber}`)) || [];
+            let purchaseOrderStatus = @json($purchaseOrder->status);
+
 
             // Load data and render table on page load
             document.addEventListener('DOMContentLoaded', () => {
@@ -510,6 +514,8 @@
 
             // Render the purchase order table
             const renderTable = () => {
+
+
                 const tableBody = document.getElementById('purchaseOrderItems');
                 tableBody.innerHTML = '';
 
@@ -517,22 +523,27 @@
                 purchaseOrderItems.forEach((orderItem, index) => {
                     subtotal += orderItem.itemTotal;
 
+                    // Conditional button rendering
+                    const removeButton = purchaseOrderStatus === 'submitted' ?
+                        `<button class="btn btn-danger" onclick="removeItem(${index})" disabled>Remove</button>` :
+                        `<button class="btn btn-danger" onclick="removeItem(${index})" >Remove</button>`;
+
                     tableBody.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${orderItem.item}</td>
-                            <td>${orderItem.description}</td>
-                            <td>${orderItem.quantity}</td>
-                            <td>${orderItem.unitPrice.toFixed(2)}</td>
-                            <td>${orderItem.itemTotal.toFixed(2)}</td>
-                            
-                            <td><button class="btn btn-danger" onclick="removeItem(${index})">Remove</button></td>
-                        </tr>
-                    `);
+            <tr>
+                <td>${orderItem.item}</td>
+                <td>${orderItem.description}</td>
+                <td>${orderItem.quantity}</td>
+                <td>${orderItem.unitPrice.toFixed(2)}</td>
+                <td>${orderItem.itemTotal.toFixed(2)}</td>
+                <td>${removeButton}</td>
+            </tr>
+        `);
                 });
 
                 document.getElementById('subtotal').textContent = subtotal.toFixed(2);
                 updateTotals();
             };
+
 
             // Remove an item from the list
             const removeItem = (index) => {
@@ -547,13 +558,32 @@
                 const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
                 const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
 
+
+                if (purchaseOrderStatus === 'submitted') {
+                    // Set input values from purchaseOrderItems
+                    discountInput.value = purchaseOrderItems[0].discountValue; // Set discount input
+                    vatInput.value = purchaseOrderItems[0].vatValue; // Set VAT input
+                    document.getElementById('totalAmount').textContent = purchaseOrderItems[0].totalAmount;
+                    // Make inputs read-only
+                    discountInput.readOnly = true; // Set discount input to read-only
+                    vatInput.readOnly = true; // Set VAT input to read-only
+                } else {
+                    discountInput.readOnly = false; // Make read-only
+                    vatInput.readOnly = false; // Make read-only
+                }
+
                 const totalDiscount = subtotal * (discountValue / 100);
                 const totalVAT = (subtotal - totalDiscount) * (vatValue / 100);
                 const totalAmount = (subtotal - totalDiscount + totalVAT).toFixed(2);
 
                 document.getElementById('totalDiscount').textContent = totalDiscount.toFixed(2);
                 document.getElementById('totalVAT').textContent = totalVAT.toFixed(2);
-                document.getElementById('totalAmount').textContent = totalAmount;
+
+                if (purchaseOrderStatus !== 'submitted') {
+                    document.getElementById('totalAmount').textContent = totalAmount;
+
+                }
+
 
                 var requestAmount = parseFloat(totalAmount);
                 var balanceBudget = parseFloat(document.getElementById('balance_budget').textContent.replace(/,/g, '')) ||
@@ -562,8 +592,9 @@
                 document.getElementById('total_request_amount').textContent = requestAmount.toLocaleString();
                 document.getElementById('total_balance_for_budget').textContent = (balanceBudget - requestAmount)
                     .toLocaleString();
-            };
 
+
+            }
             // Update totals on input change
             document.getElementById('discountInput').addEventListener('input', updateTotals);
             document.getElementById('vatInput').addEventListener('input', updateTotals);
@@ -580,21 +611,41 @@
                         requestAmount: parseFloat(totalAmount), // Ensure requestAmount is a float
                         balanceBudget: parseFloat(document.getElementById('balance_budget').textContent
                             .replace(/,/g, '')), // Remove commas and convert to float
-                        total_balanceBudget: parseFloat(document.getElementById('total_balance_for_budget').textContent
+                        total_balanceBudget: parseFloat(document.getElementById('total_balance_for_budget')
+                            .textContent
                             .replace(/,/g, '')), // Remove commas and convert to float
-                        totalDiscount: parseFloat(document.getElementById('totalDiscount').textContent.replace(/,/g,
+                        totalDiscount: parseFloat(document.getElementById('totalDiscount').textContent.replace(
+                            /,/g,
                             '')) || 0, // Remove commas and convert to float
-                        totalVAT: parseFloat(document.getElementById('totalVAT').textContent.replace(/,/g, '')) ||
+                        totalVAT: parseFloat(document.getElementById('totalVAT').textContent.replace(/,/g,
+                                '')) ||
                             0, // Remove commas and convert to float
                         status: "submitted",
                         budget: '{{ $budget->id }}', // Assuming this is already a number or ID
                         poNumber: '{{ $purchaseOrder->po_number }}', // Assuming this is a string
-                        utilization: parseFloat(document.getElementById('utilize').textContent.replace(/,/g, '')) ||
+                        utilization: parseFloat(document.getElementById('utilize').textContent.replace(/,/g,
+                                '')) ||
                             0, // Remove commas and convert to float
-                        totalBudget: parseFloat(totalBudget.replace(/,/g, '')) // Remove commas and convert to float
+                        totalBudget: parseFloat(totalBudget.replace(/,/g,
+                            '')) // Remove commas and convert to float
                     };
 
-                    console.log(data)
+                    const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
+                    const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
+
+                    // Check if purchaseOrderItems is not empty
+                    if (purchaseOrderItems.length > 0) {
+                        // Update the item with new values
+                        purchaseOrderItems[0] = {
+                            ...purchaseOrderItems[0],
+                            discountValue,
+                            vatValue,
+                            totalAmount
+                        };
+
+                        localStorage.setItem(`purchaseOrder_${poNumber}`, JSON.stringify(purchaseOrderItems));
+                    };
+
 
                     fetch('/api/save-purchase-order', {
                             method: 'POST',
@@ -659,7 +710,8 @@
             // Update budget display
             const updateBudget = (amount) => {
                 const budgetCell = document.querySelector('.value');
-                budgetCell.innerHTML = amount === 0 ? '<span style="color: red; font-weight: bold;">Not Assigned</span>' :
+                budgetCell.innerHTML = amount === 0 ?
+                    '<span style="color: red; font-weight: bold;">Not Assigned</span>' :
                     number_format(amount);
             };
 

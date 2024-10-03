@@ -169,4 +169,24 @@ class BudgetProject extends Model
     {
         return $this->current_balance >= $amount;
     }
+
+    // Hook into the deleting event to delete related records
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($budgetProject) {
+            // Delete related models
+            $budgetProject->directCosts()->delete();
+            $budgetProject->indirectCosts()->delete();
+            $budgetProject->salaries()->delete();
+            $budgetProject->facilityCosts()->delete();
+            $budgetProject->materialCosts()->delete();
+            $budgetProject->costOverheads()->delete();
+            $budgetProject->financialCosts()->delete();
+            $budgetProject->revenuePlans()->delete();
+            $budgetProject->capitalExpenditures()->delete();
+            $budgetProject->totalBudgetAllocated()->delete();
+        });
+    }
 }
