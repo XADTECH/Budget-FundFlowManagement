@@ -64,6 +64,8 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th>#</th> <!-- Index column -->
+
                                         <th>TYPE</th>
                                         <th>PROJECT</th>
                                         <th>PO</th>
@@ -82,6 +84,8 @@
                                         @endphp
 
                                         <tr>
+                                            <td>{{ $loop->iteration }}</td> <!-- Index -->
+
                                             <td>{{ $capital->type ?? 'no entry' }}</td>
                                             <td>{{ $project->name ?? 'no entry' }}</td>
                                             <td>{{ $capital->po ?? 'no entry' }}</td>

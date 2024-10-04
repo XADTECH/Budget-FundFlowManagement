@@ -26,6 +26,8 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
+                                        <th>#</th> <!-- Index column -->
+
                                         <th>TYPE</th>
                                         <th>PO</th>
                                         <th>PROJECT</th>
@@ -41,6 +43,8 @@
                                     @endphp
 
                                     <tr>
+                                        <td>{{ $loop->iteration }}</td> <!-- Index -->
+
                                         <td>{{ $overhead->type ?? 'no entry' }}</td>
                                         <td>{{ $overhead->po ?? 'no entry' }}</td>
                                         <td>{{ $project->name ?? 'no entry' }}</td>
@@ -81,6 +85,8 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
+                                <th>#</th> <!-- Index column -->
+
                                 <th>TYPE</th>
                                 <th>PO</th>
                                 <th>PROJECT</th>
@@ -96,6 +102,8 @@
                             @endphp
 
                             <tr>
+                                <td>{{ $loop->iteration }}</td> <!-- Index -->
+
                                 <td>{{ $financial->type ?? 'no entry' }}</td>
                                 <td>{{ $financial->po ?? 'no entry' }}</td>
                                 <td>{{ $project->name ?? 'no entry' }}</td>

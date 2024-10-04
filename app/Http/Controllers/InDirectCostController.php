@@ -93,6 +93,8 @@ class InDirectCostController extends Controller
       ->where('expenses', $validated['expense'])
       ->exists();
 
+  
+
     if ($existingExpense) {
       // Return error if the same expense already exists
       return redirect()->back()->withErrors(['expense' => 'The ' . $validated['expense'] . ' amount is already entered for this project.']);

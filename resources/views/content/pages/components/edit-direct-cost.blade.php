@@ -66,6 +66,8 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th>#</th> <!-- Index column -->
+
                                         <th>TYPE</th>
                                         <th>PROJECT</th>
                                         <th>PO</th>
@@ -91,6 +93,7 @@
                                             @php
                                                 $project = $projects->where('id', $salary->project)->first();
                                             @endphp
+                                            <td>{{ $loop->iteration }}</td> <!-- Index -->
 
                                             <td>{{ $salary->type ?? 'no entry' }}</td>
                                             <td>{{ $project->name ?? 'no entry' }}</td>
@@ -145,6 +148,8 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th>#</th> <!-- Index column -->
+
                                         <th>TYPE</th>
                                         <th>PROJECT</th>
                                         <th>PO</th>
@@ -166,6 +171,7 @@
                                             @php
                                                 $project = $projects->where('id', $facility->project)->first();
                                             @endphp
+                                            <td>{{ $loop->iteration }}</td> <!-- Index -->
                                             <td>{{ $facility->type ?? 'no entry' }}</td>
                                             <td>{{ $project->name ?? 'no entry' }}</td>
                                             <td>{{ $facility->po ?? 'no entry' }}</td>

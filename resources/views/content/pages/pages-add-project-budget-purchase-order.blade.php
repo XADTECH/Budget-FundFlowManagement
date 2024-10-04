@@ -147,39 +147,66 @@
                 </tr>
             </thead>
             <tbody id="project-table-body" class="table-border-bottom-0">
-                <!-- Project rows will be added here -->
-
-                @foreach($purchaseOrders as $po)
-
-                @php
-                $requestPerson = $userList->firstWhere('id', $po->requested_by);
-                $preparedPerson = $userList->firstWhere('id', $po->prepared_by);
-                $budget = $budgetList->firstWhere('id', $po->project_id);
-                @endphp
-
-                <tr>
-
-                    <td style="color:#0067aa"><a href="{{route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">{{ $po->po_number }}</a></td>
-
-                    <td style="color:#0067aa">
-                        <a href="{{ route('budget-project-report-summary', ['id' => $budget->id]) }}">
-                            {{ $budget->reference_code }}
-                        </a>
-                    </td>                    <td>{{ @$po->supplier_name }}</td>
-                    <td>{{ @$po->description }}</td>
-                    <td>{{ @$preparedPerson->first_name }}</td>
-                    <td>{{@$requestPerson->first_name }}</td>
-                    <td>
-                        @if (is_null($budget->total_budget_allocated) || $budget->total_budget_allocated <= 0)
-                            <span style="color: red;">Budget Not Allocated</span>
+                @if($purchaseOrders->isEmpty())
+                    <tr>
+                        <td colspan="8" class="text-center">No Data</td> <!-- Adjust colspan based on the number of columns in the table -->
+                    </tr>
+                @else
+                    @foreach($purchaseOrders as $po)
+            
+                    @php
+                        $requestPerson = $userList->firstWhere('id', $po->requested_by);
+                        $preparedPerson = $userList->firstWhere('id', $po->prepared_by);
+                        $budget = $budgetList->firstWhere('id', $po->project_id);
+                    @endphp
+            
+                    <tr>
+                        <!-- PO Number -->
+                        <td style="color:#0067aa">
+                            <a href="{{ route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">
+                                {{ $po->po_number ?? 'N/A' }}
+                            </a>
+                        </td>
+            
+                        <!-- Budget Reference Code -->
+                        <td style="color:#0067aa">
+                            @if($budget)
+                                <a href="{{ route('budget-project-report-summary', ['id' => $budget->id]) }}">
+                                    {{ $budget->reference_code ?? 'N/A' }}
+                                </a>
                             @else
-                            {{ number_format($budget->total_budget_allocated, 2) }}
+                                <span style="color: red;">No Budget</span>
                             @endif
-
-                    <td>{{$po->status }}</td>
-                </tr>
-                @endforeach
+                        </td>
+            
+                        <!-- Supplier Name -->
+                        <td>{{ $po->supplier_name ?? 'N/A' }}</td>
+            
+                        <!-- Description -->
+                        <td>{{ $po->description ?? 'N/A' }}</td>
+            
+                        <!-- Prepared By -->
+                        <td>{{ optional($preparedPerson)->first_name ?? 'N/A' }}</td>
+            
+                        <!-- Requested By -->
+                        <td>{{ optional($requestPerson)->first_name ?? 'N/A' }}</td>
+            
+                        <!-- Total Budget Allocated -->
+                        <td>
+                            @if (is_null(optional($budget)->total_budget_allocated) || $budget->total_budget_allocated <= 0)
+                                <span style="color: red;">Budget Not Allocated</span>
+                            @else
+                                {{ number_format($budget->total_budget_allocated, 2) }}
+                            @endif
+                        </td>
+            
+                        <!-- PO Status -->
+                        <td>{{ $po->status ?? 'N/A' }}</td>
+                    </tr>
+                    @endforeach
+                @endif
             </tbody>
+            
         </table>
     </div>
 </div>

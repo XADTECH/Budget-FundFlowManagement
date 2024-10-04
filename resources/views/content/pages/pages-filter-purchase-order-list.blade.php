@@ -113,7 +113,7 @@
                             <tr>
                                 <th>PO #</th>
                                 <th>Project #</th>
-                                <th>Verified</th>
+                                {{-- <th>Verified</th> --}}
                                 <th>Description</th>
                                 <th>Prepared By</th>
                                 <th>Requested By</th>
@@ -122,43 +122,74 @@
                             </tr>
                         </thead>
                         <tbody id="project-table-body" class="table-border-bottom-0">
-                            @foreach ($purchaseOrders as $po)
-                                @php
-                                    $requestPerson = $userList->firstWhere('id', $po->requested_by);
-                                    $preparedPerson = $userList->firstWhere('id', $po->prepared_by);
-                                    $budget = $budgetList->firstWhere('id', $po->project_id);
-                                    $totalBudget = $totalBudgetAllocated->firstWhere('budget_project_id', 2);
-                                @endphp
+                            @if($purchaseOrders->isEmpty())
                                 <tr>
-                                    <td style="color:#0067aa">
-                                        @if ($totalBudget && $totalBudget->allocated_budget)
-                                            <a
-                                                href="{{ route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">{{ $po->po_number }}</a>
-                                        @else
-                                            <span style="cursor: default;"
-                                                onclick="alert('Total budget is not allocated for this project PO.');">{{ $po->po_number }}</span>
-                                        @endif
-                                    </td>
-                                    <td style="color:#0067aa"><a
-                                            href="{{ route('edit-project-budget', ['project_id' => $budget->id]) }}">{{ $budget->reference_code }}</a>
-                                    </td>
-                                    <td> <span
-                                            style="color: red;font-weight:700">{{ $po->is_verified ? 'Verified' : 'Not Verified' }}</span>
-                                    </td>
-                                    <td>{{ $po->description ?? 'N/A' }}</td>
-                                    <td>{{ $preparedPerson->first_name ?? 'N/A' }}</td>
-                                    <td>{{ $requestPerson->first_name ?? 'N/A' }}</td>
-                                    <td>
-                                        @if (is_null($budget->total_budget_allocated) || $budget->total_budget_allocated <= 0)
-                                            <span style="color: red;font-weight:700">Budget Not Allocated</span>
-                                        @else
-                                            {{ number_format($budget->total_budget_allocated, 2) }}
-                                        @endif
-                                    </td>
-                                    <td>{{ $po->status }}</td>
+                                    <td colspan="8" class="text-center">No Data</td> <!-- Adjust colspan based on the number of columns -->
                                 </tr>
-                            @endforeach
+                            @else
+                                @foreach ($purchaseOrders as $po)
+                                    @php
+                                        $requestPerson = $userList->firstWhere('id', $po->requested_by);
+                                        $preparedPerson = $userList->firstWhere('id', $po->prepared_by);
+                                        $budget = $budgetList->firstWhere('id', $po->project_id);
+                                        $totalBudget = $totalBudgetAllocated->firstWhere('budget_project_id', $po->project_id); // Assuming 2 is for an example, adjust accordingly
+                                    @endphp
+                                    <tr>
+                                        <!-- PO Number with Budget Check -->
+                                        <td style="color:#0067aa">
+                                            @if ($totalBudget && $totalBudget->allocated_budget)
+                                                <a href="{{ route('purchaseOrder.edit', ['POID' => $po->po_number]) }}">{{ $po->po_number ?? 'N/A' }}</a>
+                                            @else
+                                                <span style="cursor: default;" onclick="alert('Total budget is not allocated for this project PO.');">
+                                                    {{ $po->po_number ?? 'N/A' }}
+                                                </span>
+                                            @endif
+                                        </td>
+                        
+                                        <!-- Budget Reference Code -->
+                                        <td style="color:#0067aa">
+                                            @if($budget)
+                                                <a href="{{ route('edit-project-budget', ['project_id' => $budget->id]) }}">
+                                                    {{ $budget->reference_code ?? 'N/A' }}
+                                                </a>
+                                            @else
+                                                <span style="color: red;">No Budget</span>
+                                            @endif
+                                        </td>
+                        
+                                        <!-- Verification Status -->
+                                        {{-- <td>
+                                            <span style="color: red;font-weight:700">
+                                                {{ $po->is_verified ? 'Verified' : 'Not Verified' }}
+                                            </span>
+                                        </td> --}}
+                        
+                                        <!-- Description -->
+                                        <td>{{ $po->description ?? 'N/A' }}</td>
+                        
+                                        <!-- Prepared By -->
+                                        <td>{{ optional($preparedPerson)->first_name ?? 'N/A' }}</td>
+                        
+                                        <!-- Requested By -->
+                                        <td>{{ optional($requestPerson)->first_name ?? 'N/A' }}</td>
+                        
+                                        <!-- Total Budget Allocated -->
+                                        <td>
+                                            @if (is_null(optional($budget)->total_budget_allocated) || $budget->total_budget_allocated <= 0)
+                                                <span style="color: red;font-weight:700">Budget Not Allocated</span>
+                                            @else
+                                                {{ number_format($budget->total_budget_allocated, 2) }}
+                                            @endif
+                                        </td>
+                        
+                                        <!-- PO Status -->
+                                        <td class="text-success">{{ $po->status ?? 'N/A' }}</td>
+
+                                    </tr>
+                                @endforeach
+                            @endif
                         </tbody>
+                        
                     </table>
                 </div>
             </div>

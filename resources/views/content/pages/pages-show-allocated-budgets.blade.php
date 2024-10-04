@@ -65,8 +65,10 @@
                                 <th>Overhead</th>
                                 <th>Financial Cost</th>
                                 <th>Capital Expenditure</th>
+                                <th>Total DPM</th>
+                                <th>Total LPO</th>
                                 <th>Total Allocation</th>
-                                <th>Reference Code</th>
+                                {{-- <th>Reference Code</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -78,9 +80,11 @@
                                     <td>{{ number_format($budgetProject->total_cost_overhead, 0) }}</td>
                                     <td>{{ number_format($budgetProject->total_financial_cost, 0) }}</td>
                                     <td>{{ number_format($budgetProject->total_capital_expenditure, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_dpm, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_lpo, 0) }}</td>
                                     <td>{{ number_format($budgetProject->allocated_budget, 0) }}</td>
                                     
-                                    <td>{{ $budgetProject->reference_code }}</td>
+                                    {{-- <td>{{ $budgetProject->reference_code }}</td> --}}
                                 </tr>
                             @endforeach
                         </tbody>
