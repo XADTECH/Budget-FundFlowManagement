@@ -56,9 +56,12 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Salary</h3>
-                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addNewSalaryModal">ADD
-                                NEW</button>
+                            @if ($budget->approval_status === 'pending')
+                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addNewSalaryModal">ADD NEW</button>
+                            @else
+                                <button class="btn btn-secondary" disabled>Approved</button>
+                            @endif
                         </div>
                         <p>Total Salary Cost : <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($totalSalary, 0) }}<span></p>
@@ -138,8 +141,12 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Facilities Cost</h3>
-                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addNewFacilitiesModal">ADD NEW</button>
+                            @if ($budget->approval_status === 'pending')
+                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addNewFacilitiesModal">ADD NEW</button>
+                            @else
+                                <button class="btn btn-secondary" disabled>Approved</button>
+                            @endif
                         </div>
                         <p>Total Facility Cost : <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($totalFacilityCost, 0) }}<span>
@@ -209,8 +216,12 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Material Cost</h3>
-                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addNewMaterialModal">ADD NEW</button>
+                            @if ($budget->approval_status === 'pending')
+                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addNewMaterialModal">ADD NEW</button>
+                            @else
+                                <button class="btn btn-secondary" disabled>Approved</button>
+                            @endif
                         </div>
                         @php
                             $Mcost =

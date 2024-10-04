@@ -35,4 +35,22 @@ class PdfController extends Controller
         // Download the PDF
         return $pdf->stream('test.pdf');
     }
+
+    public function budgetSummary($POID)
+    {
+        $budget = BudgetProject::where('id', $POID)->first();
+        $clients = BusinessClient::where('id', operator: $budget->client_id)->first();
+        $units = BusinessUnit::where('id', $budget->unit_id)->first();
+        $project = Project::where('id', $budget->project_id)->first();
+        $user = User::where('id', $budget->manager_id)->first();
+
+        // return response($budget);
+
+        $pdf = PDF::loadView('content.pages.pdf.project_approval', compact('budget', 'clients', 'units','project', 'user'));
+
+
+
+        // Download the PDF
+        return $pdf->stream('test.pdf');
+    }
 }

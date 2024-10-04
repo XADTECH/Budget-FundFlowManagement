@@ -57,8 +57,13 @@
                                 <h6>Total OPEX + CAPEX : {{ number_format($totalOPEX + $totalCapitalExpenditure) }} AED
                                 </h6>
                             </div>
-                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addNewCapitalExpense">ADD CAPEX</button>
+                            @if ($budget->approval_status === 'pending')
+                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addNewCapitalExpense">ADD CAPEX</button>
+                            @else
+                                <button class="btn btn-secondary" disabled>Approved</button>
+                            @endif
+
                         </div>
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
@@ -91,7 +96,7 @@
                                             <td>{{ $capital->po ?? 'no entry' }}</td>
                                             <td>{{ $capital->expenses ?? 'no entry' }}</td>
                                             <td>{{ $capital->total_number ?? 'no entry' }}</td>
-                                            <td>{{ number_format($capital->cost)?? 'no entry' }}</td>
+                                            <td>{{ number_format($capital->cost) ?? 'no entry' }}</td>
                                             <td>{{ number_format($capital->total_cost) ?? 'no entry' }}</td>
                                             <td>{{ $capital->description ?? 'no entry' }}</td>
                                             <td>{{ $capital->status ?? 'no entry' }}</td>
@@ -199,7 +204,7 @@
                         <!-- Hidden field to store the raw numeric value -->
                         <input type="hidden" id="cost_hidden" name="cost_hidden">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <input type="text" class="form-control" id="description" name="description"
@@ -224,31 +229,30 @@
 
 
 <script>
-    
     function formatNumber(input, hiddenFieldId) {
-    // Remove non-digit characters (except for decimal point)
-    let value = input.value.replace(/[^0-9.]/g, '');
+        // Remove non-digit characters (except for decimal point)
+        let value = input.value.replace(/[^0-9.]/g, '');
 
-    if (value) {
-        let parts = value.split('.');
-        let integerPart = parseInt(parts[0]).toLocaleString('en-US');
-        let formattedValue = integerPart;
+        if (value) {
+            let parts = value.split('.');
+            let integerPart = parseInt(parts[0]).toLocaleString('en-US');
+            let formattedValue = integerPart;
 
-        if (parts[1] !== undefined) {
-            formattedValue += '.' + parts[1].slice(0, 2); // Allow up to 2 decimal places
+            if (parts[1] !== undefined) {
+                formattedValue += '.' + parts[1].slice(0, 2); // Allow up to 2 decimal places
+            }
+
+            input.value = formattedValue;
+            document.getElementById(hiddenFieldId).value = value;
+
+            // Log the value for debugging
+            console.log("Formatted Value:", formattedValue);
+            console.log("Hidden Field Value:", value);
+        } else {
+            input.value = '';
+            document.getElementById(hiddenFieldId).value = '';
         }
-
-        input.value = formattedValue;
-        document.getElementById(hiddenFieldId).value = value;
-
-        // Log the value for debugging
-        console.log("Formatted Value:", formattedValue);
-        console.log("Hidden Field Value:", value);
-    } else {
-        input.value = '';
-        document.getElementById(hiddenFieldId).value = '';
     }
-}
 
 
     // Set up the event listener when the DOM is fully loaded

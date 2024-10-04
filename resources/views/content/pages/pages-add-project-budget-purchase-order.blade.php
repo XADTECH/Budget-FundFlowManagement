@@ -72,13 +72,13 @@
                         <div class="col-sm-4">
                             <label for="payment_term" class="form-label">Payment Term</label>
                             <select id="payment_term" name="payment_term" class="form-select">
-                                <option value="net30">Net 30</option>
-                                <option value="net60">Net 60</option>
-                                <option value="net90">Net 90</option>
-                                <option value="cod">Cash on Delivery (COD)</option>
-                                <option value="prepaid">Prepaid</option>
-                                <option value="eom">End of Month (EOM)</option>
-                                <option value="2/10net30">2/10 Net 30</option>
+                                <option value="cash">cash</option>
+                                <option value="online transaction">online transaction</option>
+                                <option value="cheque 30 days">cheque 30 days</option>
+                                <option value="cheque 60 days">cheque 60 days</option>
+                                <option value="cheque 90 days">cheque 90 days</option>
+                                <option value="cheque as per invoice">cheque as per invoice</option>
+                                <option value="cash on delivery">cash on delivery</option>
                             </select>
                         </div>
 

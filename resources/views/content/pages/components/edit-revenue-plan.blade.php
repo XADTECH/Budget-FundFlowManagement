@@ -50,8 +50,12 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5>Net Profit after Tax : {{ number_format($totalNetProfitAfterTax) }} AED</h5>
 
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewRevenuePlan">ADD
-                                REVENUE</button>
+                            @if ($budget->approval_status === 'pending')
+                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addNewRevenuePlan">ADD REVENUE</button>
+                            @else
+                                <button class="btn btn-secondary" disabled>Approved</button>
+                            @endif
                         </div>
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
