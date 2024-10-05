@@ -77,6 +77,7 @@ class BudgetProject extends Model
         // Return 0 if there's no related budget allocation
         return 0;
     }
+
     // Method to calculate Remaining Budget
     public function getRemainingBudget()
     {
@@ -189,4 +190,30 @@ class BudgetProject extends Model
             $budgetProject->totalBudgetAllocated()->delete();
         });
     }
+
+    public function calculateTotalAmount()
+    {
+        $totalSalaries = $this->salaries()->sum('total_cost');
+        $totalFacilityCosts = $this->facilityCosts()->sum('total_cost');
+        $totalMaterialCosts = $this->materialCosts()->sum('total_cost');
+        $totalCostOverheads = $this->costOverheads()->sum('amount');
+        $totalFinancialCosts = $this->financialCosts()->sum('total_cost');
+        $totalRevenuePlans = $this->revenuePlans()->sum('amount');
+    
+        // Add up all the totals to get the overall total
+        $overallTotal = $totalSalaries + $totalFacilityCosts + $totalMaterialCosts +
+                        $totalCostOverheads + $totalFinancialCosts + $totalRevenuePlans;
+    
+        // Return both individual costs and the overall total
+        return [
+            'total_salaries' => $totalSalaries,
+            'total_facility_costs' => $totalFacilityCosts,
+            'total_material_costs' => $totalMaterialCosts,
+            'total_cost_overheads' => $totalCostOverheads,
+            'total_financial_costs' => $totalFinancialCosts,
+            'total_revenue_plans' => $totalRevenuePlans,
+            'overall_total' => $overallTotal
+        ];
+    }
+    
 }

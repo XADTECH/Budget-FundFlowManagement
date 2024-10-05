@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 26, 2024 at 12:15 PM
+-- Generation Time: Oct 05, 2024 at 09:13 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -37,8 +37,8 @@ CREATE TABLE `allocated_budget` (
   `total_financial_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
   `total_capital_expenditure` decimal(15,2) NOT NULL DEFAULT 0.00,
   `allocated_budget` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_opex` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_capex` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `total_dpm` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `total_lpo` decimal(15,2) NOT NULL DEFAULT 0.00,
   `reference_code` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -48,8 +48,8 @@ CREATE TABLE `allocated_budget` (
 -- Dumping data for table `allocated_budget`
 --
 
-INSERT INTO `allocated_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `allocated_budget`, `total_opex`, `total_capex`, `reference_code`, `created_at`, `updated_at`) VALUES
-(6, 1, 500000.00, 100000.00, 150000.00, 80000.00, 50000.00, 40000.00, 920000.00, 0.00, 0.00, 'BP091920240003', '2024-09-26 05:54:57', '2024-09-26 05:59:28');
+INSERT INTO `allocated_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `allocated_budget`, `total_dpm`, `total_lpo`, `reference_code`, `created_at`, `updated_at`) VALUES
+(5, 5, 180000.00, 107000.00, 39200.00, 14922.00, 61572.00, 276100.00, 678794.00, 0.00, 0.00, 'BP100320240003', '2024-10-04 07:12:08', '2024-10-04 07:12:08');
 
 -- --------------------------------------------------------
 
@@ -79,7 +79,7 @@ CREATE TABLE `approved_budget` (
 --
 
 INSERT INTO `approved_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `approved_budget`, `expected_net_profit_after_tax`, `expected_net_profit_before_tax`, `reference_code`, `created_at`, `updated_at`) VALUES
-(5, 1, 562000.02, 142000.00, 150000.00, 85121.56, 60130.00, 59000.00, 1169000.00, 96231.06, 105748.42, 'BP091920240003', '2024-09-26 05:54:15', '2024-09-26 05:54:15');
+(5, 5, 180000.00, 107000.00, 39200.00, 14922.10, 61572.00, 276100.00, 5276100.00, 3546548.37, 3897305.90, 'BP100320240003', '2024-10-04 07:10:46', '2024-10-04 07:10:46');
 
 -- --------------------------------------------------------
 
@@ -134,7 +134,7 @@ CREATE TABLE `budget_project` (
 --
 
 INSERT INTO `budget_project` (`id`, `reference_code`, `start_date`, `end_date`, `project_id`, `unit_id`, `manager_id`, `client_id`, `region`, `site_name`, `description`, `budget_type`, `country`, `month`, `approval_status`, `bal_under_over_budget`, `total_budget_allocated`, `total_dpm_expense`, `total_lpo_expense`, `approve_by`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'BP091920240003', '2024-09-12', '2024-10-12', 1, 2, 19, 2, 'Jeddah', 'abu hail, dubai', 'starting new Project', 'Etisalat Managed Service', 'KSA', '2024-09-19', 'approve', NULL, 920000.00, NULL, NULL, 33, 'Good', '2024-09-19 07:15:32', '2024-09-26 05:54:57');
+(5, 'BP100320240003', '2024-10-03', '2024-11-03', 6, 2, 19, 1, 'Dubai', 'abu hail, dubai', 'starting new Project', 'Etisalat Managed Service', 'UAE', '2024-10-03', 'approve', NULL, 678794.00, NULL, NULL, 33, 'Good', '2024-10-03 07:18:04', '2024-10-04 07:12:08');
 
 -- --------------------------------------------------------
 
@@ -158,7 +158,8 @@ CREATE TABLE `business_clients` (
 
 INSERT INTO `business_clients` (`id`, `clientname`, `clientdetail`, `clientremark`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'Etisalat', NULL, NULL, 'Active', '2024-08-29 01:40:28', '2024-08-29 01:40:28'),
-(2, 'DU', NULL, NULL, 'Active', '2024-08-29 01:40:34', '2024-08-29 01:40:34');
+(2, 'DU', NULL, NULL, 'Active', '2024-08-29 01:40:34', '2024-08-29 01:40:34'),
+(3, 'other', NULL, NULL, 'Active', '2024-10-01 02:35:10', '2024-10-01 02:35:10');
 
 -- --------------------------------------------------------
 
@@ -182,7 +183,8 @@ CREATE TABLE `business_units` (
 
 INSERT INTO `business_units` (`id`, `source`, `unitdetail`, `unitremark`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'OutSource', NULL, NULL, 'Active', '2024-08-29 01:40:18', '2024-08-29 01:40:18'),
-(2, 'none outsource', 'Not Entered', 'Not Entered', 'Active', '2024-08-29 01:40:21', '2024-09-03 01:04:29');
+(2, 'none outsource', 'Not Entered', 'Not Entered', 'Active', '2024-08-29 01:40:21', '2024-09-03 01:04:29'),
+(3, 'Other', NULL, NULL, 'Active', '2024-10-01 02:34:58', '2024-10-01 02:34:58');
 
 -- --------------------------------------------------------
 
@@ -211,8 +213,12 @@ CREATE TABLE `capital_expenditure` (
 --
 
 INSERT INTO `capital_expenditure` (`id`, `budget_project_id`, `type`, `project`, `po`, `expenses`, `total_number`, `cost`, `description`, `status`, `total_cost`, `created_at`, `updated_at`) VALUES
-(10, 1, 'Capital Expenditure', '1', 'CAPEX', 'Cable Detector', 3, 3000, 'Cable Detector', 'new', 9000.00, '2024-09-23 07:51:56', '2024-09-23 07:51:56'),
-(11, 1, 'Capital Expenditure', '1', 'CAPEX', 'Cars Sedan', 10, 5000, 'Fleet management', 'new purchased', 50000.00, '2024-09-23 07:52:38', '2024-09-23 07:52:38');
+(8, 5, 'Capital Expenditure', '1', 'CAPEX', 'Forklift', 1, 100000, 'Electric forklift for moving pallets and heavy items in warehouses.', 'warehouse purchase', 100000.00, '2024-10-03 08:53:29', '2024-10-03 08:53:29'),
+(9, 5, 'Capital Expenditure', '1', 'CAPEX', 'Manual pallet jack for lifting and moving pallets in tight spaces.', 500, 5, 'Manual pallet jack for lifting and moving pallets in tight spaces.', 'in stock', 2500.00, '2024-10-03 08:54:45', '2024-10-03 08:54:45'),
+(10, 5, 'Capital Expenditure', '1', 'CAPEX', 'Conveyor Belt', 2, 15000, 'Automated conveyor belt system for transporting goods within the facility.', 'warehouse machinery', 30000.00, '2024-10-03 08:56:00', '2024-10-03 08:56:00'),
+(11, 5, 'Capital Expenditure', '1', 'CAPEX', '(WMS) Software', 1, 20000, 'Software solution for managing inventory and logistics operations.', 'required', 20000.00, '2024-10-03 08:57:41', '2024-10-03 08:57:41'),
+(12, 5, 'Capital Expenditure', '1', 'CAPEX', 'Delivery Van', 4, 30000, 'Medium-sized delivery van for transporting goods to clients.', 'new aquire', 120000.00, '2024-10-03 08:58:44', '2024-10-03 08:58:44'),
+(13, 5, 'Capital Expenditure', '1', 'CAPEX', 'Barcode Scanners', 12, 300, 'Handheld barcode scanners for tracking inventory in real-time.', 'required', 3600.00, '2024-10-03 09:00:47', '2024-10-03 09:00:47');
 
 -- --------------------------------------------------------
 
@@ -240,14 +246,12 @@ CREATE TABLE `cash_flows` (
 --
 
 INSERT INTO `cash_flows` (`id`, `date`, `description`, `category`, `reference_code`, `cash_inflow`, `cash_outflow`, `committed_budget`, `balance`, `budget_project_id`, `created_at`, `updated_at`) VALUES
-(42, '2024-09-26', 'Initial Allocation', 'Salary', 'BP091920240003', 500000.00, 0.00, 500000.00, 500000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
-(43, '2024-09-26', 'Initial Allocation', 'Facility', 'BP091920240003', 100000.00, 0.00, 100000.00, 100000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
-(44, '2024-09-26', 'Initial Allocation', 'Material', 'BP091920240003', 150000.00, 0.00, 150000.00, 150000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
-(45, '2024-09-26', 'Initial Allocation', 'Overhead', 'BP091920240003', 80000.00, 0.00, 80000.00, 80000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
-(46, '2024-09-26', 'Initial Allocation', 'Financial', 'BP091920240003', 50000.00, 0.00, 50000.00, 50000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:59:28'),
-(47, '2024-09-26', 'Initial Allocation', 'Capital Expenditure', 'BP091920240003', 40000.00, 0.00, 40000.00, 40000.00, 1, '2024-09-26 05:54:57', '2024-09-26 05:54:57'),
-(48, '2024-09-26', 'payment of financial loan', 'Financial', 'DPM1727344680', 0.00, 2000.00, 50000.00, 48000.00, 1, '2024-09-26 05:58:00', '2024-09-26 05:58:00'),
-(49, '2024-09-26', 'Monthly Interest Earned on Savings', 'Financial', 'DPM1727344768', 2000.00, 0.00, 50000.00, 50000.00, 1, '2024-09-26 05:59:28', '2024-09-26 05:59:28');
+(29, '2024-10-04', 'Initial Allocation', 'Salary', 'BP100320240003', 180000.00, 0.00, 180000.00, 180000.00, 5, '2024-10-04 07:12:08', '2024-10-04 07:12:08'),
+(30, '2024-10-04', 'Initial Allocation', 'Facility', 'BP100320240003', 107000.00, 0.00, 107000.00, 107000.00, 5, '2024-10-04 07:12:08', '2024-10-04 07:12:08'),
+(31, '2024-10-04', 'Initial Allocation', 'Material', 'BP100320240003', 39200.00, 0.00, 39200.00, 39200.00, 5, '2024-10-04 07:12:08', '2024-10-04 07:12:08'),
+(32, '2024-10-04', 'Initial Allocation', 'Overhead', 'BP100320240003', 14922.00, 0.00, 14922.00, 14922.00, 5, '2024-10-04 07:12:08', '2024-10-04 07:12:08'),
+(33, '2024-10-04', 'Initial Allocation', 'Financial', 'BP100320240003', 61572.00, 0.00, 61572.00, 61572.00, 5, '2024-10-04 07:12:08', '2024-10-04 07:12:08'),
+(34, '2024-10-04', 'Initial Allocation', 'Capital Expenditure', 'BP100320240003', 276100.00, 0.00, 276100.00, 276100.00, 5, '2024-10-04 07:12:08', '2024-10-04 07:12:08');
 
 -- --------------------------------------------------------
 
@@ -273,10 +277,21 @@ CREATE TABLE `cost_overhead` (
 --
 
 INSERT INTO `cost_overhead` (`id`, `in_direct_cost_id`, `budget_project_id`, `type`, `project`, `po`, `expenses`, `amount`, `created_at`, `updated_at`) VALUES
-(6, 1, 1, 'overhead cost', '1', 'OPEX', 'HO Cost', 539.56, '2024-09-23 02:40:56', '2024-09-23 02:40:56'),
-(7, 1, 1, 'overhead cost', '1', 'OPEX', 'Annual Benefit', 84300.00, '2024-09-23 02:41:15', '2024-09-23 02:41:15'),
-(8, 1, 1, 'overhead cost', '1', 'OPEX', 'Insurance Cost', 86.48, '2024-09-23 02:43:34', '2024-09-23 02:43:34'),
-(9, 1, 1, 'overhead cost', '1', 'OPEX', 'Visa Renewal', 195.52, '2024-09-23 02:47:32', '2024-09-23 02:47:32');
+(6, 2, 1, 'OverHead Cost', '1', 'OPEX', 'HO Cost', 1148.00, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
+(7, 2, 1, 'OverHead Cost', '1', 'OPEX', 'Annual Benefit', 0.30, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
+(8, 2, 1, 'OverHead Cost', '1', 'OPEX', 'Insurance Cost', 184.00, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
+(9, 2, 1, 'OverHead Cost', '1', 'OPEX', 'Visa Renewal', 416.00, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
+(10, 2, 1, 'OverHead Cost', '1', 'OPEX', 'Depreciation Tools', 10420.42, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
+(11, 3, 2, 'OverHead Cost', '2', 'OPEX', 'HO Cost', 189.42, '2024-10-01 08:56:17', '2024-10-01 08:58:04'),
+(12, 3, 2, 'OverHead Cost', '2', 'OPEX', 'Annual Benefit', 0.05, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
+(13, 3, 2, 'OverHead Cost', '2', 'OPEX', 'Insurance Cost', 30.36, '2024-10-01 08:56:17', '2024-10-01 08:58:04'),
+(14, 3, 2, 'OverHead Cost', '2', 'OPEX', 'Visa Renewal', 68.64, '2024-10-01 08:56:17', '2024-10-01 08:58:04'),
+(15, 3, 2, 'OverHead Cost', '2', 'OPEX', 'Depreciation Tools', 1.83, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
+(21, 5, 5, 'OverHead Cost', '5', 'OPEX', 'HO Cost', 2244.34, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
+(22, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Annual Benefit', 0.59, '2024-10-03 07:20:51', '2024-10-05 01:11:59'),
+(23, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Insurance Cost', 359.72, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
+(24, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Visa Renewal', 813.28, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
+(25, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Depreciation Tools', 11504.17, '2024-10-03 07:20:51', '2024-10-05 01:11:59');
 
 -- --------------------------------------------------------
 
@@ -297,7 +312,7 @@ CREATE TABLE `direct_cost` (
 --
 
 INSERT INTO `direct_cost` (`id`, `budget_project_id`, `total_cost`, `created_at`, `updated_at`) VALUES
-(1, 1, NULL, '2024-09-19 09:08:28', '2024-09-19 09:08:28');
+(5, 5, NULL, '2024-10-03 07:20:51', '2024-10-03 07:20:51');
 
 -- --------------------------------------------------------
 
@@ -331,10 +346,17 @@ CREATE TABLE `facility_cost` (
 --
 
 INSERT INTO `facility_cost` (`id`, `direct_cost_id`, `budget_project_id`, `type`, `project`, `po`, `expenses`, `description`, `status`, `cost_per_month`, `no_of_staff`, `no_of_months`, `total_cost`, `average_cost`, `percentage_cost`, `approval_status`, `created_at`, `updated_at`) VALUES
-(23, 1, 1, 'Facility Cost', '1', 'OPEX', 'Sedan', 'Sedan For Site Supervisors', 'new upgrade', 5000.00, 2, 2, 20000.00, 5000.00, 0.25, 'approved', '2024-09-21 02:49:05', '2024-09-21 02:49:05'),
-(24, 1, 1, 'Facility Cost', '1', 'OPEX', 'SIM', 'SIM For Staff', 'used but upgraded plan', 100.00, 10, 12, 12000.00, 100.00, 0.01, 'approved', '2024-09-21 02:50:08', '2024-09-21 02:50:08'),
-(25, 1, 1, 'Facility Cost', '1', 'OPEX', 'Fuel', 'fuel for our xadd fleet goroup A', 'on going process', 5000.00, 10, 2, 100000.00, 5000.00, 0.05, 'approved', '2024-09-21 02:52:58', '2024-09-21 02:52:58'),
-(26, 1, 1, 'Facility Cost', '1', 'OPEX', 'Accommodation', 'this is a villa monthly for a xadd company staff in al quoz', 'new furnished accomodation', 5000.00, 0, 2, 10000.00, 5000.00, 1.00, 'approved', '2024-09-21 02:57:32', '2024-09-21 02:57:32');
+(1, 2, 1, 'Facility Cost', '1', 'OPEX', 'Fuel', 'using for fuel', 'new fuel adjustments', 1000.00, 5, 1, 5000.00, 1000.00, 0.20, 'approved', '2024-10-01 03:01:18', '2024-10-01 03:01:18'),
+(2, 2, 1, 'Facility Cost', '1', 'OPEX', 'SIM', 'bought a new sim', 'new bought', 100.00, 10, 0, 1000.00, 100.00, 0.10, 'approved', '2024-10-01 03:02:53', '2024-10-01 03:02:53'),
+(3, 2, 1, 'Facility Cost', '1', 'OPEX', 'Accommodation', 'Staff Accomodation', 'new villa purchased', 500.00, 10, 0, 5000.00, 500.00, 0.10, 'approved', '2024-10-01 03:03:59', '2024-10-01 03:03:59'),
+(4, 2, 1, 'Facility Cost', '1', 'OPEX', 'WareHouse', 'WareHouse Maintenance', 'New WareHouse Decorated', 5000.00, 10, 0, 50000.00, 5000.00, 0.10, 'approved', '2024-10-01 03:07:13', '2024-10-01 03:07:13'),
+(5, 2, 1, 'Facility Cost', '1', 'OPEX', '3 Tone (Double Cabin + Hiab Crane)', 'for all sites', 'new hiring', 3333.00, 2, 0, 6666.00, 3333.00, 0.50, 'approved', '2024-10-01 04:57:07', '2024-10-01 04:57:07'),
+(6, 3, 2, 'Facility Cost', '1', 'OPEX', 'Travelling expense', 'this could be travelling expense', 'new cost', 2000.00, 0, 0, 2000.00, 2000.00, 1.00, 'approved', '2024-10-01 09:01:55', '2024-10-01 09:01:55'),
+(7, 5, 5, 'Facility Cost', '1', 'OPEX', 'Accommodation', 'Villa For Labor Accomodation', 'villa for 10 people', 40000.00, 0, 1, 40000.00, 40000.00, 1.00, 'approved', '2024-10-03 07:44:08', '2024-10-03 07:46:02'),
+(8, 5, 5, 'Facility Cost', '1', 'OPEX', 'SIM', 'Etisalat SIM For Staff', 'New Purchased', 100.00, 20, 1, 2000.00, 100.00, 0.05, 'approved', '2024-10-03 07:46:57', '2024-10-03 07:46:57'),
+(9, 5, 5, 'Facility Cost', '1', 'OPEX', 'Fuel', 'Fuel for Whole Project', 'staff pick & drop', 15000.00, 0, 0, 15000.00, 15000.00, 1.00, 'approved', '2024-10-03 07:52:15', '2024-10-03 07:52:15'),
+(10, 5, 5, 'Facility Cost', '1', 'OPEX', 'Warehouse Renovation', 'Total Renovation Cost', 'require for annual renovation', 30000.00, 0, 0, 30000.00, 30000.00, 1.00, 'approved', '2024-10-03 07:53:26', '2024-10-03 07:53:26'),
+(11, 5, 5, 'Facility Cost', '1', 'OPEX', 'Labor Bus 48 Seater', 'total cost for labor bus', 'pridicted cost', 20000.00, 0, 0, 20000.00, 20000.00, 1.00, 'approved', '2024-10-03 07:56:14', '2024-10-03 07:56:14');
 
 -- --------------------------------------------------------
 
@@ -377,8 +399,12 @@ CREATE TABLE `financial_cost` (
 --
 
 INSERT INTO `financial_cost` (`id`, `in_direct_cost_id`, `budget_project_id`, `type`, `po`, `project`, `expenses`, `percentage`, `total_cost`, `created_at`, `updated_at`) VALUES
-(2, 1, 1, 'financial cost', 'OPEX', '1', 'Risk', '5', 42950.00, '2024-09-23 06:24:16', '2024-09-23 06:24:16'),
-(3, 1, 1, 'financial cost', 'OPEX', '1', 'Financial Cost', '2', 17180.00, '2024-09-23 06:24:40', '2024-09-23 06:24:40');
+(3, 2, 1, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 13508.30, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
+(4, 2, 1, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 2701.66, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
+(5, 3, 2, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 3075.00, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
+(6, 3, 2, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 615.00, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
+(9, 5, 5, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 51310.00, '2024-10-03 07:20:51', '2024-10-05 01:11:59'),
+(10, 5, 5, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 10262.00, '2024-10-03 07:20:51', '2024-10-05 01:11:59');
 
 -- --------------------------------------------------------
 
@@ -399,7 +425,7 @@ CREATE TABLE `indirect_cost` (
 --
 
 INSERT INTO `indirect_cost` (`id`, `budget_project_id`, `total_cost`, `created_at`, `updated_at`) VALUES
-(1, 1, NULL, '2024-09-23 01:50:02', '2024-09-23 01:50:02');
+(5, 5, NULL, '2024-10-03 07:20:51', '2024-10-03 07:20:51');
 
 -- --------------------------------------------------------
 
@@ -411,7 +437,7 @@ CREATE TABLE `material_cost` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `direct_cost_id` bigint(20) UNSIGNED NOT NULL,
   `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `type` varchar(255) NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
   `project` varchar(255) NOT NULL,
   `po` varchar(255) NOT NULL DEFAULT 'OPEX',
   `expenses` varchar(255) NOT NULL,
@@ -434,8 +460,16 @@ CREATE TABLE `material_cost` (
 --
 
 INSERT INTO `material_cost` (`id`, `direct_cost_id`, `budget_project_id`, `type`, `project`, `po`, `expenses`, `description`, `status`, `quantity`, `unit`, `unit_cost`, `total_cost`, `average_cost`, `total_budget`, `approval_status`, `percentage_cost`, `created_at`, `updated_at`) VALUES
-(3, 1, 1, 'Material', '1', 'OPEX', 'wire', '100 Meter Ethernet Cable', 'new', 100.00, 'meters', 500.00, 50000.00, 500.00, NULL, 'approved', 0.01, '2024-09-20 08:55:59', '2024-09-20 08:55:59'),
-(4, 1, 1, 'Material', '1', 'OPEX', 'cable', '200 meter cable', 'new purchased', 200.00, 'rolls', 500.00, 100000.00, 500.00, NULL, 'approved', 0.01, '2024-09-21 03:00:59', '2024-09-21 03:00:59');
+(1, 2, 1, 'Material', '1', 'OPEX', 'wire', '100 Meter Ethernet Cable', 'new', 100.00, 'meters', 30.00, 3000.00, 30.00, NULL, 'approved', 0.01, '2024-10-01 03:06:04', '2024-10-01 03:06:04'),
+(2, 2, 1, 'Material', '1', 'OPEX', 'cable', '100 Roll Cable', 'purchased', 200.00, 'rolls', 400.00, 80000.00, 400.00, NULL, 'approved', 0.01, '2024-10-01 03:07:56', '2024-10-01 03:07:56'),
+(3, 2, 1, 'Material', '1', 'OPEX', 'cable', '100 meter cable', 'purchased', 200.00, 'meters', 50.00, 10000.00, 50.00, NULL, 'approved', 0.01, '2024-10-01 04:27:17', '2024-10-01 04:27:17'),
+(4, 2, 1, 'Material', '1', 'OPEX', 'wire', '100 Roll Cable', 'new', 29.00, 'meters', 500.00, 14500.00, 500.00, NULL, 'approved', 0.03, '2024-10-01 04:58:22', '2024-10-01 04:58:22'),
+(5, 3, 2, 'Material', '1', 'OPEX', 'cable', 'Drop Fibre Cable', 'new purchase from china', 300.00, 'rolls', 160.00, 48000.00, 160.00, NULL, 'approved', 0.00, '2024-10-01 09:06:34', '2024-10-01 09:06:34'),
+(6, 5, 5, 'Material', '1', 'OPEX', 'Electrical Wires', 'High-quality copper cable for electrical wiring.', 'In Stock', 40.00, 'meters', 500.00, 20000.00, 500.00, NULL, 'approved', 0.03, '2024-10-03 08:07:45', '2024-10-03 08:11:11'),
+(7, 5, 5, 'Material', '1', 'OPEX', 'Conductors', 'Insulated wire suitable for various electrical applications.', 'require purchase', 30.00, 'meters', 300.00, 9000.00, 300.00, NULL, 'approved', 0.03, '2024-10-03 08:09:16', '2024-10-03 08:12:32'),
+(15, 5, 5, 'Material', '1', 'OPEX', 'Electrical Tape', 'Durable electrical tape for insulating and securing wires.', 'new purchase from china', 20.00, 'meters', 50.00, 1000.00, 50.00, NULL, 'approved', 0.05, '2024-10-03 08:30:35', '2024-10-03 08:30:35'),
+(16, 5, 5, 'Material', '1', 'OPEX', 'PVC Pipes', 'Lightweight and durable PVC pipes for plumbing.', 'new purchase', 30.00, 'meters', 120.00, 3600.00, 120.00, NULL, 'approved', 0.03, '2024-10-03 08:31:50', '2024-10-03 08:31:50'),
+(17, 5, 5, 'Material', '1', 'OPEX', 'Electrical Components', 'High-quality electrical switches suitable for residential and commercial use.', 'updated', 80.00, 'meters', 70.00, 5600.00, 70.00, NULL, 'approved', 0.01, '2024-10-03 08:34:47', '2024-10-03 08:34:47');
 
 -- --------------------------------------------------------
 
@@ -466,40 +500,38 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (10, '2024_08_20_132501_bank', 1),
 (11, '2024_08_26_083007_create_business_units_table', 1),
 (12, '2024_08_26_111241_create_business_clients_table', 1),
-(13, '2024_08_30_114158_create_material_cost_table', 1),
+(13, '2024_08_30_114160_create_material_cost_table', 1),
 (14, '2024_08_31_104724_create_direct_cost_table', 1),
 (15, '2024_08_31_104731_create_indirect_cost_table', 1),
-(16, '2024_08_31_1121116_create_facility_costs_table', 1),
-(17, '2024_08_31_115424_create_cost_overhead_table', 1),
-(18, '2024_08_31_115903_create_financial_cost_table', 1),
-(19, '2024_09_02_103514_create_capital_expenditure_table', 1),
+(16, '2024_08_31_1121118_create_facility_costs_table', 1),
+(17, '2024_08_31_115324_create_cost_overhead_table', 1),
+(18, '2024_08_31_115905_create_financial_cost_table', 1),
+(19, '2024_09_02_103517_create_capital_expenditure_table', 1),
 (20, '2024_09_03_045117_create_project_budget_sequence_table', 1),
 (21, '2024_09_03_072223_create_revenue_plans_table', 1),
 (22, '2024_09_06_053630_create_purchase_order_sequence_table', 1),
 (23, '2024_09_08_121209_create_purchase_order_items_table', 1),
 (24, '2024_09_10_064229_create_budget_project_table', 1),
-(25, '2024_09_14_192841_create_allocated_budget_table', 1),
+(25, '2024_09_14_192843_create_allocated_budget_table', 1),
 (26, '2024_09_15_192732_create_approved_budget_table', 1),
 (27, '2024_09_16_064836_create_cash_flows_table', 1),
-(28, '2024_09_9_1114526_create_salaries_table', 1),
-(29, '2024_09_9_1115526_create_salaries_table', 2),
-(30, '2024_09_9_1115626_create_salaries_table', 3),
-(31, '2024_09_9_1115627_create_salaries_table', 4),
-(32, '2024_09_9_1115628_create_salaries_table', 5),
-(33, '2024_09_9_1115629_create_salaries_table', 6),
-(34, '2024_08_31_1121118_create_facility_costs_table', 7),
-(35, '2024_09_20_101530_create_petty_cash_table', 8),
-(36, '2024_09_20_101539_create_noc_payments_table', 8),
-(37, '2024_09_20_101531_create_petty_cash_table', 9),
-(38, '2024_09_20_1015340_create_noc_payments_table', 9),
-(39, '2024_08_30_114159_create_material_cost_table', 10),
-(40, '2024_08_30_114160_create_material_cost_table', 11),
-(41, '2024_08_31_115324_create_cost_overhead_table', 12),
-(42, '2024_08_31_115904_create_financial_cost_table', 13),
-(43, '2024_08_31_115905_create_financial_cost_table', 14),
-(44, '2024_09_02_103515create_capital_expenditure_table', 15),
-(45, '2024_09_02_103516_create_capital_expenditure_table', 16),
-(46, '2024_09_02_103517_create_capital_expenditure_table', 17);
+(28, '2024_09_20_101531_create_petty_cash_table', 1),
+(29, '2024_09_20_1015340_create_noc_payments_table', 1),
+(30, '2024_09_9_1115629_create_salaries_table', 1),
+(31, '2024_10_01_044603_create_supplier_prices_table', 1),
+(32, '2024_10_02_085441_create_purchase_orders_item_table', 2),
+(33, '2024_10_03_085441_create_purchase_orders_item_table', 3),
+(34, '2024_10_03_085442_create_purchase_orders_item_table', 4),
+(35, '2024_10_03_085447_create_purchase_orders_item_table', 5),
+(36, '2024_10_03_085450_create_purchase_orders_item_table', 6),
+(37, '2024_10_03_085451_create_purchase_orders_item_table', 7),
+(38, '2024_10_03_085452_create_purchase_orders_item_table', 8),
+(39, '2024_10_03_085453_create_purchase_orders_item_table', 9),
+(40, '2024_10_03_085454_create_purchase_orders_item_table', 10),
+(41, '2024_10_04_085454_create_purchase_orders_item_table', 11),
+(42, '2024_10_05_085454_create_purchase_orders_item_table', 12),
+(43, '2024_10_06_085454_create_purchase_orders_item_table', 13),
+(44, '2024_10_06_085456_create_purchase_orders_item_table', 14);
 
 -- --------------------------------------------------------
 
@@ -521,7 +553,9 @@ CREATE TABLE `noc_payments` (
 --
 
 INSERT INTO `noc_payments` (`id`, `project_id`, `description`, `amount`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Amount for NOC Payment', 4000.00, '2024-09-20 07:50:57', '2024-09-20 07:50:57');
+(1, 1, 'Amount for NOC Payment', 1000.00, '2024-10-01 03:05:36', '2024-10-01 03:05:36'),
+(2, 2, 'Amount for NOC Payment', 3000.00, '2024-10-01 09:04:57', '2024-10-01 09:04:57'),
+(3, 5, 'Amount for NOC Payment', 200000.00, '2024-10-03 08:02:28', '2024-10-03 08:02:28');
 
 -- --------------------------------------------------------
 
@@ -586,7 +620,10 @@ CREATE TABLE `petty_cash` (
 --
 
 INSERT INTO `petty_cash` (`id`, `project_id`, `description`, `amount`, `created_at`, `updated_at`) VALUES
-(6, 1, 'Amount for Petty Cash', 1000.00, '2024-09-20 07:50:24', '2024-09-20 07:50:24');
+(2, 1, 'Amount for Petty Cash', 500.00, '2024-10-01 03:05:19', '2024-10-01 03:05:19'),
+(3, 2, 'Amount for Petty Cash', 20000.00, '2024-10-01 09:04:32', '2024-10-01 09:04:32'),
+(4, 5, 'Amount for Petty Cash', 200000.00, '2024-10-03 08:01:37', '2024-10-03 08:01:37'),
+(5, 5, 'Amount for Petty Cash', 300000.00, '2024-10-03 08:01:58', '2024-10-03 08:01:58');
 
 -- --------------------------------------------------------
 
@@ -640,7 +677,9 @@ INSERT INTO `projects` (`id`, `name`, `projectdetail`, `projectremark`, `status`
 (1, '713h', NULL, NULL, 'Active', '2024-09-07 02:03:28', '2024-09-07 02:03:28'),
 (2, '89UY', NULL, NULL, 'Active', '2024-09-07 02:03:32', '2024-09-07 02:03:32'),
 (3, 'WR-OLT', NULL, NULL, 'Active', '2024-09-07 02:03:35', '2024-09-07 02:03:35'),
-(4, 'ETI-MN', NULL, NULL, 'Active', '2024-09-17 07:16:43', '2024-09-17 07:16:43');
+(4, 'ETI-MN', NULL, NULL, 'Active', '2024-09-17 07:16:43', '2024-09-17 07:16:43'),
+(5, 'Admin Department', NULL, NULL, 'Active', '2024-10-01 02:34:41', '2024-10-01 02:34:41'),
+(6, 'Logistics', NULL, NULL, 'Active', '2024-10-01 02:35:24', '2024-10-01 02:35:24');
 
 -- --------------------------------------------------------
 
@@ -661,7 +700,8 @@ CREATE TABLE `project_budget_sequence` (
 --
 
 INSERT INTO `project_budget_sequence` (`id`, `date`, `last_sequence`, `created_at`, `updated_at`) VALUES
-(1, '09192024', 3, '2024-09-19 07:13:32', '2024-09-19 07:15:32');
+(1, '10012024', 2, '2024-10-01 02:35:59', '2024-10-01 08:53:49'),
+(2, '10032024', 3, '2024-10-03 06:10:54', '2024-10-03 07:18:04');
 
 -- --------------------------------------------------------
 
@@ -695,28 +735,25 @@ CREATE TABLE `purchase_orders` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `purchase_orders`
---
-
-INSERT INTO `purchase_orders` (`id`, `po_number`, `supplier_name`, `description`, `supplier_address`, `project_id`, `total_discount`, `requested_by`, `verified_by`, `prepared_by`, `date`, `payment_term`, `subtotal`, `vat`, `total`, `budget_total`, `budget_utilization`, `budget_balance`, `current_request`, `status`, `is_verified`, `created_at`, `updated_at`) VALUES
-(1, 'PO092420240001', 'Innovative', 'starting new', 'Abu Hail, UAE', 1, NULL, 19, NULL, 33, '2024-09-24', 'net60', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Not Submitted', 0, '2024-09-24 07:03:23', '2024-09-24 07:03:23');
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table `purchase_order_items`
+-- Table structure for table `purchase_orders_item`
 --
 
-CREATE TABLE `purchase_order_items` (
+CREATE TABLE `purchase_orders_item` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `purchase_order_id` bigint(20) UNSIGNED NOT NULL,
   `po_number` varchar(255) NOT NULL,
   `items` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`items`)),
-  `total_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `total_discount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `project_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `allocated_budget_amount` decimal(8,2) NOT NULL DEFAULT 0.00,
+  `amount_requested` decimal(10,2) NOT NULL DEFAULT 0.00,
   `total_vat` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `status` varchar(255) DEFAULT 'Not Submitted',
+  `total_discount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `balance_budget` decimal(8,2) NOT NULL DEFAULT 0.00,
+  `total_balance` decimal(8,2) NOT NULL DEFAULT 0.00,
+  `budget_utilization` decimal(8,2) NOT NULL DEFAULT 0.00,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -740,7 +777,9 @@ CREATE TABLE `purchase_order_sequence` (
 --
 
 INSERT INTO `purchase_order_sequence` (`id`, `date`, `last_sequence`, `created_at`, `updated_at`) VALUES
-(1, '09242024', 1, '2024-09-24 07:03:23', '2024-09-24 07:03:23');
+(1, '10012024', 1, '2024-10-01 03:13:58', '2024-10-01 03:13:58'),
+(2, '10022024', 7, '2024-10-02 00:38:54', '2024-10-02 09:08:23'),
+(3, '10042024', 1, '2024-10-04 01:49:12', '2024-10-04 01:49:12');
 
 -- --------------------------------------------------------
 
@@ -772,8 +811,9 @@ CREATE TABLE `revenue_plans` (
 --
 
 INSERT INTO `revenue_plans` (`id`, `budget_project_id`, `sn`, `type`, `project`, `contract`, `description`, `amount`, `total_profit`, `net_profit_before_tax`, `tax`, `net_profit_after_tax`, `profit_percentage`, `approval_status`, `created_at`, `updated_at`) VALUES
-(45, 1, 1, 'Revenue', '1', NULL, 'NOC Payment', 110000.00, 110000.00, -894251.58, -80482.64, -813768.94, NULL, 'approved', '2024-09-24 01:22:08', '2024-09-24 01:22:08'),
-(46, 1, 1, 'Revenue', '1', NULL, 'NOC Payment', 1000000.00, 1110000.00, 105748.42, 9517.36, 96231.06, NULL, 'approved', '2024-09-24 01:25:39', '2024-09-24 01:25:39');
+(7, 5, 1, 'Revenue', '1', NULL, 'NOC Payment', 1000000.00, 1000000.00, -102694.10, -9242.47, -93451.63, NULL, 'approved', '2024-10-03 09:20:59', '2024-10-03 09:20:59'),
+(9, 5, 1, 'Revenue', '1', NULL, 'Civil Payment', 1000000.00, 2000000.00, 897305.90, 80757.53, 816548.37, NULL, 'approved', '2024-10-04 01:22:30', '2024-10-04 01:22:30'),
+(10, 5, 1, 'Revenue', '1', NULL, 'Invoices', 3000000.00, 5000000.00, 3897305.90, 350757.53, 3546548.37, NULL, 'approved', '2024-10-04 01:24:41', '2024-10-04 01:24:41');
 
 -- --------------------------------------------------------
 
@@ -810,15 +850,37 @@ CREATE TABLE `salaries` (
 --
 
 INSERT INTO `salaries` (`id`, `direct_cost_id`, `budget_project_id`, `type`, `project`, `po`, `expenses`, `description`, `other_expense`, `status`, `visa_status`, `cost_per_month`, `no_of_staff`, `overseeing_sites`, `no_of_months`, `total_cost`, `average_cost`, `percentage_cost`, `approval_status`, `created_at`, `updated_at`) VALUES
-(7, 1, 1, 'Salary', '1', 'OPEX', 'Sr. Client Relationship Manager', 'starting a new project with XADD', NULL, 'existing staff', 'Xad Visa', 12000.01, 1, 5, 2, 24000.02, 12000.01, 0.20, 'approved', '2024-09-21 02:25:10', '2024-09-21 02:25:10'),
-(8, 1, 1, 'Salary', '1', 'OPEX', 'Sr. Manager Operations', 'he is already overseeing 3 sights', NULL, 'new hiring person', 'Xad Visa', 20000.00, 1, 3, 2, 40000.00, 20000.00, 0.33, 'approved', '2024-09-21 02:27:18', '2024-09-21 02:27:18'),
-(10, 1, 1, 'Salary', '1', 'OPEX', 'Project Manager', 'project manager site own visa 4 nos', NULL, 'new hiring', 'Contractor', 15000.00, 4, 5, 2, 120000.00, 15000.00, 0.20, 'approved', '2024-09-21 02:31:41', '2024-09-21 02:31:41'),
-(11, 1, 1, 'Salary', '1', 'OPEX', 'Bus Driver', 'responsible for staff pick and drop', NULL, 'new hiring', 'Contractor', 5000.00, 2, 0, 2, 20000.00, 5000.00, 0.50, 'approved', '2024-09-21 02:33:12', '2024-09-21 02:33:12'),
-(12, 1, 1, 'Salary', '1', 'OPEX', 'Mason', 'for all sites', NULL, 'new hiring', 'Xad Visa', 2000.00, 10, 0, 2, 40000.00, 2000.00, 0.10, 'approved', '2024-09-21 02:34:38', '2024-09-21 02:34:38'),
-(13, 1, 1, 'Salary', '1', 'OPEX', 'Document Controller', 'responsible for visas and legal obligation', NULL, 'existing', 'Contractor', 3000.00, 1, 0, 2, 6000.00, 3000.00, 1.00, 'approved', '2024-09-21 02:36:26', '2024-09-21 02:36:26'),
-(14, 1, 1, 'Salary', '1', 'OPEX', 'Surveyor', 'site srveyor', NULL, 'new hiring person', 'Xad Visa', 2000.00, 8, 0, 2, 32000.00, 2000.00, 0.13, 'approved', '2024-09-21 02:39:23', '2024-09-21 02:39:23'),
-(15, 1, 1, 'Salary', '1', 'OPEX', 'Charge Hand', 'charge hand site supervision', NULL, 'new hiring', 'Xad Visa', 5000.00, 8, 0, 2, 80000.00, 5000.00, 0.13, 'approved', '2024-09-21 02:40:33', '2024-09-21 02:40:33'),
-(16, 1, 1, 'Salary', '1', 'OPEX', 'Foreman', 'we needed 20 of them', NULL, 'existing and previous both', 'Xad Visa', 5000.00, 20, 0, 2, 200000.00, 5000.00, 0.05, 'approved', '2024-09-21 02:41:52', '2024-09-21 02:41:52');
+(14, 5, 5, 'Salary', '1', 'OPEX', 'Bus Driver', 'staff pick and drop', NULL, 'existing', 'Xad Visa', 3000.00, 2, 0, 1, 6000.00, 3000.00, 0.50, 'approved', '2024-10-03 07:20:51', '2024-10-03 07:20:51'),
+(15, 5, 5, 'Salary', '1', 'OPEX', 'Project Manager', 'overseeing 5 sights', NULL, 'existing staff', 'Xad Visa', 3500.00, 5, 3, 1, 17500.00, 3500.00, 0.33, 'approved', '2024-10-03 07:21:47', '2024-10-03 07:21:47'),
+(16, 5, 5, 'Salary', '1', 'OPEX', 'Sr. Client Relationship Manager', 'client manager for important sites', NULL, 'new hiring', 'Xad Visa', 4000.00, 5, 5, 1, 20000.00, 4000.00, 0.20, 'approved', '2024-10-03 07:28:22', '2024-10-03 07:28:22'),
+(17, 5, 5, 'Salary', '1', 'OPEX', 'NOC Officer', 'Noc Officers For a Site', NULL, 'new hiring', 'Xad Visa', 3000.00, 10, 0, 1, 30000.00, 3000.00, 0.10, 'approved', '2024-10-03 07:29:50', '2024-10-03 07:29:50'),
+(18, 5, 5, 'Salary', '1', 'OPEX', 'Helper', 'Helpers To Renovate the House', NULL, 'new hiring', 'Xad Visa', 2000.00, 9, 0, 1, 18000.00, 2000.00, 0.11, 'approved', '2024-10-03 07:31:01', '2024-10-03 07:31:01'),
+(19, 5, 5, 'Salary', '1', 'OPEX', 'Sr. Civil Project Engineer', 'looking for sites in rural', NULL, 'existing staff', 'Xad Visa', 4500.00, 4, 10, 1, 18000.00, 4500.00, 0.10, 'approved', '2024-10-03 07:34:59', '2024-10-03 07:34:59'),
+(20, 5, 5, 'Salary', '1', 'OPEX', 'HSE Engineer', 'Site Engineers', NULL, 'new hiring', 'Xad Visa', 2500.00, 8, 0, 1, 20000.00, 2500.00, 0.13, 'approved', '2024-10-03 07:37:28', '2024-10-03 07:37:28'),
+(21, 5, 5, 'Salary', '1', 'OPEX', 'Surveyor', 'Surveyor from nepal', NULL, 'new hiring', 'Xad Visa', 2000.00, 1, 0, 1, 2000.00, 2000.00, 1.00, 'approved', '2024-10-03 07:38:28', '2024-10-03 07:38:28'),
+(22, 5, 5, 'Salary', '1', 'OPEX', 'Foreman', 'site forman', NULL, 'new hiring', 'Xad Visa', 4000.00, 9, 0, 1, 36000.00, 4000.00, 0.11, 'approved', '2024-10-03 07:39:58', '2024-10-03 07:40:14'),
+(23, 5, 5, 'Salary', '1', 'OPEX', 'Project Coordinator', 'will coordinate the entire project', NULL, 'existing staff', 'Xad Visa', 4000.00, 3, 0, 1, 12000.00, 4000.00, 0.33, 'approved', '2024-10-03 07:41:23', '2024-10-03 07:41:23'),
+(25, 5, 5, 'Salary', '1', 'OPEX', 'Charge Hand', 'charge hand site supervision', NULL, 'new hiring', 'Xad Visa', 500.00, 1, 0, 1, 500.00, 500.00, 1.00, 'approved', '2024-10-03 07:43:03', '2024-10-03 07:43:03');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `supplier_prices`
+--
+
+CREATE TABLE `supplier_prices` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `items_code` varchar(255) NOT NULL,
+  `purchase_date` date NOT NULL,
+  `item_name` varchar(255) NOT NULL,
+  `supplier_name` varchar(255) NOT NULL,
+  `uom` varchar(255) NOT NULL,
+  `price` decimal(8,2) NOT NULL,
+  `discount` decimal(5,2) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -850,7 +912,8 @@ INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `nationality`, `o
 (19, 'nabeel', 'javed', 'nabeeljaved2029@gmail.com', 'pak', 'Project', '0521077862', '$2y$12$EHZmQeCwCQ8wmA5H53V1suAans/2WT0qtykRfvx4WzxgUf411dJKG', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '172499948757.jfif', '2024-08-29 05:51:09', '2024-08-29 05:51:09'),
 (33, 'xad', 'tech', 'admin@xadtech.com', 'pak', 'admin', '0521077862', '$2y$12$WHWpYX5rpA3oSZYQYx.T6emR.1A.C2XfICThPWxCEvzfSistqapBW', 'Admin', '\"[\\\"Project Management\\\",\\\"Cash Flow Management\\\",\\\"Bank Management\\\",\\\"User Management\\\"]\"', '172499948757.jfif', '2024-08-30 02:31:28', '2024-08-30 02:31:28'),
 (35, 'shahbaz', 'anjum', 'shahbaz@xadtech.com', NULL, 'admin', '0521077862', '$2y$10$UqThbHgSNWcA/PAvH6PYmuN163EairEOMoJ73xa47WUhieFG1D8eG', 'Finance Manager', '\"[\\\"Project Management\\\",\\\"Cash Flow Management\\\"]\"', '172499948757.jfif', '2024-08-30 02:36:34', '2024-09-15 08:45:26'),
-(36, 'ahmed', 'shabbir', 'ahmed@xadtech.com', 'pak', 'Project Manager', '050521077862', '$2y$12$ZvcN2OHAhSUNjwe5uR0EGOw55Ix/94w5NwoRWhYprySNy4MRVhAU2', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '', '2024-09-16 04:47:51', '2024-09-16 04:47:51');
+(36, 'ahmed', 'shabbir', 'ahmed@xadtech.com', 'pak', 'Project Manager', '050521077862', '$2y$12$ZvcN2OHAhSUNjwe5uR0EGOw55Ix/94w5NwoRWhYprySNy4MRVhAU2', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '', '2024-09-16 04:47:51', '2024-09-16 04:47:51'),
+(37, 'Majid', 'aslam', 'majid@xadtech.com', 'Pak', 'Logistics', '050 050 050 050', '$2y$12$3N4uydfegGQhZLgrtxOD3eaZ.OSpvyF5obRo2yPWdeuITnsfeH3M.', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '', '2024-10-01 02:29:20', '2024-10-02 02:07:13');
 
 --
 -- Indexes for dumped tables
@@ -1018,9 +1081,9 @@ ALTER TABLE `purchase_orders`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `purchase_order_items`
+-- Indexes for table `purchase_orders_item`
 --
-ALTER TABLE `purchase_order_items`
+ALTER TABLE `purchase_orders_item`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1043,6 +1106,12 @@ ALTER TABLE `salaries`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `supplier_prices`
+--
+ALTER TABLE `supplier_prices`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -1056,7 +1125,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `allocated_budget`
 --
 ALTER TABLE `allocated_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `approved_budget`
@@ -1074,49 +1143,49 @@ ALTER TABLE `banks`
 -- AUTO_INCREMENT for table `budget_project`
 --
 ALTER TABLE `budget_project`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `business_clients`
 --
 ALTER TABLE `business_clients`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `business_units`
 --
 ALTER TABLE `business_units`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `capital_expenditure`
 --
 ALTER TABLE `capital_expenditure`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `cash_flows`
 --
 ALTER TABLE `cash_flows`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `cost_overhead`
 --
 ALTER TABLE `cost_overhead`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `direct_cost`
 --
 ALTER TABLE `direct_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `facility_cost`
 --
 ALTER TABLE `facility_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1128,31 +1197,31 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `financial_cost`
 --
 ALTER TABLE `financial_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `indirect_cost`
 --
 ALTER TABLE `indirect_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `material_cost`
 --
 ALTER TABLE `material_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `noc_payments`
 --
 ALTER TABLE `noc_payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -1164,7 +1233,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `petty_cash`
 --
 ALTER TABLE `petty_cash`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `planned_cash`
@@ -1182,49 +1251,55 @@ ALTER TABLE `planned_cash_opening_balances`
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `project_budget_sequence`
 --
 ALTER TABLE `project_budget_sequence`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT for table `purchase_order_items`
+-- AUTO_INCREMENT for table `purchase_orders_item`
 --
-ALTER TABLE `purchase_order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `purchase_orders_item`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_sequence`
 --
 ALTER TABLE `purchase_order_sequence`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `revenue_plans`
 --
 ALTER TABLE `revenue_plans`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `salaries`
 --
 ALTER TABLE `salaries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
+-- AUTO_INCREMENT for table `supplier_prices`
+--
+ALTER TABLE `supplier_prices`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

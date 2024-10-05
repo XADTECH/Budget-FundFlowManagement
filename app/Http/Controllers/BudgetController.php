@@ -8,7 +8,7 @@ use App\Models\BusinessUnit;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\PettyCash;
-use App\Models\IndirectCost;
+
 use App\Models\NocPayment;
 use App\Models\Salary;
 use App\Models\ProjectBudgetSequence;
@@ -20,6 +20,7 @@ use App\Models\TotalBudgetAllocated;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
 use App\Models\DirectCost;
+use App\Models\IndirectCost;
 use App\Models\CashFlow;
 use App\Models\ApprovedBudget;
 use App\Models\RevenuePlan;

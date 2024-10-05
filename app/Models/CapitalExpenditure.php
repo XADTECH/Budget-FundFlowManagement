@@ -37,9 +37,7 @@ class CapitalExpenditure extends Model
 
     public static function sumTotalCost($budgetProjectId)
     {
-        $total_cost = CapitalExpenditure::where('budget_project_id', $budgetProjectId)
-            ->where('approval_status', 'approved') // Only approved salaries
-            ->sum('total_cost');
+        $total_cost = CapitalExpenditure::where('budget_project_id', $budgetProjectId)->sum('total_cost');
 
         return $total_cost;
     }

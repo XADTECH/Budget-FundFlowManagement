@@ -9,9 +9,13 @@ use App\Models\Project;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\User;
+use App\Models\DirectCost;
+use App\Models\IndirectCost;
+use App\Models\CapitalExpenditure;
 use Illuminate\Http\Request;
 use PDF;
 use Dompdf\Dompdf;
+use Carbon\Carbon;
 
 class PdfController extends Controller
 {
@@ -29,8 +33,8 @@ class PdfController extends Controller
         $utilization = $purchaseOrderItem->budget_utilization;
         $poStatus = $purchaseOrder->status;
 
-        $balanceBudget =  $budget->getRemainingBudget();
-        $pdf = PDF::loadView('content.pages.pdf.pages-budget-project-summary-report', compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus','purchaseOrderItem'));
+        $balanceBudget = $budget->getRemainingBudget();
+        $pdf = PDF::loadView('content.pages.pdf.pages-budget-project-summary-report', compact('purchaseOrder', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus', 'purchaseOrderItem'));
 
         // Download the PDF
         return $pdf->stream('test.pdf');
@@ -39,17 +43,29 @@ class PdfController extends Controller
     public function budgetSummary($POID)
     {
         $budget = BudgetProject::where('id', $POID)->first();
+        $amounts = $budget->calculateTotalAmount();
+        // return response($amounts);
         $clients = BusinessClient::where('id', operator: $budget->client_id)->first();
         $units = BusinessUnit::where('id', $budget->unit_id)->first();
         $project = Project::where('id', $budget->project_id)->first();
+        $directCost = DirectCost::where('budget_project_id', $budget->id)->first();
+        $capitalExp = CapitalExpenditure::where('budget_project_id', $budget->id)->first();
+        $totalCapExp = $capitalExp->sumTotalCost($budget->id);
+
+        // Example start and end dates from your $budget object
+        $start_date = Carbon::parse($budget->start_date);
+        $end_date = Carbon::parse($budget->end_date);
+
+        // Calculate the difference in months
+        $months = $start_date->diffInMonths($end_date);
+        $years = $months / 12;
+
+        // return response($directCost);
+        $inDirectCost = InDirectCost::where('budget_project_id', $budget->id)->first();
         $user = User::where('id', $budget->manager_id)->first();
-
-        // return response($budget);
-
-        $pdf = PDF::loadView('content.pages.pdf.project_approval', compact('budget', 'clients', 'units','project', 'user'));
-
-
-
+        $totalDirectCost = $directCost->calculateTotalDirectCost();
+        $totalInDirectCost = $inDirectCost->calculateTotalIndirectCost();
+        $pdf = PDF::loadView('content.pages.pdf.project_approval', compact('budget', 'clients', 'units', 'project', 'user', 'amounts', 'totalDirectCost', 'totalInDirectCost', 'totalCapExp', 'months', 'years'));
         // Download the PDF
         return $pdf->stream('test.pdf');
     }
