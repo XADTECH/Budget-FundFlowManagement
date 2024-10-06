@@ -77,3 +77,5 @@ Route::post('/delete-facilities', [DirectCostController::class, 'deleteFacilitie
 Route::post('/delete-material', [DirectCostController::class, 'deleteMaterial'])->name('delete-facilities');
 Route::post('/delete-costoverhead', [InDirectCostController::class, 'deleteCostOverHead'])->name('delete-cost');
 Route::post('/delete-financial', [InDirectCostController::class, 'deleteFinancial'])->name('delete-financial');
+
+Route::post('/delete-capital', [DirectCostController::class, 'deleteCapital'])->name('delete-capital');

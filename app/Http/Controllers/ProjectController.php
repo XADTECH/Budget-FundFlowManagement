@@ -167,15 +167,15 @@ class ProjectController extends Controller
 
     // Retrieve additional data for the view
     $projects = Project::findOrFail($budget->project_id);
-    
- 
+
+
     $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
 
 
 
     $clients = BusinessClient::findOrFail($budget->client_id);
     $units = BusinessUnit::findOrFail($budget->unit_id);
-    
+
     $allProjects = Project::all();
     $facilities = FacilityCost::all();
     $materials = MaterialCost::all();
@@ -185,7 +185,7 @@ class ProjectController extends Controller
     $revenuePlans = RevenuePlan::all();
     $salaries = Salary::all();
 
-  
+
 
     $directCost = DirectCost::firstOrNew([
       'budget_project_id' => $id,

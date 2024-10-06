@@ -23,6 +23,7 @@ use App\Models\IndirectCost;
 use App\Models\TotalBudgetAllocated;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderItem;
+use App\Models\SupplierPrice;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Exception;
@@ -43,8 +44,9 @@ class PurcahseOrderController extends Controller
         $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
         $budgetList = BudgetProject::get();
         $userList = User::get();
+        $supplierlist = SupplierPrice::get();
 
-        return view('content.pages.pages-add-project-budget-purchase-order', compact('budgets', 'purchaseOrders', 'users', 'userList', 'budgetList', 'projects'));
+        return view('content.pages.pages-add-project-budget-purchase-order', compact('supplierlist', 'budgets', 'purchaseOrders', 'users', 'userList', 'budgetList', 'projects'));
     }
 
     //add / show purchase order
@@ -201,7 +203,7 @@ class PurcahseOrderController extends Controller
                 'balance_budget' => $request->balanceBudget, // Directly cast to float
                 'amount_requested' => (float) $request->requestAmount, // Directly cast to float
                 'total_balance' => (float) $request->total_balanceBudget, // Directly cast to float
-       
+
                 'status' => $request->status,
             ]);
 
@@ -211,8 +213,8 @@ class PurcahseOrderController extends Controller
             // Check if the record exists
             if ($totalBudgetAllocated) {
                 // Update total_lpo by adding the total_amount
-                $totalBudgetAllocated->total_lpo += $request->totalAmount; 
-                $totalBudgetAllocated->total_material_cost -= $request->totalAmount; 
+                $totalBudgetAllocated->total_lpo += $request->totalAmount;
+                $totalBudgetAllocated->total_material_cost -= $request->totalAmount;
 
                 // Save the updated record
                 $totalBudgetAllocated->save();

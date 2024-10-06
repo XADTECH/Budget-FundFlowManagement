@@ -208,10 +208,17 @@ Route::middleware(['checklogin'])->group(function () {
 
   Route::get('/pages/get-financial-data/{id}', [InDirectCostController::class, 'getFinancialData']);
   Route::put('/pages/update-financial/{id}', [InDirectCostController::class, 'updateFinancial']);
+
+  Route::get('/pages/get-capital-data/{id}', [DirectCostController::class, 'capitalExpenditureData'])->name('get-capitalExpenditureData');
+  Route::put('/pages/update-capital/{id}', [DirectCostController::class, 'updateCapitalExpense'])->name('capit');
+
+
   //material cost
   Route::post('/pages/add-budget-project-material-cost', [DirectCostController::class, 'storeMaterial'])->name(
     'add-budget-project-salary'
   );
+
+
 
   //Cost Overhead Cost
   Route::post('/pages/add-budget-project-overhead-cost', [InDirectCostController::class, 'storeCostOverhead'])->name(

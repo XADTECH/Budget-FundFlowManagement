@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CapitalExpenditure;
 use Illuminate\Http\Request;
 use App\Models\Salary;
 use App\Models\DirectCost;
@@ -523,6 +524,65 @@ class DirectCostController extends Controller
             return response()->json(['success' => 'User deleted successfully']);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while deleting the record: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function capitalExpenditureData($id)
+    {
+        $financialCost = CapitalExpenditure::findOrFail($id);
+        return response()->json($financialCost);
+    }
+
+    public function updateCapitalExpense(Request $request, $id)
+    {
+        // return response($request->all());
+
+        $capitalExpenditure = CapitalExpenditure::findOrFail($id);
+        $capitalExpenditure->type = $request['type'];
+        $capitalExpenditure->project = $request['project'];
+        $capitalExpenditure->po = $request['po'];
+        $capitalExpenditure->expenses =  $request['expenses'];
+        $capitalExpenditure->description = $request['description'];
+        $capitalExpenditure->status = $request['status'];
+        $capitalExpenditure->total_number = $request['total_number'];
+        $capitalExpenditure->cost = $request['cost'];
+        $capitalExpenditure->calculateTotalCost();
+        $capitalExpenditure->update();
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteCapital(Request $request)
+    {
+        try {
+            // Validate that project_id is provided
+            $redirect = false;
+            if ($request->isajax == 'false') {
+                $redirect = true;
+            }
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            // Find the project record by ID
+            $project = CapitalExpenditure::find($request->input('id'));
+
+            if (!$project) {
+                return response()->json(['message' => ' record not found.'], 404);
+            }
+
+            // Delete the project record
+            $project->delete();
+            if ($redirect) {
+                return redirect()->back()->with('success', "Record Updated Sucessfully");
+            } else {
+                return response()->json(['success' => 'Deleted successfully']);
+            }
+        } catch (Exception $e) {
+            return response()->json(['error' => 'An error occurred while deleting the project record.'], 500);
         }
     }
 }
