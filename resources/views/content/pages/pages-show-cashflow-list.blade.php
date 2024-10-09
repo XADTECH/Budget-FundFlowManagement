@@ -59,8 +59,8 @@
                             <th>Balance</th>
                             <th>Total DPM</th>
                             <th>Total LPO</th>
-                            {{-- <th>Reference Code</th> --}}
                             <th>Project Manager</th>
+                            <th>Total Budget Allocated</th>
                         </tr>
                     </thead>
                     <tbody id="cashflow-table-body" class="table-border-bottom-0">
@@ -88,9 +88,8 @@
                                 {{-- <td>{{ $cashFlow->reference_code }}</td> --}}
 
                                 <td>{{ $user->first_name ?? 'N/A' }}</td>
-                                <td>
-                                    <!-- Actions (e.g., view, edit, delete) -->
-                                </td>
+                                
+                                <td>{{number_format( $allocatedBudgets[0]->allocated_budget) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

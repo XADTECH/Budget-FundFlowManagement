@@ -136,7 +136,6 @@ class DirectCostController extends Controller
     public function storeMaterial(Request $request)
     {
         try {
-
             // return response()->json($request->all());
             // Validate the incoming request
             $validated = $request->validate([
@@ -237,7 +236,6 @@ class DirectCostController extends Controller
         }
     }
 
-
     public function getSalaryData($id)
     {
         $salary = Salary::findOrFail($id);
@@ -256,9 +254,8 @@ class DirectCostController extends Controller
         $salary->calculateAverageCost();
 
         if ($redirect) {
-            return redirect()->back()->with('success', "Record Updated Sucessfully");
+            return redirect()->back()->with('success', 'Record Updated Sucessfully');
         } else {
-
             return response()->json(['success' => true]);
         }
     }
@@ -275,7 +272,7 @@ class DirectCostController extends Controller
         $facility = FacilityCost::findOrFail($id);
         $facility->update($request->all());
         $facility->calculateTotalCost();
-        $facility->calculateAverageCost();;
+        $facility->calculateAverageCost();
         return response()->json(['success' => true]);
     }
 
@@ -458,7 +455,7 @@ class DirectCostController extends Controller
             // Delete the project record
             $project->delete();
             if ($redirect) {
-                return redirect()->back()->with('success', "Record Updated Sucessfully");
+                return redirect()->back()->with('success', 'Record Updated Sucessfully');
             } else {
                 return response()->json(['success' => 'Deleted successfully']);
             }
@@ -496,7 +493,6 @@ class DirectCostController extends Controller
 
     public function deleteMaterial(Request $request)
     {
-
         try {
             $id = $request->input('id');
             // First, try to find and delete the material cost
@@ -536,19 +532,41 @@ class DirectCostController extends Controller
     public function updateCapitalExpense(Request $request, $id)
     {
         // return response($request->all());
+        // Validate incoming request data
+        $validated = $request->validate([
+            'type' => 'required|string',
+            'project' => 'required|integer',
+            'po' => 'required|string',
+            'expenses' => 'required|string',
+            'other_expense' => 'nullable|string',
+            'description' => 'required|string',
+            'status' => 'required|string',
+            'total_number' => 'required|integer',
+            'cost' => 'required|numeric',
+        ]);
 
+        // Find the capital expenditure record
         $capitalExpenditure = CapitalExpenditure::findOrFail($id);
-        $capitalExpenditure->type = $request['type'];
-        $capitalExpenditure->project = $request['project'];
-        $capitalExpenditure->po = $request['po'];
-        $capitalExpenditure->expenses =  $request['expenses'];
-        $capitalExpenditure->description = $request['description'];
-        $capitalExpenditure->status = $request['status'];
-        $capitalExpenditure->total_number = $request['total_number'];
-        $capitalExpenditure->cost = $request['cost'];
+
+        // Update the fields with validated data
+        $capitalExpenditure->type = $validated['type'];
+        $capitalExpenditure->project = $validated['project'];
+        $capitalExpenditure->po = $validated['po'];
+        $capitalExpenditure->expenses = !empty($validated['other_expense']) ? $validated['other_expense'] : $capitalExpenditure->expenses;
+
+        $capitalExpenditure->description = $validated['description'];
+        $capitalExpenditure->status = $validated['status'];
+        $capitalExpenditure->total_number = $validated['total_number'];
+        $capitalExpenditure->cost = $validated['cost'];
+
+        // Assuming calculateTotalCost updates a field in the model
         $capitalExpenditure->calculateTotalCost();
-        $capitalExpenditure->update();
-        return response()->json(['success' => true]);
+
+        // Save the updated model
+        $capitalExpenditure->save();
+
+        // Return a success response
+        return response()->json(['success' => true, 'message' => 'Capital expense updated successfully.']);
     }
 
     public function deleteCapital(Request $request)
@@ -577,7 +595,7 @@ class DirectCostController extends Controller
             // Delete the project record
             $project->delete();
             if ($redirect) {
-                return redirect()->back()->with('success', "Record Updated Sucessfully");
+                return redirect()->back()->with('success', 'Record Updated Sucessfully');
             } else {
                 return response()->json(['success' => 'Deleted successfully']);
             }

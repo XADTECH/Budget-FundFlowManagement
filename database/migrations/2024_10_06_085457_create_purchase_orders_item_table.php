@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->decimal('total_discount', 10, 2)->default(0);
             $table->decimal('balance_budget')->default(0);
             $table->decimal('total_balance')->default(0);
+            $table->decimal('delivery_charges')->default(0);
             $table->decimal('budget_utilization')->default(0);
             $table->timestamps();
         });

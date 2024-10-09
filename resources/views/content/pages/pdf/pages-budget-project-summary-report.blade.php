@@ -151,87 +151,69 @@
             <td><b>Terms And Conditions: As Agreed with supplier (Mention in the provided Quotation)</b></td>
         </tr>
     </table>
-    <div class="header-bottom" style="font-family: Arial, sans-serif; text-align: center; width: 100%;">
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td style="text-align: left;  padding: 8px; width: 50%;">
-                </td>
+    <div class="header-container" style="display: flex; justify-content: space-between; font-family: Arial, sans-serif; width: 100%; gap: 20px;">
 
-                <td style="border: 1px solid #000; padding: 8px;  width: 50%;">VAT: {{$purchaseOrderItem->total_vat}}</td>
-
-            </tr>
-            <tr>
-                <td style="text-align: center;  padding: 8px; width: 50%;">
-
-
-                </td>
-                <td style="border: 1px solid #000; padding: 8px;  width: 50%;">Total Discount : {{$purchaseOrderItem->total_discount}} </td>
-            </tr>
-        </table>
+        <!-- First Table -->
+        <div class="table-container" style="flex: 1;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 50%;"></td>
+                    <td style="border: 1px solid #000; padding: 8px; width: 50%;">VAT: {{$purchaseOrderItem->total_vat ?? 0 }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 50%;"></td>
+                    <td style="border: 1px solid #000; padding: 8px; width: 50%;">Total Discount: {{$purchaseOrderItem->total_discount ?? 0}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 50%;"></td>
+                    <td style="border: 1px solid #000; padding: 8px; width: 50%;">Delivery Charges: {{$purchaseOrderItem->delivery_charges ?? 0}}</td>
+                </tr>
+            </table>
+        </div>
+    
+        <!-- Second Table -->
+        <div class="table-container" style="flex: 1;">
+            <table style="width: 100%; border-collapse: collapse; margin-top:10px">
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 70%;"></td>
+                    <td colspan="2" style="text-align: center; border: 1px solid #000; font-weight: bold; padding: 8px; width: 30%;">Budget Department Verification</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 70%;"></td>
+                    <td colspan="2" style="border: 1px solid #000; padding: 8px; width: 30%;"><b>Total Budget:</b> 
+                        @if(is_null($purchaseOrderItem->allocated_budget_amount))
+                            <span style="color: red; font-weight: bold;">Not Assigned</span>
+                        @else
+                            {{ number_format($purchaseOrderItem->allocated_budget_amount) }}
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 70%;"></td>
+                    <td colspan="2" style="border: 1px solid #000; padding: 8px; width: 30%;"><b>Utilization:</b> {{number_format($purchaseOrderItem->budget_utilization)}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 70%;"></td>
+                    <td colspan="2" style="border: 1px solid #000; padding: 8px; width: 30%;"><b>Balance Budget:</b> {{number_format($purchaseOrderItem->balance_budget)}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 70%;"></td>
+                    <td colspan="2" style="border: 1px solid #000; padding: 8px; width: 30%;"><b>Current Request:</b> {{number_format($purchaseOrderItem->amount_requested)}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 70%;"></td>
+                    <td colspan="2" style="border: 1px solid #000; padding: 8px; width: 30%;"><b>Balance:</b> {{ number_format($purchaseOrderItem->total_balance) }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; padding: 8px; width: 70%;"><hr>Approved By: Chief Executive Officer</td>
+                    <td style="border: 1px solid #000; padding: 8px; width: 50%;"><b>Name & Signature:</b> {{$prepared->first_name}}</td>
+                    <td style="border: 1px solid #000; padding: 8px; width: 50%;"><b>Date:</b> {{$budget->month}}</td>
+                </tr>
+            </table>
+        </div>
+    
     </div>
-
-    <div class="header-bottom" style="font-family: Arial, sans-serif; text-align: center; width: 100%;">
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td style="text-align: left;  padding: 8px; width: 70%;">
-
-                </td>
-
-                <td colspan="2" style="text-align: center;border: 1px solid #000;font-weight: bold; padding: 8px;  width: 30%;">Budget Department Verification</td>
-
-            </tr>
-            <tr>
-                <td style="text-align: left;  padding: 8px; width: 70%;">
-
-                </td>
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Total Budget:</b> @if(is_null($purchaseOrderItem->allocated_budget_amount))
-                    <span style="color: red; font-weight: bold;">Not Assigned</span>
-                    @else
-                    {{ number_format($purchaseOrderItem->allocated_budget_amount) }}
-                    @endif
-                </td>
-
-            </tr>
-            <tr>
-                <td style="text-align: left;  padding: 8px; width: 70%;">
-
-                </td>
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Utilization:</b> {{number_format($purchaseOrderItem->budget_utilization)}}</td>
-
-            </tr>
-            <tr>
-                <td style="text-align: left;  padding: 8px; width: 70%;">
-
-                </td>
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Balance Budget: </b>{{number_format($purchaseOrderItem->balance_budget)}}</td>
-
-            </tr>
-            <tr>
-                <td style="text-align: left;  padding: 8px; width: 70%;">
-
-                </td>
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Current Request: {{number_format($purchaseOrderItem->amount_requested)}}</b> </td>
-
-            </tr>
-            <tr>
-                <td style="text-align: left;  padding: 8px; width: 70%;">
-
-                </td>
-
-                <td colspan="2" style="border: 1px solid #000; padding: 8px;  width: 30%;"><b>Balance: {{ number_format($purchaseOrderItem->total_balance) }}</b> </td>
-
-            </tr>
-            <tr>
-                <td style="text-align: left;  padding: 8px; width: 70%;">
-                    <hr>
-                    Approved By: Chief Executive Officer
-                </td>
-                <td style="border: 1px solid #000; padding: 8px;  width: 50%;"><b>Name & Signature:</b> {{$prepared->first_name}}</td>
-                <td style="border: 1px solid #000; padding: 8px;  width: 50%;"><b>Date :</b> {{$budget->month}}</td>
-
-            </tr>
-        </table>
-    </div>
+    
 </body>
 
 </html>

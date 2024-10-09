@@ -12,14 +12,14 @@ return new class extends Migration {
     {
         Schema::create('supplier_prices', function (Blueprint $table) {
             $table->id();
-            $table->string('items_code');
-            $table->date('purchase_date');
-            $table->string('item_name');
-            $table->string('supplier_name');
-            $table->string('uom');
-            $table->decimal('price', 8, 2);
-            $table->decimal('discount', 5, 2)->nullable();
-            $table->text('remarks')->nullable();
+            $table->string('items_code')->nullable();
+            $table->string('purchase_date')->nullable();;
+            $table->string('item_name')->nullable();;
+            $table->string('supplier_name')->nullable();;
+            $table->string('uom')->nullable();;
+            $table->string('price')->nullable();;
+            $table->string('discount')->nullable();;
+            $table->string('remarks')->nullable();;
             $table->timestamps();
         });
     }

@@ -88,7 +88,7 @@
                 <ul class="menu-sub">
                     <li class="menu-item {{ request()->is('pages/cashflow/create') ? 'active' : '' }}">
                         <a href="/pages/cashflow/create" class="menu-link">
-                            <div>Add Expense</div>
+                            <div>Add EXP / REV</div>
                         </a>
                     </li>
                 </ul>

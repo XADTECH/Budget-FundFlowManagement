@@ -24,7 +24,8 @@ class PurchaseOrderItem extends Model
         'total_discount', // Corresponds to total_discount
         'balance_budget', // Corresponds to budget_balance
         'budget_utilization', // Corresponds to budget_utilization,
-        'total_balance'
+        'total_balance',
+        'delivery_charges'
     ];
 
     // The attributes that should be cast to native types

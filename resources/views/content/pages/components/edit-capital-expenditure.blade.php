@@ -51,17 +51,17 @@
                             <div>
                                 <h5>Total CAPEX : {{ number_format($totalCapitalExpenditure) }} AED</h5>
                                 @php
-                                $totalOPEX = $totalDirectCost + $totalInDirectCost + $totalNetProfitBeforeTax;
+                                    $totalOPEX = $totalDirectCost + $totalInDirectCost + $totalNetProfitBeforeTax;
                                 @endphp
                                 <h6>Total OPEX: {{ number_format($totalOPEX) }} AED</h6>
                                 <h6>Total OPEX + CAPEX : {{ number_format($totalOPEX + $totalCapitalExpenditure) }} AED
                                 </h6>
                             </div>
                             @if ($budget->approval_status === 'pending')
-                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addNewCapitalExpense">ADD CAPEX</button>
+                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addNewCapitalExpense">ADD CAPEX</button>
                             @else
-                            <button class="btn btn-secondary" disabled>Approved</button>
+                                <button class="btn btn-secondary" disabled>Approved</button>
                             @endif
 
                         </div>
@@ -84,38 +84,40 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->capitalExpenditures as $capital)
-                                    @php
-                                    $project = $projects->where('id', $capital->project)->first();
-                                    @endphp
+                                        @php
+                                            $project = $projects->where('id', $capital->project)->first();
+                                        @endphp
 
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td> <!-- Index -->
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td> <!-- Index -->
 
-                                        <td>{{ $capital->type ?? 'no entry' }}</td>
-                                        <td>{{ $project->name ?? 'no entry' }}</td>
-                                        <td>{{ $capital->po ?? 'no entry' }}</td>
-                                        <td>{{ $capital->expenses ?? 'no entry' }}</td>
-                                        <td>{{ $capital->total_number ?? 'no entry' }}</td>
-                                        <td>{{ number_format($capital->cost) ?? 'no entry' }}</td>
-                                        <td>{{ number_format($capital->total_cost) ?? 'no entry' }}</td>
-                                        <td>{{ $capital->description ?? 'no entry' }}</td>
-                                        <td>{{ $capital->status ?? 'no entry' }}</td>
+                                            <td>{{ $capital->type ?? 'no entry' }}</td>
+                                            <td>{{ $project->name ?? 'no entry' }}</td>
+                                            <td>{{ $capital->po ?? 'no entry' }}</td>
+                                            <td>{{ $capital->expenses ?? 'no entry' }}</td>
+                                            <td>{{ $capital->total_number ?? 'no entry' }}</td>
+                                            <td>{{ number_format($capital->cost) ?? 'no entry' }}</td>
+                                            <td>{{ number_format($capital->total_cost) ?? 'no entry' }}</td>
+                                            <td>{{ $capital->description ?? 'no entry' }}</td>
+                                            <td>{{ $capital->status ?? 'no entry' }}</td>
 
 
-                                        <td>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"><i
-                                                        class="bx bx-dots-vertical-rounded"></i></button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item editcapitalBtn" data-id="{{ $capital->id }}"><i
-                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                    <a class="dropdown-item deletecapital-btn" data-id="{{ $capital->id }}"><i
-                                                            class="bx bx-trash me-1"></i> Delete</a>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                        data-bs-toggle="dropdown"><i
+                                                            class="bx bx-dots-vertical-rounded"></i></button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item editcapitalBtn"
+                                                            data-id="{{ $capital->id }}"><i
+                                                                class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                        <a class="dropdown-item deletecapital-btn"
+                                                            data-id="{{ $capital->id }}"><i
+                                                                class="bx bx-trash me-1"></i> Delete</a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -154,7 +156,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -248,7 +250,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="capital_project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -390,7 +392,6 @@
             }
         });
     }
-
     $('#editCapitalForm').on('submit', function(e) {
         e.preventDefault();
         var form = $(this);
@@ -400,22 +401,44 @@
             type: "POST",
             url: `/pages/update-capital/${id}`,
             data: form.serialize(),
-            success: function(data) {
+            success: function(data, textStatus, jqXHR) {
+                // Log the entire response and status code
+                console.log('Response Data:', data);
+                console.log('Status Text:', textStatus);
+                console.log('Status Code:', jqXHR.status);
+
                 if (data.success) {
-                    showAlert('success', 'record updated successfully.');
+                    showAlert('success', 'Record updated successfully.');
                     $('#editCapitalExpense').modal('hide');
-                    // Refresh the salary table or update the specific row
+                    // Refresh the page or update the specific row
                     setTimeout(() => {
-                        window.location.reload()
-                    }, 2000)
+                        window.location.reload();
+                    }, 2000);
                 } else {
+                    console.log('Server returned an error:', data);
                     alert('Error updating salary data');
                 }
             },
-            error: function() {
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Log the error details
+                console.log('Error Details:', textStatus, errorThrown);
+                console.log('Response Text:', jqXHR.responseText);
+
                 alert('Error updating salary data');
             }
         });
+    });
+
+
+    // Show/Hide "Other" input based on selected expense
+    $('#capital_financial_expense').on('change', function() {
+        if ($(this).val() === 'Other') {
+            $('#capital_financial-other-expense').show();
+        } else {
+            $('#capital_financial-other-expense').hide();
+            $('#capital_financial-other-expense input[name="other_expense"]').val(
+                ''); // Clear other input if not needed
+        }
     });
 
     $('.editcapitalBtn').on('click', function() {

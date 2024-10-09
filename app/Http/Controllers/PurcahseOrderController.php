@@ -158,6 +158,7 @@ class PurcahseOrderController extends Controller
 
     public function store(Request $request)
     {
+        //return response($request->all());
         try {
             // Validate the request data
             $request->validate([
@@ -192,7 +193,7 @@ class PurcahseOrderController extends Controller
 
             // return response($request->totalBudget);
 
-            PurchaseOrderItem::create([
+            $poItems = PurchaseOrderItem::create([
                 'purchase_order_id' => $purchaseOrder->id,
                 'po_number' => $request->poNumber,
                 'items' => json_encode($request->items), // Convert array to JSON
@@ -203,7 +204,7 @@ class PurcahseOrderController extends Controller
                 'balance_budget' => $request->balanceBudget, // Directly cast to float
                 'amount_requested' => (float) $request->requestAmount, // Directly cast to float
                 'total_balance' => (float) $request->total_balanceBudget, // Directly cast to float
-
+                'delivery_charges' => (float) $request->deliveryCharges,
                 'status' => $request->status,
             ]);
 

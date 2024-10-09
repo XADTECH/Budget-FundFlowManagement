@@ -279,9 +279,15 @@
                             </td>
                         </tr>
                         <tr>
+                            <td colspan="5" class="text-end"><strong>Enter Delivery Charges</strong></td>
+                            <td><input type="number" id="deliveryChargesInput" class="form-control" placeholder="0"
+                                    min="0"></td>
+                        </tr>
+                        <tr>
                             <td colspan="5" class="text-end"><strong>Total Discount</strong></td>
                             <td id="totalDiscount">0.00</td>
                         </tr>
+
                         <tr>
                             <td colspan="5" class="text-end"><strong>Total VAT</strong></td>
                             <td id="totalVAT">0.00</td>
@@ -514,8 +520,6 @@
 
             // Render the purchase order table
             const renderTable = () => {
-
-
                 const tableBody = document.getElementById('purchaseOrderItems');
                 tableBody.innerHTML = '';
 
@@ -557,27 +561,31 @@
                 const subtotal = parseFloat(document.getElementById('subtotal').textContent) || 0;
                 const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
                 const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
+                const deliveryCharges = parseFloat(document.getElementById('deliveryChargesInput').value) || 0;
 
 
                 if (purchaseOrderStatus === 'submitted') {
                     // Set input values from purchaseOrderItems
                     discountInput.value = purchaseOrderItems[0].discountValue; // Set discount input
                     vatInput.value = purchaseOrderItems[0].vatValue; // Set VAT input
+                    document.getElementById('deliveryChargesInput').value = purchaseOrderItems[0].deliveryCharges; // Set VAT input
                     document.getElementById('totalAmount').textContent = purchaseOrderItems[0].totalAmount;
                     // Make inputs read-only
                     discountInput.readOnly = true; // Set discount input to read-only
                     vatInput.readOnly = true; // Set VAT input to read-only
+                    document.getElementById('deliveryChargesInput').value.readOnly = true; // Set VAT input to read-only
                 } else {
                     discountInput.readOnly = false; // Make read-only
                     vatInput.readOnly = false; // Make read-only
+                    document.getElementById('deliveryChargesInput').readOnly == false;
                 }
 
                 const totalDiscount = subtotal * (discountValue / 100);
                 const totalVAT = (subtotal - totalDiscount) * (vatValue / 100);
-                const totalAmount = (subtotal - totalDiscount + totalVAT).toFixed(2);
+                const totalAmount = (subtotal - totalDiscount + totalVAT + deliveryCharges).toFixed(2); // Include delivery charges
 
-                document.getElementById('totalDiscount').textContent = totalDiscount.toFixed(2);
-                document.getElementById('totalVAT').textContent = totalVAT.toFixed(2);
+                document.getElementById('totalDiscount').textContent = totalDiscount.toFixed(0);
+                document.getElementById('totalVAT').textContent = totalVAT.toFixed(0);
 
                 if (purchaseOrderStatus !== 'submitted') {
                     document.getElementById('totalAmount').textContent = totalAmount;
@@ -598,10 +606,14 @@
             // Update totals on input change
             document.getElementById('discountInput').addEventListener('input', updateTotals);
             document.getElementById('vatInput').addEventListener('input', updateTotals);
+            document.getElementById('deliveryChargesInput').addEventListener('input', updateTotals); // Add this line
+
 
             // Submit data to the server
             const submitData = () => {
                 const totalAmount = parseFloat(document.getElementById('totalAmount').textContent) || 0;
+                let deliveryCharges = parseFloat(document.getElementById('deliveryChargesInput').value) || 0;
+
 
                 if (totalAmount > 0) {
                     const totalBudget = @json($totalBudget);
@@ -609,29 +621,21 @@
                         items: purchaseOrderItems,
                         totalAmount: parseFloat(totalAmount), // Ensure totalAmount is a float
                         requestAmount: parseFloat(totalAmount), // Ensure requestAmount is a float
-                        balanceBudget: parseFloat(document.getElementById('balance_budget').textContent
-                            .replace(/,/g, '')), // Remove commas and convert to float
-                        total_balanceBudget: parseFloat(document.getElementById('total_balance_for_budget')
-                            .textContent
-                            .replace(/,/g, '')), // Remove commas and convert to float
-                        totalDiscount: parseFloat(document.getElementById('totalDiscount').textContent.replace(
-                            /,/g,
-                            '')) || 0, // Remove commas and convert to float
-                        totalVAT: parseFloat(document.getElementById('totalVAT').textContent.replace(/,/g,
-                                '')) ||
-                            0, // Remove commas and convert to float
+                        balanceBudget: parseFloat(document.getElementById('balance_budget').textContent.replace(/,/g, '')), // Remove commas and convert to float
+                        total_balanceBudget: parseFloat(document.getElementById('total_balance_for_budget').textContent.replace(/,/g, '')), // Remove commas and convert to float
+                        totalDiscount: parseFloat(document.getElementById('totalDiscount').textContent.replace(/,/g,'')) || 0, // Remove commas and convert to float
+                        totalVAT: parseFloat(document.getElementById('totalVAT').textContent.replace(/,/g,'')) ||0, // Remove commas and convert to float
                         status: "submitted",
                         budget: '{{ $budget->id }}', // Assuming this is already a number or ID
                         poNumber: '{{ $purchaseOrder->po_number }}', // Assuming this is a string
-                        utilization: parseFloat(document.getElementById('utilize').textContent.replace(/,/g,
-                                '')) ||
-                            0, // Remove commas and convert to float
-                        totalBudget: parseFloat(totalBudget.replace(/,/g,
-                            '')) // Remove commas and convert to float
+                        utilization: parseFloat(document.getElementById('utilize').textContent.replace(/,/g,'')) ||0, // Remove commas and convert to float
+                        totalBudget: parseFloat(totalBudget.replace(/,/g,'')), // Remove commas and convert to float,
+                        deliveryCharges : deliveryCharges
                     };
 
                     const discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
                     const vatValue = parseFloat(document.getElementById('vatInput').value) || 0;
+
 
                     // Check if purchaseOrderItems is not empty
                     if (purchaseOrderItems.length > 0) {
@@ -640,7 +644,8 @@
                             ...purchaseOrderItems[0],
                             discountValue,
                             vatValue,
-                            totalAmount
+                            totalAmount,
+                            deliveryCharges
                         };
 
                         localStorage.setItem(`purchaseOrder_${poNumber}`, JSON.stringify(purchaseOrderItems));
