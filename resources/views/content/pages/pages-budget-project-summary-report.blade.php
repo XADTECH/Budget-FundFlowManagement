@@ -292,8 +292,8 @@
         @if ($errors->any())
             <div class="alert alert-danger" id="error-alert">
                 <!-- <button type="button" class="close" aria-label="Close">
-                                                                                        <span aria-hidden="true">&times;</span>
-                                                                                    </button> -->
+                                                                                            <span aria-hidden="true">&times;</span>
+                                                                                        </button> -->
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -305,8 +305,8 @@
         @if (session('success'))
             <div class="alert alert-success" id="success-alert">
                 <!-- <button type="button" class="close" aria-label="Close">
-                                                                                            <span aria-hidden="true">&times;</span>
-                                                                                        </button> -->
+                                                                                                <span aria-hidden="true">&times;</span>
+                                                                                            </button> -->
                 {{ session('success') }}
             </div>
         @endif
@@ -889,49 +889,52 @@
                 </div>
             </div>
 
+            @if (auth()->user() && auth()->user()->role === 'Admin' && auth()->user()->email === 'ceo@xadtech.com')
+                <form action="{{ route('approve-status') }}" method="post">
+                    @csrf
+                    <div class="row gy-3">
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">Approval Status</label>
+                            <select class="form-select" name="status" id="status">
+                                <option value="" disabled selected>Choose Approval</option>
+                                <option value="pending">Pending</option>
+                                <option value="hold">Hold</option>
+                                <option value="reject">Reject</option>
+                                <option value="approve">Approve</option>
+                            </select>
+                            @error('status')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-            <form action="{{ route('approve-status') }}" method="post">
-                @csrf
-                <div class="row gy-3">
-                    <div class="col-md-6">
-                        <label for="status" class="form-label">Approval Status</label>
-                        <select class="form-select" name="status" id="status">
-                            <option value="" disabled selected>Choose Approval</option>
-                            <option value="pending">Pending</option>
-                            <option value="hold">Hold</option>
-                            <option value="reject">Reject</option>
-                            <option value="approve">Approve</option>
-                        </select>
-                        @error('status')
-                            <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
+                        @php
+                            $totalCost = $totalOPEX + $totalCapitalExpenditure;
+                        @endphp
+
+                        <input type="hidden" name="project_id" value="{{ $id }}">
+                        <input type="hidden" name="total_salary" value="{{ $totalSalary }}">
+                        <input type="hidden" name="total_facility_cost" value="{{ $totalFacilityCost }}">
+                        <input type="hidden" name="total_material_cost" value="{{ $totalMaterialCost }}">
+                        <input type="hidden" name="total_cost_overhead" value="{{ $totalCostOverhead }}">
+                        <input type="hidden" name="total_financial_cost" value="{{ $totalFinancialCost }}">
+                        <input type="hidden" name="total_capital_expenditure" value="{{ $totalCapitalExpenditure }}">
+                        <input type="hidden" name="total_cost" value="{{ $totalCost }}">
+                        <input type="hidden" name="expected_net_profit_after_tax"
+                            value="{{ $totalNetProfitAfterTax }}">
+                        <input type="hidden" name="expected_net_profit_before_tax"
+                            value="{{ $totalNetProfitBeforeTax }}">
+                        <input type="hidden" name="reference_code" value="{{ $budget->reference_code }}">
+                        <input type="hidden" name="client" value="{{ @$clients->id }}">
+                        <input type="hidden" name="source" value="{{ @$units->id }}">
+                        <input type="hidden" name="project" value="{{ @$projects->id }}">
+
+                        <div class="col-md-12 d-flex justify-content-start">
+                            <button type="submit" class="btn btn-primary"
+                                style="background-color:#0067aa; hover:#0067aa">Submit</button>
+                        </div>
                     </div>
-
-                    @php
-                        $totalCost = $totalOPEX + $totalCapitalExpenditure;
-                    @endphp
-
-                    <input type="hidden" name="project_id" value="{{ $id }}">
-                    <input type="hidden" name="total_salary" value="{{ $totalSalary }}">
-                    <input type="hidden" name="total_facility_cost" value="{{ $totalFacilityCost }}">
-                    <input type="hidden" name="total_material_cost" value="{{ $totalMaterialCost }}">
-                    <input type="hidden" name="total_cost_overhead" value="{{ $totalCostOverhead }}">
-                    <input type="hidden" name="total_financial_cost" value="{{ $totalFinancialCost }}">
-                    <input type="hidden" name="total_capital_expenditure" value="{{ $totalCapitalExpenditure }}">
-                    <input type="hidden" name="total_cost" value="{{ $totalCost }}">
-                    <input type="hidden" name="expected_net_profit_after_tax" value="{{ $totalNetProfitAfterTax }}">
-                    <input type="hidden" name="expected_net_profit_before_tax" value="{{ $totalNetProfitBeforeTax }}">
-                    <input type="hidden" name="reference_code" value="{{ $budget->reference_code }}">
-                    <input type="hidden" name="client" value="{{ @$clients->id }}">
-                    <input type="hidden" name="source" value="{{ @$units->id }}">
-                    <input type="hidden" name="project" value="{{ @$projects->id }}">
-
-                    <div class="col-md-12 d-flex justify-content-start">
-                        <button type="submit" class="btn btn-primary"
-                            style="background-color:#0067aa; hover:#0067aa">Submit</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            @endif
 
             @if ($budget->approval_status === 'approve')
                 <form action="{{ route('budget.allocate') }}" method="GET">
@@ -976,9 +979,9 @@
                                     </div>
 
                                     <!-- <div class="mb-3">
-                                        <label for="contract" class="form-label">Contract</label>
-                                        <input type="text" class="form-control" id="contract" name="contract" value="{{ $salary->contract }}" required>
-                                    </div> -->
+                                            <label for="contract" class="form-label">Contract</label>
+                                            <input type="text" class="form-control" id="contract" name="contract" value="{{ $salary->contract }}" required>
+                                        </div> -->
 
                                     <div class="mb-3">
                                         <label for="project" class="form-label">Project</label>
@@ -1076,10 +1079,10 @@
                                         </select>
                                     </div>
                                     <!-- <div class="mb-3">
-                                        <label for="contract" class="form-label">Contract</label>
-                                        <input type="text" class="form-control" id="contract" name="contract"
-                                            value="{{ $facility->contract }}">
-                                    </div> -->
+                                            <label for="contract" class="form-label">Contract</label>
+                                            <input type="text" class="form-control" id="contract" name="contract"
+                                                value="{{ $facility->contract }}">
+                                        </div> -->
                                     <div class="mb-3">
                                         <label for="project" class="form-label">Project</label>
                                         <select class="form-select" id="project" name="project" required>

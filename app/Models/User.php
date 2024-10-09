@@ -17,6 +17,7 @@ class User extends Authenticatable
   const ROLE_PROJECT_MANAGER = 'Project Manager';
   const ROLE_CLIENT_MANAGER = 'Client Manager';
   const ROLE_ADMIN = 'Admin';
+  const ROLE_CEO = 'CEO';
   const ROLE_SUBADMIN = 'SubAdmin';
   const ROLE_USER = 'User';
 
@@ -67,6 +68,7 @@ class User extends Authenticatable
       self::ROLE_PROJECT_MANAGER,
       self::ROLE_CLIENT_MANAGER,
       self::ROLE_ADMIN,
+      self::ROLE_CEO,
       self::ROLE_SUBADMIN,
       self::ROLE_USER,
     ];

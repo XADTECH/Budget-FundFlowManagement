@@ -52,56 +52,72 @@ class PurcahseOrderController extends Controller
     //add / show purchase order
     public function storePurchaseOrder(Request $request)
     {
-        //return response()->json($request->all());
-        // Validate incoming request
-        $validatedData = $request->validate([
-            'startdate' => 'required|date',
-            'payment_term' => 'required|string|max:255',
-            'supplier_name' => 'nullable|string|max:255',
-            'supplier_address' => 'nullable|string|max:255',
-            'project_name' => 'nullable|integer',
-            'description' => 'nullable|string',
-            'project_person_id' => 'nullable|integer', // Use 'integer' or 'numeric'
-        ]);
-
-        $currentDate = Carbon::now();
-        $monthName = $currentDate->format('M'); // Short month name (e.g. Jan, Feb)
-        $year = $currentDate->format('Y'); // Full year (e.g. 2024)
-        $formattedMonthYear = strtoupper($monthName . $year); // E.g. JAN2024
-
-        // Get current date in the desired format (MMDDYYYY)
-        $formattedDate = $currentDate->format('mdY'); // E.g. 09062024
-
-        // Fetch the current sequence for the date or create a new one
-        $poSequence = PurchaseOrderSequence::firstOrCreate(['date' => $formattedDate], ['last_sequence' => 0]);
-
-        // Increment the sequence number
-        $newSerialNumber = str_pad($poSequence->last_sequence + 1, 4, '0', STR_PAD_LEFT);
-
-        // Update the last sequence in the database
-        $poSequence->last_sequence = $newSerialNumber;
-        $poSequence->save();
-
-        $referenceCode = 'PO' . $formattedDate . $newSerialNumber;
-
-        // Create a new PurchaseOrder instance
-        $purchaseOrder = new PurchaseOrder();
-
-        // Set attributes from validated data
-        $purchaseOrder->date = $validatedData['startdate'];
-        $purchaseOrder->payment_term = $validatedData['payment_term'];
-        $purchaseOrder->supplier_name = $validatedData['supplier_name'];
-        $purchaseOrder->supplier_address = $validatedData['supplier_address'];
-        $purchaseOrder->description = $validatedData['description'];
-        $purchaseOrder->po_number = $referenceCode;
-        $purchaseOrder->project_id = $request->project_name;
-        $purchaseOrder->requested_by = $validatedData['project_person_id'];
-        $purchaseOrder->prepared_by = Auth::id();
-        $purchaseOrder->save();
-
-        // Return a success response
-        return redirect('/pages/add-budget-project-purchase-order')->with('success', 'PO Created successfully!');
+        try {
+            // Validate the incoming request data
+            $validatedData = $request->validate([
+                'startdate' => 'required|date',
+                'payment_term' => 'required|string|max:255',
+                'supplier_name' => 'nullable|string|max:255',
+                'supplier_address' => 'nullable|string|max:255',
+                'project_name' => 'nullable|integer',
+                'description' => 'nullable|string',
+                'project_person_id' => 'nullable|integer', // Use 'integer' or 'numeric'
+            ]);
+    
+            // Check if allocated budget exists
+            $allocatedBudgetExists = TotalBudgetAllocated::where('budget_project_id', $request->project_name)->exists();
+    
+            if (!$allocatedBudgetExists) {
+                // Return back with error if the budget is not allocated
+                return redirect()
+                    ->back()
+                    ->withErrors(['budget' => 'Budget is Not Allocated']);
+            }
+    
+            $currentDate = Carbon::now();
+            $monthName = $currentDate->format('M'); // Short month name (e.g. Jan, Feb)
+            $year = $currentDate->format('Y'); // Full year (e.g. 2024)
+            $formattedMonthYear = strtoupper($monthName . $year); // E.g. JAN2024
+    
+            // Get current date in the desired format (MMDDYYYY)
+            $formattedDate = $currentDate->format('mdY'); // E.g. 09062024
+    
+            // Fetch the current sequence for the date or create a new one
+            $poSequence = PurchaseOrderSequence::firstOrCreate(['date' => $formattedDate], ['last_sequence' => 0]);
+    
+            // Increment the sequence number
+            $newSerialNumber = str_pad($poSequence->last_sequence + 1, 4, '0', STR_PAD_LEFT);
+    
+            // Update the last sequence in the database
+            $poSequence->last_sequence = $newSerialNumber;
+            $poSequence->save();
+    
+            $referenceCode = 'PO' . $formattedDate . $newSerialNumber;
+    
+            // Create a new PurchaseOrder instance
+            $purchaseOrder = new PurchaseOrder();
+    
+            // Set attributes from validated data
+            $purchaseOrder->date = $validatedData['startdate'];
+            $purchaseOrder->payment_term = $validatedData['payment_term'];
+            $purchaseOrder->supplier_name = $validatedData['supplier_name'];
+            $purchaseOrder->supplier_address = $validatedData['supplier_address'];
+            $purchaseOrder->description = $validatedData['description'];
+            $purchaseOrder->po_number = $referenceCode;
+            $purchaseOrder->project_id = $request->project_name;
+            $purchaseOrder->requested_by = $validatedData['project_person_id'];
+            $purchaseOrder->prepared_by = Auth::id();
+            $purchaseOrder->save();
+    
+            // Return a success response
+            return redirect('/pages/add-budget-project-purchase-order')->with('success', 'PO Created successfully!');
+        } catch (\Exception $e) {
+         
+            // Return back with an error message
+            return redirect()->back()->withErrors(['error' => 'An error occurred while creating the Purchase Order: ' . $e->getMessage()]);
+        }
     }
+    
 
     //add purchase order
     public function editPurchaseOrder($POID)

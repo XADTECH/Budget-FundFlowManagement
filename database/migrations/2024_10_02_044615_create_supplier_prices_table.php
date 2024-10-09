@@ -13,13 +13,13 @@ return new class extends Migration {
         Schema::create('supplier_prices', function (Blueprint $table) {
             $table->id();
             $table->string('items_code')->nullable();
-            $table->string('purchase_date')->nullable();;
-            $table->string('item_name')->nullable();;
-            $table->string('supplier_name')->nullable();;
-            $table->string('uom')->nullable();;
-            $table->string('price')->nullable();;
-            $table->string('discount')->nullable();;
-            $table->string('remarks')->nullable();;
+            $table->string('purchase_date')->nullable();
+            $table->string('item_name')->nullable();
+            $table->string('supplier_name')->nullable();
+            $table->string('uom')->nullable();
+            $table->string('price')->nullable();
+            $table->text('discount')->nullable();
+            $table->string('remarks')->nullable();
             $table->timestamps();
         });
     }
