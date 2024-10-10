@@ -15,7 +15,7 @@
     <ul class="menu-inner py-1 ps ps--active-y">
 
         <!-- Budget Management -->
-        @if (Auth::user()->role == 'Project Manager' || Auth::user()->role == 'Admin')
+        @if (Auth::user()->role == 'Project Manager' || Auth::user()->role == 'Admin' || Auth::user()->role == 'Finance Manager')
             <li class="menu-item {{ request()->is('pages/add-project-*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-rocket"></i>
@@ -97,7 +97,7 @@
 
 
         <!-- Purchase Order -->
-        @if (Auth::user()->role == 'Admin')
+        @if (Auth::user()->role == 'Admin' ||  Auth::user()->role == 'Finance Manager')
             <li class="menu-item {{ request()->is('pages/add-budget-project-purchase-order') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-ball"></i>

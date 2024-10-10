@@ -889,7 +889,7 @@
                 </div>
             </div>
 
-            @if (auth()->user() && auth()->user()->role === 'Admin' && auth()->user()->email === 'ceo@xadtech.com')
+    
                 <form action="{{ route('approve-status') }}" method="post">
                     @csrf
                     <div class="row gy-3">
@@ -934,7 +934,7 @@
                         </div>
                     </div>
                 </form>
-            @endif
+
 
             @if ($budget->approval_status === 'approve')
                 <form action="{{ route('budget.allocate') }}" method="GET">
