@@ -317,9 +317,9 @@ class BudgetController extends Controller
             // Check if the logged-in user has the 'Project Manager' role
             $loggedInUser = auth()->user();
 
-            // Check if the user is a 'Project Manager'
-            if (!$loggedInUser->hasRole('Project Manager')) {
-                return back()->withErrors(['message' => 'Only Project Managers can create project budgets.']);
+            // Check if the user is either a 'Project Manager' or an 'Admin'
+            if ($loggedInUser->role !== 'Project Manager' && $loggedInUser->role !== 'Admin') {
+                return back()->withErrors(['message' => 'Only Project Managers or Admins can create project budgets.']);
             }
 
             // Generate names based on IDs
@@ -513,10 +513,14 @@ class BudgetController extends Controller
             ],
         ];
 
-        // Loop through each allocation and validate if allocated budget exceeds the approved budget
-        foreach ($allocations as $type => $budget) {
-            if ($budget['allocated'] > $budget['approved']) {
-                return back()->withErrors(['error' => "Allocated budget for {$type} cannot exceed approved budget"]);
+        $typeBudget = Project::where('id', $budget->project_id)->first();
+
+        if ($typeBudget->name !== 'Admin Department') {
+            // Loop through each allocation and validate if allocated budget exceeds the approved budget
+            foreach ($allocations as $type => $budget) {
+                if ($budget['allocated'] > $budget['approved']) {
+                    return back()->withErrors(['error' => "Allocated budget for {$type} cannot exceed approved budget"]);
+                }
             }
         }
 
