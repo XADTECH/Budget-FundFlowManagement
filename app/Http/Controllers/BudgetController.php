@@ -44,7 +44,7 @@ class BudgetController extends Controller
         $loggedInUserId = Auth::id();
 
         // Retrieve budgets where manager_id matches the logged-in user ID
-        if (auth()->user()->role == 'Admin') {
+        if (auth()->user()->role == 'Admin' || auth()->user()->role == 'Finance Manager') {
             $budgets = BudgetProject::get();
         } else {
             $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();

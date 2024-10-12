@@ -38,7 +38,12 @@ class PurcahseOrderController extends Controller
 
         $projects = BudgetProject::all();
         $loggedInUserId = Auth::id();
-        $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
+      if (auth()->user()->role == 'Admin' || auth()->user()->role == 'Finance Manager') {
+            $purchaseOrders = PurchaseOrder::all();
+        } else {
+            $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
+        }
+
 
         // Retrieve budgets where manager_id matches the logged-in user ID
         $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();

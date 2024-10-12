@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\IndirectCost;
+use App\Models\InDirectCost;
 
 class BudgetProject extends Model
 {
@@ -20,7 +21,7 @@ class BudgetProject extends Model
 
     public function indirectCosts()
     {
-        return $this->hasMany(IndirectCost::class, 'budget_project_id');
+        return $this->hasMany(InDirectCost::class, 'budget_project_id');
     }
 
     public function salaries()
@@ -218,3 +219,4 @@ class BudgetProject extends Model
     }
     
 }
+

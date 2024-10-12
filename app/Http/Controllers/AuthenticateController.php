@@ -133,42 +133,57 @@ class AuthenticateController extends Controller
       ->with('success', 'successfully Log out From System');
   }
 
-  public function loginUser(Request $request)
-  {
-    $validator = Validator::make($request->all(), [
-      'email' => 'required|string|email',
-      'password' => 'required|string',
-    ]);
+public function loginUser(Request $request)
+{
+ 
+    try {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
 
-    if ($validator->fails()) {
-      return redirect()
-        ->back()
-        ->with('error', 'Please enter correct fields.');
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Please enter correct fields.');
+        }
+
+        // Check if the user exists in the database
+        $user = User::where('email', $request->input('email'))->first();
+        
+
+        if (!$user) {
+            return redirect()
+                ->back()
+                ->with('error', 'User not found.');
+        }
+
+        // Check if the provided password matches the stored password
+        if (!Hash::check($request->input('password'), $user->password)) {
+            return redirect()
+                ->back()
+                ->with('error', 'Invalid email or password.');
+        }
+
+        // Attempt to log in the user
+        Auth::login($user);
+
+        return redirect()
+            ->route('dashboard-analytics')
+            ->with('success', 'Login successful.');
+
+    } catch (\Exception $e) {
+        // Log the exception or handle it as needed
+        
+
+        // Return an error response or redirect back with an error message
+        return redirect()
+            ->back()
+            ->with('error', 'An error occurred during login. Please try again.');
     }
+}
 
-    // Check if the user exists in the database
-    $user = User::where('email', $request->input('email'))->first();
-
-    if (!$user) {
-      return redirect()
-        ->back()
-        ->with('error', 'User not found.');
-    }
-
-    // Check if the provided password matches the stored password
-    if (!Hash::check($request->input('password'), $user->password)) {
-      return redirect()
-        ->back()
-        ->with('error', 'Invalid email or password.');
-    }
-
-    // Attempt to log in the user
-    Auth::login($user);
-
-    return redirect()
-      ->route('dashboard-analytics')
-      ->with('success', 'Login successful.');
-  }
 
   public function checkHash(Request $request)
   {
