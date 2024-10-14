@@ -30,6 +30,7 @@ class UserController extends Controller
         'last_name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
         'password' => 'required|string',
+        'xad_id' => 'required',
         'role' => 'required|string',
         'permissions' => 'nullable|array',
       ]);
@@ -67,6 +68,7 @@ class UserController extends Controller
       $user->permissions = $request->permissions ? json_encode($request->permissions) : null;
       $user->profile_image = $fileName;
       $user->nationality = $request->nationality;
+      $user->xad_id = $request->xad_id;
 
       // Save the user to the database
       $user->save();
@@ -111,7 +113,8 @@ class UserController extends Controller
         'last_name' => $request->input('last_name', $user->last_name),
         'email' => $request->input('email', $user->email),
         'phone_number' => $request->input('phone_number', $user->phone_number),
-        'role' => $request->input('role', $user->role),
+        'role' => $request->input('role', default: $user->role),
+        'xad_id' => $request->input(key: 'xad_id', default: $user->xad_id),
       ];
 
       // Check if password is provided in the request
