@@ -54,6 +54,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
+                    <th>Xad Id</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
@@ -80,6 +81,10 @@
             <div class="modal-body">
                 <form id="editProjectForm">
                     <input type="hidden" id="userid" name="id">
+                    <div class="mb-3">
+                        <label for="xadid" class="form-label">Xad Id</label>
+                        <input type="text" class="form-control" id="xadid" name="xad_id" required>
+                    </div>
                     <div class="mb-3">
                         <label for="projectName" class="form-label">First Name</label>
                         <input type="text" class="form-control" id="fistName" name="first_name" required>
@@ -188,6 +193,7 @@
 
                     row.innerHTML = `
         
+          <td> ${formatText(user.xad_id)}</td>
           <td> ${formatText(user.first_name)}</td>
           <td>${formatText(user.last_name)}</td>
           <td>${formatText(user.email)}</td>
@@ -197,7 +203,7 @@
             <div class="dropdown">
               <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
               <div class="dropdown-menu">
-                <a class="dropdown-item edit-btn" data-userid="${user.id}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                <a class="dropdown-item edit-btn" data-userid="${user.id}" data-xadid="${user.xad_id}" data-firstname="${user.first_name}" data-lastname="${user.last_name}" data-phonenumber="${user.phone_number}" data-email="${user.email}" data-role="${user.role}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
                 <a class="dropdown-item delete-btn" data-id="${user.id}"><i class="bx bx-trash me-1"></i> Delete</a>
               </div>
             </div>
@@ -222,6 +228,7 @@
         document.querySelectorAll('.edit-btn').forEach(button => {
             button.addEventListener('click', function(e) {
                 const userId = this.getAttribute('data-userid');
+                const xadid = this.getAttribute('data-xadid');
                 const userFistName = this.getAttribute('data-firstname');
                 const userLastName = this.getAttribute('data-lastname');
                 const email = this.getAttribute('data-email');
@@ -234,6 +241,7 @@
 
                 // Populate the modal fields
                 document.getElementById('userid').value = userId;
+                document.getElementById('xadid').value = xadid;
                 document.getElementById('fistName').value = userFistName;
                 document.getElementById('lastName').value = userLastName;
                 document.getElementById('email').value = email;
