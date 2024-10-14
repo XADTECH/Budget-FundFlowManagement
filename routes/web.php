@@ -248,6 +248,7 @@ Route::middleware(['checklogin'])->group(function () {
 
   //download pdf 
   Route::get('/download-pdf/{POID}', [PdfController::class, 'download'])->name('download.pdf');
+  Route::get('/download-pdf/cashflow-report/{POID}', [PdfController::class, 'downloadCashFlow'])->name('download.cashflow');
   Route::get('/download-budget-summary/{POID}', [PdfController::class, 'budgetSummary'])->name('download.budgetSummary');
 
 

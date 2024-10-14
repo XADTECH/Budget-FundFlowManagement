@@ -341,12 +341,12 @@
                                 style="color:green; font-weight:bold">{{ @$budget->approval_status }}</span></div>
                         <div class="team-member">
                             <strong>Budget Summary</strong>
-                            @if ($budget->approval_status == 'approve')
+                            {{-- @if ($budget->approval_status == 'approve') --}}
                                 <a href="{{ route('download.budgetSummary', ['POID' => $budget->id]) }}" target="_blank"
                                     class="btn btn-sm" style="background-color:#1a73e8; color:white">
                                     <i class="fas fa-print"></i> Download PDF
                                 </a>
-                            @endif
+                            {{-- @endif --}}
                         </div>
                     </div>
                 </div>

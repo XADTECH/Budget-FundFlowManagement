@@ -9,6 +9,7 @@ use App\Models\BusinessUnit;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Salary;
+use App\Models\CashFlow;
 use App\Models\PurchaseOrder;
 use App\Models\ProjectBudgetSequence;
 use App\Models\PurchaseOrderController;
@@ -38,12 +39,11 @@ class PurcahseOrderController extends Controller
 
         $projects = BudgetProject::all();
         $loggedInUserId = Auth::id();
-      if (auth()->user()->role == 'Admin' || auth()->user()->role == 'Finance Manager') {
+        if (auth()->user()->role == 'Admin' || auth()->user()->role == 'Finance Manager') {
             $purchaseOrders = PurchaseOrder::all();
         } else {
             $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
         }
-
 
         // Retrieve budgets where manager_id matches the logged-in user ID
         $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
@@ -68,40 +68,40 @@ class PurcahseOrderController extends Controller
                 'description' => 'nullable|string',
                 'project_person_id' => 'nullable|integer', // Use 'integer' or 'numeric'
             ]);
-    
+
             // Check if allocated budget exists
             $allocatedBudgetExists = TotalBudgetAllocated::where('budget_project_id', $request->project_name)->exists();
-    
+
             if (!$allocatedBudgetExists) {
                 // Return back with error if the budget is not allocated
                 return redirect()
                     ->back()
                     ->withErrors(['budget' => 'Budget is Not Allocated']);
             }
-    
+
             $currentDate = Carbon::now();
             $monthName = $currentDate->format('M'); // Short month name (e.g. Jan, Feb)
             $year = $currentDate->format('Y'); // Full year (e.g. 2024)
             $formattedMonthYear = strtoupper($monthName . $year); // E.g. JAN2024
-    
+
             // Get current date in the desired format (MMDDYYYY)
             $formattedDate = $currentDate->format('mdY'); // E.g. 09062024
-    
+
             // Fetch the current sequence for the date or create a new one
             $poSequence = PurchaseOrderSequence::firstOrCreate(['date' => $formattedDate], ['last_sequence' => 0]);
-    
+
             // Increment the sequence number
             $newSerialNumber = str_pad($poSequence->last_sequence + 1, 4, '0', STR_PAD_LEFT);
-    
+
             // Update the last sequence in the database
             $poSequence->last_sequence = $newSerialNumber;
             $poSequence->save();
-    
+
             $referenceCode = 'PO' . $formattedDate . $newSerialNumber;
-    
+
             // Create a new PurchaseOrder instance
             $purchaseOrder = new PurchaseOrder();
-    
+
             // Set attributes from validated data
             $purchaseOrder->date = $validatedData['startdate'];
             $purchaseOrder->payment_term = $validatedData['payment_term'];
@@ -113,16 +113,16 @@ class PurcahseOrderController extends Controller
             $purchaseOrder->requested_by = $validatedData['project_person_id'];
             $purchaseOrder->prepared_by = Auth::id();
             $purchaseOrder->save();
-    
+
             // Return a success response
             return redirect('/pages/add-budget-project-purchase-order')->with('success', 'PO Created successfully!');
         } catch (\Exception $e) {
-         
             // Return back with an error message
-            return redirect()->back()->withErrors(['error' => 'An error occurred while creating the Purchase Order: ' . $e->getMessage()]);
+            return redirect()
+                ->back()
+                ->withErrors(['error' => 'An error occurred while creating the Purchase Order: ' . $e->getMessage()]);
         }
     }
-    
 
     //add purchase order
     public function editPurchaseOrder($POID)
@@ -231,12 +231,32 @@ class PurcahseOrderController extends Controller
 
             // Fetch the total budget allocated record
             $totalBudgetAllocated = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->first();
+            $lastCashFlow = CashFlow::where('budget_project_id', $purchaseOrder->project_id)
+            ->where('category', 'Material')
+            ->orderBy('date', 'desc')
+            ->first();
+            
 
-            // Check if the record exists
             if ($totalBudgetAllocated) {
                 // Update total_lpo by adding the total_amount
                 $totalBudgetAllocated->total_lpo += $request->totalAmount;
                 $totalBudgetAllocated->total_material_cost -= $request->totalAmount;
+       
+
+                $lastCashFlow->balance -= $request->totalAmount;
+                $lastCashFlow->save();
+
+                CashFlow::create([
+                    'date' => $purchaseOrder->date,
+                    'description' => $purchaseOrder->description,
+                    'category' => 'Material',
+                    'cash_inflow' => $request->cash_inflow ?? 0.0, // Ensure cash inflow is recorded
+                    'cash_outflow' => $request->totalAmount ?? 0.0, // Ensure cash outflow is recorded
+                    'committed_budget' => $lastCashFlow ? $lastCashFlow->committed_budget : 0,
+                    'balance' => $lastCashFlow->balance,
+                    'reference_code' => $poItems->po_number, // Reference code generated dynamically
+                    'budget_project_id' => $purchaseOrder->project_id,
+                ]);
 
                 // Save the updated record
                 $totalBudgetAllocated->save();

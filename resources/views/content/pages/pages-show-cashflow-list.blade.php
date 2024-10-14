@@ -43,8 +43,17 @@
         </form>
     </div>
 
+
     <!-- Cash Flow Table -->
     @if (request('budget_project_id') || request('reference_code'))
+        @if ($cashFlows->count() > 0)
+            <div class="text-right mt-3" style="display: flex; justify-content: flex-end;">
+                <a href="{{ route('download.cashflow', ['POID' => request('budget_project_id')]) }}" class="btn btn-primary">
+                    <i class="fa fa-download"></i> Download
+                </a>
+            </div>
+        @endif
+
         <div class="card mt-4">
             <div class="table-responsive text-nowrap limited-scroll">
                 <table class="table table-bordered table-striped">
@@ -53,6 +62,7 @@
                             <th>Date</th>
                             <th>Description</th>
                             <th>Category</th>
+                            <th>Reference</th>
                             <th>Cash Inflow</th>
                             <th>Cash Outflow</th>
                             <th>Committed Budget</th>
@@ -70,11 +80,15 @@
                                 @php
                                     $project = $budgetProjects->firstWhere('id', $cashFlow->budget_project_id);
                                     $user = $users->firstWhere('id', $project->manager_id);
-                                    $dpm = $allocatedBudgets->firstWhere('budget_project_id',  $cashFlow->budget_project_id);
+                                    $dpm = $allocatedBudgets->firstWhere(
+                                        'budget_project_id',
+                                        $cashFlow->budget_project_id,
+                                    );
                                 @endphp
                                 <td>{{ $cashFlow->date }}</td>
                                 <td>{{ $cashFlow->description }}</td>
                                 <td>{{ $cashFlow->category }}</td>
+                                <td>{{ $cashFlow->reference_code }}</td>
                                 <td class="{{ $index >= 6 && $cashFlow->cash_inflow > 0 ? 'text-primary' : '' }}">
                                     {{ number_format($cashFlow->cash_inflow, 0) }}
                                 </td>
@@ -88,8 +102,8 @@
                                 {{-- <td>{{ $cashFlow->reference_code }}</td> --}}
 
                                 <td>{{ $user->first_name ?? 'N/A' }}</td>
-                                
-                                <td>{{number_format( $allocatedBudgets[0]->allocated_budget) }}</td>
+
+                                <td>{{ number_format($allocatedBudgets[0]->allocated_budget) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -97,8 +111,8 @@
                 </table>
             </div>
         </div>
-    @else
     @endif
+
 
     @if (!request('budget_project_id') && !request('reference_code'))
         <div class="alert alert-info mt-4">

@@ -61,9 +61,9 @@ class CashFlowController extends Controller
                     ->withErrors(['insufficient_budget' => 'Insufficient budget for this cash outflow transaction.'])
                     ->withInput();
             }
-            //   return response($lastCashFlow);
-            $balance -= $request->cash_outflow; // Deduct cash outflow from balance
-            // return response($lastCashFlow);
+          
+            $balance -= $request->cash_outflow; 
+        
             $this->deductCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_outflow, $lastCashFlow);
         }
 
@@ -160,7 +160,6 @@ class CashFlowController extends Controller
     }
 
     // Helper method to add cash Outflow to the corresponding category budget
-
     private function deductCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category, $cashOutflow, $lastCashFlow)
     {
         switch ($category) {

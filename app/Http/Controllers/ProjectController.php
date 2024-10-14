@@ -14,6 +14,8 @@ use App\Models\IndirectCost;
 use App\Models\MaterialCost;
 use App\Models\RevenuePlan;
 use App\Models\CashFlow;
+use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderItem;
 
 use App\Models\ApprovedBudget;
 use App\Models\TotalBudgetAllocated;
@@ -289,7 +291,7 @@ class ProjectController extends Controller
 
     // Step 3: If approval_status is not 'approve', delete the related record
     if ($approvalStatus !== 'approve') {
-      BudgetProject::where('id', $projectId)->update([
+      $budget = BudgetProject::where('id', $projectId)->update([
         'approval_status' => $approvalStatus,
         'approve_by' =>  null,
         'total_budget_allocated' => 0
@@ -297,6 +299,18 @@ class ProjectController extends Controller
       ApprovedBudget::where('budget_project_id', $projectId)->delete();
       TotalBudgetAllocated::where('budget_project_id', $projectId)->delete();
       CashFlow::where('budget_project_id', $projectId)->delete();
+
+      $po = PurchaseOrder::where('project_id',  $projectId)->first();
+
+
+      if($po){
+        PurchaseOrder::where('project_id',  $projectId)->delete();
+        PurchaseOrderItem::where('po_number',  $po->po_number)->delete();
+
+
+      }
+
+      
       return redirect()->back()->with(['success' => 'Budget record deleted due to status: ' . $approvalStatus]);
     }
 

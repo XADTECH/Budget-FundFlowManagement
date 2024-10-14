@@ -9,8 +9,10 @@ use App\Models\Project;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\User;
+use App\Models\CashFlow;
 use App\Models\DirectCost;
-use App\Models\IndirectCost;
+use App\Models\TotalBudgetAllocated;
+use App\Models\InDirectCost;
 use App\Models\CapitalExpenditure;
 use Illuminate\Http\Request;
 use PDF;
@@ -67,6 +69,28 @@ class PdfController extends Controller
         $totalInDirectCost = $inDirectCost->calculateTotalIndirectCost();
         $pdf = PDF::loadView('content.pages.pdf.project_approval', compact('budget', 'clients', 'units', 'project', 'user', 'amounts', 'totalDirectCost', 'totalInDirectCost', 'totalCapExp', 'months', 'years'));
         // Download the PDF
+        return $pdf->stream('test.pdf');
+    }
+
+    public function downloadCashFlow($POID){
+
+        $budget = BudgetProject::where('id', $POID)->first();
+        $clients = BusinessClient::where('id',$budget->client_id)->first();
+        $units = BusinessUnit::where('id', $budget->unit_id)->first();
+        $project = Project::where('id', $budget->project_id)->first();
+        $user = User::where('id', $budget->manager_id)->first();
+
+        $cashFlows = CashFlow::where('reference_code', $budget->reference_code)->get();
+
+        $allocatedBudgets = TotalBudgetAllocated::where('budget_project_id', $budget->id)->first();
+        $dpm = $allocatedBudgets->total_dpm; 
+        $lpo = $allocatedBudgets->total_lpo;
+        $allocatedBudget = $allocatedBudgets->allocated_budget; 
+        $remainingBudget = $allocatedBudget - ($dpm + $lpo);
+
+        //return response($allocatedBudgets);
+
+        $pdf = PDF::loadView('content.pages.pdf.cash-flow-report', compact('budget','clients','units','project','user','cashFlows','allocatedBudgets','dpm','lpo','allocatedBudget','remainingBudget'));
         return $pdf->stream('test.pdf');
     }
 }

@@ -207,7 +207,7 @@
                 <tr>
                     <td style="text-align: left; padding: 8px; width: 70%;"><hr>Approved By: Chief Executive Officer</td>
                     <td style="border: 1px solid #000; padding: 8px; width: 50%;"><b>Name & Signature:</b> {{$prepared->first_name}}</td>
-                    <td style="border: 1px solid #000; padding: 8px; width: 50%;"><b>Date:</b> {{$budget->month}}</td>
+                    <td style="border: 1px solid #000; padding: 8px; width: 50%;"><b>Date:</b>  {{$purchaseOrder->date}}</td>
                 </tr>
             </table>
         </div>
