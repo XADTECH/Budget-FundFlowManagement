@@ -59,6 +59,11 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
+                                <th>Approved Budget</th>
+                                <th>Initial Fund Allocated</th>
+                                <th>Consumed Fund</th>
+                                <th>Remaining Fund</th>
+                                <th>Remain Budget</th>
                                 <th>Salary</th>
                                 <th>Facility</th>
                                 <th>Material</th>
@@ -67,18 +72,33 @@
                                 <th>Capital Expenditure</th>
                                 <th>Total DPM</th>
                                 <th>Total LPO</th>
-                                <th>Total Allocation</th>
-                                <th>Remaining Budget</th>
-                                {{-- <th>Reference Code</th> --}}
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($allocatedBudgets as $budgetProject)
-                               @php
-                                 $remaining = $budgetProject->allocated_budget - $budgetProject->total_dpm - $budgetProject->total_lpo;
-                               @endphp
+                                @php
+                                    $remaining =
+                                        $budgetProject->allocated_budget -
+                                        $budgetProject->total_dpm -
+                                        $budgetProject->total_lpo;
+
+                                @endphp
                                 <tr>
-                                    <td>{{ number_format($budgetProject->total_salary, 0) }}</td>
+                                    {{-- <td>{{ number_format($budgetProject->total_salary, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_facility_cost, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_material_cost, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_cost_overhead, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_financial_cost, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_capital_expenditure, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_dpm, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->total_lpo, 0) }}</td> --}}
+                                    <td>{{ number_format($approvedBudget->approved_budget, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->initial_allocation_budget, 0) }}</td>
+                                    </td>
+                                    <td>{{ number_format($budgetProject->total_dpm + $budgetProject->total_lpo, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->allocated_budget, 0) }}</td>
+                                    <td>{{ number_format(($approvedBudget->approved_budget - $budgetProject->allocated_budget), 0) }}</td>
+                                     <td>{{ number_format($budgetProject->total_salary, 0) }}</td>
                                     <td>{{ number_format($budgetProject->total_facility_cost, 0) }}</td>
                                     <td>{{ number_format($budgetProject->total_material_cost, 0) }}</td>
                                     <td>{{ number_format($budgetProject->total_cost_overhead, 0) }}</td>
@@ -86,9 +106,6 @@
                                     <td>{{ number_format($budgetProject->total_capital_expenditure, 0) }}</td>
                                     <td>{{ number_format($budgetProject->total_dpm, 0) }}</td>
                                     <td>{{ number_format($budgetProject->total_lpo, 0) }}</td>
-                                    <td>{{ number_format($budgetProject->allocated_budget, 0) }}</td>
-                                    <td>{{ number_format($remaining, 0) }}</td>
-                                    {{-- <td>{{ $budgetProject->reference_code }}</td> --}}
                                 </tr>
                             @endforeach
                         </tbody>

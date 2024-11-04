@@ -180,7 +180,7 @@
                     </li>
                     <li class="menu-item {{ request()->routeIs('show-allocated-budgets') ? 'active' : '' }}">
                         <a href="{{ route('show-allocated-budgets') }}" class="menu-link">
-                            <div>Allocated Budgets</div>
+                            <div>Track Budget</div>
                         </a>
                     </li>
                 </ul>

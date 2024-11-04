@@ -50,7 +50,6 @@ class CashFlowController extends Controller
 
         // Assuming there is a method to get the total allocated budget for the specific category
         $allocatedBudget = $this->getCategoryBudget($allocatedBudgetEntry, $request->category);
-        
 
         // Handle cash outflow
         if ($request->cash_outflow > 0) {
@@ -61,9 +60,9 @@ class CashFlowController extends Controller
                     ->withErrors(['insufficient_budget' => 'Insufficient budget for this cash outflow transaction.'])
                     ->withInput();
             }
-          
-            $balance -= $request->cash_outflow; 
-        
+
+            $balance -= $request->cash_outflow;
+
             $this->deductCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_outflow, $lastCashFlow);
         }
 
@@ -165,12 +164,14 @@ class CashFlowController extends Controller
         switch ($category) {
             case 'Salary':
                 $allocatedBudgetEntry->total_salary -= $cashOutflow;
+                $allocatedBudgetEntry->allocated_budget -= $cashOutflow;
                 $allocatedBudgetEntry->total_dpm += $cashOutflow;
                 $lastCashFlow->balance -= $cashOutflow;
 
                 break;
             case 'Facility':
                 $allocatedBudgetEntry->total_facility_cost -= $cashOutflow;
+                $allocatedBudgetEntry->allocated_budget -= $cashOutflow;
                 $allocatedBudgetEntry->total_dpm += $cashOutflow;
                 $lastCashFlow->balance -= $cashOutflow;
 
@@ -178,23 +179,27 @@ class CashFlowController extends Controller
             case 'Material':
                 $allocatedBudgetEntry->total_material_cost -= $cashOutflow;
                 $allocatedBudgetEntry->total_dpm += $cashOutflow;
+                $allocatedBudgetEntry->allocated_budget -= $cashOutflow;
                 $lastCashFlow->balance -= $cashOutflow;
 
                 break;
             case 'Overhead':
                 $allocatedBudgetEntry->total_cost_overhead -= $cashOutflow;
                 $allocatedBudgetEntry->total_dpm += $cashOutflow;
+                $allocatedBudgetEntry->allocated_budget -= $cashOutflow;
                 $lastCashFlow->balance -= $cashOutflow;
 
                 break;
             case 'Financial':
                 $allocatedBudgetEntry->total_financial_cost -= $cashOutflow;
+                $allocatedBudgetEntry->allocated_budget -= $cashOutflow;
                 $allocatedBudgetEntry->total_dpm += $cashOutflow;
                 $lastCashFlow->balance -= $cashOutflow;
 
                 break;
             case 'Capital Expenditure':
                 $allocatedBudgetEntry->total_capital_expenditure -= $cashOutflow;
+                $allocatedBudgetEntry->allocated_budget -= $cashOutflow;
                 $allocatedBudgetEntry->total_dpm += $cashOutflow;
                 $lastCashFlow->balance -= $cashOutflow;
                 break;
@@ -204,5 +209,173 @@ class CashFlowController extends Controller
         $allocatedBudgetEntry->save();
         //save the entry for cash flow
         $lastCashFlow->save();
+    }
+
+    public function allocateFund(Request $request)
+    {
+        // return response()->json($request->all());
+
+        $validatedData = $request->validate([
+            'fund_type' => 'required|string',
+            'budget_project_id' => 'required|string',
+            'amount' => 'required|string',
+            'reason' => 'nullable|string',
+        ]);
+
+        $amount = $validatedData['amount'];
+        $reason = $validatedData['reason'];
+        $type = $validatedData['fund_type'];
+        $p_id = $validatedData['budget_project_id'];
+
+        // return response($request->all());
+
+        // Routing to the specific model based on type
+        switch ($type) {
+            case 'salary':
+                $allocated = TotalBudgetAllocated::where('budget_project_id', $p_id)->first();
+                $allocated->total_salary += $amount;
+                $allocated->allocated_budget += $amount;
+                $allocated->initial_allocation_budget += $amount;
+                $allocated->save();
+
+                $cashFlow = CashFlow::where('budget_project_id', $p_id)->where('category', $type)->first();
+
+                $newcashFlow = new CashFlow();
+
+                $newcashFlow->category = ucfirst($type);
+                $newcashFlow->description = $reason;
+                $newcashFlow->cash_inflow = $amount;
+                $newcashFlow->cash_outflow = 0;
+                $newcashFlow->balance = $cashFlow->balance + $amount;
+                $newcashFlow->budget_project_id = $p_id;
+                $newcashFlow->reference_code = $cashFlow->reference_code;
+                $newcashFlow->date = now();
+                $newcashFlow->save();
+                return redirect()->back()->with('success', 'Salary Fund Allocated successfully!');
+                break;
+
+            case 'facility':
+                $allocated = TotalBudgetAllocated::where('budget_project_id', $p_id)->first();
+                $allocated->total_facility_cost += $amount;
+                $allocated->allocated_budget += $amount;
+                $allocated->initial_allocation_budget += $amount;
+                $allocated->save();
+
+                $cashFlow = CashFlow::where('budget_project_id', $p_id)->where('category', $type)->first();
+
+                $newcashFlow = new CashFlow();
+
+                $newcashFlow->category = ucfirst($type);
+                $newcashFlow->description = $reason;
+                $newcashFlow->cash_inflow = $amount;
+                $newcashFlow->cash_outflow = 0;
+                $newcashFlow->balance = $cashFlow->balance + $amount;
+                $newcashFlow->budget_project_id = $p_id;
+                $newcashFlow->reference_code = $cashFlow->reference_code;
+                $newcashFlow->date = now();
+                $newcashFlow->save();
+                return redirect()->back()->with('success', 'Facility Fund Allocated successfully!');
+                break;
+            case 'material':
+                $allocated = TotalBudgetAllocated::where('budget_project_id', $p_id)->first();
+                $allocated->total_material_cost += $amount;
+                $allocated->allocated_budget += $amount;
+                $allocated->initial_allocation_budget += $amount;
+
+                $allocated->save();
+
+                $cashFlow = CashFlow::where('budget_project_id', $p_id)->where('category', $type)->first();
+
+                $newcashFlow = new CashFlow();
+
+                $newcashFlow->category = ucfirst($type);
+                $newcashFlow->description = $reason;
+                $newcashFlow->cash_inflow = $amount;
+                $newcashFlow->cash_outflow = 0;
+                $newcashFlow->balance = $cashFlow->balance + $amount;
+                $newcashFlow->budget_project_id = $p_id;
+                $newcashFlow->reference_code = $cashFlow->reference_code;
+                $newcashFlow->date = now();
+                $newcashFlow->save();
+                return redirect()->back()->with('success', 'Material Fund Allocated successfully!');
+                break;
+            case 'overhead':
+                $allocated = TotalBudgetAllocated::where('budget_project_id', $p_id)->first();
+                $allocated->total_cost_overhead += $amount;
+                $allocated->allocated_budget += $amount;
+                $allocated->initial_allocation_budget += $amount;
+
+                $allocated->save();
+
+                $cashFlow = CashFlow::where('budget_project_id', $p_id)->where('category', $type)->first();
+
+                $newcashFlow = new CashFlow();
+
+                $newcashFlow->category = ucfirst($type);
+                $newcashFlow->description = $reason;
+                $newcashFlow->cash_inflow = $amount;
+                $newcashFlow->cash_outflow = 0;
+                $newcashFlow->balance = $cashFlow->balance + $amount;
+                $newcashFlow->budget_project_id = $p_id;
+                $newcashFlow->reference_code = $cashFlow->reference_code;
+                $newcashFlow->date = now();
+                $newcashFlow->save();
+                return redirect()->back()->with('success', 'Overhead Fund Allocated successfully!');
+                break;
+            case 'financial':
+                $allocated = TotalBudgetAllocated::where('budget_project_id', $p_id)->first();
+                $allocated->total_financial_cost += $amount;
+                $allocated->allocated_budget += $amount;
+                $allocated->initial_allocation_budget += $amount;
+
+                $allocated->save();
+
+                $cashFlow = CashFlow::where('budget_project_id', $p_id)->where('category', $type)->first();
+
+                $newcashFlow = new CashFlow();
+
+                $newcashFlow->category = ucfirst($type);
+                $newcashFlow->description = $reason;
+                $newcashFlow->cash_inflow = $amount;
+                $newcashFlow->cash_outflow = 0;
+                $newcashFlow->balance = $cashFlow->balance + $amount;
+                $newcashFlow->budget_project_id = $p_id;
+                $newcashFlow->reference_code = $cashFlow->reference_code;
+                $newcashFlow->date = now();
+                $newcashFlow->save();
+                return redirect()->back()->with('success', 'Financial Fund Allocated successfully!');
+                break;
+            case 'Capital Expenditure':
+                $allocated = TotalBudgetAllocated::where('budget_project_id', $p_id)->first();
+                $allocated->total_capital_expenditure += $amount;
+                $allocated->allocated_budget += $amount;
+                $allocated->initial_allocation_budget += $amount;
+
+                $allocated->save();
+
+                $cashFlow = CashFlow::where('budget_project_id', $p_id)->where('category', $type)->first();
+
+                $newcashFlow = new CashFlow();
+
+                $newcashFlow->category = ucfirst($type);
+                $newcashFlow->description = $reason;
+                $newcashFlow->cash_inflow = $amount;
+                $newcashFlow->cash_outflow = 0;
+                $newcashFlow->balance = $cashFlow->balance + $amount;
+                $newcashFlow->budget_project_id = $p_id;
+                $newcashFlow->reference_code = $cashFlow->reference_code;
+                $newcashFlow->date = now();
+                $newcashFlow->save();
+
+                return redirect()->back()->with('success', 'Capital Expenditure Fund Allocated successfully!');
+                break;
+            default:
+                return response()->json(['error' => 'Invalid type'], 400);
+        }
+
+        return response()->json([
+            'message' => 'Funds allocated successfully',
+            'updatedAmount' => $updatedAmount,
+        ]);
     }
 }

@@ -65,12 +65,13 @@
                             <th>Reference</th>
                             <th>Cash Inflow</th>
                             <th>Cash Outflow</th>
-                            <th>Committed Budget</th>
-                            <th>Balance</th>
+                            {{-- <th>Committed Budget</th> --}}
                             <th>Total DPM</th>
                             <th>Total LPO</th>
+                            <th>Balance</th>
                             <th>Project Manager</th>
-                            <th>Total Budget Allocated</th>
+                       
+                            {{-- <th>Total Budget Allocated</th> --}}
                         </tr>
                     </thead>
                     <tbody id="cashflow-table-body" class="table-border-bottom-0">
@@ -95,15 +96,16 @@
                                 <td class="{{ $index >= 6 && $cashFlow->cash_outflow > 0 ? 'text-danger' : '' }}">
                                     {{ number_format($cashFlow->cash_outflow, 0) }}
                                 </td>
-                                <td>{{ number_format($cashFlow->committed_budget, 0) }}</td>
-                                <td>{{ number_format($cashFlow->balance, 0) }}</td>
+                                {{-- <td>{{ number_format($cashFlow->committed_budget, 0) }}</td> --}}
+                      
                                 <td>{{ number_format($dpm->total_dpm, 0) }}</td>
                                 <td>{{ number_format($dpm->total_lpo, 0) }}</td>
+                                <td>{{ number_format($cashFlow->balance, 0) }}</td>
                                 {{-- <td>{{ $cashFlow->reference_code }}</td> --}}
 
                                 <td>{{ $user->first_name ?? 'N/A' }}</td>
 
-                                <td>{{ number_format($allocatedBudgets[0]->allocated_budget) }}</td>
+                                {{-- <td>{{ number_format($allocatedBudgets[0]->allocated_budget) }}</td> --}}
                             </tr>
                         @endforeach
                     </tbody>

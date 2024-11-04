@@ -20,6 +20,7 @@ class TotalBudgetAllocated extends Model
         'total_financial_cost',
         'total_capital_expenditure',
         'allocated_budget',
+        'initial_allocation_budget',
         'reference_code',
     ];
 

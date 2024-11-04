@@ -200,19 +200,6 @@ class PurcahseOrderController extends Controller
             $purchaseOrder->vat = $request->totalVAT;
             $purchaseOrder->total_discount = $request->totalDiscount;
 
-            // $data = $request->all();
-            // $types = [];
-
-            // foreach ($data as $key => $value) {
-            //     $types[$key] = gettype($value); // Get the type of each request item
-            // }
-
-            // return response()->json([
-            //     'data' => $data, // Show the request data
-            //     'types' => $types, // Show the data types of each field
-            // ]);
-
-            // return response($request->totalBudget);
 
             $poItems = PurchaseOrderItem::create([
                 'purchase_order_id' => $purchaseOrder->id,
@@ -241,7 +228,8 @@ class PurcahseOrderController extends Controller
                 // Update total_lpo by adding the total_amount
                 $totalBudgetAllocated->total_lpo += $request->totalAmount;
                 $totalBudgetAllocated->total_material_cost -= $request->totalAmount;
-       
+                $totalBudgetAllocated->allocated_budget -= $request->totalAmount;
+                
 
                 $lastCashFlow->balance -= $request->totalAmount;
                 $lastCashFlow->save();

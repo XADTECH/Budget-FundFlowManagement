@@ -118,6 +118,8 @@ Route::middleware(['checklogin'])->group(function () {
 
   // Route to handle form submission (storing the Cash Flow)
   Route::post('/cashflow/store', [CashFlowController::class, 'store'])->name('cashflow.storeDPM');
+  Route::post('/cashflow/allocate-funds', [CashFlowController::class, 'allocateFund'])->name('cashflow.allocateFund');
+
 
   //project management
   Route::get('/pages/add-project-name', [ProjectController::class, 'showaddProjectView'])->name('add-project-name');

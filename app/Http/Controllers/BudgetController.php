@@ -546,6 +546,7 @@ class BudgetController extends Controller
             'total_financial_cost' => $allocations['financial']['allocated'],
             'total_capital_expenditure' => $allocations['Capital Expenditure']['allocated'],
             'allocated_budget' => $totalAllocatedBudget,
+            'initial_allocation_budget' => $totalAllocatedBudget,
             'reference_code' => $budget->reference_code,
         ]);
 
@@ -624,11 +625,16 @@ class BudgetController extends Controller
             $query->where('budget_project_id', $request->input('budget_project_id'));
         }
 
+        $cashFlow = CashFlow::all();
+        $approvedBudget = ApprovedBudget::where('budget_project_id', $request->input('budget_project_id'))->first();
+        $totalAllocations = CashFlow::where('budget_project_id', $request->input('budget_project_id'))->first();
+
         // Get the filtered results
         $allocatedBudgets = $query->get();
 
+        
         // Pass data to the view
-        return view('content.pages.pages-show-allocated-budgets', compact('budgetProjects', 'allocatedBudgets'));
+        return view('content.pages.pages-show-allocated-budgets', compact('budgetProjects', 'allocatedBudgets', 'approvedBudget', 'totalAllocations'));
     }
 
     //store capital expense
