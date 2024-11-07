@@ -115,7 +115,7 @@
         @endif
 
         <!-- Bank Management -->
-        {{-- @if (Auth::user()->role == 'Finance Manager' || Auth::user()->role == 'Admin')
+        @if (Auth::user()->role == 'Finance Manager' || Auth::user()->role == 'Admin')
             <li class="menu-item {{ request()->is('pages/add-bank-detail') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-wallet-alt"></i>
@@ -129,7 +129,7 @@
                     </li>
                 </ul>
             </li>
-        @endif --}}
+        @endif
 
         <!-- User Management -->
         @if (Auth::user()->role == 'Admin')
