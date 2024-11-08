@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 07, 2024 at 11:58 AM
+-- Generation Time: Nov 08, 2024 at 12:45 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -109,16 +109,16 @@ CREATE TABLE `banks` (
 --
 
 INSERT INTO `banks` (`id`, `bank_name`, `bank_address`, `iban`, `account`, `swift_code`, `branch`, `rm_detail`, `country`, `region`, `balance_amount`, `created_at`, `updated_at`) VALUES
-(66, 'Bank of America', '123 Main St, New York', 'GB33BUKB20201555555555', '\"1234567890\"', 'BOFAUS3N', 'Main Branch', 'John Doe, johndoe@bank.com', 'USA', 'New York', 50000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(67, 'Wells Fargo', '456 Second Ave, Boston', 'US29WFAL100000123456789', '\"1234567890\"', 'WFBIUS6S', 'Downtown', 'Jane Smith, janesmith@wellsfargo.com', 'USA', 'Massachusetts', 150000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(68, 'Chase Bank', '789 Third Ave, Chicago', 'DE12CHASE2015050001234567', '\"1234567890\"', 'CHASUS33', 'Lincoln Park', 'Mike Johnson, mikej@chase.com', 'USA', 'Illinois', 20000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(69, 'Citibank', '101 Fourth St, San Francisco', 'FR45CITI89012345678901234', '\"1234567890\"', 'CITIUS33', 'Pacific Branch', 'Susan Lee, susan.lee@citibank.com', 'USA', 'California', 75000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(70, 'HSBC', '12 Fifth Ave, London', 'GB12HSCB30300012345678', '\"1234567890\"', 'HSBCHKHH', 'Central Branch', 'Robert Brown, robert.brown@hsbc.com', 'UK', 'London', 30000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(71, 'Barclays', '34 Sixth St, Manchester', 'GB34BARC20001510012345678', '\"1234567890\"', 'BARCGB22', 'City Center', 'David Green, david.green@barclays.com', 'UK', 'Manchester', 120000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(72, 'Deutsche Bank', '56 Seventh Ave, Frankfurt', 'DE82DEUT60123456789012345', '\"1234567890\"', 'DEUTDEFF', 'Frankfurt Main', 'Lisa White, lisa.white@db.com', 'Germany', 'Frankfurt', 250000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(73, 'Standard Chartered', '78 Eighth Rd, Mumbai', 'IN75SCTB1122334455667890', '\"1234567890\"', 'SCBLINBB', 'Mumbai Branch', 'Amit Kumar, amit.kumar@standardchartered.com', 'India', 'Maharashtra', 65000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(74, 'Bank of China', '90 Ninth Blvd, Beijing', 'CN56BKCH49001234567890123', '\"1234567890\"', 'BKCHCNBJ', 'Beijing Branch', 'Zhang Wei, zhangwei@bankofchina.com', 'China', 'Beijing', 100000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02'),
-(75, 'ANZ Bank', '101 Tenth Rd, Sydney', 'AU88ANZB1234567890123456', '\"1234567890\"', 'ANZBAU2S', 'Sydney Branch', 'Emily Zhang, emily.zhang@anz.com', 'Australia', 'New South Wales', 50000.00, '2024-11-07 06:54:02', '2024-11-07 06:54:02');
+(97, 'ADCB', 'Khalifa St, Abu Dhabi', 'GB33BUKB20201555555555', '\"1234567890\"', 'BOFAUS3N', 'Abu Dhabi Main Branch', 'John Doe, johndoe@bank.com', 'UAE', 'Abu Dhabi', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(98, 'ADIB', 'Al Fahidi St, Dubai', 'US29WFAL100000123456789', '\"1234567890\"', 'WFBIUS6S', 'Dubai Downtown', 'Jane Smith, janesmith@wellsfargo.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(99, 'EMIRATES NBD', 'Sheikh Zayed Rd, Sharjah', 'DE12CHASE2015050001234567', '\"1234567890\"', 'CHASUS33', 'Sharjah Lincoln Park', 'Mike Johnson, mikej@chase.com', 'UAE', 'Sharjah', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(100, 'Emirates Islamic', 'Corniche Rd, Al Ain', 'FR45CITI89012345678901234', '\"1234567890\"', 'CITIUS33', 'Al Ain Pacific Branch', 'Susan Lee, susan.lee@citibank.com', 'UAE', 'Al Ain', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(101, 'HSBC', 'Hamdan St, Fujairah', 'GB12HSCB30300012345678', '\"1234567890\"', 'HSBCHKHH', 'Fujairah Central Branch', 'Robert Brown, robert.brown@hsbc.com', 'UAE', 'Fujairah', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(102, 'Barclays', 'Ras Al Khaimah', 'GB34BARC20001510012345678', '\"1234567890\"', 'BARCGB22', 'City Center Branch', 'David Green, david.green@barclays.com', 'UAE', 'Ras Al Khaimah', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(103, 'Deutsche Bank', 'Ajman St, Ajman', 'DE82DEUT60123456789012345', '\"1234567890\"', 'DEUTDEFF', 'Ajman Main', 'Lisa White, lisa.white@db.com', 'UAE', 'Ajman', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(104, 'Standard Chartered', 'Dibba, Umm Al Quwain', 'IN75SCTB1122334455667890', '\"1234567890\"', 'SCBLINBB', 'Dibba Branch', 'Amit Kumar, amit.kumar@standardchartered.com', 'UAE', 'Umm Al Quwain', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(105, 'Bank of China', 'Deira, Dubai', 'CN56BKCH49001234567890123', '\"1234567890\"', 'BKCHCNBJ', 'Deira Branch', 'Zhang Wei, zhangwei@bankofchina.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(106, 'ANZ Bank', 'Jumeirah, Dubai', 'AU88ANZB1234567890123456', '\"1234567890\"', 'ANZBAU2S', 'Jumeirah Branch', 'Emily Zhang, emily.zhang@anz.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25');
 
 -- --------------------------------------------------------
 
@@ -478,6 +478,22 @@ CREATE TABLE `ledger_entries` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `ledger_entries`
+--
+
+INSERT INTO `ledger_entries` (`id`, `bank_id`, `amount`, `type`, `description`, `created_at`, `updated_at`) VALUES
+(10, 97, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(11, 98, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(12, 99, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(13, 100, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(14, 101, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(15, 102, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(16, 103, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(17, 104, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(18, 105, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(19, 106, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25');
 
 -- --------------------------------------------------------
 
@@ -3534,7 +3550,7 @@ ALTER TABLE `approved_budget`
 -- AUTO_INCREMENT for table `banks`
 --
 ALTER TABLE `banks`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT for table `budget_project`
@@ -3606,7 +3622,7 @@ ALTER TABLE `indirect_cost`
 -- AUTO_INCREMENT for table `ledger_entries`
 --
 ALTER TABLE `ledger_entries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `material_cost`
