@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\BudgetProject;
 use App\Models\CashFlow;
+use App\Models\Bank;
 use App\Models\TotalBudgetAllocated;
 use Illuminate\Http\Request;
 
@@ -13,12 +14,93 @@ class CashFlowController extends Controller
     public function create()
     {
         $budgetProjects = BudgetProject::all();
+        $banks = Bank::all();
 
-        return view('content.pages.page-cashflow-form', compact('budgetProjects')); // Name of your Blade view for the form
+        return view('content.pages.page-cashflow-form', compact('budgetProjects', 'banks')); // Name of your Blade view for the form
     }
 
     public function store(Request $request)
     {
+        return response($request->all());
+
+        $fundType = $request->fund_type;
+        $mainCategory = $request->main_category;
+        
+        if ($fundType === 'Inflow') {
+            switch ($mainCategory) {
+                case 'Invoice':
+                    $request->validate([
+                        'fund_type' => 'required|string',
+                        'main_category' => 'required|string',
+                        'invoice_number' => 'required|string',
+                        'invoice_dr_amount_received' => 'required|numeric',
+                        'invoice_budget_project_id' => 'required|integer',
+                        'invoice_fund_category' => 'required|string',
+                        'invoice_destination_account' => 'required|integer',
+                        'item_description' => 'required|array',
+                        'item_description.*' => 'string', // each item in the array should be a string
+                        'amount' => 'required|array',
+                        'amount.*' => 'numeric', // each item in the array should be a numeric value
+                    ]);
+        
+                    $invoiceNumber = $request->invoice_number;
+                    $invoiceAmount = $request->invoice_dr_amount_received;
+                    $budgetID = $request->invoice_budget_project_id;
+                    $fundCategory = $request->invoice_fund_category;
+                    $bankID = $request->invoice_destination_account;
+                    $items = $request->item_description;
+                    $amount = $request->amount;
+                    break;
+        
+                case 'Funds Transfer from Management':
+                    // Code to handle funds transfer logic
+                    break;
+        
+                case 'Account Remittance':
+                    // Code to handle account remittance logic
+                    break;
+        
+                case 'Bank Loan':
+                    // Code to handle bank loan logic
+                    break;
+        
+                default:
+                    // Handle any unexpected cases
+                    break;
+            }
+        } else {
+            // Code for handling 'Outflow' fund type
+            switch ($mainCategory) {
+                case 'Salary':
+                    // Code to handle salary-specific outflow logic
+                    break;
+        
+                case 'Facility':
+                    // Code to handle facility-specific outflow logic
+                    break;
+        
+                case 'Material':
+                    // Code to handle material-specific outflow logic
+                    break;
+        
+                case 'Overhead':
+                    // Code to handle overhead-specific outflow logic
+                    break;
+        
+                case 'Finance':
+                    // Code to handle finance-specific outflow logic
+                    break;
+        
+                case 'Capital Expenditure':
+                    // Code to handle capital expenditure-specific outflow logic
+                    break;
+        
+                default:
+                    // Handle any unexpected cases
+                    break;
+            }
+        }
+        
         // Validate request data
         $request->validate([
             'date' => 'required|date',
