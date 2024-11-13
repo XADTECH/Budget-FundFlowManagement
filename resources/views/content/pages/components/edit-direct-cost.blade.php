@@ -39,7 +39,12 @@
         /* Color of the scrollbar track */
     }
 </style>
-
+<div id="loading-overlay"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
 <div class="container mt-4">
     <div id="responseAlertnew" class="alert alert-info alert-dismissible fade show" role="alert"
         style="display:none; width:80%; margin:10px auto">
@@ -56,12 +61,34 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Salary</h3>
-                            @if ($budget->approval_status === 'pending')
+                            <div class="d-flex">
+                                <div style="display: flex; align-items: center; justify-content: right;">
+                                    <!-- Separate Form for File Upload -->
+                                    <form action="{{ route('salary.import') }}" method="POST" enctype="multipart/form-data"
+                                        id="salary-file-upload-form" class="m-2">
+                                        @csrf
+                                        <!-- Hidden file input -->
+                                        <input type="file" name="file" id="salary-file-upload" style="display: none;" required>
+                                        <input type="hidden" name="bg_id" value="{{$project_id}}">
+                                        <!-- Upload Button Triggers File Input -->
+                                        <button type="button" class="btn btn-primary btn-custom"
+                                            onclick="salarytriggerFileUpload()">Upload</button>
+                                    </form>
+
+                                    <!-- Download Button -->
+                                    <a href="{{ route('sarlary-export',$project_id) }}" class="btn btn-primary btn-custom m-2">
+                                        Download Excel
+                                    </a>
+
+
+                                </div>
+                                @if ($budget->approval_status === 'pending')
                                 <button class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#addNewSalaryModal">ADD NEW</button>
-                            @else
+                                @else
                                 <button class="btn btn-secondary" disabled>Approved</button>
-                            @endif
+                                @endif
+                            </div>
                         </div>
                         <p>Total Salary Cost : <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($totalSalary, 0) }}<span></p>
@@ -91,47 +118,47 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->salaries as $salary)
-                                        <tr>
+                                    <tr>
 
-                                            @php
-                                                $project = $projects->where('id', $salary->project)->first();
-                                            @endphp
-                                            <td>{{ $loop->iteration }}</td> <!-- Index -->
+                                        @php
+                                        $project = $projects->where('id', $salary->project)->first();
+                                        @endphp
+                                        <td>{{ $loop->iteration }}</td> <!-- Index -->
 
-                                            <td>{{ $salary->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $salary->po ?? 'no entry' }}</td>
-                                            <td>{{ $salary->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $salary->status ?? 'no entry' }}</td>
-                                            <td>{{ $salary->description ?? 'no entry' }}</td>
-                                            <td>{{ $salary->overseeing_sites ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->cost_per_month) ?? 'no entry' }}</td>
-                                            <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
-                                            <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->average_cost) ?? 'no entry' }}</td>
-                                            <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
-                                            <td>{{ $salary->visa_status ?? 'no entry' }}</td>
-                                            <td>{{ $salary->percentage_cost ?? 'no entry' }}</td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown"><i
-                                                            class="bx bx-dots-vertical-rounded"></i></button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item editSalaryBtn"
-                                                            data-id="{{ $salary->id }}"
-                                                            data-firstname="${user.first_name}"
-                                                            data-lastname="${user.last_name}"
-                                                            data-phonenumber="${user.phone_number}"
-                                                            data-email="${user.email}" data-role="${user.role}"><i
-                                                                class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                        <a class="dropdown-item deletesalary-btn"
-                                                            data-id="{{ $salary->id }}"><i
-                                                                class="bx bx-trash me-1"></i> Delete</a>
-                                                    </div>
+                                        <td>{{ $salary->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $salary->po ?? 'no entry' }}</td>
+                                        <td>{{ $salary->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $salary->status ?? 'no entry' }}</td>
+                                        <td>{{ $salary->description ?? 'no entry' }}</td>
+                                        <td>{{ $salary->overseeing_sites ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->cost_per_month) ?? 'no entry' }}</td>
+                                        <td>{{ $salary->no_of_staff ?? 'no entry' }}</td>
+                                        <td>{{ $salary->no_of_months ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->average_cost) ?? 'no entry' }}</td>
+                                        <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
+                                        <td>{{ $salary->visa_status ?? 'no entry' }}</td>
+                                        <td>{{ $salary->percentage_cost ?? 'no entry' }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                    data-bs-toggle="dropdown"><i
+                                                        class="bx bx-dots-vertical-rounded"></i></button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item editSalaryBtn"
+                                                        data-id="{{ $salary->id }}"
+                                                        data-firstname="${user.first_name}"
+                                                        data-lastname="${user.last_name}"
+                                                        data-phonenumber="${user.phone_number}"
+                                                        data-email="${user.email}" data-role="${user.role}"><i
+                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item deletesalary-btn"
+                                                        data-id="{{ $salary->id }}"><i
+                                                            class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -141,12 +168,34 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Facilities Cost</h3>
-                            @if ($budget->approval_status === 'pending')
+                            <div class="d-flex">
+                                <div style="display: flex; align-items: center; justify-content: right;">
+                                    <!-- Separate Form for File Upload -->
+                                    <form action="{{ route('facilities.import') }}" method="POST" enctype="multipart/form-data"
+                                        id="facilities-file-upload-form" class="m-2">
+                                        @csrf
+                                        <!-- Hidden file input -->
+                                        <input type="file" name="facilities-file" id="facilities-file-upload" style="display: none;" required>
+                                        <input type="hidden" name="bg_id" value="{{$project_id}}">
+                                        <!-- Upload Button Triggers File Input -->
+                                        <button type="button" class="btn btn-primary btn-custom"
+                                            onclick="facilitiestriggerFileUpload()">Upload</button>
+                                    </form>
+
+                                    <!-- Download Button -->
+                                    <a href="{{ route('facility-export',$project_id) }}" class="btn btn-primary btn-custom m-2">
+                                        Download Excel
+                                    </a>
+
+
+                                </div>
+                                @if ($budget->approval_status === 'pending')
                                 <button class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#addNewFacilitiesModal">ADD NEW</button>
-                            @else
+                                @else
                                 <button class="btn btn-secondary" disabled>Approved</button>
-                            @endif
+                                @endif
+                            </div>
                         </div>
                         <p>Total Facility Cost : <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($totalFacilityCost, 0) }}<span>
@@ -174,39 +223,39 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->facilityCosts as $facility)
-                                        <tr>
-                                            @php
-                                                $project = $projects->where('id', $facility->project)->first();
-                                            @endphp
-                                            <td>{{ $loop->iteration }}</td> <!-- Index -->
-                                            <td>{{ $facility->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $facility->po ?? 'no entry' }}</td>
-                                            <td>{{ $facility->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $facility->status ?? 'no entry' }}</td>
-                                            <td>{{ $facility->description ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->cost_per_month) ?? 'no entry' }}</td>
-                                            <td>{{ $facility->no_of_staff ?? 'no entry' }}</td>
-                                            <td>{{ $facility->no_of_months ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->average_cost) ?? 'no entry' }}</td>
-                                            <td>{{ number_format($facility->total_cost) ?? 'no entry' }}</td>
-                                            <td>{{ $facility->percentage_cost ?? 'no entry' }}</td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown"><i
-                                                            class="bx bx-dots-vertical-rounded"></i></button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item edit-btn editFacilitesBtn"
-                                                            data-id="{{ $facility->id }}"><i
-                                                                class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                        <a class="dropdown-item deletefacilities"
-                                                            data-id="{{ $facility->id }}"><i
-                                                                class="bx bx-trash me-1"></i> Delete</a>
-                                                    </div>
+                                    <tr>
+                                        @php
+                                        $project = $projects->where('id', $facility->project)->first();
+                                        @endphp
+                                        <td>{{ $loop->iteration }}</td> <!-- Index -->
+                                        <td>{{ $facility->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $facility->po ?? 'no entry' }}</td>
+                                        <td>{{ $facility->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $facility->status ?? 'no entry' }}</td>
+                                        <td>{{ $facility->description ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->cost_per_month) ?? 'no entry' }}</td>
+                                        <td>{{ $facility->no_of_staff ?? 'no entry' }}</td>
+                                        <td>{{ $facility->no_of_months ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->average_cost) ?? 'no entry' }}</td>
+                                        <td>{{ number_format($facility->total_cost) ?? 'no entry' }}</td>
+                                        <td>{{ $facility->percentage_cost ?? 'no entry' }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                    data-bs-toggle="dropdown"><i
+                                                        class="bx bx-dots-vertical-rounded"></i></button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item edit-btn editFacilitesBtn"
+                                                        data-id="{{ $facility->id }}"><i
+                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item deletefacilities"
+                                                        data-id="{{ $facility->id }}"><i
+                                                            class="bx bx-trash me-1"></i> Delete</a>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -216,18 +265,41 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Material Cost</h3>
-                            @if ($budget->approval_status === 'pending')
+
+                            <div class="d-flex">
+                                <div style="display: flex; align-items: center; justify-content: right;">
+                                    <!-- Separate Form for File Upload -->
+                                    <form action="{{ route('banks.import') }}" method="POST" enctype="multipart/form-data"
+                                        id="file-upload-form" class="m-2">
+                                        @csrf
+                                        <!-- Hidden file input -->
+                                        <input type="file" name="file" id="file-upload" style="display: none;" required>
+
+                                        <!-- Upload Button Triggers File Input -->
+                                        <button type="button" class="btn btn-primary btn-custom"
+                                            onclick="triggerFileUpload()">Upload</button>
+                                    </form>
+
+                                    <!-- Download Button -->
+                                    <a href="{{ route('material-export',$project_id) }}" class="btn btn-primary btn-custom m-2">
+                                        Download Excel
+                                    </a>
+
+
+                                </div>
+                                @if ($budget->approval_status === 'pending')
                                 <button class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#addNewMaterialModal">ADD NEW</button>
-                            @else
+                                @else
                                 <button class="btn btn-secondary" disabled>Approved</button>
-                            @endif
+                                @endif
+                            </div>
                         </div>
                         @php
-                            $Mcost =
-                                $totalMaterialCost +
-                                ($existingPettyCash->amount ?? 0) +
-                                ($existingNocPayment->amount ?? 0);
+                        $Mcost =
+                        $totalMaterialCost +
+                        ($existingPettyCash->amount ?? 0) +
+                        ($existingNocPayment->amount ?? 0);
                         @endphp
                         <span>Total Material Cost: <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($Mcost ?? 0) }}</span></span><br>
@@ -261,47 +333,47 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->materialCosts as $material)
-                                        @php
-                                            $project = $projects->where('id', $material->project)->first();
-                                        @endphp
+                                    @php
+                                    $project = $projects->where('id', $material->project)->first();
+                                    @endphp
 
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td> <!-- Display Index -->
-                                            <td>{{ $material->type ?? 'no entry' }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $material->po ?? 'no entry' }}</td>
-                                            <td>{{ $material->expenses ?? 'no entry' }}</td>
-                                            <td>{{ $material->status ?? 'no entry' }}</td>
-                                            <td>{{ $material->description ?? 'no entry' }}</td>
-                                            <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
-                                            <td>{{ $material->unit ?? 'no entry' }}</td>
-                                            <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}
-                                            </td>
-                                            <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}
-                                            </td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown">
-                                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item editMaterialBtn"
-                                                            data-id="{{ $material->id }}">
-                                                            <i class="bx bx-edit-alt me-1"></i> Edit
-                                                        </a>
-                                                        <a class="dropdown-item deleteMaterialBtn"
-                                                            data-id="{{ $material->id }}">
-                                                            <i class="bx bx-trash me-1"></i> Delete
-                                                        </a>
-                                                    </div>
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td> <!-- Display Index -->
+                                        <td>{{ $material->type ?? 'no entry' }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $material->po ?? 'no entry' }}</td>
+                                        <td>{{ $material->expenses ?? 'no entry' }}</td>
+                                        <td>{{ $material->status ?? 'no entry' }}</td>
+                                        <td>{{ $material->description ?? 'no entry' }}</td>
+                                        <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
+                                        <td>{{ $material->unit ?? 'no entry' }}</td>
+                                        <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}
+                                        </td>
+                                        <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                    data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item editMaterialBtn"
+                                                        data-id="{{ $material->id }}">
+                                                        <i class="bx bx-edit-alt me-1"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item deleteMaterialBtn"
+                                                        data-id="{{ $material->id }}">
+                                                        <i class="bx bx-trash me-1"></i> Delete
+                                                    </a>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -339,7 +411,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -476,7 +548,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -573,7 +645,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -697,7 +769,7 @@
                         <label for="edit_project" class="form-label">Project</label>
                         <select class="form-select" id="edit_project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -822,7 +894,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -911,7 +983,7 @@
                         <label for="edit_material_project" class="form-label">Project</label>
                         <select class="form-select" id="edit_material_project" name="project" required>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -998,6 +1070,28 @@
 
 
 <script>
+    function salarytriggerFileUpload() {
+        document.getElementById('salary-file-upload').click();
+    }
+    document.getElementById('salary-file-upload').addEventListener('change', function() {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex'; // Show the spinner
+        setTimeout(() => {
+            document.getElementById('salary-file-upload-form').submit(); // Submit form after delay
+        }, 500); // Small delay to ensure spinner is visible
+    });
+
+    function facilitiestriggerFileUpload() {
+        document.getElementById('facilities-file-upload').click();
+    }
+    document.getElementById('facilities-file-upload').addEventListener('change', function() {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex'; // Show the spinner
+        setTimeout(() => {
+            document.getElementById('facilities-file-upload-form').submit(); // Submit form after delay
+        }, 500); // Small delay to ensure spinner is visible
+    });
+
     function formatNumber(input, hiddenFieldId) {
         // Remove non-digit characters (except for decimal point)
         let value = input.value.replace(/[^0-9.]/g, '');

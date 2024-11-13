@@ -144,18 +144,13 @@ class DirectCostController extends Controller
                 'po' => 'required|string',
                 'expense' => 'required|string',
                 'project_id' => 'required|exists:budget_project,id', // Ensure `budget_projects` table exists
-
                 'material_head' => 'string|nullable',
                 'quantity' => 'numeric|nullable',
                 'unit' => 'string|nullable',
                 'unit_cost' => 'numeric|nullable',
                 'description' => 'nullable|string',
                 'status' => 'string|nullable',
-
-                // Field for petty cash expense type
                 'petty_cash_amount' => 'numeric|nullable',
-
-                // Field for NOC payment expense type
                 'noc_amount' => 'numeric|nullable',
             ]);
 

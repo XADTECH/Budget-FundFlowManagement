@@ -53,6 +53,7 @@ use App\Http\Controllers\form_elements\BasicInput;
 use App\Http\Controllers\form_elements\InputGroups;
 use App\Http\Controllers\form_layouts\VerticalForm;
 use App\Http\Controllers\form_layouts\HorizontalForm;
+use App\Http\Controllers\ImportExportController;
 use App\Http\Controllers\tables\Basic as TablesBasic;
 use App\Http\Controllers\SupplierPriceController;
 use Maatwebsite\Excel\Facades\Excel;
@@ -121,10 +122,25 @@ Route::middleware(['checklogin'])->group(function () {
     //upload bank details
     Route::post('/bank-import', [BankController::class, 'uploadBank'])->name('banks.import');
 
-    Route::get('/download-bank-excel', function () {
-        $filePath = storage_path('app/public/bank_details.xlsx'); // Ensure the path is correct
-        return response()->download($filePath); // This will trigger the download
-    })->name('banks.download');
+    Route::get('/download-bank-excel', [ImportExportController::class, 'bankexport'])->name('banks.download');
+
+
+    //Project Budget import export
+    Route::get('/salary/export/{id}', [ImportExportController::class, 'salaryexport'])->name('sarlary-export');
+
+    Route::post('/salary-import', [ImportExportController::class, 'uploadSalary'])->name('salary.import');
+
+    Route::get('/facilitiescost/export/{id}', [ImportExportController::class, 'facilitycostexport'])->name('facility-export');
+    Route::post('/facilities-import', [ImportExportController::class, 'uploadFacilities'])->name('facilities.import');
+
+    Route::get('/materialcost/export/{id}', [ImportExportController::class, 'materialcostexport'])->name('material-export');
+
+    Route::get('/capitalexpenditure/export/{id}', [ImportExportController::class, 'capitalexpenditureexport'])->name('capitalexpenditure-export');
+    Route::post('/capital-import', [ImportExportController::class, 'uploadCapital'])->name('capital.import');
+
+    Route::get('/revenueplan/export/{id}', [ImportExportController::class, 'revenueplanexport'])->name('revenueplan-export');
+
+    Route::post('/revenue-import', [ImportExportController::class, 'uploadRevenue'])->name('revenue.import');
 
     //project management
     Route::get('/pages/add-project-name', [ProjectController::class, 'showaddProjectView'])->name('add-project-name');

@@ -49,13 +49,35 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5>Net Profit after Tax : {{ number_format($totalNetProfitAfterTax) }} AED</h5>
+                            <div class="d-flex">
+                                <div style="display: flex; align-items: center; justify-content: right;">
+                                    <!-- Separate Form for File Upload -->
+                                    <form action="{{ route('revenue.import') }}" method="POST" enctype="multipart/form-data"
+                                        id="revenue-file-upload-form" class="m-2">
+                                        @csrf
+                                        <!-- Hidden file input -->
+                                        <input type="file" name="revenue-file" id="revenue-file-upload" style="display: none;" required>
+                                        <input type="hidden" name="bg_id" value="{{$project_id}}">
 
-                            @if ($budget->approval_status === 'pending')
+                                        <!-- Upload Button Triggers File Input -->
+                                        <button type="button" class="btn btn-primary btn-custom"
+                                            onclick="revenuetriggerFileUpload()">Upload</button>
+                                    </form>
+
+                                    <!-- Download Button -->
+                                    <a href="{{ route('revenueplan-export',$project_id) }}" class="btn btn-primary btn-custom m-2">
+                                        Download Excel
+                                    </a>
+
+
+                                </div>
+                                @if ($budget->approval_status === 'pending')
                                 <button class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#addNewRevenuePlan">ADD REVENUE</button>
-                            @else
+                                @else
                                 <button class="btn btn-secondary" disabled>Approved</button>
-                            @endif
+                                @endif
+                            </div>
                         </div>
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
@@ -75,20 +97,20 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->revenuePlans as $revenuePlan)
-                                        <tr>
-                                            @php
-                                                $project = $projects->where('id', $revenuePlan->project)->first();
-                                            @endphp
-                                            <td>{{ $revenuePlan->sn }}</td>
-                                            <td>{{ $revenuePlan->type }}</td>
-                                            <td>{{ $project->name ?? 'no entry' }}</td>
-                                            <td>{{ $revenuePlan->description }}</td>
-                                            <td>{{ number_format($revenuePlan->amount, 0) }}</td>
-                                            <td>{{ number_format($revenuePlan->total_profit, 0) }}</td>
-                                            <td>{{ number_format($revenuePlan->net_profit_before_tax, 0) }}</td>
-                                            <td>{{ number_format($revenuePlan->tax, 0) }}</td>
-                                            <td>{{ number_format($revenuePlan->net_profit_after_tax, 0) }}</td>
-                                        </tr>
+                                    <tr>
+                                        @php
+                                        $project = $projects->where('id', $revenuePlan->project)->first();
+                                        @endphp
+                                        <td>{{ $revenuePlan->sn }}</td>
+                                        <td>{{ $revenuePlan->type }}</td>
+                                        <td>{{ $project->name ?? 'no entry' }}</td>
+                                        <td>{{ $revenuePlan->description }}</td>
+                                        <td>{{ number_format($revenuePlan->amount, 0) }}</td>
+                                        <td>{{ number_format($revenuePlan->total_profit, 0) }}</td>
+                                        <td>{{ number_format($revenuePlan->net_profit_before_tax, 0) }}</td>
+                                        <td>{{ number_format($revenuePlan->tax, 0) }}</td>
+                                        <td>{{ number_format($revenuePlan->net_profit_after_tax, 0) }}</td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -124,7 +146,7 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project">
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -154,4 +176,15 @@
 
 
 
-<script></script>
+<script>
+    function revenuetriggerFileUpload() {
+        document.getElementById('revenue-file-upload').click();
+    }
+    document.getElementById('revenue-file-upload').addEventListener('change', function() {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex'; // Show the spinner
+        setTimeout(() => {
+            document.getElementById('revenue-file-upload-form').submit(); // Submit form after delay
+        }, 500); // Small delay to ensure spinner is visible
+    });
+</script>
