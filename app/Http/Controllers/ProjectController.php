@@ -16,6 +16,7 @@ use App\Models\RevenuePlan;
 use App\Models\CashFlow;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
+use App\Models\TransferFromManagement;
 use App\Models\LedgerEntry;
 use App\Models\Invoice;
 use App\Models\Sender;
@@ -256,6 +257,7 @@ class ProjectController extends Controller
             Invoice::where('invoice_budget_project_id', $projectId)->delete();
             LedgerEntry::where('budget_project_id', $projectId)->delete();
             Sender::where('budget_project_id', $projectId)->delete();
+            TransferFromManagement::where('budget_project_id', $projectId)->delete();
 
             $po = PurchaseOrder::where('project_id', $projectId)->first();
 

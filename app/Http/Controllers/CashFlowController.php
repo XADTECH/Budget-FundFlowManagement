@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\Sender;
 use App\Models\LedgerEntry;
 use App\Models\TotalBudgetAllocated;
+use App\Models\TransferFromManagement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -129,7 +130,75 @@ class CashFlowController extends Controller
                     break;
 
                 case 'Funds Transfer from Management':
-                    // Handle funds transfer logic
+                    // return response($request->all());
+
+                    $request->validate([
+                        'date_received' => 'required|date',
+                        'transfer_reference' => 'required|string|max:255|unique:transfer_from_management,transfer_reference',
+                        'fund_category' => 'required|in:Financial,Salary,Facility,Material,Overhead,Capital Expenditure',
+                        'source_account' => 'required|numeric',
+                        'transfer_amount' => 'required|numeric|min:0',
+                        'sender_bank_name' => 'required|string|max:255',
+                        'transfer_designation' => 'required|string|max:255',
+                        'transfer_date' => 'required|date|before_or_equal:today',
+                        'budget_project_id' => 'required|exists:budget_project,id',
+                        'transfer_description' => 'nullable|string',
+                        'transfer_destination_account' => 'required|numeric',
+                    ]);
+
+                    $transferEntry = TransferFromManagement::create([
+                        'date_received' => $request->date_received,
+                        'transfer_date' => $request->transfer_date,
+                        'transfer_designation' => $request->transfer_designation,
+                        'transfer_reference' => $request->transfer_reference,
+                        'fund_category' => $request->fund_category,
+                        'source_account' => $request->source_account,
+                        'transfer_destination_account' => $request->transfer_destination_account,
+                        'transfer_amount' => $request->transfer_amount,
+                        'sender_bank_name' => $request->sender_bank_name,
+                        'budget_project_id' => $request->budget_project_id,
+                        'transfer_description' => $request->transfer_description ?? '',
+                    ]);
+
+                    // Define sender data and save it
+                    $senderData = [
+                        'date' => $request->date_received,
+                        'sender_name' => $request->transfer_designation,
+                        'sender_bank_name' => $request->sender_bank_name,
+                        'sender_bank_account' => $request->source_account,
+                        'tracking_number' => 'TRK #' . $request->transfer_reference,
+                        'amount' => $request->transfer_amount,
+                        'fund_type' => $request->fund_category,
+                        'sender_detail' => $request->transfer_description,
+                        'budget_project_id' => $request->budget_project_id,
+                    ];
+
+                    Sender::create($senderData);
+
+                    // Create debit and credit ledger entries
+                    LedgerEntry::create([
+                        'bank_id' => $request->transfer_destination_account,
+                        'amount' => abs($request->transfer_amount),
+                        'type' => 'debit',
+                        'description' => 'Bank Account',
+                        'budget_project_id' => $request->budget_project_id,
+                        'category_type' => $request->fund_category,
+                    ]);
+
+                    LedgerEntry::create([
+                        'bank_id' => $request->transfer_destination_account,
+                        'amount' => abs($request->transfer_amount),
+                        'type' => 'credit',
+                        'description' => 'Management Fund For'.' '.$request->fund_category,
+                        'budget_project_id' => $request->budget_project_id,
+                        'category_type' => $request->fund_category,
+                    ]);
+
+                    $this->maintainCashFlow($request->budget_project_id, $request->fund_category, $request->transfer_amount, 'Fund Transfer From Management', $request->transfer_reference, $request->date);
+
+                    return redirect()->back()->with('success', 'DPM recorded and cash flow updated.');
+
+
                     break;
 
                 case 'Account Remittance':

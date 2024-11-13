@@ -27,6 +27,7 @@ use App\Models\Invoice;
 use App\Models\ApprovedBudget;
 use App\Models\Bank;
 use App\Models\RevenuePlan;
+use App\Models\TransferFromManagement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -610,72 +611,59 @@ class BudgetController extends Controller
         $cashFlows = $query->get();
 
         // Pass data to the view
-        return view('content.pages.pages-show-cashflow-list', compact('cashFlows', 'allocatedBudgets', 'budgetProjects', 'allProjects', 'users','invoice'));
+        return view('content.pages.pages-show-cashflow-list', compact('cashFlows', 'allocatedBudgets', 'budgetProjects', 'allProjects', 'users', 'invoice'));
     }
 
     public function showAllocatedBudgets(Request $request)
     {
         // Fetch all budget projects for the dropdown
         $budgetProjects = BudgetProject::all();
-    
+
         // Start a query on TotalBudgetAllocated with potential filters
         $query = TotalBudgetAllocated::query();
 
         $banks = Bank::all();
-    
+
         // Apply filters if present in the request
         if ($request->filled('reference_code')) {
             $query->where('reference_code', 'like', '%' . $request->reference_code . '%');
         }
-    
+
         if ($request->filled('budget_project_id')) {
             $query->where('budget_project_id', $request->budget_project_id);
         }
 
-        
-        $invoices = Invoice::where('invoice_budget_project_id',  $request->budget_project_id)->get();
-        $sndr = Sender::where('budget_project_id',  $request->budget_project_id)->get();
-    
+        $invoices = Invoice::where('invoice_budget_project_id', $request->budget_project_id)->get();
+        $sndr = Sender::where('budget_project_id', $request->budget_project_id)->get();
+        $transfers = TransferFromManagement::where('budget_project_id', $request->budget_project_id)->get();
+
+
         // Get the filtered allocated budgets
         $allocatedBudgets = $query->get();
-    
+
         // Fetch approved budget and total allocations related to the budget project, if provided
-        $approvedBudget = $request->has('budget_project_id') 
-            ? ApprovedBudget::where('budget_project_id', $request->budget_project_id)->first()
-            : null;
-    
-        $totalAllocations = $request->has('budget_project_id') 
-            ? CashFlow::where('budget_project_id', $request->budget_project_id)->first()
-            : null;
+        $approvedBudget = $request->has('budget_project_id') ? ApprovedBudget::where('budget_project_id', $request->budget_project_id)->first() : null;
 
-        $total_amount = 0; 
-    
+        $totalAllocations = $request->has('budget_project_id') ? CashFlow::where('budget_project_id', $request->budget_project_id)->first() : null;
+
+        $total_amount = 0;
+
         // Calculate the invoice count and total amount received for the specified budget project
-        $invoice_count = $request->has('budget_project_id') 
-            ? Invoice::where('invoice_budget_project_id', $request->budget_project_id)->count()
-            : 0;
-    
-        $total_invoice_amount = $request->has('budget_project_id') 
-            ? Invoice::where('invoice_budget_project_id', $request->budget_project_id)->sum('invoice_dr_amount_received')
-            : 0;
+        $invoice_count = $request->has('budget_project_id') ? Invoice::where('invoice_budget_project_id', $request->budget_project_id)->count() : 0;
 
-        $total_amount +=  $total_invoice_amount;
-    
+        $total_invoice_amount = $request->has('budget_project_id') ? Invoice::where('invoice_budget_project_id', $request->budget_project_id)->sum('invoice_dr_amount_received') : 0;
+
+        // Get the count of transfers for the given budget project ID
+        $transfer_count = $request->has('budget_project_id') ? TransferFromManagement::where('budget_project_id', $request->budget_project_id)->count() : 0;
+
+        // Get the total transfer amount for the given budget project ID
+        $total_transfer_amount = $request->has('budget_project_id') ? TransferFromManagement::where('budget_project_id', $request->budget_project_id)->sum('transfer_amount') : 0;
+
+        $total_amount += $total_invoice_amount + $total_transfer_amount;
+
         // Pass data to the view
-        return view('content.pages.pages-show-allocated-budgets', compact(
-            'invoice_count',
-            'total_invoice_amount',
-            'budgetProjects',
-            'allocatedBudgets',
-            'approvedBudget',
-            'totalAllocations',
-            'total_amount',
-            'invoices',
-            'banks',
-            'sndr'
-        ));
+        return view('content.pages.pages-show-allocated-budgets', compact('invoice_count', 'total_invoice_amount', 'budgetProjects', 'allocatedBudgets', 'approvedBudget', 'totalAllocations', 'total_amount', 'invoices', 'banks', 'sndr','total_transfer_amount','transfer_count','transfers'));
     }
-    
 
     //store capital expense
     public function storeCapex(Request $request)

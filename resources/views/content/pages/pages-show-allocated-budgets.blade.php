@@ -153,7 +153,7 @@
         <div class="card mt-4">
             <div class="card-body">
                 <div class="dropdown-section">
-                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Invoices ▼ {{ $sndr->count() }}</h3>
+                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Invoices ▼ {{ $invoice_count }}</h3>
                     <div class="dropdown-content">
                         <h5>Total Invoices: {{ $invoice_count }}</h5>
                         <h5>Total Amount Received: {{ number_format($total_amount, 0) }}</h5>
@@ -211,7 +211,6 @@
     @endif
 
 
-
     <!-- Sender Dropdown Section -->
     @if ($sndr && $sndr->isNotEmpty())
         <div class="card mt-4">
@@ -248,6 +247,67 @@
                                             <td>{{ $sender->tracking_number }}</td>
                                             <td>{{ $sender->amount }}</td>
                                             <td>{!! nl2br(e($sender->sender_detail)) !!}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Transfer From Management Dropdown Section -->
+    @if ($transfers && $transfers->isNotEmpty())
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="dropdown-section">
+                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Management Transfers ▼ {{ $transfers->count() }}</h3>
+                    <div class="dropdown-content">
+                        <h5>Total Transfers Amount: {{ number_format($total_transfer_amount, 0) }}</h5>
+
+                        <div class="table-responsive text-nowrap limited-scroll mt-2">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date Received</th>
+                                        <th>Transfer Designation</th>
+                                        <th>Transfer Reference</th>
+                                        <th>Fund Category</th>
+                                        <th>Source Account</th>
+                                        <th>Destination Account</th>
+                                        <th>Amount</th>
+                                        <th>Sender Bank Name</th>
+                                        <th>Transfer Date</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($transfers as $index => $transfer)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $transfer->date_received }}</td>
+                                            <td>{{ $transfer->transfer_designation }}</td>
+                                            <td>{{ $transfer->transfer_reference }}</td>
+                                            <td>{{ $transfer->fund_category }}</td>
+                                            <td>{{ $transfer->source_account }}</td>
+                                            @php
+                                            $bank = $banks
+                                                ->where('id', $transfer->transfer_destination_account)
+                                                ->first();
+                                        @endphp
+                                        <td>
+                                            <a
+                                                href="{{ route('banks.projectledger', ['bank_id' =>  $transfer->transfer_destination_account, 'budget_project_id' =>  $transfer->budget_project_id]) }}">
+                                                {{ $bank->bank_name }}
+                                            </a>
+                                        </td>
+                                            <td>{{ number_format($total_transfer_amount, 0) }}</td>
+                                            <td>{{ $transfer->sender_bank_name }}</td>
+                                            <td>{{ $transfer->transfer_date }}</td>
+                                            <td>{!! nl2br(e($transfer->transfer_description)) !!}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

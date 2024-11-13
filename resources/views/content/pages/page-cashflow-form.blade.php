@@ -199,7 +199,8 @@
                                             {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material</option>
                                         <option value="Overhead"
                                             {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead</option>
-                                        <option value="Financial" {{ old('fund_category') == 'Financial' ? 'selected' : '' }}>
+                                        <option value="Financial"
+                                            {{ old('fund_category') == 'Financial' ? 'selected' : '' }}>
                                             Financial</option>
                                         <option value="Capital Expenditure"
                                             {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>
@@ -409,8 +410,8 @@
                                             {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material</option>
                                         <option value="Overhead"
                                             {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead</option>
-                                        <option value="Finance" {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
-                                            Finance</option>
+                                        <option value="Financial" {{ old('fund_category') == 'Financial' ? 'selected' : '' }}>
+                                            Financial</option>
                                         <option value="Capital Expenditure"
                                             {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>Capital
                                             Expenditure</option>
@@ -439,9 +440,9 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label for="destination_account" class="form-label">Destination Account
+                                    <label for="transfer_destination_account" class="form-label">Destination Account
                                         (Receiving)</label>
-                                    <select id="destination_account" name="destination_account" class="form-select">
+                                    <select id="transfer_destination_account" name="transfer_destination_account" class="form-select">
                                         <option value="">Select Receiving Account</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{ $bank->id }}">{{ $bank->bank_name }} -
@@ -477,155 +478,167 @@
                                     <input type="date" id="date_received" class="form-control"
                                         name="date_received" />
                                 </div>
-                            </div>
 
-                            <!-- Fourth Row -->
-                            <div class="row mt-4">
-                                <div class="col-md-12">
-                                    <label for="transfer_description" class="form-label">Purpose/Description</label>
-                                    <input type="text" id="transfer_description" class="form-control"
-                                        name="transfer_description" placeholder="Enter Description" />
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Loan Source of Funds Fields -->
-                        <div id="loanFields" class="hidden mt-4">
-                            <h6>Loan Details</h6>
+                                <!-- Fourth Row -->
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <label for="transfer_designation" class="form-label">Designation</label>
+                                        <input type="input" id="transfer_designation" class="form-control"
+                                            name="transfer_designation" placeholder="From CEO ... Finance" />
+                                    </div>
 
-                            <!-- First Row -->
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <label for="loan_reference" class="form-label">Loan Reference Number</label>
-                                    <input type="text" id="loan_reference" class="form-control" name="loan_reference"
-                                        placeholder="Enter Loan Reference Number" />
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <label for="provider_type" class="form-label">Provider Type</label>
-                                    <select id="provider_type" name="provider_type" class="form-control">
-                                        <option value="">Select Provider Type</option>
-                                        <option value="Director">Director</option>
-                                        <option value="Manager">Manager</option>
-                                        <option value="External">External</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <label for="provider_name" class="form-label">Provider Name</label>
-                                    <input type="text" id="provider_name" class="form-control" name="provider_name"
-                                        placeholder="Enter Provider's Name" />
+                                    <div class="col-md-8">
+                                        <label for="transfer_description" class="form-label">Purpose/Description</label>
+                                        <textarea id="transfer_description" class="form-control" name="transfer_description" placeholder="Enter Description"
+                                            rows="4"></textarea>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Second Row -->
-                            <div class="row mt-4">
-                                <div class="col-sm-4">
-                                    <label for="loan_amount" class="form-label">Amount of Loan</label>
-                                    <input type="number" id="loan_amount" class="form-control" name="loan_amount"
-                                        placeholder="Enter Loan Amount" />
+                            <!-- Loan Source of Funds Fields -->
+                            <div id="loanFields" class="hidden mt-4">
+                                <h6>Loan Details</h6>
+
+                                <!-- First Row -->
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="loan_reference" class="form-label">Loan Reference Number</label>
+                                        <input type="text" id="loan_reference" class="form-control"
+                                            name="loan_reference" placeholder="Enter Loan Reference Number" />
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label for="provider_type" class="form-label">Provider Type</label>
+                                        <select id="provider_type" name="provider_type" class="form-control">
+                                            <option value="">Select Provider Type</option>
+                                            <option value="Director">Director</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="External">External</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label for="provider_name" class="form-label">Provider Name</label>
+                                        <input type="text" id="provider_name" class="form-control"
+                                            name="provider_name" placeholder="Enter Provider's Name" />
+                                    </div>
                                 </div>
 
-                                <div class="col-sm-4">
-                                    <label for="interest_rate" class="form-label">Interest Rate (%)</label>
-                                    <input type="number" id="interest_rate" class="form-control" name="interest_rate"
-                                        placeholder="Enter Interest Rate" />
+                                <!-- Second Row -->
+                                <div class="row mt-4">
+                                    <div class="col-sm-4">
+                                        <label for="loan_amount" class="form-label">Amount of Loan</label>
+                                        <input type="number" id="loan_amount" class="form-control" name="loan_amount"
+                                            placeholder="Enter Loan Amount" />
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label for="interest_rate" class="form-label">Interest Rate (%)</label>
+                                        <input type="number" id="interest_rate" class="form-control"
+                                            name="interest_rate" placeholder="Enter Interest Rate" />
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label for="loan_term" class="form-label">Loan Term (Months/Years)</label>
+                                        <input type="text" id="loan_term" class="form-control" name="loan_term"
+                                            placeholder="Enter Loan Term" />
+                                    </div>
                                 </div>
 
-                                <div class="col-sm-4">
-                                    <label for="loan_term" class="form-label">Loan Term (Months/Years)</label>
-                                    <input type="text" id="loan_term" class="form-control" name="loan_term"
-                                        placeholder="Enter Loan Term" />
-                                </div>
-                            </div>
-
-                            <!-- Third Row with Fund Category -->
-                            <div class="row mt-4">
-                                <div class="col-sm-4">
-                                    <label for="fund_category" class="form-label">Fund Category</label>
-                                    <select id="fund_category" name="fund_category" class="form-select">
-                                        <option disabled selected value>Choose Fund Category</option>
-                                        <option value="Salary" {{ old('fund_category') == 'Salary' ? 'selected' : '' }}>
-                                            Salary</option>
-                                        <option value="Facility"
-                                            {{ old('fund_category') == 'Facility' ? 'selected' : '' }}>Facility</option>
-                                        <option value="Material"
-                                            {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material</option>
-                                        <option value="Overhead"
-                                            {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead</option>
-                                        <option value="Finance" {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
-                                            Finance</option>
-                                        <option value="Capital Expenditure"
-                                            {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>Capital
-                                            Expenditure</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <label for="repayment_start_date" class="form-label">Repayment Start Date</label>
-                                    <input type="date" id="repayment_start_date" class="form-control"
-                                        name="repayment_start_date" />
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <label for="repayment_frequency" class="form-label">Repayment Frequency</label>
-                                    <select id="repayment_frequency" name="repayment_frequency" class="form-control">
-                                        <option value="">Select Frequency</option>
-                                        <option value="Monthly">Monthly</option>
-                                        <option value="Quarterly">Quarterly</option>
-                                        <option value="Annually">Annually</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Fourth Row -->
-                            <div class="row mt-4">
-                                <div class="col-sm-4">
-                                    <label for="receiving_bank" class="form-label">Receiving Bank Account</label>
-                                    <select id="destination_account" name="destination_account" class="form-control">
-                                        <option value="">Select Receiving Account</option>
-                                        @foreach ($banks as $bank)
-                                            <option value="{{ $bank->id }}">{{ $bank->bank_name }} -
-                                                {{ $bank->country }} - {{ $bank->region }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select class="form-select" name="budget_project_id">
-                                        <option disabled selected value>Choose Project</option>
-                                        @foreach ($budgetProjects as $project)
-                                            <option value="{{ $project->id }}"
-                                                {{ old('budget_project_id') == $project->id ? 'selected' : '' }}>
-                                                {{ $project->reference_code }}
+                                <!-- Third Row with Fund Category -->
+                                <div class="row mt-4">
+                                    <div class="col-sm-4">
+                                        <label for="fund_category" class="form-label">Fund Category</label>
+                                        <select id="fund_category" name="fund_category" class="form-select">
+                                            <option disabled selected value>Choose Fund Category</option>
+                                            <option value="Salary"
+                                                {{ old('fund_category') == 'Salary' ? 'selected' : '' }}>
+                                                Salary</option>
+                                            <option value="Facility"
+                                                {{ old('fund_category') == 'Facility' ? 'selected' : '' }}>Facility
                                             </option>
-                                        @endforeach
-                                    </select>
+                                            <option value="Material"
+                                                {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material
+                                            </option>
+                                            <option value="Overhead"
+                                                {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead
+                                            </option>
+                                            <option value="Finance"
+                                                {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
+                                                Finance</option>
+                                            <option value="Capital Expenditure"
+                                                {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>
+                                                Capital
+                                                Expenditure</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label for="repayment_start_date" class="form-label">Repayment Start Date</label>
+                                        <input type="date" id="repayment_start_date" class="form-control"
+                                            name="repayment_start_date" />
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label for="repayment_frequency" class="form-label">Repayment Frequency</label>
+                                        <select id="repayment_frequency" name="repayment_frequency" class="form-control">
+                                            <option value="">Select Frequency</option>
+                                            <option value="Monthly">Monthly</option>
+                                            <option value="Quarterly">Quarterly</option>
+                                            <option value="Annually">Annually</option>
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <div class="col-sm-4">
-                                    <label for="loan_date" class="form-label">Loan Date</label>
-                                    <input type="date" id="loan_date" class="form-control" name="loan_date" />
+                                <!-- Fourth Row -->
+                                <div class="row mt-4">
+                                    <div class="col-sm-4">
+                                        <label for="receiving_bank" class="form-label">Receiving Bank Account</label>
+                                        <select id="destination_account" name="destination_account" class="form-control">
+                                            <option value="">Select Receiving Account</option>
+                                            @foreach ($banks as $bank)
+                                                <option value="{{ $bank->id }}">{{ $bank->bank_name }} -
+                                                    {{ $bank->country }} - {{ $bank->region }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label for="budget_project_id" class="form-label">Budget Project</label>
+                                        <select class="form-select" name="budget_project_id">
+                                            <option disabled selected value>Choose Project</option>
+                                            @foreach ($budgetProjects as $project)
+                                                <option value="{{ $project->id }}"
+                                                    {{ old('budget_project_id') == $project->id ? 'selected' : '' }}>
+                                                    {{ $project->reference_code }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label for="loan_date" class="form-label">Loan Date</label>
+                                        <input type="date" id="loan_date" class="form-control" name="loan_date" />
+                                    </div>
+                                </div>
+
+                                <!-- Fifth Row -->
+                                <div class="row mt-4">
+                                    <div class="col-sm-12">
+                                        <label for="loan_description" class="form-label">Purpose/Description</label>
+                                        <input type="text" id="loan_description" class="form-control"
+                                            name="loan_description" placeholder="Enter Purpose of Loan" />
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Fifth Row -->
-                            <div class="row mt-4">
-                                <div class="col-sm-12">
-                                    <label for="loan_description" class="form-label">Purpose/Description</label>
-                                    <input type="text" id="loan_description" class="form-control"
-                                        name="loan_description" placeholder="Enter Purpose of Loan" />
-                                </div>
+                        </div>
+
+
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary me-2">Submit</button>
                             </div>
-                        </div>
-
-
-
-
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary me-2">Submit</button>
-                        </div>
                     </form>
                 </div>
             </div>
