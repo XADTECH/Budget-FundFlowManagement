@@ -25,9 +25,9 @@ class CashFlowController extends Controller
 
     public function store(Request $request)
     {
+
         // return response($request->all());
         // Initial validation for required fields
-
         $request->validate([
             'date' => 'required|date',
             'fund_type' => 'required|string',
@@ -57,11 +57,11 @@ class CashFlowController extends Controller
                         'invoice_sender_bank_name' => 'required|string',
                         'invoice_sender_bank_account' => 'required|string',
                         'sender_detail' => 'nullable|string',
+                        
                     ]);
 
                     // Process the invoice data
                     $invoiceData = [
-                        'date' => $request->date,
                         'invoice_number' => $request->invoice_number,
                         'invoice_dr_amount_received' => $request->invoice_dr_amount_received,
                         'invoice_fund_category' => $request->invoice_fund_category,
@@ -83,12 +83,9 @@ class CashFlowController extends Controller
 
                     // Prepare sender data
                     $senderData = [
-                        'date' => $request->date,
                         'sender_name' => $request->invoice_sender_name,
                         'sender_bank_name' => $request->invoice_sender_bank_name,
                         'sender_bank_account' => $request->invoice_sender_bank_account,
-                        'tracking_number' => $request->invoice_number,
-                        'amount' => $request->invoice_dr_amount_received,
                         'fund_type' => $request->main_category,
                         'sender_detail' => $request->sender_detail,
                         'budget_project_id' => $request->invoice_budget_project_id,
@@ -103,7 +100,7 @@ class CashFlowController extends Controller
                         'amount' => abs($request->invoice_dr_amount_received),
                         'type' => 'debit',
                         'budget_project_id' => $request->invoice_budget_project_id,
-                        'category_type' => $request->main_category,
+                        'category_type' =>  $request->main_category,
                         'description' => 'Invoice Ref: ' . $request->invoice_number, // Adds "Invoice Ref" along with the invoice number
                     ]);
 
@@ -118,13 +115,11 @@ class CashFlowController extends Controller
                             'type' => 'credit',
                             'description' => $description,
                             'budget_project_id' => $request->invoice_budget_project_id,
-                            'category_type' => $request->main_category,
+                            'category_type' =>  $request->main_category,
                         ]);
                     }
 
-                    $this->maintainCashFlow($request->invoice_budget_project_id, $request->invoice_fund_category, $request->invoice_dr_amount_received, 'Received Invoice', $request->invoice_number, $request->date);
-
-                    return redirect()->back()->with('success', 'DPM recorded and cash flow updated.');
+                    return redirect()->back()->with('success', 'Funds Updated SucessFully');
 
                     break;
 
@@ -176,59 +171,39 @@ class CashFlowController extends Controller
                     break;
             }
         }
-    }
 
-    private function maintainCashFlow($budget_project_id, $category, $amountReceived, $detail, $trackNumber, $date)
-    {
-        // Fetch the last recorded cash flow for this project and category
-        $lastCashFlow = CashFlow::where('budget_project_id', $budget_project_id) // Use parameter
-            ->where('category', $category) // Use parameter
-            ->orderBy('date', 'desc')
-            ->first();
-
-        // Calculate the initial balance
-        $balance = $lastCashFlow ? $lastCashFlow->balance : 0;
-
-        // Get the allocated budget for the project and category
-        $allocatedBudgetEntry = TotalBudgetAllocated::where('budget_project_id', $budget_project_id)->first();
-
-        if (!$allocatedBudgetEntry) {
-            return redirect()
-                ->back()
-                ->withErrors(['budget_not_found' => 'No allocated budget found for this project.'])
-                ->withInput();
-        }
-
-        // // Assuming there is a method to get the total allocated budget for the specific category
-        $allocatedBudget = $this->getCategoryBudget($allocatedBudgetEntry, $category);
-
-        // dd([
-        //     'balance' => $balance,
-        //     'amount_received' => $amountReceived
+        // // Additional validation for other fields
+        // $request->validate([
+        //     'date' => 'required|date',
+        //     'description' => 'required|string',
+        //     'category' => 'required|string',
+        //     'cash_outflow' => 'nullable|numeric',
+        //     'cash_inflow' => 'nullable|numeric',
+        //     'budget_project_id' => 'required|integer',
         // ]);
 
-        // Handle cash inflow
-        if ($amountReceived > 0) {
-            $balance += $amountReceived;
-            $this->addCategoryBudget($allocatedBudgetEntry, $category, $amountReceived, $lastCashFlow);
-        }
+        // // Fetch the last recorded cash flow for this project and category
+        // $lastCashFlow = CashFlow::where('budget_project_id', $request->budget_project_id)
+        //     ->where('category', $request->category)
+        //     ->orderBy('date', 'desc')
+        //     ->first();
 
-        // // Save the new cash flow entry
-        $cashFlow = CashFlow::create([
-            'date' => $date,
-            'description' => $detail,
-            'category' => $category,
-            'cash_inflow' => $amountReceived ?? 0.0,
-            'cash_outflow' => 0.0,
-            'committed_budget' => $lastCashFlow ? $lastCashFlow->committed_budget : 0,
-            'balance' => $balance,
-            'reference_code' => trim($trackNumber),
-            'budget_project_id' => $budget_project_id,
-        ]);
-    }
+        // // Calculate the initial balance
+        // $balance = $lastCashFlow ? $lastCashFlow->balance : 0;
 
-    private function handleCashOutFlow()
-    {
+        // // Get the allocated budget for the project and category
+        // $allocatedBudgetEntry = TotalBudgetAllocated::where('budget_project_id', $request->budget_project_id)->first();
+
+        // if (!$allocatedBudgetEntry) {
+        //     return redirect()
+        //         ->back()
+        //         ->withErrors(['budget_not_found' => 'No allocated budget found for this project.'])
+        //         ->withInput();
+        // }
+
+        // // Assuming there is a method to get the total allocated budget for the specific category
+        // $allocatedBudget = $this->getCategoryBudget($allocatedBudgetEntry, $request->category);
+
         // // Handle cash outflow
         // if ($request->cash_outflow > 0) {
         //     if ($request->cash_outflow > $allocatedBudget) {
@@ -242,8 +217,29 @@ class CashFlowController extends Controller
         //     $this->deductCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_outflow, $lastCashFlow);
         // }
 
+        // // Handle cash inflow
+        // if ($request->cash_inflow > 0) {
+        //     $balance += $request->cash_inflow;
+        //     $this->addCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_inflow, $lastCashFlow);
+        // }
+
         // // Generate a unique reference code
         // $referenceCode = 'DPM' . time();
+
+        // // Save the new cash flow entry
+        // CashFlow::create([
+        //     'date' => $request->date,
+        //     'description' => $request->description,
+        //     'category' => $request->category,
+        //     'cash_inflow' => $request->cash_inflow ?? 0.0,
+        //     'cash_outflow' => $request->cash_outflow ?? 0.0,
+        //     'committed_budget' => $lastCashFlow ? $lastCashFlow->committed_budget : 0,
+        //     'balance' => $balance,
+        //     'reference_code' => $referenceCode,
+        //     'budget_project_id' => $request->budget_project_id,
+        // ]);
+
+        // return redirect()->back()->with('success', 'DPM recorded and cash flow updated.');
     }
 
     private function getCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category)
@@ -279,16 +275,19 @@ class CashFlowController extends Controller
                 $allocatedBudgetEntry->total_facility_cost += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+
                 break;
             case 'Material':
                 $allocatedBudgetEntry->total_material_cost += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+
                 break;
             case 'Overhead':
                 $allocatedBudgetEntry->total_cost_overhead += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+
                 break;
             case 'Financial':
                 $allocatedBudgetEntry->total_financial_cost += $cashInflow;
@@ -300,6 +299,7 @@ class CashFlowController extends Controller
                 $allocatedBudgetEntry->total_capital_expenditure += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+
                 break;
         }
 

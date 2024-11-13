@@ -19,6 +19,8 @@ class LedgerEntry extends Model
         'amount',
         'type',
         'description',
+        'budget_project_id',
+        'category_type'
     ];
 
     /**

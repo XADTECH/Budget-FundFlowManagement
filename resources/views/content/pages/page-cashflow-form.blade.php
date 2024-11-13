@@ -44,14 +44,13 @@
                             <div class="col-sm-4">
                                 <label for="date" class="form-label">Date</label>
                                 <input type="date" id="date" class="form-control" name="date"
-                                    value="{{ old('date') }}"  />
+                                    value="{{ old('date') }}" />
                             </div>
 
                             <!-- Fund Type -->
                             <div class="col-sm-4">
                                 <label for="fund_type" class="form-label">Fund Type</label>
-                                <select class="form-select" id="fund_type" name="fund_type" onchange="toggleFundTypeUI()"
-                                    >
+                                <select class="form-select" id="fund_type" name="fund_type" onchange="toggleFundTypeUI()">
                                     <option disabled selected value>Choose Fund Type</option>
                                     <option value="Inflow" {{ old('fund_type') == 'Inflow' ? 'selected' : '' }}>Inflow
                                     </option>
@@ -67,8 +66,8 @@
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="category" class="form-label">Category</label>
-                                    <select class="form-select" id="category" name="main_category" onchange="toggleCategoryUI()"
-                                        >
+                                    <select class="form-select" id="category" name="main_category"
+                                        onchange="toggleCategoryUI()">
                                         <option disabled selected value>Choose Category</option>
                                         {{-- <option value="Salary" {{ old('category') == 'Salary' ? 'selected' : '' }}>Salary
                                         </option>
@@ -156,7 +155,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Invoice Fields - Visible only when "Invoice" is selected -->
                         <div id="invoiceFields" class="hidden mt-4">
                             <h6>Invoice Details</h6>
@@ -175,7 +173,7 @@
 
                                 <div class="col-sm-4">
                                     <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select class="form-select" name="invoice_budget_project_id" >
+                                    <select class="form-select" name="invoice_budget_project_id">
                                         <option disabled selected value>Choose Project</option>
                                         @foreach ($budgetProjects as $project)
                                             <option value="{{ $project->id }}"
@@ -201,19 +199,18 @@
                                             {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material</option>
                                         <option value="Overhead"
                                             {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead</option>
-                                        <option value="Finance" {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
-                                            Finance</option>
+                                        <option value="Financial" {{ old('fund_category') == 'Financial' ? 'selected' : '' }}>
+                                            Financial</option>
                                         <option value="Capital Expenditure"
-                                            {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>Capital
-                                            Expenditure</option>
+                                            {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>
+                                            Capital Expenditure</option>
                                     </select>
                                 </div>
 
-
-
                                 <div class="col-sm-4">
                                     <label for="bank" class="form-label">Bank</label>
-                                    <select id="invoice_destination_account" name="invoice_destination_account" class="form-control">
+                                    <select id="invoice_destination_account" name="invoice_destination_account"
+                                        class="form-control">
                                         <option value="">Select Receiving Account</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{ $bank->id }}">{{ $bank->bank_name }} -
@@ -228,7 +225,40 @@
                                 </div>
                             </div>
 
+                            <!-- Sender Details -->
+                            <div class="row mt-3">
+                                <div class="col-sm-4">
+                                    <label for="invoice_sender_name" class="form-label">Sender Name</label>
+                                    <input type="text" id="invoice_sender_name" class="form-control"
+                                        name="invoice_sender_name" value="{{ old('invoice_sender_name') }}"
+                                        placeholder="Enter Sender Name" />
+                                </div>
 
+                                <div class="col-sm-8">
+                                    <label for="invoice_sender_bank_name" class="form-label">Sender Bank Name</label>
+                                    <input type="text" id="invoice_sender_bank_name" class="form-control"
+                                        name="invoice_sender_bank_name" value="{{ old('invoice_sender_bank_name') }}"
+                                        placeholder="Enter Sender Bank Name" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-sm-4">
+                                    <label for="invoice_sender_bank_account" class="form-label">Sender Bank Account
+                                        Number</label>
+                                    <input type="text" id="invoice_sender_bank_account" class="form-control"
+                                        name="invoice_sender_bank_account"
+                                        value="{{ old('invoice_sender_bank_account') }}"
+                                        placeholder="Enter Sender Bank Account Number" />
+                                </div>
+
+                                <div class="col-sm-8">
+                                    <label for="sender_detail" class="form-label">Sender Details</label>
+                                    <textarea id="sender_detail" name="sender_detail" class="form-control" rows="4" cols="50"
+                                        placeholder="Enter details here...">{{ old('sender_detail') }}</textarea>
+                                </div>
+
+                            </div>
 
                             <!-- Invoice Items -->
                             <div class="mt-4">
@@ -326,7 +356,7 @@
 
                                 <div class="col-sm-4">
                                     <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select class="form-select" name="budget_project_id" >
+                                    <select class="form-select" name="budget_project_id">
                                         <option disabled selected value>Choose Project</option>
                                         @foreach ($budgetProjects as $project)
                                             <option value="{{ $project->id }}"
@@ -431,7 +461,7 @@
 
                                 <div class="col-md-4">
                                     <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select id="budget_project_id" class="form-select" name="budget_project_id" >
+                                    <select id="budget_project_id" class="form-select" name="budget_project_id">
                                         <option disabled selected value>Choose Project</option>
                                         @foreach ($budgetProjects as $project)
                                             <option value="{{ $project->id }}"
@@ -563,7 +593,7 @@
 
                                 <div class="col-sm-4">
                                     <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select class="form-select" name="budget_project_id" >
+                                    <select class="form-select" name="budget_project_id">
                                         <option disabled selected value>Choose Project</option>
                                         @foreach ($budgetProjects as $project)
                                             <option value="{{ $project->id }}"

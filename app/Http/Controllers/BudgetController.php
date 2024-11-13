@@ -8,6 +8,7 @@ use App\Models\BusinessUnit;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\PettyCash;
+use App\Models\Sender;
 
 use App\Models\NocPayment;
 use App\Models\Salary;
@@ -22,7 +23,9 @@ use App\Models\FinancialCost;
 use App\Models\DirectCost;
 use App\Models\IndirectCost;
 use App\Models\CashFlow;
+use App\Models\Invoice;
 use App\Models\ApprovedBudget;
+use App\Models\Bank;
 use App\Models\RevenuePlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -587,6 +590,7 @@ class BudgetController extends Controller
         $allProjects = Project::all();
         $users = User::all();
         $allocatedBudgets = TotalBudgetAllocated::all();
+        $invoice = Invoice::all();
 
         // return response($allocatedBudgets);
 
@@ -606,36 +610,72 @@ class BudgetController extends Controller
         $cashFlows = $query->get();
 
         // Pass data to the view
-        return view('content.pages.pages-show-cashflow-list', compact('cashFlows', 'allocatedBudgets', 'budgetProjects', 'allProjects', 'users'));
+        return view('content.pages.pages-show-cashflow-list', compact('cashFlows', 'allocatedBudgets', 'budgetProjects', 'allProjects', 'users','invoice'));
     }
 
     public function showAllocatedBudgets(Request $request)
     {
+        // Fetch all budget projects for the dropdown
         $budgetProjects = BudgetProject::all();
-
-        // Fetch budget projects and filter based on query parameters
+    
+        // Start a query on TotalBudgetAllocated with potential filters
         $query = TotalBudgetAllocated::query();
 
+        $banks = Bank::all();
+    
         // Apply filters if present in the request
-        if ($request->has('reference_code') && $request->reference_code) {
+        if ($request->filled('reference_code')) {
             $query->where('reference_code', 'like', '%' . $request->reference_code . '%');
         }
-
-        if ($request->has('budget_project_id')) {
-            $query->where('budget_project_id', $request->input('budget_project_id'));
+    
+        if ($request->filled('budget_project_id')) {
+            $query->where('budget_project_id', $request->budget_project_id);
         }
 
-        $cashFlow = CashFlow::all();
-        $approvedBudget = ApprovedBudget::where('budget_project_id', $request->input('budget_project_id'))->first();
-        $totalAllocations = CashFlow::where('budget_project_id', $request->input('budget_project_id'))->first();
-
-        // Get the filtered results
-        $allocatedBudgets = $query->get();
-
         
+        $invoices = Invoice::where('invoice_budget_project_id',  $request->budget_project_id)->get();
+        $sndr = Sender::where('budget_project_id',  $request->budget_project_id)->get();
+    
+        // Get the filtered allocated budgets
+        $allocatedBudgets = $query->get();
+    
+        // Fetch approved budget and total allocations related to the budget project, if provided
+        $approvedBudget = $request->has('budget_project_id') 
+            ? ApprovedBudget::where('budget_project_id', $request->budget_project_id)->first()
+            : null;
+    
+        $totalAllocations = $request->has('budget_project_id') 
+            ? CashFlow::where('budget_project_id', $request->budget_project_id)->first()
+            : null;
+
+        $total_amount = 0; 
+    
+        // Calculate the invoice count and total amount received for the specified budget project
+        $invoice_count = $request->has('budget_project_id') 
+            ? Invoice::where('invoice_budget_project_id', $request->budget_project_id)->count()
+            : 0;
+    
+        $total_invoice_amount = $request->has('budget_project_id') 
+            ? Invoice::where('invoice_budget_project_id', $request->budget_project_id)->sum('invoice_dr_amount_received')
+            : 0;
+
+        $total_amount +=  $total_invoice_amount;
+    
         // Pass data to the view
-        return view('content.pages.pages-show-allocated-budgets', compact('budgetProjects', 'allocatedBudgets', 'approvedBudget', 'totalAllocations'));
+        return view('content.pages.pages-show-allocated-budgets', compact(
+            'invoice_count',
+            'total_invoice_amount',
+            'budgetProjects',
+            'allocatedBudgets',
+            'approvedBudget',
+            'totalAllocations',
+            'total_amount',
+            'invoices',
+            'banks',
+            'sndr'
+        ));
     }
+    
 
     //store capital expense
     public function storeCapex(Request $request)
@@ -721,10 +761,6 @@ class BudgetController extends Controller
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
 
     /**
      * Update the specified resource in storage.

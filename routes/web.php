@@ -117,6 +117,7 @@ Route::middleware(['checklogin'])->group(function () {
 
     //ledger details
     Route::get('/show-bank-ledger/{id}', [BankController::class, 'showLedger'])->name('banks.ledger');
+    Route::get('/show-project-bank-ledger', [BankController::class, 'showLedgerByProject'])->name('banks.projectledger');
 
     //upload bank details
     Route::post('/bank-import', [BankController::class, 'uploadBank'])->name('banks.import');
