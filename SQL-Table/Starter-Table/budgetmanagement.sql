@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 13, 2024 at 08:03 AM
+-- Generation Time: Nov 13, 2024 at 02:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -50,7 +50,7 @@ CREATE TABLE `allocated_budget` (
 --
 
 INSERT INTO `allocated_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `allocated_budget`, `initial_allocation_budget`, `total_dpm`, `total_lpo`, `reference_code`, `created_at`, `updated_at`) VALUES
-(15, 5, 150000.00, 122500.00, 35000.00, 14000.00, 60000.00, 200000.00, 581500.00, 559000.00, 0.00, 0.00, 'BP100320240003', '2024-11-13 01:58:32', '2024-11-13 02:20:52');
+(17, 5, 100000.00, 72650.00, 30000.00, 14000.00, 110000.00, 200000.00, 526650.00, 454000.00, 0.00, 0.00, 'BP100320240003', '2024-11-13 08:01:28', '2024-11-13 08:56:10');
 
 -- --------------------------------------------------------
 
@@ -80,7 +80,7 @@ CREATE TABLE `approved_budget` (
 --
 
 INSERT INTO `approved_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `approved_budget`, `expected_net_profit_after_tax`, `expected_net_profit_before_tax`, `reference_code`, `created_at`, `updated_at`) VALUES
-(39, 5, 180000.00, 107000.00, 39200.00, 14922.10, 61572.00, 276100.00, 5276100.00, 3546548.37, 3897305.90, 'BP100320240003', '2024-11-13 01:57:55', '2024-11-13 01:57:55');
+(41, 5, 180000.00, 107000.00, 39200.00, 14922.10, 61572.00, 276100.00, 5276100.00, 3546548.37, 3897305.90, 'BP100320240003', '2024-11-13 08:00:55', '2024-11-13 08:00:55');
 
 -- --------------------------------------------------------
 
@@ -157,7 +157,7 @@ CREATE TABLE `budget_project` (
 --
 
 INSERT INTO `budget_project` (`id`, `reference_code`, `start_date`, `end_date`, `project_id`, `unit_id`, `manager_id`, `client_id`, `region`, `site_name`, `description`, `budget_type`, `country`, `month`, `approval_status`, `bal_under_over_budget`, `total_budget_allocated`, `total_dpm_expense`, `total_lpo_expense`, `approve_by`, `status`, `created_at`, `updated_at`) VALUES
-(5, 'BP100320240003', '2024-10-03', '2024-11-03', 6, 2, 19, 1, 'Dubai', 'abu hail, dubai', 'starting new Project', 'Etisalat Managed Service', 'UAE', '2024-10-03', 'approve', NULL, 559000.00, NULL, NULL, 33, 'Good', '2024-10-03 07:18:04', '2024-11-13 01:58:32'),
+(5, 'BP100320240003', '2024-10-03', '2024-11-03', 6, 2, 19, 1, 'Dubai', 'abu hail, dubai', 'starting new Project', 'Etisalat Managed Service', 'UAE', '2024-10-03', 'approve', NULL, 454000.00, NULL, NULL, 33, 'Good', '2024-10-03 07:18:04', '2024-11-13 08:01:28'),
 (8, 'BP110420240001', '2024-11-04', '2024-12-04', 1, 3, 33, 1, 'Dubai', 'Al Quoz Dubai', 'Fibre Cabling', 'Other', 'UAE', '2024-11-04', 'pending', NULL, NULL, NULL, NULL, NULL, 'Good', '2024-11-04 10:45:02', '2024-11-04 10:45:02');
 
 -- --------------------------------------------------------
@@ -270,13 +270,14 @@ CREATE TABLE `cash_flows` (
 --
 
 INSERT INTO `cash_flows` (`id`, `date`, `description`, `category`, `reference_code`, `cash_inflow`, `cash_outflow`, `committed_budget`, `balance`, `budget_project_id`, `created_at`, `updated_at`) VALUES
-(250, '2024-11-13', 'Initial Allocation', 'Salary', 'BP100320240003', 150000.00, 0.00, 150000.00, 150000.00, 5, '2024-11-13 01:58:32', '2024-11-13 01:58:32'),
-(251, '2024-11-13', 'Initial Allocation', 'Facility', 'BP100320240003', 100000.00, 0.00, 100000.00, 122500.00, 5, '2024-11-13 01:58:32', '2024-11-13 02:20:52'),
-(252, '2024-11-13', 'Initial Allocation', 'Material', 'BP100320240003', 35000.00, 0.00, 35000.00, 35000.00, 5, '2024-11-13 01:58:32', '2024-11-13 01:58:32'),
-(253, '2024-11-13', 'Initial Allocation', 'Overhead', 'BP100320240003', 14000.00, 0.00, 14000.00, 14000.00, 5, '2024-11-13 01:58:32', '2024-11-13 01:58:32'),
-(254, '2024-11-13', 'Initial Allocation', 'Financial', 'BP100320240003', 60000.00, 0.00, 60000.00, 60000.00, 5, '2024-11-13 01:58:32', '2024-11-13 01:58:32'),
-(255, '2024-11-13', 'Initial Allocation', 'Capital Expenditure', 'BP100320240003', 200000.00, 0.00, 200000.00, 200000.00, 5, '2024-11-13 01:58:32', '2024-11-13 01:58:32'),
-(256, '2024-11-13', 'Received Invoice', 'Facility', 'INV-112024', 22500.00, 0.00, 100000.00, 122500.00, 5, '2024-11-13 02:20:52', '2024-11-13 02:20:52');
+(264, '2024-11-13', 'Initial Allocation', 'Salary', 'BP100320240003', 100000.00, 0.00, 100000.00, 100000.00, 5, '2024-11-13 08:01:28', '2024-11-13 08:01:28'),
+(265, '2024-11-13', 'Initial Allocation', 'Facility', 'BP100320240003', 50000.00, 0.00, 50000.00, 72650.00, 5, '2024-11-13 08:01:28', '2024-11-13 08:56:10'),
+(266, '2024-11-13', 'Initial Allocation', 'Material', 'BP100320240003', 30000.00, 0.00, 30000.00, 30000.00, 5, '2024-11-13 08:01:28', '2024-11-13 08:01:28'),
+(267, '2024-11-13', 'Initial Allocation', 'Overhead', 'BP100320240003', 14000.00, 0.00, 14000.00, 14000.00, 5, '2024-11-13 08:01:28', '2024-11-13 08:01:28'),
+(268, '2024-11-13', 'Initial Allocation', 'Financial', 'BP100320240003', 60000.00, 0.00, 60000.00, 110000.00, 5, '2024-11-13 08:01:28', '2024-11-13 08:08:18'),
+(269, '2024-11-13', 'Initial Allocation', 'Capital Expenditure', 'BP100320240003', 200000.00, 0.00, 200000.00, 200000.00, 5, '2024-11-13 08:01:28', '2024-11-13 08:01:28'),
+(270, '2024-11-13', 'Fund Transfer From Management', 'Financial', 'ASE30000HLLL', 50000.00, 0.00, 60000.00, 110000.00, 5, '2024-11-13 08:08:18', '2024-11-13 08:08:18'),
+(271, '2024-11-13', 'Received Invoice', 'Facility', 'INV - 01234', 22650.00, 0.00, 50000.00, 72650.00, 5, '2024-11-13 08:56:10', '2024-11-13 08:56:10');
 
 -- --------------------------------------------------------
 
@@ -487,7 +488,7 @@ CREATE TABLE `invoice` (
 --
 
 INSERT INTO `invoice` (`id`, `date`, `invoice_number`, `invoice_dr_amount_received`, `invoice_fund_category`, `invoice_destination_account`, `item_description`, `amount`, `invoice_file`, `invoice_budget_project_id`, `created_at`, `updated_at`) VALUES
-(1, '2024-11-13', 'INV-01234', 22500.00, 'Facility', 97, '\"[\\\"Preliminary Design Services\\\",\\\"schematic Design Services\\\",\\\"Design Development Services\\\"]\"', '\"[\\\"5000\\\",\\\"7500\\\",\\\"10000\\\"]\"', 'invoices/XXmHPMBJ3zs1ACQvAsU2zAOmXSNeyzraOkfwQY2V.pdf', 5, '2024-11-13 02:20:52', '2024-11-13 02:20:52');
+(3, '2024-11-13', 'INV - 01234', 22650.00, 'Facility', 98, '\"[\\\"Preliminary Design Services\\\",\\\"Schematic Design Services\\\",\\\"Design Development Services\\\"]\"', '\"[\\\"5000\\\",\\\"7500\\\",\\\"10001\\\"]\"', 'invoices/yLnk9XDEDnDfoSs9LvDpCAv5nbBz1OBRlkxlwQ9x.pdf', 5, '2024-11-13 08:56:10', '2024-11-13 08:56:10');
 
 -- --------------------------------------------------------
 
@@ -522,10 +523,12 @@ INSERT INTO `ledger_entries` (`id`, `bank_id`, `amount`, `type`, `description`, 
 (17, 104, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25', 0, NULL),
 (18, 105, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25', 0, NULL),
 (19, 106, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25', 0, NULL),
-(34, 97, 22500.00, 'debit', 'Invoice Ref: INV-112024', '2024-11-13 02:20:52', '2024-11-13 02:20:52', 5, 'Invoice'),
-(35, 97, 5000.00, 'credit', 'Preliminary Design Services', '2024-11-13 02:20:52', '2024-11-13 02:20:52', 5, 'Invoice'),
-(36, 97, 7500.00, 'credit', 'schematic Design Services', '2024-11-13 02:20:52', '2024-11-13 02:20:52', 5, 'Invoice'),
-(37, 97, 10000.00, 'credit', 'Design Development Services', '2024-11-13 02:20:52', '2024-11-13 02:20:52', 5, 'Invoice');
+(44, 98, 50000.00, 'debit', 'Bank Account', '2024-11-13 08:08:18', '2024-11-13 08:08:18', 5, 'Financial'),
+(45, 98, 50000.00, 'credit', 'Management Fund For Financial', '2024-11-13 08:08:18', '2024-11-13 08:08:18', 5, 'Financial'),
+(46, 98, 22650.00, 'debit', 'Invoice Ref: INV - 01234', '2024-11-13 08:56:10', '2024-11-13 08:56:10', 5, 'Invoice'),
+(47, 98, 5000.00, 'credit', 'Preliminary Design Services', '2024-11-13 08:56:10', '2024-11-13 08:56:10', 5, 'Invoice'),
+(48, 98, 7500.00, 'credit', 'Schematic Design Services', '2024-11-13 08:56:10', '2024-11-13 08:56:10', 5, 'Invoice'),
+(49, 98, 10001.00, 'credit', 'Design Development Services', '2024-11-13 08:56:10', '2024-11-13 08:56:10', 5, 'Invoice');
 
 -- --------------------------------------------------------
 
@@ -649,7 +652,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (59, '2024_11_12_080006_add_budget_project_id_and_category_type_to_ledger_entries_table', 29),
 (60, '2024_11_12_054054_create_sender_table', 30),
 (61, '2024_11_12_054055_create_sender_table', 31),
-(62, '2024_11_12_060242_create_invoice_table', 31);
+(62, '2024_11_12_060242_create_invoice_table', 31),
+(63, '2024_11_13_101715_create_transfer_from_management_table', 32),
+(64, '2024_11_13_101716_create_transfer_from_management_table', 33),
+(65, '2024_11_13_101717_create_transfer_from_management_table', 34);
 
 -- --------------------------------------------------------
 
@@ -1017,7 +1023,8 @@ CREATE TABLE `sender` (
 --
 
 INSERT INTO `sender` (`id`, `date`, `sender_name`, `sender_bank_name`, `sender_bank_account`, `tracking_number`, `amount`, `fund_type`, `sender_detail`, `budget_project_id`, `created_at`, `updated_at`) VALUES
-(1, '2024-11-13', 'Studio Shodwe Architecture', 'ADCB', 'AG4569930', 'INV-01234', '22500', 'Invoice', 'Address : Khalifa City, Abu Dhabi \r\nContact Person : Mr Hamza \r\nTelephone : 052109384\r\nSwift Code : SW34563', 5, '2024-11-13 02:20:52', '2024-11-13 02:20:52');
+(4, '2024-11-14', 'CEO', 'ADCB', '87678798', 'TRK #ASE30000HLLL', '50000', 'Financial', 'Detail : Funds From Top Management Opal tower\r\nApprove By : Mr. Khalid CEO', 5, '2024-11-13 08:08:18', '2024-11-13 08:08:18'),
+(5, '2024-11-13', 'Handover & Tyke', 'ADCB', 'AG4569930', 'INV - 01234', '22650', 'Invoice', 'Contact Person : Mr Augustin \r\nEmail : handover tyke', 5, '2024-11-13 08:56:10', '2024-11-13 08:56:10');
 
 -- --------------------------------------------------------
 
@@ -3342,6 +3349,36 @@ INSERT INTO `supplier_prices` (`id`, `items_code`, `purchase_date`, `item_name`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `transfer_from_management`
+--
+
+CREATE TABLE `transfer_from_management` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `date_received` date NOT NULL,
+  `transfer_reference` varchar(255) NOT NULL,
+  `fund_category` varchar(255) NOT NULL,
+  `source_account` varchar(255) NOT NULL,
+  `transfer_amount` decimal(15,2) NOT NULL,
+  `sender_bank_name` varchar(255) NOT NULL,
+  `transfer_designation` varchar(255) NOT NULL,
+  `transfer_date` date NOT NULL,
+  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
+  `transfer_destination_account` bigint(20) UNSIGNED NOT NULL,
+  `transfer_description` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `transfer_from_management`
+--
+
+INSERT INTO `transfer_from_management` (`id`, `date_received`, `transfer_reference`, `fund_category`, `source_account`, `transfer_amount`, `sender_bank_name`, `transfer_designation`, `transfer_date`, `budget_project_id`, `transfer_destination_account`, `transfer_description`, `created_at`, `updated_at`) VALUES
+(2, '2024-11-14', 'ASE30000HLLL', 'Financial', '87678798', 50000.00, 'ADCB', 'CEO', '2024-11-13', 5, 98, 'Detail : Funds From Top Management Opal tower\r\nApprove By : Mr. Khalid CEO', '2024-11-13 08:08:18', '2024-11-13 08:08:18');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -3590,6 +3627,13 @@ ALTER TABLE `supplier_prices`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `transfer_from_management`
+--
+ALTER TABLE `transfer_from_management`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `transfer_from_management_transfer_reference_unique` (`transfer_reference`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -3603,13 +3647,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `allocated_budget`
 --
 ALTER TABLE `allocated_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `approved_budget`
 --
 ALTER TABLE `approved_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `banks`
@@ -3645,7 +3689,7 @@ ALTER TABLE `capital_expenditure`
 -- AUTO_INCREMENT for table `cash_flows`
 --
 ALTER TABLE `cash_flows`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=257;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=272;
 
 --
 -- AUTO_INCREMENT for table `cost_overhead`
@@ -3687,13 +3731,13 @@ ALTER TABLE `indirect_cost`
 -- AUTO_INCREMENT for table `invoice`
 --
 ALTER TABLE `invoice`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `ledger_entries`
 --
 ALTER TABLE `ledger_entries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `material_cost`
@@ -3705,7 +3749,7 @@ ALTER TABLE `material_cost`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `noc_payments`
@@ -3783,13 +3827,19 @@ ALTER TABLE `salaries`
 -- AUTO_INCREMENT for table `sender`
 --
 ALTER TABLE `sender`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `supplier_prices`
 --
 ALTER TABLE `supplier_prices`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2285;
+
+--
+-- AUTO_INCREMENT for table `transfer_from_management`
+--
+ALTER TABLE `transfer_from_management`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
