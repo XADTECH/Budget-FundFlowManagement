@@ -83,12 +83,12 @@
                 class="menu-item {{ request()->is('pages/cashflow/create') || request()->is('pages/allocate-cash') || request()->is('pages/cash-receive-amount') || request()->is('pages/plan-cash-report') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-money"></i>
-                    <div>Manage DPM</div>
+                    <div>Fund Management</div>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item {{ request()->is('pages/cashflow/create') ? 'active' : '' }}">
                         <a href="/pages/cashflow/create" class="menu-link">
-                            <div>Add EXP / REV</div>
+                            <div>Inflow / OutFlow</div>
                         </a>
                     </li>
                 </ul>

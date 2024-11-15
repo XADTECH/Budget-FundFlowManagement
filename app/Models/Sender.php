@@ -16,11 +16,13 @@ class Sender extends Model
     protected $fillable = [
         'date',
         'sender_name',
+        'sender_for',
         'sender_bank_name',
         'sender_bank_account',
         'fund_type',
         'tracking_number',
         'amount',
+        'destination_account',
         'sender_detail',  // Optional field for additional fund-specific details
         'budget_project_id',  // Foreign key to link the sender to a budget project
     ];

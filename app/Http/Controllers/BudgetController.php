@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Project;
 use App\Models\PettyCash;
 use App\Models\Sender;
+use App\Models\Loan;
 
 use App\Models\NocPayment;
 use App\Models\Salary;
@@ -18,6 +19,7 @@ use App\Models\FacilityCost;
 use App\Models\CapitalExpenditure;
 use App\Models\MaterialCost;
 use App\Models\TotalBudgetAllocated;
+use App\Models\RemittanceTransfer;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
 use App\Models\DirectCost;
@@ -636,6 +638,10 @@ class BudgetController extends Controller
         $invoices = Invoice::where('invoice_budget_project_id', $request->budget_project_id)->get();
         $sndr = Sender::where('budget_project_id', $request->budget_project_id)->get();
         $transfers = TransferFromManagement::where('budget_project_id', $request->budget_project_id)->get();
+        $remittances = RemittanceTransfer::where('budget_project_id', $request->budget_project_id)->get();
+        $loans = Loan::where('budget_project_id', $request->budget_project_id)->get();
+
+        // return response($remittances);
 
 
         // Get the filtered allocated budgets
@@ -658,11 +664,13 @@ class BudgetController extends Controller
 
         // Get the total transfer amount for the given budget project ID
         $total_transfer_amount = $request->has('budget_project_id') ? TransferFromManagement::where('budget_project_id', $request->budget_project_id)->sum('transfer_amount') : 0;
+        $total_remittance_amount = $request->has('budget_project_id') ? RemittanceTransfer::where('budget_project_id', $request->budget_project_id)->sum('remittance_amount') : 0;
+        $total_loan_amount = $request->has('budget_project_id') ? Loan::where('budget_project_id', $request->budget_project_id)->sum('loan_amount') : 0;
 
-        $total_amount += $total_invoice_amount + $total_transfer_amount;
+        $total_amount += $total_invoice_amount + $total_transfer_amount +  $total_remittance_amount + $total_loan_amount;
 
         // Pass data to the view
-        return view('content.pages.pages-show-allocated-budgets', compact('invoice_count', 'total_invoice_amount', 'budgetProjects', 'allocatedBudgets', 'approvedBudget', 'totalAllocations', 'total_amount', 'invoices', 'banks', 'sndr','total_transfer_amount','transfer_count','transfers'));
+        return view('content.pages.pages-show-allocated-budgets', compact('invoice_count', 'total_invoice_amount', 'budgetProjects', 'allocatedBudgets', 'approvedBudget', 'totalAllocations', 'total_amount', 'invoices', 'banks', 'sndr','total_transfer_amount','transfer_count','transfers','remittances','loans'));
     }
 
     //store capital expense

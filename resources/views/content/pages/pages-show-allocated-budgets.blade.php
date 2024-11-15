@@ -226,12 +226,14 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Date</th>
-                                        <th>Sender Name</th>
-                                        <th>Bank Name</th>
-                                        <th>Bank Account</th>
-                                        <th>Fund Type</th>
                                         <th>Tracking #</th>
+                                        <th>Sender Name</th>
                                         <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Sender Bank Name</th>
+                                        <th>Sender Bank Account</th>
+                                        <th>Destination Account</th>
+                                        <th>Fund Type</th>
                                         <th>Details</th>
                                     </tr>
                                 </thead>
@@ -240,12 +242,24 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $sender->date }}</td>
+                                            <td>{{ $sender->tracking_number }}</td>
                                             <td>{{ $sender->sender_name }}</td>
+                                            <td>{{ number_format($sender->amount, 0) }}</td>
+                                            <td>{{ $sender->sender_for }}</td>
                                             <td>{{ $sender->sender_bank_name }}</td>
                                             <td>{{ $sender->sender_bank_account }}</td>
+                                            @php
+                                                $bank = $banks->where('id', $sender->destination_account)->first();
+                                            @endphp
+                                            <td>
+                                                <a
+                                                    href="{{ route('banks.projectledger', ['bank_id' => $bank->id, 'budget_project_id' => $sender->budget_project_id]) }}">
+                                                    {{ $bank->bank_name }}
+                                                </a>
+                                            </td>
                                             <td>{{ $sender->fund_type }}</td>
-                                            <td>{{ $sender->tracking_number }}</td>
-                                            <td>{{ $sender->amount }}</td>
+
+
                                             <td>{!! nl2br(e($sender->sender_detail)) !!}</td>
                                         </tr>
                                     @endforeach
@@ -263,7 +277,8 @@
         <div class="card mt-4">
             <div class="card-body">
                 <div class="dropdown-section">
-                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Management Transfers ▼ {{ $transfers->count() }}</h3>
+                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Management Transfers ▼
+                        {{ $transfers->count() }}</h3>
                     <div class="dropdown-content">
                         <h5>Total Transfers Amount: {{ number_format($total_transfer_amount, 0) }}</h5>
 
@@ -276,6 +291,7 @@
                                         <th>Transfer Designation</th>
                                         <th>Transfer Reference</th>
                                         <th>Fund Category</th>
+                                        <th>Amount</th>
                                         <th>Source Account</th>
                                         <th>Destination Account</th>
                                         <th>Amount</th>
@@ -292,19 +308,20 @@
                                             <td>{{ $transfer->transfer_designation }}</td>
                                             <td>{{ $transfer->transfer_reference }}</td>
                                             <td>{{ $transfer->fund_category }}</td>
+                                            <td>{{ number_format($transfer->transfer_amount, 0) }}</td>
+
                                             <td>{{ $transfer->source_account }}</td>
                                             @php
-                                            $bank = $banks
-                                                ->where('id', $transfer->transfer_destination_account)
-                                                ->first();
-                                        @endphp
-                                        <td>
-                                            <a
-                                                href="{{ route('banks.projectledger', ['bank_id' =>  $transfer->transfer_destination_account, 'budget_project_id' =>  $transfer->budget_project_id]) }}">
-                                                {{ $bank->bank_name }}
-                                            </a>
-                                        </td>
-                                            <td>{{ number_format($total_transfer_amount, 0) }}</td>
+                                                $bank = $banks
+                                                    ->where('id', $transfer->transfer_destination_account)
+                                                    ->first();
+                                            @endphp
+                                            <td>
+                                                <a
+                                                    href="{{ route('banks.projectledger', ['bank_id' => $transfer->transfer_destination_account, 'budget_project_id' => $transfer->budget_project_id]) }}">
+                                                    {{ $bank->bank_name }}
+                                                </a>
+                                            </td>
                                             <td>{{ $transfer->sender_bank_name }}</td>
                                             <td>{{ $transfer->transfer_date }}</td>
                                             <td>{!! nl2br(e($transfer->transfer_description)) !!}</td>
@@ -318,6 +335,133 @@
             </div>
         </div>
     @endif
+
+    <!-- Remittance Transfer Dropdown Section -->
+    @if ($remittances && $remittances->isNotEmpty())
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="dropdown-section">
+                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Remittance Transfers ▼
+                        {{ $remittances->count() }}</h3>
+                    <div class="dropdown-content">
+                        <h5>Total Remittance Amount: {{ number_format($remittances->sum('remittance_amount'), 0) }}</h5>
+
+                        <div class="table-responsive text-nowrap limited-scroll mt-2">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Reference</th>
+                                        <th>Payer Name</th>
+                                        <th>Sender Bank</th>
+                                        <th>Account Number</th>
+                                        <th>Destination Account</th>
+                                        <th>Fund Category</th>
+                                        <th>Amount</th>
+                                        <th>Date Received</th>
+                                        <th>Currency</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($remittances as $index => $remittance)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $remittance->remittance_reference }}</td>
+                                            <td>{{ $remittance->remittance_payer_name }}</td>
+                                            <td>{{ $remittance->remittance_sender_bank }}</td>
+                                            <td>{{ $remittance->remittance_account_number }}</td>
+                                            @php
+                                                $destinationBank = $banks
+                                                    ->where('id', $remittance->remittance_destination_account)
+                                                    ->first();
+                                            @endphp
+                                            <td>
+                                                <a
+                                                    href="{{ route('banks.projectledger', ['bank_id' => $remittance->remittance_destination_account, 'budget_project_id' => $remittance->budget_project_id]) }}">
+                                                    {{ $destinationBank->bank_name ?? 'N/A' }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $remittance->fund_category }}</td>
+                                            <td>{{ number_format($remittance->remittance_amount, 0) }}</td>
+                                            <td>{{ $remittance->remittance_date_received }}</td>
+                                            <td>{{ $remittance->remittance_currency }}</td>
+                                            <td>{!! nl2br(e($remittance->remittance_description)) !!}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Loan Dropdown Section -->
+    @if ($loans && $loans->isNotEmpty())
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="dropdown-section">
+                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Loans ▼
+                        {{ $loans->count() }}</h3>
+                    <div class="dropdown-content">
+                        <h5>Total Loan Amount: {{ number_format($loans->sum('loan_amount'), 0) }}</h5>
+
+                        <div class="table-responsive text-nowrap limited-scroll mt-2">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Loan Reference</th>
+                                        <th>Provider Name</th>
+                                        <th>Loan Amount</th>
+                                        <th>Interest Rate</th>
+                                        <th>Destination Account</th>
+                                        <th>Loan Type</th>
+                                        <th>Loan Start Date</th>
+                                        <th>Loan Date</th>
+                                        <th>Loan Repayment Frequency</th>
+                                        <th>Fund Category</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($loans as $index => $loan)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $loan->loan_reference }}</td>
+                                            <td>{{ $loan->loan_provider_name }}</td>
+                                            <td>{{ number_format($loan->loan_amount, 0) }}</td>
+                                            <td>{{ number_format($loan->loan_interest_rate, 0) }}</td>
+                                            @php
+                                            $destinationBank = $banks
+                                                ->where('id', $loan->loan_destination_account)
+                                                ->first();
+                                        @endphp
+                                        <td>
+                                            <a
+                                                href="{{ route('banks.projectledger', ['bank_id' => $loan->loan_destination_account, 'budget_project_id' => $loan->budget_project_id]) }}">
+                                                {{ $destinationBank->bank_name ?? 'N/A' }}
+                                            </a>
+                                        </td>
+                                            <td>{{ $loan->loan_provider_type }}</td>
+                                            <td>{{ $loan->loan_repayment_start_date }}</td>
+                                            <td>{{ $loan->loan_date }}</td>
+                                            <td>{{ $loan->loan_repayment_frequency }}</td>
+                                            <td>{{ $loan->fund_category }}</td>
+                                            <td>{!! nl2br(e($loan->loan_description)) !!}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
 
 
 
