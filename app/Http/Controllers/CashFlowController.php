@@ -82,8 +82,8 @@ class CashFlowController extends Controller
                         $extension = $file->getClientOriginalExtension();
 
                         $filename = time() . "." . $extension;
-                        $file->move('public/inovices/', $filename);
-                        $path = 'public/inovices/' . $filename;
+                        $file->move('public/invoices/', $filename);
+                        $path = 'public/invoices/' . $filename;
 
                         $invoiceData['invoice_file'] = $path;
                     }
