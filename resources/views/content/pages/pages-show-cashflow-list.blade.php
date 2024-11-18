@@ -48,7 +48,8 @@
     @if (request('budget_project_id') || request('reference_code'))
         @if ($cashFlows->count() > 0)
             <div class="text-right mt-3" style="display: flex; justify-content: flex-end;">
-                <a href="{{ route('download.cashflow', ['POID' => request('budget_project_id')]) }}" class="btn btn-primary">
+                <a href="{{ route('download.cashflow', ['POID' => request('budget_project_id')]) }}"
+                    class="btn btn-primary">
                     <i class="fa fa-download"></i> Download
                 </a>
             </div>
@@ -70,7 +71,7 @@
                             <th>Total LPO</th>
                             <th>Balance</th>
                             <th>Project Manager</th>
-                       
+
                             {{-- <th>Total Budget Allocated</th> --}}
                         </tr>
                     </thead>
@@ -89,7 +90,24 @@
                                 <td>{{ $cashFlow->date }}</td>
                                 <td>{{ $cashFlow->description }}</td>
                                 <td>{{ $cashFlow->category }}</td>
-                                <td>{{ $cashFlow->reference_code }}</td>
+                                <td>
+                                    @if (str_contains($cashFlow->reference_code, 'INV-'))
+                                        @php
+                                            $inv = $invoice
+                                                ->where('invoice_number', $cashFlow->reference_code)
+                                                ->first(); // Get the first matching invoice
+                                        @endphp
+
+                                        @if ($inv)
+                                        <a href="{{ asset('storage/' . $inv->invoice_file) }}" target="_blank">{{ $cashFlow->reference_code }}</a>
+
+                                        @else
+                                            {{ $cashFlow->reference_code }}
+                                        @endif
+                                    @else
+                                        {{ $cashFlow->reference_code }}
+                                    @endif
+                                </td>
                                 <td class="{{ $index >= 6 && $cashFlow->cash_inflow > 0 ? 'text-primary' : '' }}">
                                     {{ number_format($cashFlow->cash_inflow, 0) }}
                                 </td>
@@ -97,7 +115,7 @@
                                     {{ number_format($cashFlow->cash_outflow, 0) }}
                                 </td>
                                 {{-- <td>{{ number_format($cashFlow->committed_budget, 0) }}</td> --}}
-                      
+
                                 <td>{{ number_format($dpm->total_dpm, 0) }}</td>
                                 <td>{{ number_format($dpm->total_lpo, 0) }}</td>
                                 <td>{{ number_format($cashFlow->balance, 0) }}</td>

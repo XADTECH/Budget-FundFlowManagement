@@ -404,7 +404,8 @@
                     <div class="modal-body">
                         <form action="{{ route('cashflow.allocateFund') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="budget_project_id" id="budget_project_id" value="{{$approvedBudget->budget_project_id}}">
+                            <input type="hidden" name="budget_project_id" id="budget_project_id"
+                                value="{{ $approvedBudget->budget_project_id }}">
 
                             <div class="form-group">
                                 <label for="salaryAmount">Amount</label>
@@ -441,7 +442,8 @@
                     <div class="modal-body">
                         <form action="{{ route('cashflow.allocateFund') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="budget_project_id" id="budget_project_id"  value="{{$approvedBudget->budget_project_id}}">
+                            <input type="hidden" name="budget_project_id" id="budget_project_id"
+                                value="{{ $approvedBudget->budget_project_id }}">
 
                             <div class="form-group">
                                 <label for="facilityAmount">Amount</label>
@@ -478,7 +480,8 @@
                     <div class="modal-body">
                         <form action="{{ route('cashflow.allocateFund') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="budget_project_id" id="budget_project_id" value="{{$approvedBudget->budget_project_id}}">
+                            <input type="hidden" name="budget_project_id" id="budget_project_id"
+                                value="{{ $approvedBudget->budget_project_id }}">
 
                             <div class="form-group">
                                 <label for="materialAmount">Amount</label>
@@ -515,7 +518,8 @@
                     <div class="modal-body">
                         <form action="{{ route('cashflow.allocateFund') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="budget_project_id" id="budget_project_id" value="{{$approvedBudget->budget_project_id}}">
+                            <input type="hidden" name="budget_project_id" id="budget_project_id"
+                                value="{{ $approvedBudget->budget_project_id }}">
 
                             <div class="form-group">
                                 <label for="overheadAmount">Amount</label>
@@ -552,7 +556,8 @@
                     <div class="modal-body">
                         <form action="{{ route('cashflow.allocateFund') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="budget_project_id" id="budget_project_id" value="{{$approvedBudget->budget_project_id}}">
+                            <input type="hidden" name="budget_project_id" id="budget_project_id"
+                                value="{{ $approvedBudget->budget_project_id }}">
 
                             <div class="form-group">
                                 <label for="financialAmount">Amount</label>
@@ -589,7 +594,8 @@
                     <div class="modal-body">
                         <form action="{{ route('cashflow.allocateFund') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="budget_project_id" id="budget_project_id" value="{{$approvedBudget->budget_project_id}}">
+                            <input type="hidden" name="budget_project_id" id="budget_project_id"
+                                value="{{ $approvedBudget->budget_project_id }}">
 
                             <div class="form-group">
                                 <label for="capexAmount">Amount</label>
@@ -628,7 +634,7 @@
                         var budgetId = button.data('budget-id'); // Extract info from data-* attributes
                         var modal = $(this);
                         modal.find('.modal-body #budget_project_id').val(
-                        budgetId); // Set the value of the hidden input
+                            budgetId); // Set the value of the hidden input
                     });
             });
         </script>

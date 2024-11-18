@@ -44,14 +44,13 @@
                             <div class="col-sm-4">
                                 <label for="date" class="form-label">Date</label>
                                 <input type="date" id="date" class="form-control" name="date"
-                                    value="{{ old('date') }}"  />
+                                    value="{{ old('date') }}" />
                             </div>
 
                             <!-- Fund Type -->
                             <div class="col-sm-4">
                                 <label for="fund_type" class="form-label">Fund Type</label>
-                                <select class="form-select" id="fund_type" name="fund_type" onchange="toggleFundTypeUI()"
-                                    >
+                                <select class="form-select" id="fund_type" name="fund_type" onchange="toggleFundTypeUI()">
                                     <option disabled selected value>Choose Fund Type</option>
                                     <option value="Inflow" {{ old('fund_type') == 'Inflow' ? 'selected' : '' }}>Inflow
                                     </option>
@@ -67,8 +66,8 @@
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="category" class="form-label">Category</label>
-                                    <select class="form-select" id="category" name="main_category" onchange="toggleCategoryUI()"
-                                        >
+                                    <select class="form-select" id="category" name="main_category"
+                                        onchange="toggleCategoryUI()">
                                         <option disabled selected value>Choose Category</option>
                                         {{-- <option value="Salary" {{ old('category') == 'Salary' ? 'selected' : '' }}>Salary
                                         </option>
@@ -156,7 +155,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Invoice Fields - Visible only when "Invoice" is selected -->
                         <div id="invoiceFields" class="hidden mt-4">
                             <h6>Invoice Details</h6>
@@ -175,7 +173,7 @@
 
                                 <div class="col-sm-4">
                                     <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select class="form-select" name="invoice_budget_project_id" >
+                                    <select class="form-select" name="invoice_budget_project_id">
                                         <option disabled selected value>Choose Project</option>
                                         @foreach ($budgetProjects as $project)
                                             <option value="{{ $project->id }}"
@@ -201,19 +199,19 @@
                                             {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material</option>
                                         <option value="Overhead"
                                             {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead</option>
-                                        <option value="Finance" {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
-                                            Finance</option>
+                                        <option value="Financial"
+                                            {{ old('fund_category') == 'Financial' ? 'selected' : '' }}>
+                                            Financial</option>
                                         <option value="Capital Expenditure"
-                                            {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>Capital
-                                            Expenditure</option>
+                                            {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>
+                                            Capital Expenditure</option>
                                     </select>
                                 </div>
 
-
-
                                 <div class="col-sm-4">
                                     <label for="bank" class="form-label">Bank</label>
-                                    <select id="invoice_destination_account" name="invoice_destination_account" class="form-control">
+                                    <select id="invoice_destination_account" name="invoice_destination_account"
+                                        class="form-control">
                                         <option value="">Select Receiving Account</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{ $bank->id }}">{{ $bank->bank_name }} -
@@ -228,7 +226,40 @@
                                 </div>
                             </div>
 
+                            <!-- Sender Details -->
+                            <div class="row mt-3">
+                                <div class="col-sm-4">
+                                    <label for="invoice_sender_name" class="form-label">Sender Name</label>
+                                    <input type="text" id="invoice_sender_name" class="form-control"
+                                        name="invoice_sender_name" value="{{ old('invoice_sender_name') }}"
+                                        placeholder="Enter Sender Name" />
+                                </div>
 
+                                <div class="col-sm-8">
+                                    <label for="invoice_sender_bank_name" class="form-label">Sender Bank Name</label>
+                                    <input type="text" id="invoice_sender_bank_name" class="form-control"
+                                        name="invoice_sender_bank_name" value="{{ old('invoice_sender_bank_name') }}"
+                                        placeholder="Enter Sender Bank Name" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-sm-4">
+                                    <label for="invoice_sender_bank_account" class="form-label">Sender Bank Account
+                                        Number</label>
+                                    <input type="text" id="invoice_sender_bank_account" class="form-control"
+                                        name="invoice_sender_bank_account"
+                                        value="{{ old('invoice_sender_bank_account') }}"
+                                        placeholder="Enter Sender Bank Account Number" />
+                                </div>
+
+                                <div class="col-sm-8">
+                                    <label for="sender_detail" class="form-label">Sender Details</label>
+                                    <textarea id="sender_detail" name="sender_detail" class="form-control" rows="4" cols="50"
+                                        placeholder="Enter details here...">{{ old('sender_detail') }}</textarea>
+                                </div>
+
+                            </div>
 
                             <!-- Invoice Items -->
                             <div class="mt-4">
@@ -253,7 +284,7 @@
 
                         <!-- Account Remittance Fields -->
                         <div id="accountRemittanceFields" class="hidden mt-4">
-                            <h6>Account Remittance Details</h6>
+
 
                             <div class="row">
                                 <div class="col-sm-4">
@@ -264,29 +295,38 @@
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="payer_name" class="form-label">Payer Name</label>
-                                    <input type="text" id="payer_name" class="form-control" name="payer_name"
-                                        placeholder="Enter Payer Name" />
+                                    <label for="remittance_payer_name" class="form-label">Payer Name</label>
+                                    <input type="text" id="remittance_payer_name" class="form-control"
+                                        name="remittance_payer_name" placeholder="Enter Payer Name" />
                                 </div>
 
                                 <div class="col-sm-4">
                                     <label for="remittance_amount" class="form-label">Amount Received</label>
-                                    <input type="number" id="remittance_amount" class="form-control"
-                                        name="remittance_amount" placeholder="Enter Amount" />
+                                    <input type="text" id="remittance_amount" class="form-control"
+                                        name="remittance_amount" placeholder="Enter Amount"
+                                        oninput="formatNumber(this)" />
                                 </div>
                             </div>
 
                             <!-- Second Row -->
                             <div class="row mt-4">
                                 <div class="col-sm-4">
-                                    <label for="sender_bank" class="form-label">Sender Bank</label>
-                                    <input type="text" id="sender_bank" class="form-control" name="sender_bank"
-                                        placeholder="Enter Sender's Bank Name" />
+                                    <label for="remittance_sender_bank" class="form-label">Sender Bank</label>
+                                    <input type="text" id="remittance_sender_bank" class="form-control"
+                                        name="remittance_sender_bank" placeholder="Enter Sender's Bank Name" />
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="destination_account" class="form-label">Bank Receiving</label>
-                                    <select id="destination_account" name="destination_account" class="form-select">
+                                    <label for="remittance_account_number" class="form-label">Sender Bank Account
+                                        Number</label>
+                                    <input type="text" id="remittance_account_number" class="form-control"
+                                        name="remittance_account_number" placeholder="Enter Sender Account Number" />
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <label for="remittance_destination_account" class="form-label">Bank Receiving</label>
+                                    <select id="remittance_destination_account" name="remittance_destination_account"
+                                        class="form-select">
                                         <option value="">Select Receiving Account</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{ $bank->id }}">{{ $bank->bank_name }} -
@@ -295,11 +335,7 @@
                                     </select>
                                 </div>
 
-                                <div class="col-sm-4">
-                                    <label for="currency" class="form-label">Currency</label>
-                                    <input type="text" id="currency" class="form-control" name="currency"
-                                        placeholder="e.g., USD, EUR" />
-                                </div>
+
                             </div>
 
                             <!-- Third Row with Fund Category -->
@@ -326,7 +362,7 @@
 
                                 <div class="col-sm-4">
                                     <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select class="form-select" name="budget_project_id" >
+                                    <select class="form-select" name="budget_project_id">
                                         <option disabled selected value>Choose Project</option>
                                         @foreach ($budgetProjects as $project)
                                             <option value="{{ $project->id }}"
@@ -338,19 +374,26 @@
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="date_received" class="form-label">Date Received</label>
-                                    <input type="date" id="date_received" class="form-control"
-                                        name="date_received" />
+                                    <label for="remittance_date_received" class="form-label">Date Received</label>
+                                    <input type="date" id="remittance_date_received" class="form-control"
+                                        name="remittance_date_received" />
                                 </div>
                             </div>
 
                             <!-- Fourth Row -->
-                            <div class="row mt-4">
-                                <div class="col-sm-12">
-                                    <label for="remittance_description" class="form-label">Purpose/Description</label>
-                                    <input type="text" id="remittance_description" class="form-control"
-                                        name="remittance_description" placeholder="Enter Description" />
+                            <div class="row mt-3">
+
+                                <div class="col-sm-4">
+                                    <label for="remittance_currency" class="form-label">remittance_currency</label>
+                                    <input type="text" id="remittance_currency" class="form-control"
+                                        name="remittance_currency" placeholder="e.g., USD, EUR" />
                                 </div>
+                                <div class="col-sm-8">
+                                    <label for="remittance_description" class="form-label">Purpose/Description</label>
+                                    <textarea id="remittance_description" class="form-control" name="remittance_description"
+                                        placeholder="Enter Description" rows="4"></textarea>
+                                </div>
+
                             </div>
                         </div>
 
@@ -379,8 +422,9 @@
                                             {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material</option>
                                         <option value="Overhead"
                                             {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead</option>
-                                        <option value="Finance" {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
-                                            Finance</option>
+                                        <option value="Financial"
+                                            {{ old('fund_category') == 'Financial' ? 'selected' : '' }}>
+                                            Financial</option>
                                         <option value="Capital Expenditure"
                                             {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>Capital
                                             Expenditure</option>
@@ -409,9 +453,10 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label for="destination_account" class="form-label">Destination Account
+                                    <label for="transfer_destination_account" class="form-label">Destination Account
                                         (Receiving)</label>
-                                    <select id="destination_account" name="destination_account" class="form-select">
+                                    <select id="transfer_destination_account" name="transfer_destination_account"
+                                        class="form-select">
                                         <option value="">Select Receiving Account</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{ $bank->id }}">{{ $bank->bank_name }} -
@@ -431,7 +476,7 @@
 
                                 <div class="col-md-4">
                                     <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select id="budget_project_id" class="form-select" name="budget_project_id" >
+                                    <select id="budget_project_id" class="form-select" name="budget_project_id">
                                         <option disabled selected value>Choose Project</option>
                                         @foreach ($budgetProjects as $project)
                                             <option value="{{ $project->id }}"
@@ -447,16 +492,25 @@
                                     <input type="date" id="date_received" class="form-control"
                                         name="date_received" />
                                 </div>
-                            </div>
 
-                            <!-- Fourth Row -->
-                            <div class="row mt-4">
-                                <div class="col-md-12">
-                                    <label for="transfer_description" class="form-label">Purpose/Description</label>
-                                    <input type="text" id="transfer_description" class="form-control"
-                                        name="transfer_description" placeholder="Enter Description" />
+
+                                <!-- Fourth Row -->
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <label for="transfer_designation" class="form-label">Designation</label>
+                                        <input type="input" id="transfer_designation" class="form-control"
+                                            name="transfer_designation" placeholder="From CEO ... Finance" />
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <label for="transfer_description" class="form-label">Purpose/Description</label>
+                                        <textarea id="transfer_description" class="form-control" name="transfer_description" placeholder="Enter Description"
+                                            rows="4"></textarea>
+                                    </div>
                                 </div>
                             </div>
+
+
                         </div>
 
                         <!-- Loan Source of Funds Fields -->
@@ -472,19 +526,18 @@
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="provider_type" class="form-label">Provider Type</label>
-                                    <select id="provider_type" name="provider_type" class="form-control">
+                                    <label for="loan_provider_type" class="form-label">Provider Type</label>
+                                    <select id="loan_provider_type" name="loan_provider_type" class="form-control">
                                         <option value="">Select Provider Type</option>
-                                        <option value="Director">Director</option>
-                                        <option value="Manager">Manager</option>
-                                        <option value="External">External</option>
+                                        <option value="financial instituion">Financial Institution</option>
+                                        <option value="bank">Bank</option>
                                     </select>
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="provider_name" class="form-label">Provider Name</label>
-                                    <input type="text" id="provider_name" class="form-control" name="provider_name"
-                                        placeholder="Enter Provider's Name" />
+                                    <label for="loan_provider_name" class="form-label">Provider Name</label>
+                                    <input type="text" id="loan_provider_name" class="form-control"
+                                        name="loan_provider_name" placeholder="Enter Provider's Name" />
                                 </div>
                             </div>
 
@@ -497,15 +550,15 @@
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="interest_rate" class="form-label">Interest Rate (%)</label>
-                                    <input type="number" id="interest_rate" class="form-control" name="interest_rate"
-                                        placeholder="Enter Interest Rate" />
+                                    <label for="loan_interest_rate" class="form-label">Interest Rate (%)</label>
+                                    <input type="number" id="loan_interest_rate" class="form-control"
+                                        name="loan_interest_rate" placeholder="Enter Interest Rate" />
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="loan_term" class="form-label">Loan Term (Months/Years)</label>
-                                    <input type="text" id="loan_term" class="form-control" name="loan_term"
-                                        placeholder="Enter Loan Term" />
+                                    <label for="loan_bank_account" class="form-label">Loan Bank Account Number</label>
+                                    <input type="text" id="loan_bank_account" class="form-control"
+                                        name="loan_bank_account" placeholder="Enter Loan Account No" />
                                 </div>
                             </div>
 
@@ -518,28 +571,33 @@
                                         <option value="Salary" {{ old('fund_category') == 'Salary' ? 'selected' : '' }}>
                                             Salary</option>
                                         <option value="Facility"
-                                            {{ old('fund_category') == 'Facility' ? 'selected' : '' }}>Facility</option>
+                                            {{ old('fund_category') == 'Facility' ? 'selected' : '' }}>Facility
+                                        </option>
                                         <option value="Material"
-                                            {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material</option>
+                                            {{ old('fund_category') == 'Material' ? 'selected' : '' }}>Material
+                                        </option>
                                         <option value="Overhead"
-                                            {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead</option>
-                                        <option value="Finance" {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
+                                            {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead
+                                        </option>
+                                        <option value="Financial" {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
                                             Finance</option>
                                         <option value="Capital Expenditure"
-                                            {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>Capital
+                                            {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>
+                                            Capital
                                             Expenditure</option>
                                     </select>
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="repayment_start_date" class="form-label">Repayment Start Date</label>
-                                    <input type="date" id="repayment_start_date" class="form-control"
-                                        name="repayment_start_date" />
+                                    <label for="loan_repayment_start_date" class="form-label">Repayment Start Date</label>
+                                    <input type="date" id="loan_repayment_start_date" class="form-control"
+                                        name="loan_repayment_start_date" />
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label for="repayment_frequency" class="form-label">Repayment Frequency</label>
-                                    <select id="repayment_frequency" name="repayment_frequency" class="form-control">
+                                    <label for="loan_repayment_frequency" class="form-label">Repayment Frequency</label>
+                                    <select id="loan_repayment_frequency" name="loan_repayment_frequency"
+                                        class="form-control">
                                         <option value="">Select Frequency</option>
                                         <option value="Monthly">Monthly</option>
                                         <option value="Quarterly">Quarterly</option>
@@ -552,7 +610,8 @@
                             <div class="row mt-4">
                                 <div class="col-sm-4">
                                     <label for="receiving_bank" class="form-label">Receiving Bank Account</label>
-                                    <select id="destination_account" name="destination_account" class="form-control">
+                                    <select id="loan_destination_account" name="loan_destination_account"
+                                        class="form-control">
                                         <option value="">Select Receiving Account</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{ $bank->id }}">{{ $bank->bank_name }} -
@@ -563,7 +622,7 @@
 
                                 <div class="col-sm-4">
                                     <label for="budget_project_id" class="form-label">Budget Project</label>
-                                    <select class="form-select" name="budget_project_id" >
+                                    <select class="form-select" name="budget_project_id">
                                         <option disabled selected value>Choose Project</option>
                                         @foreach ($budgetProjects as $project)
                                             <option value="{{ $project->id }}"
@@ -584,12 +643,11 @@
                             <div class="row mt-4">
                                 <div class="col-sm-12">
                                     <label for="loan_description" class="form-label">Purpose/Description</label>
-                                    <input type="text" id="loan_description" class="form-control"
-                                        name="loan_description" placeholder="Enter Purpose of Loan" />
+                                    <textarea id="loan_description" class="form-control" name="loan_description" placeholder="Enter Purpose of Loan"
+                                        rows="4"></textarea>
                                 </div>
                             </div>
                         </div>
-
 
 
 
@@ -656,6 +714,19 @@
         // Remove Row
         function removeRow(button) {
             button.closest('tr').remove();
+        }
+
+        function formatNumber(input) {
+            // Remove any existing commas
+            let value = input.value.replace(/,/g, '');
+
+            // Ensure it is a number
+            if (!isNaN(value) && value !== '') {
+                // Add commas for thousands separator
+                input.value = parseFloat(value).toLocaleString('en-US');
+            } else {
+                input.value = ''; // Reset if not a valid number
+            }
         }
     </script>
 

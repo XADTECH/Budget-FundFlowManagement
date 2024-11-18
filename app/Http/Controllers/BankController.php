@@ -212,8 +212,25 @@ class BankController extends Controller
     public function showLedger($id)
     {
         $bank = Bank::where('id', $id)->first();
-        $ledgerEntries  = LedgerEntry::where('bank_id', $bank->id)->get(); // Retrieve all entries as a collection
+        $ledgerEntries = LedgerEntry::where('bank_id', $bank->id)->get(); // Retrieve all entries as a collection
         // return response($ledger);
+        return view('content.pages.pages-show-bank-ledger', compact('bank', 'ledgerEntries'));
+    }
+
+    public function showLedgerByProject(Request $request)
+    {
+        $bank_id = $request->bank_id;
+        $budget_project_id = $request->budget_project_id;
+
+        // return response($request->all());
+
+        // Retrieve the bank details
+        $bank = Bank::find($bank_id);
+
+        // Retrieve ledger entries for the specified bank and project
+        $ledgerEntries = LedgerEntry::where('bank_id', $bank_id)->where('budget_project_id', $budget_project_id)->get();
+
+        // Return the view with bank and ledger entries
         return view('content.pages.pages-show-bank-ledger', compact('bank', 'ledgerEntries'));
     }
 }

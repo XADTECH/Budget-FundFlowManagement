@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unadjusted Trial Balance</title>
+    <title>Bank Ledger {{$bank->bank_name}}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -22,7 +22,7 @@
         }
         @media (min-width: 768px) {
             .table-container {
-                max-width: 75%;
+                max-width: 50%;
                 padding: 1.5rem;
             }
         }
@@ -88,8 +88,8 @@
                         @foreach ($ledgerEntries as $entry)
                             <tr>
                                 <td class="account-name">{{ $entry->description }}</td>
-                                <td>{{ $entry->type === 'debit' ? number_format($entry->amount, 2) : '' }}</td>
-                                <td>{{ $entry->type === 'credit' ? number_format($entry->amount, 2) : '' }}</td>
+                                <td>{{ $entry->type === 'debit' ? number_format($entry->amount, 0) : '' }}</td>
+                                <td>{{ $entry->type === 'credit' ? number_format($entry->amount, 0) : '' }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -97,10 +97,10 @@
                         <tr class="table-footer">
                             <td class="account-name">Totals</td>
                             <td>
-                                {{ number_format($ledgerEntries->where('type', 'debit')->sum('amount'), 2) }}
+                                {{ number_format($ledgerEntries->where('type', 'debit')->sum('amount'), 0) }}
                             </td>
                             <td>
-                                {{ number_format($ledgerEntries->where('type', 'credit')->sum('amount'), 2) }}
+                                {{ number_format($ledgerEntries->where('type', 'credit')->sum('amount'), 0) }}
                             </td>
                         </tr>
                     </tfoot>

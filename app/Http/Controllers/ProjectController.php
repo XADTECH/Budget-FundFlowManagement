@@ -6,6 +6,7 @@ use App\Models\BudgetProject;
 use App\Models\BusinessClient;
 use App\Models\BusinessUnit;
 use App\Models\CapitalExpenditure;
+use App\Models\Loan;
 use App\Models\CostOverhead;
 use App\Models\DirectCost;
 use App\Models\FacilityCost;
@@ -15,8 +16,12 @@ use App\Models\MaterialCost;
 use App\Models\RevenuePlan;
 use App\Models\CashFlow;
 use App\Models\PurchaseOrder;
+use App\Models\RemittanceTransfer;
 use App\Models\PurchaseOrderItem;
-
+use App\Models\TransferFromManagement;
+use App\Models\LedgerEntry;
+use App\Models\Invoice;
+use App\Models\Sender;
 use App\Models\ApprovedBudget;
 use App\Models\TotalBudgetAllocated;
 use App\Models\Salary;
@@ -251,6 +256,12 @@ class ProjectController extends Controller
             ApprovedBudget::where('budget_project_id', $projectId)->delete();
             TotalBudgetAllocated::where('budget_project_id', $projectId)->delete();
             CashFlow::where('budget_project_id', $projectId)->delete();
+            Invoice::where('invoice_budget_project_id', $projectId)->delete();
+            LedgerEntry::where('budget_project_id', $projectId)->delete();
+            Sender::where('budget_project_id', $projectId)->delete();
+            TransferFromManagement::where('budget_project_id', $projectId)->delete();
+            RemittanceTransfer::where('budget_project_id', $projectId)->delete();
+            Loan::where('budget_project_id', $projectId)->delete();
 
             $po = PurchaseOrder::where('project_id', $projectId)->first();
 
