@@ -233,6 +233,7 @@ Route::middleware(['checklogin'])->group(function () {
 
     //add purchase order
     Route::get('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'addPurchaseOrder'])->name('add-budget-project-purchase-order');
+    Route::get('/pages/add-budget-project-payment-order', [PurcahseOrderController::class, 'addPaymentOrder'])->name('add-budget-project-payment-order');
 
     //add purchase order
     Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name('add-budget-project-purchase-order');

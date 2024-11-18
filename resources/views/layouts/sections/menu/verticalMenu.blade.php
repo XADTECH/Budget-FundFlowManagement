@@ -111,8 +111,8 @@
                         </a>
                     </li>
                     <li
-                    class="menu-item {{ request()->is('pages/add-budget-project-purchase-order') ? 'active' : '' }}">
-                    <a href="/pages/add-budget-project-purchase-order" class="menu-link">
+                    class="menu-item {{ request()->is('pages/add-budget-project-payment-order') ? 'active' : '' }}">
+                    <a href="/pages/add-budget-project-payment-order" class="menu-link">
                         <div>Add Payment Order</div>
                     </a>
                 </li>

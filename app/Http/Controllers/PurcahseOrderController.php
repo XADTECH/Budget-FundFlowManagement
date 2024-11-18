@@ -295,4 +295,9 @@ class PurcahseOrderController extends Controller
 
         return view('content.pages.pages-filter-purchase-order-list', compact('purchaseOrders', 'projects', 'users', 'userList', 'budgetList', 'totalBudgetAllocated'));
     }
+
+    public function addPaymentOrder(Request $request)
+    {
+        return view('content.pages.show-budget-project-payment-order');
+    }
 }
