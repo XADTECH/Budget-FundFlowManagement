@@ -193,7 +193,7 @@
 
                                             <td>
                                                 @if ($invoice->invoice_file)
-                                                    <a href="{{ asset('storage/' . $invoice->invoice_file) }}"
+                                                    <a href="{{ asset('/' . $invoice->invoice_file) }}"
                                                         target="_blank">View</a>
                                                 @else
                                                     No file

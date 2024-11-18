@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\BudgetProject;
 use App\Models\CashFlow;
 use App\Models\Bank;
@@ -74,11 +75,17 @@ class CashFlowController extends Controller
                         'invoice_budget_project_id' => $request->invoice_budget_project_id,
                     ];
 
+
                     // Handle file upload if it exists
                     if ($request->hasFile('invoice_file')) {
                         $file = $request->file('invoice_file');
-                        $path = $file->store('invoices', 'public');
-                        $invoiceData['invoice_file'] = $path; // Store the path in the database
+                        $extension = $file->getClientOriginalExtension();
+
+                        $filename = time() . "." . $extension;
+                        $file->move('public/inovices/', $filename);
+                        $path = 'public/inovices/' . $filename;
+
+                        $invoiceData['invoice_file'] = $path;
                     }
 
                     // Save the invoice data
@@ -313,12 +320,12 @@ class CashFlowController extends Controller
                         'loan_description' => 'nullable|string|max:1000',
                     ]);
 
-              
+
 
                     Loan::create($validatedData);
 
-                        // Create debit ledger entry for the principal loan amount received
-                        $interestAmount = $request->loan_amount * ($request->loan_interest_rate / 100); 
+                    // Create debit ledger entry for the principal loan amount received
+                    $interestAmount = $request->loan_amount * ($request->loan_interest_rate / 100);
 
                     $loanData = [
                         'date' => $request->loan_date,
@@ -371,7 +378,7 @@ class CashFlowController extends Controller
                         ]);
                     }
 
-               
+
 
                     // Update cash flow for loan
                     $this->maintainCashFlow(
