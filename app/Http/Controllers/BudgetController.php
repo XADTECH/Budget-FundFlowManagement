@@ -275,8 +275,7 @@ class BudgetController extends Controller
         $existingPettyCash = PettyCash::where('project_id', $project_id)->first();
 
         $existingNocPayment = NocPayment::where('project_id', $project_id)->first();
-
-        return view('content.pages.pages-edit-project-budget', compact('clients', 'overHeads', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'existingNocPayment', 'existingPettyCash'));
+        return view('content.pages.pages-edit-project-budget', compact('project_id', 'clients', 'overHeads', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'existingNocPayment', 'existingPettyCash'));
     }
 
     /**
