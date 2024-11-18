@@ -269,15 +269,16 @@
                             <div class="d-flex">
                                 <div style="display: flex; align-items: center; justify-content: right;">
                                     <!-- Separate Form for File Upload -->
-                                    <form action="{{ route('banks.import') }}" method="POST" enctype="multipart/form-data"
-                                        id="file-upload-form" class="m-2">
+                                    <form action="{{ route('material.import') }}" method="POST" enctype="multipart/form-data"
+                                        id="material-file-upload-form" class="m-2">
                                         @csrf
                                         <!-- Hidden file input -->
-                                        <input type="file" name="file" id="file-upload" style="display: none;" required>
+                                        <input type="file" name="material-file" id="material-file-upload" style="display: none;" required>
+                                        <input type="hidden" name="bg_id" value="{{$project_id}}">
 
                                         <!-- Upload Button Triggers File Input -->
                                         <button type="button" class="btn btn-primary btn-custom"
-                                            onclick="triggerFileUpload()">Upload</button>
+                                            onclick="materialtriggerFileUpload()">Upload</button>
                                     </form>
 
                                     <!-- Download Button -->
@@ -1070,6 +1071,17 @@
 
 
 <script>
+    function materialtriggerFileUpload() {
+        document.getElementById('material-file-upload').click();
+    }
+    document.getElementById('material-file-upload').addEventListener('change', function() {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex'; // Show the spinner
+        setTimeout(() => {
+            document.getElementById('material-file-upload-form').submit(); // Submit form after delay
+        }, 500); // Small delay to ensure spinner is visible
+    });
+
     function salarytriggerFileUpload() {
         document.getElementById('salary-file-upload').click();
     }

@@ -134,6 +134,7 @@ Route::middleware(['checklogin'])->group(function () {
     Route::post('/facilities-import', [ImportExportController::class, 'uploadFacilities'])->name('facilities.import');
 
     Route::get('/materialcost/export/{id}', [ImportExportController::class, 'materialcostexport'])->name('material-export');
+    Route::post('/material-import', [ImportExportController::class, 'uploadMaterial'])->name('material.import');
 
     Route::get('/capitalexpenditure/export/{id}', [ImportExportController::class, 'capitalexpenditureexport'])->name('capitalexpenditure-export');
     Route::post('/capital-import', [ImportExportController::class, 'uploadCapital'])->name('capital.import');

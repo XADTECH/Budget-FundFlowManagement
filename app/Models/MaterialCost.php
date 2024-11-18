@@ -14,11 +14,10 @@ class MaterialCost extends Model
     protected $fillable = [
         'direct_cost_id', // Foreign key reference to DirectCost
         'budget_project_id',
-
         'type', // Type of record (Material/Cost)
-
         'project', // Project name
         'po', // Type of expense (e.g., OPEX)
+        'expense_head', // Specific expense (e.g., Salary, Materials)
         'expenses', // Specific expense (e.g., Salary, Materials)
         'description', // Description of the material or details
         'status', // Status of the budget entry (e.g., New Hiring, Purchased)

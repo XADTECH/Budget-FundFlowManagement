@@ -167,6 +167,7 @@ class DirectCostController extends Controller
             // Conditionally store fields based on the expense type
             if ($validated['expense'] === 'consumed_material') {
                 $materialCost = new MaterialCost();
+                $materialCost->expense_head = $validated['expense'];
                 $materialCost->expenses = $validated['material_head'];
                 $materialCost->quantity = $validated['quantity'];
                 $materialCost->unit = $validated['unit'];
