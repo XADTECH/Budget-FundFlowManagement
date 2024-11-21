@@ -95,21 +95,33 @@
             </li>
         @endif
 
+           <!-- Purchase Order -->
+           @if (Auth::user()->role == 'Admin' ||  Auth::user()->role == 'Finance Manager')
+           <li class="menu-item {{ request()->is('pages/add-budget-project-purchase-order') ? 'active open' : '' }}">
+               <a href="javascript:void(0);" class="menu-link menu-toggle">
+                   <i class="menu-icon tf-icons bx bx-detail"></i>
+                   <div>Purchase Order</div>
+               </a>
+               <ul class="menu-sub">
+                   <li
+                       class="menu-item {{ request()->is('pages/add-budget-project-purchase-order') ? 'active' : '' }}">
+                       <a href="/pages/add-budget-project-purchase-order" class="menu-link">
+                           <div>Add Purchase Order</div>
+                       </a>
+                   </li>
+               </ul>
+           </li>
+       @endif
 
-        <!-- Purchase Order -->
+
+        <!-- payment Order -->
         @if (Auth::user()->role == 'Admin' ||  Auth::user()->role == 'Finance Manager')
-            <li class="menu-item {{ request()->is('pages/add-budget-project-purchase-order') ? 'active open' : '' }}">
+            <li class="menu-item {{ request()->is('pages/add-budget-project-payment-order') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-ball"></i>
-                    <div>Manage Purchases</div>
+                    <i class="menu-icon tf-icons bx bx-dollar"></i>
+                    <div>Payment Order</div>
                 </a>
                 <ul class="menu-sub">
-                    <li
-                        class="menu-item {{ request()->is('pages/add-budget-project-purchase-order') ? 'active' : '' }}">
-                        <a href="/pages/add-budget-project-purchase-order" class="menu-link">
-                            <div>Add Purchase Order</div>
-                        </a>
-                    </li>
                     <li
                     class="menu-item {{ request()->is('pages/add-budget-project-payment-order') ? 'active' : '' }}">
                     <a href="/pages/add-budget-project-payment-order" class="menu-link">

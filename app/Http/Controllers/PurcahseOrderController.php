@@ -54,9 +54,12 @@ class PurcahseOrderController extends Controller
         return view('content.pages.pages-add-project-budget-purchase-order', compact('supplierlist', 'budgets', 'purchaseOrders', 'users', 'userList', 'budgetList', 'projects'));
     }
 
+
     //add / show purchase order
     public function storePurchaseOrder(Request $request)
     {
+
+    
         try {
             // Validate the incoming request data
             $validatedData = $request->validate([
@@ -200,7 +203,6 @@ class PurcahseOrderController extends Controller
             $purchaseOrder->vat = $request->totalVAT;
             $purchaseOrder->total_discount = $request->totalDiscount;
 
-
             $poItems = PurchaseOrderItem::create([
                 'purchase_order_id' => $purchaseOrder->id,
                 'po_number' => $request->poNumber,
@@ -219,17 +221,15 @@ class PurcahseOrderController extends Controller
             // Fetch the total budget allocated record
             $totalBudgetAllocated = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->first();
             $lastCashFlow = CashFlow::where('budget_project_id', $purchaseOrder->project_id)
-            ->where('category', 'Material')
-            ->orderBy('date', 'desc')
-            ->first();
-            
+                ->where('category', 'Material')
+                ->orderBy('date', 'desc')
+                ->first();
 
             if ($totalBudgetAllocated) {
                 // Update total_lpo by adding the total_amount
                 $totalBudgetAllocated->total_lpo += $request->totalAmount;
                 $totalBudgetAllocated->total_material_cost -= $request->totalAmount;
                 $totalBudgetAllocated->allocated_budget -= $request->totalAmount;
-                
 
                 $lastCashFlow->balance -= $request->totalAmount;
                 $lastCashFlow->save();
@@ -296,7 +296,7 @@ class PurcahseOrderController extends Controller
         return view('content.pages.pages-filter-purchase-order-list', compact('purchaseOrders', 'projects', 'users', 'userList', 'budgetList', 'totalBudgetAllocated'));
     }
 
-    public function addPaymentOrder(Request $request)
+    public function showPaymentOrder(Request $request)
     {
         return view('content.pages.show-budget-project-payment-order');
     }

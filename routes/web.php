@@ -18,6 +18,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\PaymentOrder;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\DirectCostController;
 use App\Http\Controllers\InDirectCostController;
@@ -249,11 +250,20 @@ Route::middleware(['checklogin'])->group(function () {
     Route::get('/download-budget-summary/{POID}', [PdfController::class, 'budgetSummary'])->name('download.budgetSummary');
 
     //add purchase order
-    Route::get('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'addPurchaseOrder'])->name('add-budget-project-purchase-order');
-    Route::get('/pages/add-budget-project-payment-order', [PurcahseOrderController::class, 'addPaymentOrder'])->name('add-budget-project-payment-order');
+    Route::get('/pages/add-budget-project-payment-order', [PaymentOrder::class, 'addPaymentOrder'])->name('add-budget-project-payment-order');
 
+    //store payment order 
+    Route::post('/pages/store-budget-project-payment-order', [PaymentOrder::class, 'storePaymentOrder'])->name('paymentOrder.store');
+
+    //show payment order 
+    Route::post('/payment-order', [PaymentOrder::class, 'show'])->name('paymentOrder.show');
+ 
+    
     //add purchase order
     Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name('add-budget-project-purchase-order');
+    Route::get('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'addPurchaseOrder'])->name('add-budget-project-purchase-order');
+
+    Route::post('/payment-orders', [PaymentOrderController::class, 'store'])->name('payment-orders.store');
 
     //edit purchase order
     Route::get('/purchase-order/edit/{POID}', [PurcahseOrderController::class, 'editPurchaseOrder'])->name('purchaseOrder.edit');
