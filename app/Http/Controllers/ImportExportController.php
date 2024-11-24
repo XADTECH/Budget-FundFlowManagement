@@ -273,7 +273,6 @@ class ImportExportController extends Controller
 
             // Perform the import operation
             Excel::import($import, $request->file('material-file'));
-
             // Get the number of failures from the import
             $failureCount = $import->failures()->count();
             Log::info('Import completed', ['failures' => $failureCount]);

@@ -20,7 +20,7 @@ class CheckLogin
     // Check if the user is not authenticated
     if (!Auth::check()) {
       // Redirect to the login page if not authenticated
-      return redirect()->route('auth-login-basic');
+      return redirect()->route(route: 'auth-login-basic');
     }
 
     // Proceed with the request if authenticated
