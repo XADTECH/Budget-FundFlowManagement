@@ -260,9 +260,11 @@ Route::middleware(['checklogin'])->group(function () {
     // Show a specific payment order (e.g., by ID)
     Route::get('/payment-orders/{id}', [PaymentOrder::class, 'show'])->name('paymentOrders.show');
 
-
+    //update a payment order 
     Route::put('/payment-orders/{id}', [PaymentOrder::class, 'update'])->name('paymentOrders.update');
 
+    //delete a payment order 
+    Route::delete('/paymentOrders/{id}', [PaymentOrder::class, 'destroy'])->name('paymentOrders.destroy');
 
     //store purchase order
     Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name('add-budget-project-purchase-order');

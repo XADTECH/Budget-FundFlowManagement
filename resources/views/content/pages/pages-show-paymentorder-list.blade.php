@@ -21,6 +21,9 @@
         }
     </style>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
     <h4 class="py-3 mb-4">
         <span class="text-muted fw-light">Budget Management /</span> Filter Payment Orders
     </h4>
@@ -119,12 +122,13 @@
                                 <th>Prepared By</th>
                                 <th>Status</th>
                                 <th>Submit Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="project-table-body" class="table-border-bottom-0">
                             @if ($filteredPaymentOrders->isEmpty())
                                 <tr>
-                                    <td colspan="5" class="text-center">No Data</td>
+                                    <td colspan="7" class="text-center">No Data</td>
                                 </tr>
                             @else
                                 @foreach ($filteredPaymentOrders as $po)
@@ -138,25 +142,39 @@
                                                     {{ $po->payment_order_number }}
                                                 </button>
                                             </form>
-
                                         </td>
                                         @php
                                             $project = $budgetList->where('id', $po->budget_project_id)->first();
                                         @endphp
                                         <td>{{ $project->reference_code ?? 'N/A' }}</td>
-                                        <!-- Assuming project relationship -->
-                                        <td>{{$po->payment_method}}</td>
+                                        <td>{{ $po->payment_method }}</td>
                                         @php
                                             $user = $userList->where('id', $po->user_id)->first();
                                         @endphp
                                         <td>{{ $user->email ?? 'N/A' }}</td>
                                         <td class="text-success" style="font-weight:bold">{{ $po->status }}</td>
                                         <td class="text-success" style="font-weight:bold">{{ $po->paid_status }}</td>
+                                        <td>
+                                            <form
+                                                action="{{ route('paymentOrders.destroy', ['id' => $po->payment_order_number]) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this payment order?');"
+                                                style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="btn btn-link text-danger p-0 m-0 align-baseline"
+                                                    style="background: none; border: none;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 @endforeach
                             @endif
                         </tbody>
                     </table>
+
                 </div>
             </div>
 

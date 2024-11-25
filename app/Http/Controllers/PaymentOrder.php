@@ -45,6 +45,7 @@ class PaymentOrder extends Controller
         return view('content.pages.pages-add-budget-project-payment-order', compact('projects', 'paymentOrders', 'users'));
     }
 
+    //store payment order
     public function store(Request $request)
     {
         // Validate the request
@@ -152,15 +153,14 @@ class PaymentOrder extends Controller
                     'total_bank_transfer' => str_replace(',', '', $request->total_bank_transfer),
                 ]);
 
-                $totalAmount = (float) $request->total_bank_transfer; 
-
+                $totalAmount = (float) $request->total_bank_transfer;
 
                 $bankTransferData = [
                     'payment_order_number' => $request->payment_order_number,
                     'budget_reference_code' => $request->budget_reference_code,
                     'payment_order_method' => $request->payment_order_method,
                     'beneficiary_name' => $request->beneficiary_name,
-                    'total_bank_transfer' =>$totalAmount,
+                    'total_bank_transfer' => $totalAmount,
                     'iban' => $request->iban,
                     'bank_name' => $request->bank_name,
                     'bank_transfer_details' => $request->bank_transfer_details,
@@ -170,29 +170,28 @@ class PaymentOrder extends Controller
                     'bank_payment_id' => $request->bank_payment_id,
                     'item_description' => json_encode($request->item_description),
                     'item_amount' => json_encode($request->item_amount),
-                    'submit_status' => 'Submitted'
+                    'submit_status' => 'Submitted',
                 ];
 
-                  // Find existing payment order
-                  $paymentOrder = PaymentOrderModel::where('payment_order_number', $request->payment_order_number)->first();
+                // Find existing payment order
+                $paymentOrder = PaymentOrderModel::where('payment_order_number', $request->payment_order_number)->first();
 
-                  if ($paymentOrder) {
-  
-                      // Attempt to update the record
-                      try {
-                          $paymentOrder->update($bankTransferData);
-                          return redirect()->back()->with('success', 'Payment Order updated successfully!');
-                      } catch (\Exception $e) {
-                          \Log::error('Failed to update Payment Order', ['error' => $e->getMessage()]);
-                          return redirect()
-                              ->back()
-                              ->withErrors(['error' => 'Failed to update Payment Order.']);
-                      }
-                  } else {
-                      return redirect()
-                          ->back()
-                          ->withErrors(['error' => 'Payment Order not found.']);
-                  }
+                if ($paymentOrder) {
+                    // Attempt to update the record
+                    try {
+                        $paymentOrder->update($bankTransferData);
+                        return redirect()->back()->with('success', 'Payment Order updated successfully!');
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to update Payment Order', ['error' => $e->getMessage()]);
+                        return redirect()
+                            ->back()
+                            ->withErrors(['error' => 'Failed to update Payment Order.']);
+                    }
+                } else {
+                    return redirect()
+                        ->back()
+                        ->withErrors(['error' => 'Payment Order not found.']);
+                }
 
                 break;
             case 'cash':
@@ -322,9 +321,6 @@ class PaymentOrder extends Controller
                         'transaction_amount' => $transactionAmount,
                     ];
 
-                    // return response($onlineTransactionData);
-
-                    // Attempt to update the record
                     try {
                         $paymentOrder->update($onlineTransactionData);
                         return redirect()->back()->with('success', 'Payment Order updated successfully!');
@@ -343,44 +339,81 @@ class PaymentOrder extends Controller
                 break;
 
             case 'cheque':
-                $request->validate([
-                    'cheque_number' => 'required|string|max:50',
-                    'cheque_date' => 'required|date',
-                    'cheque_file' => 'required|file|mimes:pdf|max:2048',
-                    'cheque_payee' => 'required|string|max:255',
-                    'item_description' => 'required|array',
-                    'item_description.*' => 'string|max:255', // Ensure every item is a valid string
-                    'item_amount' => 'required|array',
-                    'item_amount.*' => [
-                        'required',
-                        'regex:/^\d{1,3}(,\d{3})*(\.\d{1,2})?$/', // Allow numbers with commas
-                    ],
+                // Preprocess the request data
+                $request->merge([
+                    'total_cheque_amount' => str_replace(',', '', $request->total_cheque_amount),
+                    'total_budget' => str_replace(',', '', $request->total_budget),
+                    'utilization' => str_replace(',', '', $request->utilization),
+                    'balance' => str_replace(',', '', $request->balance),
+                    'item_amount' => array_map(function ($amount) {
+                        return str_replace(',', '', $amount);
+                    }, $request->item_amount ?? []), // Ensure this handles null gracefully
                 ]);
 
-                $chequeData = [
-                    'payment_order_number' => $request->payment_order_number,
-                    'budget_reference_code' => $request->budget_reference_code,
-                    'project_name' => $request->project_name,
-                    'payment_method' => $request->payment_method,
-                    'cheque_number' => $request->cheque_number,
-                    'cheque_date' => $request->cheque_date,
-                    'cheque_payee' => $request->cheque_payee,
-                    'total_budget' => $request->total_budget,
-                    'utilization' => $request->utilization,
-                    'balance' => $request->balance,
-                    'bank_payment_id' => $request->bank_payment_id,
-                    'item_description' => json_encode($request->item_description),
-                    'item_amount' => json_encode($request->item_amount),
-                    'item_status' => json_encode($request->item_status),
-                ];
+                // Validate the request inputs
+                $validatedData = $request->validate([
+                    'cheque_number' => 'required|string|max:50',
+                    'cheque_date' => 'required|date',
+                    'cheque_file' => 'required|file|mimes:pdf|max:2048', // Ensure the uploaded file is a PDF
+                    'total_cheque_amount' => 'required|regex:/^\d+(\.\d{1,2})?$/', // Allow valid decimal format
+                    'cheque_payee' => 'required|string|max:255',
+                    'item_description' => 'required|array', // Ensure item descriptions are an array
+                    'item_description.*' => 'string|max:255', // Each item must be a string
+                    'item_amount' => 'required|array', // Ensure item amounts are an array
+                    'item_amount.*' => 'regex:/^\d+(\.\d{1,2})?$/', // Allow numbers with decimals
+                ]);
 
-                // Handle file upload
-                if ($request->hasFile('cheque_file')) {
-                    $path = $request->file('cheque_file')->store('cheques', 'public');
-                    $chequeData['cheque_file'] = $path;
+                // Calculate the cheque amount
+                $chequeAmount = (float) $request->total_cheque_amount;
+
+                $paymentOrder = PaymentOrderModel::where('payment_order_number', $request->payment_order_number)->first();
+
+                if ($paymentOrder) {
+                    // Prepare data for storage or further processing
+                    $chequeData = [
+                        'payment_order_number' => $request->payment_order_number,
+                        'budget_reference_code' => $request->budget_reference_code,
+                        'project_name' => $request->project_name,
+                        'payment_method' => $request->payment_order_method,
+                        'cheque_number' => $request->cheque_number,
+                        'total_cheque_amount' => $chequeAmount,
+                        'cheque_date' => $request->cheque_date,
+                        'cheque_payee' => $request->cheque_payee,
+                        'total_budget' => (float) $request->total_budget,
+                        'utilization' => (float) $request->utilization,
+                        'balance' => (float) $request->balance,
+                        'bank_payment_id' => $request->bank_payment_id,
+                        'item_description' => json_encode($request->item_description),
+                        'item_amount' => json_encode($request->item_amount),
+                        'submit_status' => 'Submitted',
+                    ];
+
+                    // Handle file upload if it exists
+                    if ($request->hasFile('cheque_file')) {
+                        $file = $request->file('cheque_file');
+                        $extension = $file->getClientOriginalExtension();
+
+                        $filename = time() . '.' . $extension;
+                        $file->move('public/cheque/', $filename);
+                        $path = 'public/cheque/' . $filename;
+
+                        $chequeData['cheque_file'] = $path;
+                    }
+
+                    try {
+                        $paymentOrder->update($chequeData);
+                        return redirect()->back()->with('success', 'Payment Order updated successfully!');
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to update Payment Order', ['error' => $e->getMessage()]);
+                        return redirect()
+                            ->back()
+                            ->withErrors(['error' => 'Failed to update Payment Order.']);
+                    }
+                } else {
+                    return redirect()
+                        ->back()
+                        ->withErrors(['error' => 'Payment Order not found.']);
                 }
-
-                PaymentOrder::create($chequeData);
 
                 break;
 
@@ -391,37 +424,35 @@ class PaymentOrder extends Controller
         return redirect()->back()->with('success', 'Payment order recorded successfully!');
     }
 
-    //payment order list 
+    //payment order list
     public function list(Request $request)
     {
-    
         $projects = BudgetProject::all();
         $paymentOrders = PaymentOrderModel::all();
         $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
         $budgetList = BudgetProject::get();
         $userList = User::get();
-        $query = PaymentOrderModel::query(); 
-    
+        $query = PaymentOrderModel::query();
+
         $totalBudgetAllocated = TotalBudgetAllocated::all();
-    
+
         // Apply filters
         if ($request->has('project_id') && $request->project_id != '') {
             $query->where('budget_project_id', $request->project_id);
-            
         }
-    
+
         if ($request->has('payment_order_id') && $request->payment_order_id != '') {
             $query->where('id', $request->payment_order_id);
         }
-    
+
         if ($request->has('po_number') && $request->po_number != '') {
             $query->where('payment_order_number', 'like', '%' . $request->po_number . '%');
         }
-    
+
         if ($request->has('project_reference') && $request->project_reference != '') {
             // Fetch the project with the given reference code
             $project = BudgetProject::where('reference_code', 'like', '%' . $request->project_reference . '%')->first();
-        
+
             if ($project) {
                 // Filter payment orders by the project's ID
                 $query->where('budget_project_id', $project->id);
@@ -430,13 +461,27 @@ class PaymentOrder extends Controller
                 $query->whereRaw('0 = 1'); // This ensures no records are returned
             }
         }
-        
-    
+
         $filteredPaymentOrders = $query->get(); // Fetch filtered Payment Orders
-    
-        return view('content.pages.pages-show-paymentorder-list', compact(
-            'filteredPaymentOrders', 'projects', 'users', 'userList', 'budgetList', 'totalBudgetAllocated', 'paymentOrders'
-        ));
+
+        return view('content.pages.pages-show-paymentorder-list', compact('filteredPaymentOrders', 'projects', 'users', 'userList', 'budgetList', 'totalBudgetAllocated', 'paymentOrders'));
     }
-    
+
+    //payment order delete
+    public function destroy($id)
+    {
+        // Find the payment order by ID
+        $paymentOrder = PaymentOrderModel::where('payment_order_number', $id)->first();
+        if (!$paymentOrder) {
+            return redirect()->back()->with('error', 'Payment order not found.');
+        }
+
+        try {
+            // Delete the payment order
+            $paymentOrder->delete();
+            return redirect()->back()->with('success', 'Payment order deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while deleting the payment order.');
+        }
+    }
 }

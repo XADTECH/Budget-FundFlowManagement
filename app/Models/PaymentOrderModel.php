@@ -31,6 +31,7 @@ class PaymentOrderModel extends Model
         'cheque_number',
         'cheque_date',
         'cheque_file',
+        'total_cheque_amount',
         'cash_amount',
         'item_description',
         'item_amount',

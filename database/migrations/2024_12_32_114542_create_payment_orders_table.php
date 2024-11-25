@@ -38,10 +38,12 @@ class CreatePaymentOrdersTable extends Migration
             $table->string('cheque_file')->nullable();
             $table->string('cheque_payee')->nullable();
             $table->decimal('total_budget', 15, 2)->nullable();
+            $table->decimal('total_cheque_amount', 15, 2)->nullable();
             $table->decimal('utilization', 15, 2)->nullable();
             $table->decimal('total_bank_transfer', 15, 2)->nullable();
             $table->decimal('balance', 15, 2)->nullable();
             $table->timestamps();
+            
         });
     }
 

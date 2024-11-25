@@ -101,8 +101,8 @@
     @if ($errors->any())
         <div class="alert alert-danger" id="error-alert">
             <!-- <button type="button" class="close" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button> -->
+                                    <span aria-hidden="true">&times;</span>
+                                </button> -->
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -114,14 +114,15 @@
     @if (session('success'))
         <div class="alert alert-success" id="success-alert">
             <!-- <button type="button" class="close" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button> -->
+                                        <span aria-hidden="true">&times;</span>
+                                    </button> -->
             {{ session('success') }}
         </div>
     @endif
 
     <div class="container">
-        <form action="{{ route('paymentOrders.update', ['id' => $po->payment_order_number]) }}" method="POST">
+        <form action="{{ route('paymentOrders.update', ['id' => $po->payment_order_number]) }}" method="POST"
+            enctype="multipart/form-data">
             @csrf
             @method('PUT') <!-- Indicates a PUT request -->
             <!-- Payment Order Details -->
@@ -207,28 +208,47 @@
                 <div id="chequeFields" class="form-section">
                     <h4>Cheque Payment Details</h4>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="chequeNumber" class="form-label">Cheque Number</label>
                             <input type="text" id="chequeNumber" name="cheque_number" class="form-control"
-                                placeholder="Enter Cheque Number">
+                                placeholder="Enter Cheque Number"
+                                value="{{ old('cheque_number', $po->cheque_number ?? '') }}">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="chequeDate" class="form-label">Cheque Date</label>
-                            <input type="date" id="chequeDate" name="cheque_date" class="form-control">
+                            <input type="date" id="chequeDate" name="cheque_date" class="form-control"
+                                value="{{ old('cheque_date', $po->cheque_date ?? '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="totalChequeAmount" class="form-label">Total Cheque Amount</label>
+                            <input type="text" id="totalChequeAmount" name="total_cheque_amount" class="form-control"
+                                placeholder="Enter Cash Amount"
+                                value="{{ old('total_cheque_amount', isset($po->total_cheque_amount) ? number_format($po->total_cheque_amount, 0) : '') }}"
+                                oninput="formatNumber(this)">
                         </div>
                     </div>
+
                     <div class="row mt-3">
-                        <div class="col-md-6">
-                            <label for="chequeFile" class="form-label">Upload Cheque (PDF)</label>
-                            <input type="file" id="chequeFile" name="cheque_file" class="form-control"
-                                accept="application/pdf" onchange="previewPDF(event)">
+                        <div class="col-md-4 d-flex flex-column justify-content-center">
+                            <label for="chequeFile" class="form-label mb-1">Upload Cheque (PDF)</label>
+                            @if (!empty($po->cheque_file))
+                                <a href="{{ asset($po->cheque_file) }}" target="_blank" class="btn btn-link p-0 m-0">
+                                    View Current File (PDF)
+                                </a>
+                            @else
+                                <input type="file" id="chequeFile" name="cheque_file" class="form-control"
+                                    accept="application/pdf">
+                            @endif
                         </div>
-                        <div class="col-md-6">
+
+                        <div class="col-md-4">
                             <label for="chequePayee" class="form-label">Payee Name</label>
                             <input type="text" id="chequePayee" name="cheque_payee" class="form-control"
-                                placeholder="Enter Payee Name">
+                                placeholder="Enter Payee Name"
+                                value="{{ old('cheque_payee', $po->cheque_payee ?? '') }}">
                         </div>
                     </div>
+
 
                     <!-- PDF Preview Section -->
                     <div id="pdfPreviewContainer" class="mt-4 d-none">
@@ -244,15 +264,15 @@
                         <div class="col-md-4">
                             <label for="beneficiaryName" class="form-label">Beneficiary Name</label>
                             <input type="text" id="beneficiaryName" name="beneficiary_name" class="form-control"
-                                placeholder="Enter Beneficiary Name" value="{{$po->beneficiary_name ?? ''}}">
+                                placeholder="Enter Beneficiary Name" value="{{ $po->beneficiary_name ?? '' }}">
                         </div>
                         <div class="col-md-4">
                             <label for="iban" class="form-label">IBAN/Account Number</label>
                             <input type="text" id="iban" name="iban" class="form-control"
-                                placeholder="Enter IBAN/Account" value="{{$po->iban ?? ''}}">
+                                placeholder="Enter IBAN/Account" value="{{ $po->iban ?? '' }}">
                         </div>
                         <div class="col-md-4">
-                            <label for="bankAmount" class="form-label">Total Bank  Transfer Amount</label>
+                            <label for="bankAmount" class="form-label">Total Bank Transfer Amount</label>
                             <input type="text" id="bankAmount" name="total_bank_transfer" class="form-control"
                                 value="{{ old('total_bank_transfer', isset($po->total_bank_transfer) ? number_format($po->total_bank_transfer, 0) : '') }}"
                                 placeholder="Enter total transfer amount" oninput="formatNumber(this)">
@@ -262,12 +282,12 @@
                         <div class="col-md-4">
                             <label for="bankName" class="form-label">Bank Name</label>
                             <input type="text" id="bankName" name="bank_name" class="form-control"
-                                placeholder="Enter Bank Name" value="{{$po->bank_name ?? ''}}">
+                                placeholder="Enter Bank Name" value="{{ $po->bank_name ?? '' }}">
                         </div>
                         <div class="col-md-8">
                             <label for="bankTransfer" class="form-label">Details</label>
                             <textarea id="bankTransfer" name="bank_transfer_details" class="form-control" placeholder="Enter Paid To"
-                                rows="3">{{$po->bank_transfer_details ?? ''}}</textarea>
+                                rows="3">{{ $po->bank_transfer_details ?? '' }}</textarea>
                         </div>
 
                     </div>
