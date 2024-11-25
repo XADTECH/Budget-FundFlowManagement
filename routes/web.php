@@ -126,7 +126,6 @@ Route::middleware(['checklogin'])->group(function () {
 
     Route::get('/download-bank-excel', [ImportExportController::class, 'bankexport'])->name('banks.download');
 
-
     //Project Budget import export
     Route::get('/salary/export/{id}', [ImportExportController::class, 'salaryexport'])->name('sarlary-export');
 
@@ -249,27 +248,37 @@ Route::middleware(['checklogin'])->group(function () {
     Route::get('/download-pdf/cashflow-report/{POID}', [PdfController::class, 'downloadCashFlow'])->name('download.cashflow');
     Route::get('/download-budget-summary/{POID}', [PdfController::class, 'budgetSummary'])->name('download.budgetSummary');
 
-    //add purchase order
-    Route::get('/pages/add-budget-project-payment-order', [PaymentOrder::class, 'addPaymentOrder'])->name('add-budget-project-payment-order');
+    //add payment order
+    Route::get('/pages/payment-orders/create', [PaymentOrder::class, 'create'])->name('paymentOrders.create');
 
-    //store payment order 
-    Route::post('/pages/store-budget-project-payment-order', [PaymentOrder::class, 'storePaymentOrder'])->name('paymentOrder.store');
-
-    //show payment order 
-    Route::post('/payment-order', [PaymentOrder::class, 'show'])->name('paymentOrder.show');
- 
+    //store a new payment order
+    Route::post('/pages/payment-orders', [PaymentOrder::class, 'store'])->name('paymentOrders.store');
     
-    //add purchase order
+    //payment order list 
+    Route::get('pages/payment-order-list', [PaymentOrder::class, 'list'])->name('paymentOrders.list');
+
+    // Show a specific payment order (e.g., by ID)
+    Route::get('/payment-orders/{id}', [PaymentOrder::class, 'show'])->name('paymentOrders.show');
+
+
+    Route::put('/payment-orders/{id}', [PaymentOrder::class, 'update'])->name('paymentOrders.update');
+
+
+    //store purchase order
     Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name('add-budget-project-purchase-order');
+    
+    //add purchase order 
     Route::get('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'addPurchaseOrder'])->name('add-budget-project-purchase-order');
 
+    //store purchase order
     Route::post('/payment-orders', [PaymentOrderController::class, 'store'])->name('payment-orders.store');
 
     //edit purchase order
     Route::get('/purchase-order/edit/{POID}', [PurcahseOrderController::class, 'editPurchaseOrder'])->name('purchaseOrder.edit');
 
     //show purchase order
-    Route::get('/pages/show-budget-project-purchase-order', [PurcahseOrderController::class, 'showPurchaseOrder'])->name('add-budget-capital-expense');
+    // Route::get('/pages/show-budget-project-purchase-order', [PurcahseOrderController::class, 'showPurchaseOrder'])->name('add-budget-capital-expense');
+    
     //show purchase order
     Route::get('/pages/show-budget-project-purchase-order', [PurcahseOrderController::class, 'showPurchaseOrder'])->name('add-budget-capital-expense');
 

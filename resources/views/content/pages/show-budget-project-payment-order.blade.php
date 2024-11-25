@@ -97,23 +97,53 @@
         }
     </style>
 
+
+    @if ($errors->any())
+        <div class="alert alert-danger" id="error-alert">
+            <!-- <button type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button> -->
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success" id="success-alert">
+            <!-- <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button> -->
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="container">
-        <form action="" method="POST">
+        <form action="{{ route('paymentOrders.update', ['id' => $po->payment_order_number]) }}" method="POST">
             @csrf
+            @method('PUT') <!-- Indicates a PUT request -->
             <!-- Payment Order Details -->
             <div class="form-section">
                 <h4>Payment Order Details</h4>
                 <div class="row">
                     <div class="col-md-4">
-                        <label for="poNumber" class="form-label">Payment Order No.</label>
-                        <input type="text" id="poNumber" name="po_number" class="form-control"
-                            placeholder="Enter PO Number" value="{{ $po->payment_order_number ?? 'No Value' }}" required>
+                        <label for="payment_order_number" class="form-label">Payment Order Number</label>
+                        <input type="text" id="payment_order_number" name="payment_order_number" class="form-control"
+                            value="{{ $po->payment_order_number ?? 'No Value' }}" readonly>
                     </div>
-                    {{-- <div class="col-md-4">
-                    <label for="date" class="form-label">Date</label>
-                    <input type="date" id="date" name="date" class="form-control" required>
-                </div> --}}
+                    <div class="col-md-4">
+                        <label for="budget_reference_code" class="form-label">Budget Project</label>
+                        <input type="text" id="budget_reference_code" name="budget_reference_code" class="form-control"
+                            value="{{ $budget->reference_code ?? 'No Value' }}" readonly>
+                    </div>
 
+                    <div class="col-md-4">
+                        <label for="project_name" class="form-label">Project Name</label>
+                        <input type="text" id="project_name" name="project_name" class="form-control"
+                            value="{{ $project->name ?? 'No Value' }}" readonly>
+                    </div>
                 </div>
             </div>
 
@@ -124,14 +154,28 @@
                 <div id="cashFields" class="form-section">
                     <h4>Cash Payment Details</h4>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="cashReceivedBy" class="form-label">Received By</label>
                             <input type="text" id="cashReceivedBy" name="cash_received_by" class="form-control"
-                                placeholder="Enter Receiver's Name" required>
+                                placeholder="Enter Receiver's Name" value="{{ $po->cash_received_by ?? '' }}">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="cashDate" class="form-label">Payment Date</label>
-                            <input type="date" id="cashDate" name="cash_date" class="form-control" required>
+                            <input type="date" id="cashDate" name="cash_date" class="form-control"
+                                value="{{ optional($po)->cash_date ? \Carbon\Carbon::parse($po->cash_date)->format('Y-m-d') : '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="cashAmount" class="form-label">Cash Amount</label>
+                            <input type="text" id="cashAmount" name="cash_amount" class="form-control"
+                                value="{{ old('cash_amount', isset($po->cash_amount) ? number_format($po->cash_amount, 0) : '') }}"
+                                placeholder="Enter cash amount" oninput="formatNumber(this)">
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <label for="cashDetail" class="form-label">Cash Detail</label>
+                            <textarea id="cashDetail" name="cash_detail" class="form-control" rows="2"
+                                placeholder="Enter cash details here...">{{ old('cash_detail', $po->cash_detail ?? '') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -140,15 +184,21 @@
                 <div id="onlineTransactionFields" class="form-section">
                     <h4>Online Transaction Details</h4>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="transaction_number" class="form-label">Transaction Number</label>
-                            <input type="text" id="transaction_number" name="transaction_id" class="form-control"
-                                placeholder="Enter Transaction ID" required>
+                            <input type="text" id="transaction_number" name="transaction_number" class="form-control"
+                                placeholder="Enter Transaction ID" value="{{ $po->transaction_number ?? '' }}">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label for="transactionAmount" class="form-label">Transaction Amount</label>
+                            <input type="text" id="transactionAmount" name="transaction_amount" class="form-control"
+                                value="{{ old('transaction_amount', isset($po->transaction_amount) ? number_format($po->transaction_amount, 0) : '') }}"
+                                placeholder="Enter transaction amount" oninput="formatNumber(this)">
+                        </div>
+                        <div class="col-md-4">
                             <label for="transaction_detail" class="form-label">Transaction Detail</label>
-                            <textarea id="transaction_detail" name="payment_gateway" class="form-control" placeholder="Please enter detail..."
-                                required></textarea>
+                            <textarea id="transaction_detail" name="transaction_detail" class="form-control"
+                                placeholder="Please enter detail..." rows="3">{{ $po->transaction_detail ?? '' }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -160,23 +210,23 @@
                         <div class="col-md-6">
                             <label for="chequeNumber" class="form-label">Cheque Number</label>
                             <input type="text" id="chequeNumber" name="cheque_number" class="form-control"
-                                placeholder="Enter Cheque Number" required>
+                                placeholder="Enter Cheque Number">
                         </div>
                         <div class="col-md-6">
                             <label for="chequeDate" class="form-label">Cheque Date</label>
-                            <input type="date" id="chequeDate" name="cheque_date" class="form-control" required>
+                            <input type="date" id="chequeDate" name="cheque_date" class="form-control">
                         </div>
                     </div>
                     <div class="row mt-3">
                         <div class="col-md-6">
                             <label for="chequeFile" class="form-label">Upload Cheque (PDF)</label>
                             <input type="file" id="chequeFile" name="cheque_file" class="form-control"
-                                accept="application/pdf" onchange="previewPDF(event)" required>
+                                accept="application/pdf" onchange="previewPDF(event)">
                         </div>
                         <div class="col-md-6">
                             <label for="chequePayee" class="form-label">Payee Name</label>
                             <input type="text" id="chequePayee" name="cheque_payee" class="form-control"
-                                placeholder="Enter Payee Name" required>
+                                placeholder="Enter Payee Name">
                         </div>
                     </div>
 
@@ -186,37 +236,44 @@
                         <embed id="pdfPreview" src="" type="application/pdf" width="100%" height="400px" />
                     </div>
                 </div>
-        @elseif($po->payment_method === 'bank transfer')
-            <!-- Bank Transfer -->
-            <div id="bankTransferFields" class="form-section">
-                <h4>Bank Transfer Details</h4>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="beneficiaryName" class="form-label">Beneficiary Name</label>
-                        <input type="text" id="beneficiaryName" name="beneficiary_name" class="form-control"
-                            placeholder="Enter Beneficiary Name" required>
+            @elseif($po->payment_method === 'bank transfer')
+                <!-- Bank Transfer -->
+                <div id="bankTransferFields" class="form-section">
+                    <h4>Bank Transfer Details</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="beneficiaryName" class="form-label">Beneficiary Name</label>
+                            <input type="text" id="beneficiaryName" name="beneficiary_name" class="form-control"
+                                placeholder="Enter Beneficiary Name" value="{{$po->beneficiary_name ?? ''}}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="iban" class="form-label">IBAN/Account Number</label>
+                            <input type="text" id="iban" name="iban" class="form-control"
+                                placeholder="Enter IBAN/Account" value="{{$po->iban ?? ''}}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="bankAmount" class="form-label">Total Bank  Transfer Amount</label>
+                            <input type="text" id="bankAmount" name="total_bank_transfer" class="form-control"
+                                value="{{ old('total_bank_transfer', isset($po->total_bank_transfer) ? number_format($po->total_bank_transfer, 0) : '') }}"
+                                placeholder="Enter total transfer amount" oninput="formatNumber(this)">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="iban" class="form-label">IBAN/Account Number</label>
-                        <input type="text" id="iban" name="iban" class="form-control"
-                            placeholder="Enter IBAN/Account" required>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label for="bankName" class="form-label">Bank Name</label>
+                            <input type="text" id="bankName" name="bank_name" class="form-control"
+                                placeholder="Enter Bank Name" value="{{$po->bank_name ?? ''}}">
+                        </div>
+                        <div class="col-md-8">
+                            <label for="bankTransfer" class="form-label">Details</label>
+                            <textarea id="bankTransfer" name="bank_transfer_details" class="form-control" placeholder="Enter Paid To"
+                                rows="3">{{$po->bank_transfer_details ?? ''}}</textarea>
+                        </div>
+
                     </div>
                 </div>
-                <div class="row mt-3">
-                    <div class="col-md-6">
-                        <label for="bankName" class="form-label">Bank Name</label>
-                        <input type="text" id="bankName" name="bank_name" class="form-control"
-                            placeholder="Enter Bank Name" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="paidTo" class="form-label">Paid To</label>
-                        <input type="text" id="paidTo" name="paid_to" class="form-control"
-                            placeholder="Enter Paid To" required>
-                    </div>
-                </div>
-            </div>
-        @else
-            <p class="text-muted">Please select a valid payment method to see relevant fields.</p>
+            @else
+                <p class="text-muted">Please select a valid payment method to see relevant fields.</p>
             @endif
 
 
@@ -229,43 +286,111 @@
                             <tr>
                                 <th>Description</th>
                                 <th>Amount</th>
-                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="paymentItems">
-                            <!-- Rows will be added dynamically -->
+                            <!-- Check if item_description and item_amount exist -->
+                            @if (isset($po->item_description) && isset($po->item_amount))
+                                @php
+                                    // Decode JSON strings into PHP arrays
+                                    $itemDescriptions = json_decode($po->item_description, true);
+                                    $itemAmounts = json_decode($po->item_amount, true);
+                                @endphp
+
+                                @foreach ($itemDescriptions as $index => $description)
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="item_description[]" class="form-control"
+                                                value="{{ $description }}" placeholder="Enter Description"
+                                                {{ isset($po) && $po->submit_status === 'Submitted' ? 'readonly' : '' }}>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="item_amount[]" class="form-control"
+                                                value="{{ number_format((float) $itemAmounts[$index], 0) }}"
+                                                placeholder="Enter Amount"
+                                                {{ isset($po) && $po->submit_status === 'Submitted' ? 'readonly' : '' }}
+                                                oninput="formatNumber(this)">
+                                        </td>
+                                        <td>
+                                            @if (isset($po) && $po->submit_status !== 'Submitted')
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="removeItem(this)">Remove</button>
+                                            @else
+                                                <span class="text-muted">Locked</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
                         </tbody>
                     </table>
                 </div>
-                <div class="add-item-btn" onclick="addItem()">+ Add Item</div>
+
+                @if (isset($po) && $po->submit_status === 'Submitted')
+                    <div class="add-item-btn disabled" style="opacity: 0.6;"
+                        title="Cannot add items to a submitted order">
+                        + Add Item
+                    </div>
+                @else
+                    <div class="add-item-btn" onclick="addItem()">+ Add Item</div>
+                @endif
             </div>
+
 
             <!-- Budget Summary -->
             <div class="form-section">
                 <h4>Budget Summary</h4>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="totalBudget" class="form-label">Total Budget</label>
                         <input type="text" id="totalBudget" name="total_budget" class="form-control"
-                            placeholder="Enter Total Budget" required>
+                            placeholder="Enter Total Budget"
+                            value="{{ number_format($allocatedBudget->allocated_budget, 0) }}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="utilization" class="form-label">Utilization</label>
                         <input type="text" id="utilization" name="utilization" class="form-control"
-                            placeholder="Enter Utilization" required>
+                            placeholder="Enter Utilization"
+                            value="{{ number_format($allocatedBudget->total_dpm + $allocatedBudget->total_lpo, 0) }}"
+                            readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="balance" class="form-label">Balance</label>
                         <input type="text" id="balance" name="balance" class="form-control"
-                            placeholder="Enter Balance" required>
+                            placeholder="Enter Balance"
+                            value="{{ number_format($allocatedBudget->allocated_budget - ($allocatedBudget->total_dpm + $allocatedBudget->total_lpo), 0) }}"
+                            readonly>
                     </div>
+                    <div class="col-sm-3">
+                        <label for="bank_payment_id" class="form-label">Bank Receiving</label>
+                        <select id="bank_payment_id" name="bank_payment_id" class="form-select">
+                            <option value="">Select Payment Account</option>
+                            @foreach ($banks as $bank)
+                                <option value="{{ $bank->id }}" @if (isset($po) && $po->bank_payment_id == $bank->id) selected @endif>
+                                    {{ $bank->bank_name }} - {{ $bank->country }} - {{ $bank->region }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                 </div>
             </div>
 
+            <input type="hidden" value="{{ $po->payment_method }}" name="payment_order_method" />
+
             <!-- Submit Button -->
             <div class="text-end mt-4">
-                <button type="submit" class="btn btn-primary">Submit Payment Order</button>
+                @if (isset($po) && $po->submit_status !== 'Submitted')
+                    <button type="submit" class="btn btn-primary">
+                        Submit Payment Order
+                    </button>
+                @else
+                    <button type="submit" class="btn btn-primary" disabled>
+                        Submitted
+                    </button>
+                @endif
             </div>
         </form>
     </div>
@@ -277,15 +402,9 @@
             const row = document.createElement('tr');
 
             row.innerHTML = `
-            <td><input type="text" name="item_description[]" class="form-control" placeholder="Enter Description" required></td>
-            <td><input type="number" name="item_amount[]" class="form-control" placeholder="Enter Amount" required></td>
-            <td>
-                <select name="item_status[]" class="form-control">
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                </select>
-            </td>
+            <td><input type="text" name="item_description[]" class="form-control" placeholder="Enter Description" ></td>
+            <td><input type="text" name="item_amount[]" class="form-control" placeholder="Enter Amount"  oninput="formatNumber(this)"></td>
+      
             <td><button type="button" class="btn btn-danger" onclick="removeItem(this)">Remove</button></td>
         `;
 
@@ -309,6 +428,19 @@
         // Remove an item from the table
         function removeItem(button) {
             button.closest('tr').remove();
+        }
+
+        function formatNumber(input) {
+            // Remove any existing commas
+            let value = input.value.replace(/,/g, '');
+
+            // Ensure it is a number
+            if (!isNaN(value) && value !== '') {
+                // Add commas for thousands separator
+                input.value = parseFloat(value).toLocaleString('en-US');
+            } else {
+                input.value = ''; // Reset if not a valid number
+            }
         }
     </script>
 
