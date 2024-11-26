@@ -35,7 +35,9 @@
         @if (Auth::user()->role == 'Logistics' )
         @include('layouts.sections.menu.logisticssidebar')
         @endif
-
+        @if (Auth::user()->role == 'Cashier' )
+        @include('layouts.sections.menu.cashiersidebar')
+        @endif
 
     </ul>
 
