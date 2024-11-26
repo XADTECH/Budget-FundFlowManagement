@@ -24,10 +24,6 @@
         @endif
 
 
-        @if (Auth::user()->role == 'Project Manager')
-        @include('layouts.sections.menu.pmosidebar')
-        @endif
-
         @if (Auth::user()->role == 'Finance Manager' )
         @include('layouts.sections.menu.financesidebar')
         @endif
