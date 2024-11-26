@@ -29,6 +29,10 @@
         @if (Auth::user()->role == 'Finance Manager' )
         @include('layouts.sections.menu.financesidebar')
         @endif
+        @if (Auth::user()->role == 'Logistics' )
+        @include('layouts.sections.menu.logisticssidebar')
+        @endif
+
     </ul>
 
 </aside>
