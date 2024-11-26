@@ -20,6 +20,7 @@ class User extends Authenticatable
   const ROLE_CEO = 'CEO';
   const ROLE_SUBADMIN = 'SubAdmin';
   const ROLE_USER = 'User';
+  const ROLE_LOGISTICS = 'Logistics';
 
   /**
    * The attributes that are mass assignable.
@@ -72,6 +73,7 @@ class User extends Authenticatable
       self::ROLE_CEO,
       self::ROLE_SUBADMIN,
       self::ROLE_USER,
+      self::ROLE_LOGISTICS,
     ];
   }
 }

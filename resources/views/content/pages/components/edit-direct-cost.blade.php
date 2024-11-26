@@ -1071,6 +1071,21 @@
 
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const successMessage = urlParams.get('success');
+        if (successMessage) {
+            showAlert('success', decodeURIComponent(successMessage));
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    });
+
+    function handleSuccess(message) {
+        window.location.href = window.location.pathname + '?success=' + encodeURIComponent(message);
+    }
+
+
     function materialtriggerFileUpload() {
         document.getElementById('material-file-upload').click();
     }
@@ -1286,12 +1301,8 @@
             data: form.serialize(),
             success: function(data) {
                 if (data.success) {
-                    showAlert('success', 'record updated successfully.');
                     $('#editSalaryModal').modal('hide');
-                    // Refresh the salary table or update the specific row
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000)
+                    handleSuccess('Record updated successfully');
                 } else {
                     alert('Error updating salary data');
                 }
@@ -1376,12 +1387,8 @@
             data: form.serialize(),
             success: function(data) {
                 if (data.success) {
-                    showAlert('success', 'record updated successfully.');
                     $('#editFacilitiesModal').modal('hide');
-                    // Refresh the salary table or update the specific row
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000)
+                    handleSuccess('Material cost updated successfully');
                 } else {
                     alert('Error updating salary data');
                 }
@@ -1425,10 +1432,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showAlert('success', data.success);
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000)
+                    handleSuccess('Record deleted successfully');
                 } else {
                     showAlert('danger', data.message || 'An error occurred while deleting the User record.');
                 }
@@ -1467,10 +1471,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showAlert('success', data.success);
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000)
+                    handleSuccess('Record deleted successfully');
                 } else {
                     showAlert('danger', data.message || 'An error occurred while deleting the User record.');
                 }
@@ -1534,11 +1535,8 @@
             data: form.serialize(),
             success: function(data) {
                 if (data.success) {
-                    showAlert('success', 'Material cost updated successfully.');
                     $('#editMaterialModal').modal('hide');
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000);
+                    handleSuccess('Material cost updated successfully');
                 } else {
                     alert('Error updating material data');
                 }
@@ -1585,10 +1583,7 @@
                 .then(data => {
                     console.log(data)
                     if (data.success) {
-                        showAlert('success', "Cost is Deleted SuccessFully");
-                        setTimeout(() => {
-                            window.location.reload()
-                        }, 2000)
+                        handleSuccess('Record deleted successfully');
                     } else {
                         showAlert('danger', data.message || 'An error occurred while deleting the User record.');
                     }
@@ -1607,6 +1602,7 @@
     });
 
 
+
     function showAlert(type, message) {
         const alertBox = document.getElementById('responseAlertnew');
         const alertMessage = document.getElementById('alertMessagenew');
@@ -1614,7 +1610,6 @@
         alertMessage.textContent = message;
         alertBox.style.display = 'block';
 
-        // Hide the alert after 3 seconds
         setTimeout(() => {
             alertBox.style.display = 'none';
         }, 3000);

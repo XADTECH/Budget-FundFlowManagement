@@ -444,12 +444,10 @@
                 console.log('Status Code:', jqXHR.status);
 
                 if (data.success) {
-                    showAlert('success', 'Record updated successfully.');
                     $('#editCapitalExpense').modal('hide');
                     // Refresh the page or update the specific row
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
+                    handleSuccess('Record updated successfully');
+
                 } else {
                     console.log('Server returned an error:', data);
                     alert('Error updating salary data');
@@ -511,10 +509,8 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showAlert('success', data.success);
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000)
+                    handleSuccess('Record deleted successfully');
+
                 } else {
                     showAlert('danger', data.message || 'An error occurred while deleting the User record.');
                 }

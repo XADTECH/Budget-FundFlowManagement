@@ -30,6 +30,8 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
     }
     public function model(array $row)
     {
+
+        // dd($row);
         // Find the related budget project
         $budgetProject = BudgetProject::find($this->bg_id);
         $directCost = DirectCost::firstOrNew([
@@ -40,9 +42,11 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
         if (!$directCost->exists) {
             $directCost->save();
         }
+
         // Conditionally store fields based on the expense type
         if ($row['expense_head'] === 'consumed_material' || $row['expense_head'] === 'consumed material') {
-            
+
+
             $materialCost = new MaterialCost();
             $materialCost->expense_head = $row['expense_head'];
             $materialCost->expenses = $row['expenses'];
@@ -67,7 +71,7 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
 
             // Redirect back to the edit page with a success message
             return;
-        } elseif ($row['expense'] === 'petty_cash') {
+        } elseif ($row['expenses'] === 'petty_cash') {
             // Check if the petty cash amount already exists for the project
             $existingPettyCash = PettyCash::where('project_id', $row['project_id'])
                 ->where('amount', $row['petty_cash_amount'])
@@ -111,7 +115,7 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
             'project' => 'nullable', // Project name
             'po' => 'nullable', // Type of expense (e.g., OPEX)
             'expense_head' => 'nullable', // Specific expense (e.g., Salary, Materials)
-            'expenses' => 'nullable', // Specific expense (e.g., Salary, Materials)
+            'expense' => 'nullable', // Specific expense (e.g., Salary, Materials)
             'description' => 'nullable', // Description of the material or details
             'status' => 'nullable', // Status of the budget entry (e.g., New Hiring, Purchased)
             'quantity' => 'nullable', // Amount of material (e.g., 100, 50)
