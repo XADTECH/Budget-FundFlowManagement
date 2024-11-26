@@ -249,13 +249,13 @@
                         </div>
                     </div>
 
-
                     <!-- PDF Preview Section -->
                     <div id="pdfPreviewContainer" class="mt-4 d-none">
                         <h5>PDF Preview:</h5>
                         <embed id="pdfPreview" src="" type="application/pdf" width="100%" height="400px" />
                     </div>
                 </div>
+                
             @elseif($po->payment_method === 'bank transfer')
                 <!-- Bank Transfer -->
                 <div id="bankTransferFields" class="form-section">
