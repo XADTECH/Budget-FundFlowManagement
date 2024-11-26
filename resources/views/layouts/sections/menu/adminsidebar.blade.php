@@ -93,15 +93,14 @@
 
 
   <!-- payment Order -->
-  <li class="menu-item {{ request()->is('pages/add-budget-project-payment-order') ? 'active open' : '' }}">
+  <li class="menu-item {{ request()->is('pages/payment-orders/create') ? 'active open' : '' }}">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-dollar"></i>
           <div>Payment Order</div>
       </a>
       <ul class="menu-sub">
-          <li
-              class="menu-item {{ request()->is('pages/add-budget-project-payment-order') ? 'active' : '' }}">
-              <a href="/pages/add-budget-project-payment-order" class="menu-link">
+          <li class="menu-item {{ request()->is('pages/payment-orders/create') ? 'active' : '' }}">
+              <a href="/pages/payment-orders/create" class="menu-link">
                   <div>Add Payment Order</div>
               </a>
           </li>
@@ -170,6 +169,11 @@
           <li class="menu-item {{ request()->routeIs('show-allocated-budgets') ? 'active' : '' }}">
               <a href="{{ route('show-allocated-budgets') }}" class="menu-link">
                   <div>Track Budget</div>
+              </a>
+          </li>
+          <li class="menu-item {{ request()->routeIs('paymentOrders.list') ? 'active' : '' }}">
+              <a href="{{ route('paymentOrders.list') }}" class="menu-link">
+                  <div>Payment Orders</div>
               </a>
           </li>
       </ul>
