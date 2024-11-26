@@ -24,8 +24,6 @@
         @endif
 
 
-
-
         @if (Auth::user()->role == 'Project Manager')
         @include('layouts.sections.menu.pmosidebar')
         @endif
