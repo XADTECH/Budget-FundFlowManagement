@@ -267,6 +267,7 @@ class PurcahseOrderController extends Controller
 
     public function filterPurchaseOrders(Request $request)
     {
+
         $projects = BudgetProject::all();
         $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
         $budgetList = BudgetProject::get();
@@ -291,7 +292,7 @@ class PurcahseOrderController extends Controller
             $query->whereDate('po_number', $request->po_number);
         }
 
-        $purchaseOrders = $query->get();
+        $purchaseOrders = $query->get(); 
 
         return view('content.pages.pages-filter-purchase-order-list', compact('purchaseOrders', 'projects', 'users', 'userList', 'budgetList', 'totalBudgetAllocated'));
     }

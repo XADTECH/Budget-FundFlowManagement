@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 18, 2024 at 07:12 AM
+-- Generation Time: Nov 25, 2024 at 06:31 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -316,15 +316,15 @@ INSERT INTO `cost_overhead` (`id`, `in_direct_cost_id`, `budget_project_id`, `ty
 (14, 3, 2, 'OverHead Cost', '2', 'OPEX', 'Visa Renewal', 68.64, '2024-10-01 08:56:17', '2024-10-01 08:58:04'),
 (15, 3, 2, 'OverHead Cost', '2', 'OPEX', 'Depreciation Tools', 1.83, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
 (21, 5, 5, 'OverHead Cost', '5', 'OPEX', 'HO Cost', 2244.34, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
-(22, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Annual Benefit', 0.59, '2024-10-03 07:20:51', '2024-11-15 06:36:20'),
+(22, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Annual Benefit', 0.59, '2024-10-03 07:20:51', '2024-11-18 03:27:15'),
 (23, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Insurance Cost', 359.72, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
 (24, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Visa Renewal', 813.28, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
-(25, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Depreciation Tools', 11504.17, '2024-10-03 07:20:51', '2024-11-15 06:36:20'),
-(26, 6, 8, 'OverHead Cost', '8', 'OPEX', 'HO Cost', 688.80, '2024-11-04 10:46:24', '2024-11-15 06:37:15'),
+(25, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Depreciation Tools', 11504.17, '2024-10-03 07:20:51', '2024-11-18 03:27:15'),
+(26, 6, 8, 'OverHead Cost', '8', 'OPEX', 'HO Cost', 688.80, '2024-11-04 10:46:24', '2024-11-18 03:13:43'),
 (27, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Annual Benefit', 0.18, '2024-11-04 10:46:24', '2024-11-04 10:51:43'),
-(28, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Insurance Cost', 110.40, '2024-11-04 10:46:24', '2024-11-15 06:37:15'),
-(29, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Visa Renewal', 249.60, '2024-11-04 10:46:24', '2024-11-15 06:37:15'),
-(30, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Depreciation Tools', 0.00, '2024-11-04 10:46:24', '2024-11-15 06:37:15');
+(28, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Insurance Cost', 110.40, '2024-11-04 10:46:24', '2024-11-18 03:13:43'),
+(29, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Visa Renewal', 249.60, '2024-11-04 10:46:24', '2024-11-18 03:13:43'),
+(30, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Depreciation Tools', 0.00, '2024-11-04 10:46:24', '2024-11-18 03:13:43');
 
 -- --------------------------------------------------------
 
@@ -437,10 +437,10 @@ INSERT INTO `financial_cost` (`id`, `in_direct_cost_id`, `budget_project_id`, `t
 (4, 2, 1, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 2701.66, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
 (5, 3, 2, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 3075.00, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
 (6, 3, 2, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 615.00, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
-(9, 5, 5, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 51310.00, '2024-10-03 07:20:51', '2024-11-15 06:36:20'),
-(10, 5, 5, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 10262.00, '2024-10-03 07:20:51', '2024-11-15 06:36:20'),
-(11, 6, 8, 'Financial Cost', 'OPEX', '1', 'Risk', '0', 6250.00, '2024-11-04 10:46:24', '2024-11-15 06:37:15'),
-(12, 6, 8, 'Financial Cost', 'OPEX', '1', 'Financial Cost', '0', 1250.00, '2024-11-04 10:46:24', '2024-11-15 06:37:15');
+(9, 5, 5, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 51310.00, '2024-10-03 07:20:51', '2024-11-18 03:27:15'),
+(10, 5, 5, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 10262.00, '2024-10-03 07:20:51', '2024-11-18 03:27:15'),
+(11, 6, 8, 'Financial Cost', 'OPEX', '1', 'Risk', '0', 6250.00, '2024-11-04 10:46:24', '2024-11-18 03:13:43'),
+(12, 6, 8, 'Financial Cost', 'OPEX', '1', 'Financial Cost', '0', 1250.00, '2024-11-04 10:46:24', '2024-11-18 03:13:43');
 
 -- --------------------------------------------------------
 
@@ -699,7 +699,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (66, '2024_11_15_051004_create_remittance_transfers_table', 35),
 (67, '2024_11_12_054056_create_sender_table', 36),
 (68, '2024_11_12_054057_create_sender_table', 37),
-(69, '2024_11_15_111045_create_loans_table', 38);
+(69, '2024_11_15_111045_create_loans_table', 38),
+(70, '2024_12_32_114540_create_payment_orders_table', 39);
 
 -- --------------------------------------------------------
 
@@ -747,6 +748,49 @@ CREATE TABLE `password_reset_tokens` (
   `email` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_orders`
+--
+
+CREATE TABLE `payment_orders` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `payment_order_number` varchar(255) NOT NULL,
+  `payment_date` date NOT NULL,
+  `payment_method` varchar(255) NOT NULL,
+  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
+  `beneficiary_name` varchar(255) DEFAULT NULL,
+  `iban` varchar(255) DEFAULT NULL,
+  `bank_name` varchar(255) DEFAULT NULL,
+  `cash_amount` decimal(15,2) DEFAULT NULL,
+  `bank_payment_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `cash_detail` varchar(255) DEFAULT NULL,
+  `bank_detail` varchar(255) DEFAULT NULL,
+  `submit_status` varchar(255) DEFAULT NULL,
+  `bank_transfer_details` text DEFAULT NULL,
+  `cash_received_by` varchar(255) DEFAULT NULL,
+  `item_amount` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`item_amount`)),
+  `item_description` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`item_description`)),
+  `cash_date` date DEFAULT NULL,
+  `transaction_number` varchar(255) DEFAULT NULL,
+  `paid_status` varchar(255) NOT NULL DEFAULT 'not paid yet',
+  `transaction_detail` varchar(255) DEFAULT NULL,
+  `transaction_amount` decimal(15,2) DEFAULT NULL,
+  `cheque_number` varchar(255) DEFAULT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `cheque_date` date DEFAULT NULL,
+  `cheque_file` varchar(255) DEFAULT NULL,
+  `cheque_payee` varchar(255) DEFAULT NULL,
+  `total_budget` decimal(15,2) DEFAULT NULL,
+  `utilization` decimal(15,2) DEFAULT NULL,
+  `total_bank_transfer` decimal(15,2) DEFAULT NULL,
+  `balance` decimal(15,2) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -3638,6 +3682,13 @@ ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
+-- Indexes for table `payment_orders`
+--
+ALTER TABLE `payment_orders`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `payment_orders_payment_order_number_unique` (`payment_order_number`);
+
+--
 -- Indexes for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
@@ -3855,13 +3906,19 @@ ALTER TABLE `material_cost`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `noc_payments`
 --
 ALTER TABLE `noc_payments`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `payment_orders`
+--
+ALTER TABLE `payment_orders`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`

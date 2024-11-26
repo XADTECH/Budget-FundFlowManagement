@@ -9,15 +9,41 @@ class PaymentOrderModel extends Model
 {
     use HasFactory;
 
-    // Table associated with the model
+    use HasFactory;
+
     protected $table = 'payment_orders';
 
-    // Mass assignable attributes
     protected $fillable = [
         'payment_order_number',
         'payment_date',
         'payment_method',
+        'budget_project_id',
+        'beneficiary_name',
+        'iban',
+        'bank_name',
+        'bank_transfer_details',
+        'total_bank_transfer',
+        'cash_received_by',
+        'cash_date',
+        'transaction_number',
+        'transaction_detail',
+        'transaction_amount',
+        'cheque_number',
+        'cheque_date',
+        'cheque_file',
+        'total_cheque_amount',
+        'cash_amount',
+        'item_description',
+        'item_amount',
+        'bank_payment_id',
+        'cash_detail',
+        'submit_status',
+        'cheque_payee',
+        'total_budget',
+        'utilization',
+        'balance',
     ];
+
 
     /**
      * Generate a unique Payment Order number
