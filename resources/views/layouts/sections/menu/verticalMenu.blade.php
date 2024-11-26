@@ -24,10 +24,6 @@
         @endif
 
 
-        @if (Auth::user()->role == 'Project Manager')
-        @include('layouts.sections.menu.pmosidebar')
-        @endif
-
         @if (Auth::user()->role == 'Finance Manager' )
         @include('layouts.sections.menu.financesidebar')
         @endif
@@ -35,7 +31,9 @@
         @if (Auth::user()->role == 'Logistics' )
         @include('layouts.sections.menu.logisticssidebar')
         @endif
-
+        @if (Auth::user()->role == 'Cashier' )
+        @include('layouts.sections.menu.cashiersidebar')
+        @endif
 
     </ul>
 
