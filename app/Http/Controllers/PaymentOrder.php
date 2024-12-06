@@ -33,6 +33,9 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Models\Invoice;
+use App\Models\RemittanceTransfer;
+use App\Models\TransferFromManagement;
 
 class PaymentOrder extends Controller
 {
@@ -48,36 +51,29 @@ class PaymentOrder extends Controller
     //store payment order
     public function store(Request $request)
     {
-        // Validate the request
+        // return response($request->all());
+
         $validated = $request->validate([
-            'payment_date' => 'required|date',
-            'payment_method' => 'required|string',
-            'budget_project_id' => 'required|string',
+            'to_date' => 'required|date',
+            'company_name' => 'required|string',
         ]);
 
         $currentUser = auth()->user();
 
         // Extract formatted date (DDMMYYYY)
-        $formattedDate = Carbon::parse($validated['payment_date'])->format('dmy');
-
-        // Convert payment method to uppercase and replace spaces with dashes
-        $formattedMethod = Str::upper(Str::slug($validated['payment_method'], '-'));
+        $formattedDate = Carbon::parse($validated['to_date'])->format('dmy');
 
         // Generate a random 3-letter string
         $randomLetters = strtoupper(Str::random(3)); // Generate a random string of 3 characters and convert to uppercase
 
-        // Format the method and date
-        $formattedMethod = Str::upper(Str::slug($validated['payment_method'], '-'));
-
         // Generate unique payment order number
-        $paymentOrderNumber = "PO{$formattedDate}-{$formattedMethod}-{$randomLetters}";
+        $paymentOrderNumber = "PO{$formattedDate}-{$randomLetters}";
 
         // Create the payment order
         $paymentOrder = [
             'payment_order_number' => $paymentOrderNumber,
-            'payment_date' => $validated['payment_date'],
-            'payment_method' => $validated['payment_method'],
-            'budget_project_id' => $validated['budget_project_id'],
+            'payment_date' => $validated['to_date'],
+            'company_name' => $validated['company_name'],
             'created_at' => now(),
             'updated_at' => now(),
             'user_id' => $currentUser->id,
@@ -92,6 +88,8 @@ class PaymentOrder extends Controller
     public function show($id)
     {
         $po = PaymentOrderModel::where('payment_order_number', $id)->first();
+        $budgets = BudgetProject::all();
+        $banks = Bank::all();
 
         if (!$po) {
             return redirect()
@@ -99,14 +97,14 @@ class PaymentOrder extends Controller
                 ->withErrors(['error' => 'Payment Order not found.']);
         }
 
-        $budget = BudgetProject::where('id', $po->budget_project_id)->first();
-        $project = Project::find($budget->project_id);
+        $budgets = BudgetProject::all();
+
         $banks = Bank::all();
 
         $allocatedBudget = TotalBudgetAllocated::where('budget_project_id', $po->budget_project_id)->first();
 
         // Return the view with the payment order details
-        return view('content.pages.show-budget-project-payment-order', compact('po', 'banks', 'allocatedBudget', 'budget', 'project'));
+        return view('content.pages.show-budget-project-payment-order', compact('po', 'banks', 'allocatedBudget', 'budgets', 'budgets', 'banks'));
     }
 
     //update payment order
@@ -482,6 +480,73 @@ class PaymentOrder extends Controller
             return redirect()->back()->with('success', 'Payment order deleted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while deleting the payment order.');
+        }
+    }
+
+    //get total amount for payment order
+    public function getTotalAmount(Request $request)
+    {
+        // return response($request->all());
+        try {
+            $fundType = $request->input('fund_type');
+
+            // Fetch the project ID
+            $projectId = $request->project_id;
+            if (!$projectId) {
+                return response()->json(['error' => 'Invalid Project ID'], 404);
+            }
+
+            $totalAmount = 0;
+
+            // Handle fund type logic
+            switch ($fundType) {
+                case 'Invoice':
+                    // Calculate total amount from Invoice
+                    $invoiceAmount = Invoice::where('invoice_budget_project_id', $projectId)->sum('invoice_dr_amount_received');
+                    $totalAmount = $invoiceAmount;
+
+                    // Get a sample invoice record to retrieve bank-related info
+                    $invoiceRecord = Invoice::where('invoice_budget_project_id', $projectId)->first();
+                    $bankId = $invoiceRecord ? $invoiceRecord->invoice_destination_account : null;
+                    break;
+
+                case 'Remittance':
+                    // Calculate total amount from RemittanceTransfer
+                    $remittanceAmount = RemittanceTransfer::where('budget_project_id', $projectId)->sum('remittance_amount');
+                    $totalAmount = $remittanceAmount;
+
+                    // Get a sample remittance record to retrieve bank-related info
+                    $remittanceRecord = RemittanceTransfer::where('budget_project_id', $projectId)->first();
+                    $bankId = $remittanceRecord ? $remittanceRecord->remittance_destination_account : null;
+                    break;
+
+                case 'Transfer':
+                    // Calculate total amount from TransferFromManagement
+                    $transferAmount = TransferFromManagement::where('budget_project_id', $projectId)->sum('transfer_amount');
+                    $totalAmount = $transferAmount;
+
+                    // Get a sample transfer record to retrieve bank-related info
+                    $transferRecord = TransferFromManagement::where('budget_project_id', $projectId)->first();
+                    $bankId = $transferRecord ? $transferRecord->transfer_destination_account : null;
+                    break;
+
+                default:
+                    return response()->json(['error' => 'Invalid Fund Type'], 400);
+            }
+
+            // Return JSON response with total amount and bank id
+            return response()->json([
+                'total' => $totalAmount,
+                'bank_id' => $bankId,
+            ]);
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Error in getTotalAmount: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Return a generic error message
+            return response()->json(['error' => 'An error occurred while fetching the total amount. Please try again.'], 500);
         }
     }
 }

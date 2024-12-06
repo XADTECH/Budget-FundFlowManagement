@@ -181,9 +181,17 @@
                                     <option value="Fleet Management">Fleet Management</option>
                                     <option value="Auto Workshop">Auto Workshop</option>
                                     <option value="Etisalat Managed Service">Etisalat Managed Service</option>
+                                    <option value="Fixed Network">Fixed Network</option>
+                                    <option value="Mobile Network">Mobile Network</option>
                                     <option value="Other">Other</option>
                                 </select>
                             </div>
+                            <div class="col-sm-4">
+                                <label for="referenceID" class="form-label">Reference ID </label>
+                                <input type="text" class="form-control" name="reference_id"
+                                    placeholder="self reference ... AE-101H-DU-SO" />
+                            </div>
+
                         </div>
 
 

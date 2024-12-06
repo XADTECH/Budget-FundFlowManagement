@@ -23,7 +23,7 @@ use App\Models\RemittanceTransfer;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
 use App\Models\DirectCost;
-use App\Models\IndirectCost;
+use App\Models\InDirectCost;
 use App\Models\CashFlow;
 use App\Models\Invoice;
 use App\Models\ApprovedBudget;
@@ -400,7 +400,7 @@ class BudgetController extends Controller
 
         // Initialize DirectCost and IndirectCost for the project
         $directCost = DirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
-        $indirectCost = IndirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
+        $indirectCost = InDirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
 
         // Calculate total costs
         $totalDirectCost = $directCost->exists ? $directCost->calculateTotalDirectCost() : 0;
