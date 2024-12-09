@@ -665,6 +665,8 @@
                             <option value="consumed_material">Consumed Material</option>
                             <option value="petty_cash">Petty Cash</option>
                             <option value="noc_payment">NOC Payment</option>
+                            <option value="noc_payment">Third Party</option>
+                            <option value="noc_payment">SubContractor</option>
                         </select>
                     </div>
 

@@ -11,12 +11,15 @@ use App\Models\Project;
 use App\Models\Salary;
 use App\Models\CashFlow;
 use App\Models\Bank;
+use App\Models\BankBalance;
 use App\Models\PurchaseOrder;
 use App\Models\ProjectBudgetSequence;
 use App\Models\PurchaseOrderController;
 use App\Models\FacilityCost;
 use App\Models\CapitalExpenditure;
 use App\Models\MaterialCost;
+use App\Models\Sender;
+use App\Models\LedgerEntry;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
 use App\Models\DirectCost;
@@ -548,5 +551,35 @@ class PaymentOrder extends Controller
             // Return a generic error message
             return response()->json(['error' => 'An error occurred while fetching the total amount. Please try again.'], 500);
         }
+    }
+
+    public function getBankDetails(Request $request)
+    {
+        $projectId = $request->input('project_id');
+
+        // Get all bank balances for the given project, along with their associated banks
+        $bankBalances = BankBalance::with('bank')->where('budget_project_id', $projectId)->get();
+
+        // Group bank balances by bank_id
+        $banksGrouped = $bankBalances->groupBy('bank_id');
+
+        // Map over each bank group to summarize data
+        $response = $banksGrouped
+            ->map(function ($balances, $bankId) {
+                // Get the first related bank model (they should all share the same bank_id)
+                $bank = $balances->first()->bank;
+
+                // Sum all project balances for this bank
+                $projectBalance = $balances->sum('current_balance');
+
+                return [
+                    'name' => $bank->bank_name,
+                    'overall_balance' => $bank->current_balance,
+                    'project_balance' => $projectBalance,
+                ];
+            })
+            ->values();
+
+        return response()->json($response);
     }
 }

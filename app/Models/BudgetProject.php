@@ -39,6 +39,11 @@ class BudgetProject extends Model
         return $this->hasMany(MaterialCost::class, 'budget_project_id');
     }
 
+    public function bankBalances()
+    {
+        return $this->hasMany(BankBalance::class, 'budget_project_id');
+    }
+
     public function costOverheads()
     {
         return $this->hasMany(CostOverhead::class, 'budget_project_id');
@@ -201,11 +206,10 @@ class BudgetProject extends Model
         $totalCostOverheads = $this->costOverheads()->sum('amount');
         $totalFinancialCosts = $this->financialCosts()->sum('total_cost');
         $totalRevenuePlans = $this->revenuePlans()->sum('amount');
-    
+
         // Add up all the totals to get the overall total
-        $overallTotal = $totalSalaries + $totalFacilityCosts + $totalMaterialCosts +
-                        $totalCostOverheads + $totalFinancialCosts + $totalRevenuePlans;
-    
+        $overallTotal = $totalSalaries + $totalFacilityCosts + $totalMaterialCosts + $totalCostOverheads + $totalFinancialCosts + $totalRevenuePlans;
+
         // Return both individual costs and the overall total
         return [
             'total_salaries' => $totalSalaries,
@@ -214,9 +218,7 @@ class BudgetProject extends Model
             'total_cost_overheads' => $totalCostOverheads,
             'total_financial_costs' => $totalFinancialCosts,
             'total_revenue_plans' => $totalRevenuePlans,
-            'overall_total' => $overallTotal
+            'overall_total' => $overallTotal,
         ];
     }
-    
 }
-
