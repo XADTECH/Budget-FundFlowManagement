@@ -231,7 +231,7 @@
                             $clientName = $client ? $client->clientname : 'N/A'; // Handle cases where client is not found
 
                             $user = $users->firstWhere('id', $budget->manager_id);
-                            $userName = $user ? $user->first_name : 'N/A'; // Handle cases where client is not found
+                            $userName = $user ? $user->email : 'N/A'; // Handle cases where client is not found
 
                             $project = $projects->firstWhere('id', $budget->project_id);
                             $projectName = $project ? $project->name : 'N/A'; // Handle cases where client is not found

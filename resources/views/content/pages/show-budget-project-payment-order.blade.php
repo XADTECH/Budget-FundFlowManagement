@@ -63,13 +63,29 @@
             <button class="btn btn-secondary" onclick="history.back()">Back</button>
         </div>
 
+        @if ($errors->any())
+            <div class="alert alert-danger" id="error-alert">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        @if (session('success'))
+            <div class="alert alert-success" id="success-alert">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="text-center mb-4">
             <h5 class="header-title">{{ $po->company_name }}</h5>
             <p>Payment Order No: {{ $po->payment_order_number }}</p>
             <p>Date: {{ $po->payment_date }}</p>
         </div>
 
-        <form id="paymentForm" method="POST" action="{{ route('paymentOrders.store') }}">
+        <form id="paymentForm" method="POST" action="{{ route('PaymentOrderItems.store') }}">
             @csrf
             <div class="table-responsive">
                 <table id="paymentTable" class="table">
@@ -87,29 +103,73 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <select class="form-select project-dropdown" name="projectname[]">
-                                    <option disabled selected value>Choose</option>
-                                    @foreach ($budgets as $project)
-                                        <option value="{{ $project->id }}">{{ $project->reference_code }}</option>
+                        <!-- Loop through existing items -->
+                        @forelse ($items as $index => $item)
+                            <tr data-row-index="{{ $index }}">
+                                <td>
+                                    <select class="form-select project-dropdown" name="projectname[]">
+                                        @foreach ($budgets as $project)
+                                            <option value="{{ $project->id }}"
+                                                {{ $project->id == $item['budget_project_id'] ? 'selected' : '' }}>
+                                                {{ $project->reference_code }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td><input type="text" class="form-control" name="head[]" value="{{ $item['head'] }}"
+                                        required></td>
+                                <td><input type="text" class="form-control" name="description[]"
+                                        value="{{ $item['description'] }}" required></td>
+                                <td>
+                                    <div class="bank-container">
+                                        @foreach ($item['banks'] as $bankId => $bankAmount)
+                                        <div class="bank-entry">
+                                            <label>{{ $banks->find($bankId)->bank_name ?? '' }}:</label>
+                                            <input type="number" class="form-control bank-payment"
+                                                name="bank_amount[{{ $index }}][{{ $bankId }}]"
+                                                value="{{ is_scalar($bankAmount) ? $bankAmount : '' }}" step="0.01">
+                                        </div>
                                     @endforeach
-                                </select>
-                            </td>
-                            <td><input type="text" class="form-control" name="head[]" required></td>
-                            <td><input type="text" class="form-control" name="description[]" required></td>
-                            <td>
-                                <div class="bank-container"></div>
-                            </td>
-                            <td><input type="number" class="form-control balance-field" name="balance[]" readonly></td>
-                            <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]"
-                                    readonly></td>
-                            <td><input type="text" class="form-control" name="beneficiary_name[]" required></td>
-                            <td><input type="text" class="form-control" name="beneficiary_iban[]" required></td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
-                            </td>
-                        </tr>
+                                    </div>
+                                </td>
+                                <td><input type="number" class="form-control balance-field" name="balance[]"
+                                        value="{{ $item['balance'] }}" readonly></td>
+                                <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]"
+                                        value="{{ $item['paid_amount'] }}" readonly></td>
+                                <td><input type="text" class="form-control" name="beneficiary_name[]"
+                                        value="{{ $item['beneficiary_name'] }}" required></td>
+                                <td><input type="text" class="form-control" name="beneficiary_iban[]"
+                                        value="{{ $item['beneficiary_iban'] }}" required></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                                </td>
+                            </tr>
+                        @empty
+                            <!-- If no items, show an empty row -->
+                            <tr data-row-index="0">
+                                <td>
+                                    <select class="form-select project-dropdown" name="projectname[]">
+                                        <option value="" selected disabled>Select a project</option>
+                                        @foreach ($budgets as $project)
+                                            <option value="{{ $project->id }}">{{ $project->reference_code }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td><input type="text" class="form-control" name="head[]" required></td>
+                                <td><input type="text" class="form-control" name="description[]" required></td>
+                                <td>
+                                    <div class="bank-container"></div>
+                                </td>
+                                <td><input type="number" class="form-control balance-field" name="balance[]" readonly></td>
+                                <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]"
+                                        readonly></td>
+                                <td><input type="text" class="form-control" name="beneficiary_name[]" required></td>
+                                <td><input type="text" class="form-control" name="beneficiary_iban[]" required></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -118,6 +178,7 @@
                 <button type="submit" class="btn btn-primary">Submit Payment Order</button>
                 <button type="button" id="addRow" class="btn btn-success ms-2">Add Item</button>
             </div>
+            <input type="hidden" name="payment_order_id" value="{{ $po->id }}" />
         </form>
     </div>
 
@@ -129,76 +190,10 @@
 
     <script>
         $(document).ready(function() {
-            // Initialize Select2 for the project dropdown
             $('.project-dropdown').select2({
                 placeholder: "Select a project",
                 allowClear: true,
                 width: '100%'
-            });
-
-            $(document).on('change', '.project-dropdown', function() {
-                const row = $(this).closest('tr');
-                const projectId = $(this).val();
-                const bankContainer = row.find('.bank-container');
-
-                if (projectId) {
-                    $.ajax({
-                        url: "{{ route('getBankDetails') }}", // Route to fetch total amount
-                        method: "POST",
-                        data: {
-                            project_id: projectId, // Pass the selected project ID
-                            _token: "{{ csrf_token() }}" // CSRF token for security
-                        },
-                        success: function(response) {
-                            bankContainer.empty(); // Clear previous bank details
-
-                            response.forEach(bank => {
-                                const bankEntry = `
-                        <div class="bank-entry">
-                            <label>${bank.name} (${bank.project_balance}):</label>
-                            <input type="number" class="form-control bank-payment" placeholder="Enter Payment Amount" step="0.01">
-                        </div>`;
-                                bankContainer.append(bankEntry);
-                            });
-
-                            // Calculate the total balance and display in the balance field
-                            const totalBalance = response.reduce((sum, bank) => sum + bank
-                                .balance, 0);
-                            row.find('.balance-field').val(totalBalance);
-                        },
-                        error: function() {
-                            alert('Failed to fetch data. Please try again.');
-                        }
-                    });
-                } else {
-                    bankContainer.empty(); // Clear bank container if no project is selected
-                    row.find('.balance-field').val('');
-                }
-            });
-
-
-            // Add new row
-            $('#addRow').on('click', function() {
-                const newRow = $('#paymentTable tbody tr:first').clone();
-                newRow.find('input, select').val('');
-                newRow.find('.bank-container').empty();
-                $('#paymentTable tbody').append(newRow);
-
-                newRow.find('.project-dropdown').select2({
-                    placeholder: "Select a project",
-                    allowClear: true,
-                    width: '100%'
-                });
-            });
-
-            // Remove row
-            $(document).on('click', '.remove-row', function() {
-                const rows = $('#paymentTable tbody tr');
-                if (rows.length > 1) {
-                    $(this).closest('tr').remove();
-                } else {
-                    alert('At least one row is required.');
-                }
             });
         });
     </script>

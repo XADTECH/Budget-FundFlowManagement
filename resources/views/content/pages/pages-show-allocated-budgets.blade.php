@@ -148,6 +148,67 @@
         </div>
     @endif
 
+     <!-- Sender Dropdown Section -->
+     @if ($sndr && $sndr->isNotEmpty())
+     <div class="card mt-4">
+         <div class="card-body">
+             <div class="dropdown-section">
+                 <h3 class="dropdown-header" onclick="toggleDropdown(event)">Senders ▼ {{ $sndr->count() }}</h3>
+                 <div class="dropdown-content">
+                     <h5>Total Senders: {{ $sndr->count() }}</h5>
+
+                     <div class="table-responsive text-nowrap limited-scroll mt-2">
+                         <table class="table table-bordered table-hover">
+                             <thead>
+                                 <tr>
+                                     <th>#</th>
+                                     <th>Date</th>
+                                     <th>Tracking #</th>
+                                     <th>Sender Name</th>
+                                     <th>Amount</th>
+                                     <th>Status</th>
+                                     <th>Sender Bank Name</th>
+                                     <th>Sender Bank Account</th>
+                                     <th>Destination Account</th>
+                                     <th>Fund Type</th>
+                                     <th>Details</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 @foreach ($sndr as $index => $sender)
+                                     <tr>
+                                         <td>{{ $index + 1 }}</td>
+                                         <td>{{ $sender->date }}</td>
+                                         <td>{{ $sender->tracking_number }}</td>
+                                         <td>{{ $sender->sender_name }}</td>
+                                         <td>{{ number_format($sender->amount, 0) }}</td>
+                                         <td>{{ $sender->sender_for }}</td>
+                                         <td>{{ $sender->sender_bank_name }}</td>
+                                         <td>{{ $sender->sender_bank_account }}</td>
+                                         @php
+                                             $bank = $banks->where('id', $sender->destination_account)->first();
+                                         @endphp
+                                         <td>
+                                             <a
+                                                 href="{{ route('banks.projectledger', ['bank_id' => $bank->id, 'budget_project_id' => $sender->budget_project_id]) }}">
+                                                 {{ $bank->bank_name }}
+                                             </a>
+                                         </td>
+                                         <td>{{ $sender->fund_type }}</td>
+
+
+                                         <td>{!! nl2br(e($sender->sender_detail)) !!}</td>
+                                     </tr>
+                                 @endforeach
+                             </tbody>
+                         </table>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+ @endif
+
     <!-- Invoices Dropdown Section -->
     @if ($invoices && $invoices->isNotEmpty())
         <div class="card mt-4">
@@ -199,68 +260,6 @@
                                                     No file
                                                 @endif
                                             </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-
-    <!-- Sender Dropdown Section -->
-    @if ($sndr && $sndr->isNotEmpty())
-        <div class="card mt-4">
-            <div class="card-body">
-                <div class="dropdown-section">
-                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Senders ▼ {{ $sndr->count() }}</h3>
-                    <div class="dropdown-content">
-                        <h5>Total Senders: {{ $sndr->count() }}</h5>
-
-                        <div class="table-responsive text-nowrap limited-scroll mt-2">
-                            <table class="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Date</th>
-                                        <th>Tracking #</th>
-                                        <th>Sender Name</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Sender Bank Name</th>
-                                        <th>Sender Bank Account</th>
-                                        <th>Destination Account</th>
-                                        <th>Fund Type</th>
-                                        <th>Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($sndr as $index => $sender)
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $sender->date }}</td>
-                                            <td>{{ $sender->tracking_number }}</td>
-                                            <td>{{ $sender->sender_name }}</td>
-                                            <td>{{ number_format($sender->amount, 0) }}</td>
-                                            <td>{{ $sender->sender_for }}</td>
-                                            <td>{{ $sender->sender_bank_name }}</td>
-                                            <td>{{ $sender->sender_bank_account }}</td>
-                                            @php
-                                                $bank = $banks->where('id', $sender->destination_account)->first();
-                                            @endphp
-                                            <td>
-                                                <a
-                                                    href="{{ route('banks.projectledger', ['bank_id' => $bank->id, 'budget_project_id' => $sender->budget_project_id]) }}">
-                                                    {{ $bank->bank_name }}
-                                                </a>
-                                            </td>
-                                            <td>{{ $sender->fund_type }}</td>
-
-
-                                            <td>{!! nl2br(e($sender->sender_detail)) !!}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

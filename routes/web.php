@@ -153,6 +153,10 @@ Route::middleware(['checklogin'])->group(function () {
     //budget list
     Route::get('pages/budget-lists', [BudgetController::class, 'budgetsLists'])->name('budgets.list');
 
+    //store payment order items 
+    Route::post('/store-payment-order-items', [PaymentOrder::class, 'paymentOrderItems'])->name('PaymentOrderItems.store');
+
+
     // Route for handling the form submission to update the budget
     Route::put('/budget/update/{id}', [BudgetController::class, 'update'])->name('update-project-budget');
 
