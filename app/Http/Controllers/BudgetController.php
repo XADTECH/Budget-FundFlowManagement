@@ -10,9 +10,10 @@ use App\Models\Project;
 use App\Models\PettyCash;
 use App\Models\Sender;
 use App\Models\Loan;
-
+use App\Models\BankBalance;
 use App\Models\NocPayment;
 use App\Models\Salary;
+use App\Models\LedgerEntry;
 use App\Models\ProjectBudgetSequence;
 use App\Models\PurchaseOrderController;
 use App\Models\FacilityCost;
@@ -23,7 +24,7 @@ use App\Models\RemittanceTransfer;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
 use App\Models\DirectCost;
-use App\Models\IndirectCost;
+use App\Models\InDirectCost;
 use App\Models\CashFlow;
 use App\Models\Invoice;
 use App\Models\ApprovedBudget;
@@ -404,7 +405,7 @@ class BudgetController extends Controller
 
         // Initialize DirectCost and IndirectCost for the project
         $directCost = DirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
-        $indirectCost = IndirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
+        $indirectCost = InDirectCost::firstOrNew(['budget_project_id' => $request->project_id]);
 
         // Calculate total costs
         $totalDirectCost = $directCost->exists ? $directCost->calculateTotalDirectCost() : 0;
@@ -646,7 +647,6 @@ class BudgetController extends Controller
 
         // return response($remittances);
 
-
         // Get the filtered allocated budgets
         $allocatedBudgets = $query->get();
 
@@ -670,7 +670,7 @@ class BudgetController extends Controller
         $total_remittance_amount = $request->has('budget_project_id') ? RemittanceTransfer::where('budget_project_id', $request->budget_project_id)->sum('remittance_amount') : 0;
         $total_loan_amount = $request->has('budget_project_id') ? Loan::where('budget_project_id', $request->budget_project_id)->sum('loan_amount') : 0;
 
-        $total_amount += $total_invoice_amount + $total_transfer_amount +  $total_remittance_amount + $total_loan_amount;
+        $total_amount += $total_invoice_amount + $total_transfer_amount + $total_remittance_amount + $total_loan_amount;
 
         // Pass data to the view
         return view('content.pages.pages-show-allocated-budgets', compact('invoice_count', 'total_invoice_amount', 'budgetProjects', 'allocatedBudgets', 'approvedBudget', 'totalAllocations', 'total_amount', 'invoices', 'banks', 'sndr', 'total_transfer_amount', 'transfer_count', 'transfers', 'remittances', 'loans'));
@@ -803,10 +803,29 @@ class BudgetController extends Controller
      */
     public function destroy(string $id)
     {
+        // Find the budget record by ID
         $budget = BudgetProject::findOrFail($id);
+
+        // Get the project ID to delete related records
+        $projectId = $budget->id;
+
+        // Delete related records
+        ApprovedBudget::where('budget_project_id', $projectId)->delete();
+        TotalBudgetAllocated::where('budget_project_id', $projectId)->delete();
+        CashFlow::where('budget_project_id', $projectId)->delete();
+        Invoice::where('invoice_budget_project_id', $projectId)->delete();
+        LedgerEntry::where('budget_project_id', $projectId)->delete();
+        Sender::where('budget_project_id', $projectId)->delete();
+        TransferFromManagement::where('budget_project_id', $projectId)->delete();
+        RemittanceTransfer::where('budget_project_id', $projectId)->delete();
+        Loan::where('budget_project_id', $projectId)->delete();
+        BankBalance::where('budget_project_id', $projectId)->delete();
+
+        // Finally, delete the budget record
         $budget->delete();
 
-        return redirect('/pages/add-project-budget')->with('success', 'Project Budget Deleted successfully!');
+        // Redirect with success message
+        return redirect('/pages/add-project-budget')->with('success', 'Project Budget and related records deleted successfully!');
     }
 
     public function allocateBudget(Request $request, $id)

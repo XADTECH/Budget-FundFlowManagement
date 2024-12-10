@@ -9,6 +9,7 @@ use App\Models\CapitalExpenditure;
 use App\Models\Loan;
 use App\Models\CostOverhead;
 use App\Models\DirectCost;
+use App\Models\BankBalance;
 use App\Models\FacilityCost;
 use App\Models\FinancialCost;
 use App\Models\IndirectCost;
@@ -262,6 +263,8 @@ class ProjectController extends Controller
             TransferFromManagement::where('budget_project_id', $projectId)->delete();
             RemittanceTransfer::where('budget_project_id', $projectId)->delete();
             Loan::where('budget_project_id', $projectId)->delete();
+            BankBalance::where('budget_project_id', $projectId)->delete();
+
 
             $po = PurchaseOrder::where('project_id', $projectId)->first();
 

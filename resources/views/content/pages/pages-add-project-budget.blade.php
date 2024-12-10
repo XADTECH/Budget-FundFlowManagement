@@ -170,32 +170,35 @@
                                 placeholder="description" />
                         </div>
 
-                    </div>
 
-                    <div class="row mt-4">
+                        <div class="row mt-4">
 
-                        <div class="col-sm-4">
-                            <label for="budget_type" class="form-label">Project Budget Type</label>
-                            <select class="form-select" name="budget_type" id="budget_type">
-                                <option disabled selected value>Choose</option>
-                                <option value="Fleet Management">Fleet Management</option>
+                            <div class="col-sm-4">
+                                <label for="budget_type" class="form-label">Project Budget Type</label>
+                                <select class="form-select" name="budget_type" id="budget_type">
+                                    <option disabled selected value>Choose</option>
+                                    <option value="Fleet Management">Fleet Management</option>
+                                    <option value="Auto Workshop">Auto Workshop</option>
+                                    <option value="Etisalat Managed Service">Etisalat Managed Service</option>
+                                    <option value="Fixed Network">Fixed Network</option>
+                                    <option value="Mobile Network">Mobile Network</option>
+                                    <option value="Operational Budget">Operational Budget</option>
+                                    <option value="Incremental Budget">Incremental Budget</option>
+                                    <option value="Capital Budget">Capital Budget</option>
+                                    <option value="Project Budget">Project Budget</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="referenceID" class="form-label">Reference ID </label>
+                                <input type="text" class="form-control" name="reference_id"
+                                    placeholder="self reference ... AE-101H-DU-SO" />
+                            </div>
 
-                                <option value="Auto Workshop">Auto Workshop</option>
-
-                                <option value="Etisalat Managed Service">Etisalat Managed Service</option>
-
-                                <option value="Fixed Network">Fixed Network</option>
-
-                                <option value="Mobile Network">Mobile Network</option>
-                                <option value="Operational Budget">Operational Budget</option>
-                                <option value="Incremental Budget">Incremental Budget</option>
-                                <option value="Capital Budget">Capital Budget</option>
-                                <option value="Project Budget">Project Budget</option>
-
-                                <option value="Other">Other</option>
-                            </select>
                         </div>
+
                     </div>
+
 
 
 

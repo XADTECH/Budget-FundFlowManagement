@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 25, 2024 at 06:31 AM
+-- Generation Time: Nov 27, 2024 at 06:34 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -580,6 +580,7 @@ CREATE TABLE `material_cost` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `direct_cost_id` bigint(20) UNSIGNED NOT NULL,
   `budget_project_id` bigint(20) UNSIGNED NOT NULL,
+  `expense_head` varchar(500) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
   `project` varchar(255) NOT NULL,
   `po` varchar(255) NOT NULL DEFAULT 'OPEX',
@@ -602,17 +603,17 @@ CREATE TABLE `material_cost` (
 -- Dumping data for table `material_cost`
 --
 
-INSERT INTO `material_cost` (`id`, `direct_cost_id`, `budget_project_id`, `type`, `project`, `po`, `expenses`, `description`, `status`, `quantity`, `unit`, `unit_cost`, `total_cost`, `average_cost`, `total_budget`, `approval_status`, `percentage_cost`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 'Material', '1', 'OPEX', 'wire', '100 Meter Ethernet Cable', 'new', 100.00, 'meters', 30.00, 3000.00, 30.00, NULL, 'approved', 0.01, '2024-10-01 03:06:04', '2024-10-01 03:06:04'),
-(2, 2, 1, 'Material', '1', 'OPEX', 'cable', '100 Roll Cable', 'purchased', 200.00, 'rolls', 400.00, 80000.00, 400.00, NULL, 'approved', 0.01, '2024-10-01 03:07:56', '2024-10-01 03:07:56'),
-(3, 2, 1, 'Material', '1', 'OPEX', 'cable', '100 meter cable', 'purchased', 200.00, 'meters', 50.00, 10000.00, 50.00, NULL, 'approved', 0.01, '2024-10-01 04:27:17', '2024-10-01 04:27:17'),
-(4, 2, 1, 'Material', '1', 'OPEX', 'wire', '100 Roll Cable', 'new', 29.00, 'meters', 500.00, 14500.00, 500.00, NULL, 'approved', 0.03, '2024-10-01 04:58:22', '2024-10-01 04:58:22'),
-(5, 3, 2, 'Material', '1', 'OPEX', 'cable', 'Drop Fibre Cable', 'new purchase from china', 300.00, 'rolls', 160.00, 48000.00, 160.00, NULL, 'approved', 0.00, '2024-10-01 09:06:34', '2024-10-01 09:06:34'),
-(6, 5, 5, 'Material', '1', 'OPEX', 'Electrical Wires', 'High-quality copper cable for electrical wiring.', 'In Stock', 40.00, 'meters', 500.00, 20000.00, 500.00, NULL, 'approved', 0.03, '2024-10-03 08:07:45', '2024-10-03 08:11:11'),
-(7, 5, 5, 'Material', '1', 'OPEX', 'Conductors', 'Insulated wire suitable for various electrical applications.', 'require purchase', 30.00, 'meters', 300.00, 9000.00, 300.00, NULL, 'approved', 0.03, '2024-10-03 08:09:16', '2024-10-03 08:12:32'),
-(15, 5, 5, 'Material', '1', 'OPEX', 'Electrical Tape', 'Durable electrical tape for insulating and securing wires.', 'new purchase from china', 20.00, 'meters', 50.00, 1000.00, 50.00, NULL, 'approved', 0.05, '2024-10-03 08:30:35', '2024-10-03 08:30:35'),
-(16, 5, 5, 'Material', '1', 'OPEX', 'PVC Pipes', 'Lightweight and durable PVC pipes for plumbing.', 'new purchase', 30.00, 'meters', 120.00, 3600.00, 120.00, NULL, 'approved', 0.03, '2024-10-03 08:31:50', '2024-10-03 08:31:50'),
-(17, 5, 5, 'Material', '1', 'OPEX', 'Electrical Components', 'High-quality electrical switches suitable for residential and commercial use.', 'updated', 80.00, 'meters', 70.00, 5600.00, 70.00, NULL, 'approved', 0.01, '2024-10-03 08:34:47', '2024-10-03 08:34:47');
+INSERT INTO `material_cost` (`id`, `direct_cost_id`, `budget_project_id`, `expense_head`, `type`, `project`, `po`, `expenses`, `description`, `status`, `quantity`, `unit`, `unit_cost`, `total_cost`, `average_cost`, `total_budget`, `approval_status`, `percentage_cost`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, NULL, 'Material', '1', 'OPEX', 'wire', '100 Meter Ethernet Cable', 'new', 100.00, 'meters', 30.00, 3000.00, 30.00, NULL, 'approved', 0.01, '2024-10-01 03:06:04', '2024-10-01 03:06:04'),
+(2, 2, 1, NULL, 'Material', '1', 'OPEX', 'cable', '100 Roll Cable', 'purchased', 200.00, 'rolls', 400.00, 80000.00, 400.00, NULL, 'approved', 0.01, '2024-10-01 03:07:56', '2024-10-01 03:07:56'),
+(3, 2, 1, NULL, 'Material', '1', 'OPEX', 'cable', '100 meter cable', 'purchased', 200.00, 'meters', 50.00, 10000.00, 50.00, NULL, 'approved', 0.01, '2024-10-01 04:27:17', '2024-10-01 04:27:17'),
+(4, 2, 1, NULL, 'Material', '1', 'OPEX', 'wire', '100 Roll Cable', 'new', 29.00, 'meters', 500.00, 14500.00, 500.00, NULL, 'approved', 0.03, '2024-10-01 04:58:22', '2024-10-01 04:58:22'),
+(5, 3, 2, NULL, 'Material', '1', 'OPEX', 'cable', 'Drop Fibre Cable', 'new purchase from china', 300.00, 'rolls', 160.00, 48000.00, 160.00, NULL, 'approved', 0.00, '2024-10-01 09:06:34', '2024-10-01 09:06:34'),
+(6, 5, 5, NULL, 'Material', '1', 'OPEX', 'Electrical Wires', 'High-quality copper cable for electrical wiring.', 'In Stock', 40.00, 'meters', 500.00, 20000.00, 500.00, NULL, 'approved', 0.03, '2024-10-03 08:07:45', '2024-10-03 08:11:11'),
+(7, 5, 5, NULL, 'Material', '1', 'OPEX', 'Conductors', 'Insulated wire suitable for various electrical applications.', 'require purchase', 30.00, 'meters', 300.00, 9000.00, 300.00, NULL, 'approved', 0.03, '2024-10-03 08:09:16', '2024-10-03 08:12:32'),
+(15, 5, 5, NULL, 'Material', '1', 'OPEX', 'Electrical Tape', 'Durable electrical tape for insulating and securing wires.', 'new purchase from china', 20.00, 'meters', 50.00, 1000.00, 50.00, NULL, 'approved', 0.05, '2024-10-03 08:30:35', '2024-10-03 08:30:35'),
+(16, 5, 5, NULL, 'Material', '1', 'OPEX', 'PVC Pipes', 'Lightweight and durable PVC pipes for plumbing.', 'new purchase', 30.00, 'meters', 120.00, 3600.00, 120.00, NULL, 'approved', 0.03, '2024-10-03 08:31:50', '2024-10-03 08:31:50'),
+(17, 5, 5, NULL, 'Material', '1', 'OPEX', 'Electrical Components', 'High-quality electrical switches suitable for residential and commercial use.', 'updated', 80.00, 'meters', 70.00, 5600.00, 70.00, NULL, 'approved', 0.01, '2024-10-03 08:34:47', '2024-10-03 08:34:47');
 
 -- --------------------------------------------------------
 
@@ -700,7 +701,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (67, '2024_11_12_054056_create_sender_table', 36),
 (68, '2024_11_12_054057_create_sender_table', 37),
 (69, '2024_11_15_111045_create_loans_table', 38),
-(70, '2024_12_32_114540_create_payment_orders_table', 39);
+(70, '2024_12_32_114540_create_payment_orders_table', 39),
+(71, '2024_12_32_114542_create_payment_orders_table', 40);
 
 -- --------------------------------------------------------
 
@@ -786,12 +788,20 @@ CREATE TABLE `payment_orders` (
   `cheque_file` varchar(255) DEFAULT NULL,
   `cheque_payee` varchar(255) DEFAULT NULL,
   `total_budget` decimal(15,2) DEFAULT NULL,
+  `total_cheque_amount` decimal(15,2) DEFAULT NULL,
   `utilization` decimal(15,2) DEFAULT NULL,
   `total_bank_transfer` decimal(15,2) DEFAULT NULL,
   `balance` decimal(15,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `payment_orders`
+--
+
+INSERT INTO `payment_orders` (`id`, `payment_order_number`, `payment_date`, `payment_method`, `budget_project_id`, `beneficiary_name`, `iban`, `bank_name`, `cash_amount`, `bank_payment_id`, `user_id`, `cash_detail`, `bank_detail`, `submit_status`, `bank_transfer_details`, `cash_received_by`, `item_amount`, `item_description`, `cash_date`, `transaction_number`, `paid_status`, `transaction_detail`, `transaction_amount`, `cheque_number`, `status`, `cheque_date`, `cheque_file`, `cheque_payee`, `total_budget`, `total_cheque_amount`, `utilization`, `total_bank_transfer`, `balance`, `created_at`, `updated_at`) VALUES
+(4, 'PO251124-CHEQUE-VEP', '2024-11-25', 'cheque', 5, NULL, NULL, NULL, NULL, 98, 33, NULL, NULL, 'Submitted', NULL, NULL, '[\"5000\"]', '[\"interest received on loan\"]', NULL, NULL, 'not paid yet', NULL, NULL, 'ASED', 'pending', '2024-11-25', 'public/cheque/1732537253.pdf', 'Mr Mohammad', 685650.00, 5000.00, 0.00, NULL, 685650.00, '2024-11-25 08:20:15', '2024-11-25 08:20:53');
 
 -- --------------------------------------------------------
 
@@ -3514,6 +3524,7 @@ INSERT INTO `transfer_from_management` (`id`, `date_received`, `transfer_referen
 
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `xad_id` varchar(255) DEFAULT NULL,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -3532,13 +3543,14 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `nationality`, `organization_unit`, `phone_number`, `password`, `role`, `permissions`, `profile_image`, `created_at`, `updated_at`) VALUES
-(19, 'nabeel', 'javed', 'nabeeljaved2029@gmail.com', 'pak', 'Project Manager', '0521077862', '$2y$12$EHZmQeCwCQ8wmA5H53V1suAans/2WT0qtykRfvx4WzxgUf411dJKG', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '172499948757.jfif', '2024-08-29 05:51:09', '2024-08-29 05:51:09'),
-(33, 'xad', 'tech', 'admin@xadtech.com', 'pak', 'admin', '0521077862', '$2y$12$WHWpYX5rpA3oSZYQYx.T6emR.1A.C2XfICThPWxCEvzfSistqapBW', 'Admin', '\"[\\\"Project Management\\\",\\\"Cash Flow Management\\\",\\\"Bank Management\\\",\\\"User Management\\\"]\"', '172499948757.jfif', '2024-08-30 02:31:28', '2024-08-30 02:31:28'),
-(35, 'shahbaz', 'anjum', 'shahbaz@xadtech.com', NULL, 'admin', '0521077862', '$2y$10$wGzRSPSOc5KHdFrp33E0vuJl.WbHLREtMESmiHCg25jWJrIirMble', 'Finance Manager', '\"[\\\"Project Management\\\",\\\"Cash Flow Management\\\"]\"', '172499948757.jfif', '2024-08-30 02:36:34', '2024-10-09 01:41:49'),
-(36, 'ahmed', 'shabbir', 'ahmed@xadtech.com', 'pak', 'Project Manager', '050521077862', '$2y$12$ZvcN2OHAhSUNjwe5uR0EGOw55Ix/94w5NwoRWhYprySNy4MRVhAU2', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '', '2024-09-16 04:47:51', '2024-09-16 04:47:51'),
-(37, 'Majid', 'aslam', 'majid@xadtech.com', 'Pak', 'Logistics', '050 050 050 050', '$2y$12$3N4uydfegGQhZLgrtxOD3eaZ.OSpvyF5obRo2yPWdeuITnsfeH3M.', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '', '2024-10-01 02:29:20', '2024-10-02 02:07:13'),
-(38, 'khalid', 'omar', 'ceo@xadtech.com', 'Pak', 'CEO', '0547014800', '$2y$10$Pm/cRim769BlglRAxuMNyOwfRzNyI7iLXIScPzD5QFSAjlJb2TWBq', 'Admin', NULL, '', '2024-10-09 01:54:19', '2024-10-09 02:54:58');
+INSERT INTO `users` (`id`, `xad_id`, `first_name`, `last_name`, `email`, `nationality`, `organization_unit`, `phone_number`, `password`, `role`, `permissions`, `profile_image`, `created_at`, `updated_at`) VALUES
+(19, NULL, 'nabeel', 'javed', 'nabeeljaved2029@gmail.com', 'pak', 'Project Manager', '0521077862', '$2y$12$EHZmQeCwCQ8wmA5H53V1suAans/2WT0qtykRfvx4WzxgUf411dJKG', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '172499948757.jfif', '2024-08-29 05:51:09', '2024-08-29 05:51:09'),
+(33, NULL, 'xad', 'tech', 'admin@xadtech.com', 'pak', 'admin', '0521077862', '$2y$12$WHWpYX5rpA3oSZYQYx.T6emR.1A.C2XfICThPWxCEvzfSistqapBW', 'Admin', '\"[\\\"Project Management\\\",\\\"Cash Flow Management\\\",\\\"Bank Management\\\",\\\"User Management\\\"]\"', '172499948757.jfif', '2024-08-30 02:31:28', '2024-08-30 02:31:28'),
+(35, 'undefined', 'shahbaz', 'anjum', 'shahbaz@xadtech.com', NULL, 'admin', '0521077862', '$2y$10$5yh.HtT8oxqaSnqrz3DrBOdkgVHBHEopZ.WlF6zKBpunbvFx/u9w2', 'Finance Manager', '\"[\\\"Project Management\\\",\\\"Cash Flow Management\\\"]\"', '172499948757.jfif', '2024-08-30 02:36:34', '2024-11-26 12:18:14'),
+(36, NULL, 'ahmed', 'shabbir', 'ahmed@xadtech.com', 'pak', 'Project Manager', '050521077862', '$2y$12$ZvcN2OHAhSUNjwe5uR0EGOw55Ix/94w5NwoRWhYprySNy4MRVhAU2', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '', '2024-09-16 04:47:51', '2024-09-16 04:47:51'),
+(37, NULL, 'Majid', 'aslam', 'majid@xadtech.com', 'Pak', 'Logistics', '050 050 050 050', '$2y$12$3N4uydfegGQhZLgrtxOD3eaZ.OSpvyF5obRo2yPWdeuITnsfeH3M.', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '', '2024-10-01 02:29:20', '2024-10-02 02:07:13'),
+(38, NULL, 'khalid', 'omar', 'ceo@xadtech.com', 'Pak', 'CEO', '0547014800', '$2y$10$Pm/cRim769BlglRAxuMNyOwfRzNyI7iLXIScPzD5QFSAjlJb2TWBq', 'Admin', NULL, '', '2024-10-09 01:54:19', '2024-10-09 02:54:58'),
+(39, 'XAD_123', 'surendra', 'dev', 'surendra@xadtechnologies.com', 'Nepal', 'Management', '+971 55 956 3011', '$2y$10$OBDJoT4cOqQw2omEy0kh4OuEkTtPUp09aQex/6hCyHzbB6TJRHIKS', 'Project Manager', '\"[\\\"Project Management\\\"]\"', '', '2024-11-26 12:25:00', '2024-11-27 00:44:31');
 
 --
 -- Indexes for dumped tables
@@ -3906,7 +3918,7 @@ ALTER TABLE `material_cost`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `noc_payments`
@@ -3918,7 +3930,7 @@ ALTER TABLE `noc_payments`
 -- AUTO_INCREMENT for table `payment_orders`
 --
 ALTER TABLE `payment_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -4014,7 +4026,7 @@ ALTER TABLE `transfer_from_management`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- Constraints for dumped tables

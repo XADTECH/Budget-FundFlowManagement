@@ -221,6 +221,8 @@ Route::middleware(['checklogin'])->group(function () {
     //add payment order
     Route::get('/pages/payment-orders/create', [PaymentOrder::class, 'create'])->name('paymentOrders.create');
 
+    //get total amount 
+    Route::post('/get-total-amount', [PaymentOrder::class, 'getBankDetails'])->name('getBankDetails');
 
     //store a new payment order
     Route::post('/pages/payment-orders', [PaymentOrder::class, 'store'])->name('paymentOrders.store');
