@@ -87,48 +87,60 @@
         </div>
     </div>
 
-    <!-- Payment Orders Table -->
-    <div class="card mt-4">
-        <h5 class="card-header">Payment Order List</h5>
-        <div class="table-responsive text-nowrap limited-scroll">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Date</th>
-                        <th>Payment Order Number</th>
-                        <th>Approval</th>
-                        <th>Payment Status</th>
+ 
+   <!-- Payment Orders Table -->
+<div class="card mt-4">
+    <h5 class="card-header">Payment Order List</h5>
+    <div class="table-responsive text-nowrap limited-scroll">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Payment Order Number</th>
+                    <th>Approval</th>
+                    <th>Payment Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="paymentOrderTableBody">
+                @if ($paymentOrders->isEmpty())
+                    <tr id="noDataRow">
+                        <td colspan="6" class="text-center">No Data</td>
                     </tr>
-                </thead>
-                <tbody id="paymentOrderTableBody">
-                    @if ($paymentOrders->isEmpty())
-                        <tr id="noDataRow">
-                            <td colspan="5" class="text-center">No Data</td>
+                @else
+                    @foreach ($paymentOrders as $po)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $po->payment_date }}</td>
+                            <td>
+                                <form action="{{ route('paymentOrders.show', ['id' => $po->payment_order_number]) }}"
+                                    method="GET" style="display: inline;">
+                                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline"
+                                        style="text-decoration: underline; background: none; border: none;">
+                                        {{ $po->payment_order_number }}
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-success" style="font-weight:bold">{{ $po->status }}</td>
+                            <td class="text-success" style="font-weight:bold">{{ $po->paid_status }}</td>
+                            <td>
+                                <!-- Delete Action -->
+                                <form action="{{ route('paymentOrders.destroy', ['id' => $po->id]) }}" method="POST"
+                                    onsubmit="return confirm('Are you sure you want to delete this Payment Order?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
                         </tr>
-                    @else
-                        @foreach ($paymentOrders as $po)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $po->payment_date }}</td>
-                                <td>
-                                    <form action="{{ route('paymentOrders.show', ['id' => $po->payment_order_number]) }}"
-                                        method="GET" style="display: inline;">
-                                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline"
-                                            style="text-decoration: underline; background: none; border: none;">
-                                            {{ $po->payment_order_number }}
-                                        </button>
-                                    </form>
-                                </td>
-                                <td class="text-success" style="font-weight:bold">{{ $po->status }}</td>
-                                <td class="text-success" style="font-weight:bold">{{ $po->paid_status }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                    @endforeach
+                @endif
+            </tbody>
+        </table>
     </div>
+</div>
+
     
 
 

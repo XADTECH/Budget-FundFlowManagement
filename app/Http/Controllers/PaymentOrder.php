@@ -477,8 +477,10 @@ class PaymentOrder extends Controller
     //payment order delete
     public function destroy($id)
     {
+   
         // Find the payment order by ID
-        $paymentOrder = PaymentOrderModel::where('payment_order_number', $id)->first();
+        $paymentOrder = PaymentOrderModel::where('id', $id)->first();
+        $po_item = PaymentOrderItem::where('payment_order_id', $id)->first();
         if (!$paymentOrder) {
             return redirect()->back()->with('error', 'Payment order not found.');
         }
@@ -486,6 +488,7 @@ class PaymentOrder extends Controller
         try {
             // Delete the payment order
             $paymentOrder->delete();
+            $po_item->delete();
             return redirect()->back()->with('success', 'Payment order deleted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while deleting the payment order.');

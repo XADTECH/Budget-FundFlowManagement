@@ -156,6 +156,11 @@ Route::middleware(['checklogin'])->group(function () {
     //store payment order items 
     Route::post('/store-payment-order-items', [PaymentOrder::class, 'paymentOrderItems'])->name('PaymentOrderItems.store');
 
+    //delete payment order 
+    Route::delete('/payment-orders/{id}', [PaymentOrder::class, 'destroy'])->name('paymentOrders.destroy');
+
+    //download payment order 
+    Route::get('/payment-order/{id}/download-pdf', [PaymentOrder::class, 'downloadPDF'])->name('paymentOrder.downloadPDF');
 
     // Route for handling the form submission to update the budget
     Route::put('/budget/update/{id}', [BudgetController::class, 'update'])->name('update-project-budget');

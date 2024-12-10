@@ -117,19 +117,19 @@
                                     </select>
                                 </td>
                                 <td><input type="text" class="form-control" name="head[]" value="{{ $item['head'] }}"
-                                        required></td>
+                                    readonly></td>
                                 <td><input type="text" class="form-control" name="description[]"
-                                        value="{{ $item['description'] }}" required></td>
+                                        value="{{ $item['description'] }}" readonly></td>
                                 <td>
                                     <div class="bank-container">
-                                        @foreach ($item['banks'] as $bankId => $bankAmount)
-                                        <div class="bank-entry">
-                                            <label>{{ $banks->find($bankId)->bank_name ?? '' }}:</label>
-                                            <input type="number" class="form-control bank-payment"
-                                                name="bank_amount[{{ $index }}][{{ $bankId }}]"
-                                                value="{{ is_scalar($bankAmount) ? $bankAmount : '' }}" step="0.01">
-                                        </div>
-                                    @endforeach
+                                        @foreach ($item['banks'] as $bank)
+                                            <div class="bank-entry">
+                                                <label>{{ $banks->find($bank['bank_id'])->bank_name ?? '' }}:</label>
+                                                <input type="number" class="form-control bank-payment"
+                                                    name="bank_amount[{{ $index }}][{{ $bank['bank_id'] }}]"
+                                                    value="{{ $bank['amount'] }}" step="0.01" readonly>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </td>
                                 <td><input type="number" class="form-control balance-field" name="balance[]"
@@ -137,11 +137,13 @@
                                 <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]"
                                         value="{{ $item['paid_amount'] }}" readonly></td>
                                 <td><input type="text" class="form-control" name="beneficiary_name[]"
-                                        value="{{ $item['beneficiary_name'] }}" required></td>
+                                        value="{{ $item['beneficiary_name'] }}" readonly></td>
                                 <td><input type="text" class="form-control" name="beneficiary_iban[]"
-                                        value="{{ $item['beneficiary_iban'] }}" required></td>
+                                        value="{{ $item['beneficiary_iban'] }}" readonly></td>
                                 <td>
-                                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                                    @if (!$po->is_submitted)
+                                        <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -151,7 +153,8 @@
                                     <select class="form-select project-dropdown" name="projectname[]">
                                         <option value="" selected disabled>Select a project</option>
                                         @foreach ($budgets as $project)
-                                            <option value="{{ $project->id }}">{{ $project->reference_code }}</option>
+                                            <option value="{{ $project->id }}">{{ $project->reference_code }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -160,13 +163,16 @@
                                 <td>
                                     <div class="bank-container"></div>
                                 </td>
-                                <td><input type="number" class="form-control balance-field" name="balance[]" readonly></td>
+                                <td><input type="number" class="form-control balance-field" name="balance[]" readonly>
+                                </td>
                                 <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]"
                                         readonly></td>
                                 <td><input type="text" class="form-control" name="beneficiary_name[]" required></td>
                                 <td><input type="text" class="form-control" name="beneficiary_iban[]" required></td>
                                 <td>
-                                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                                    @if (!$po->is_submitted)
+                                        <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
@@ -175,8 +181,13 @@
             </div>
 
             <div class="mt-4 text-center">
-                <button type="submit" class="btn btn-primary">Submit Payment Order</button>
-                <button type="button" id="addRow" class="btn btn-success ms-2">Add Item</button>
+                @if ($po->submit_status === 'submitted')
+                    <button type="button" class="btn btn-success" id="proceedPayment">Proceed Payment</button>
+                    <button type="button" class="btn btn-primary" id="downloadPDF">Download PDF</button>
+                @else
+                    <button type="submit" class="btn btn-primary">Submit Payment Order</button>
+                    <button type="button" id="addRow" class="btn btn-success ms-2">Add Item</button>
+                @endif
             </div>
             <input type="hidden" name="payment_order_id" value="{{ $po->id }}" />
         </form>
@@ -189,11 +200,122 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
+            // Initialize Select2
             $('.project-dropdown').select2({
                 placeholder: "Select a project",
                 allowClear: true,
                 width: '100%'
+            });
+
+            // Fetch and load bank details when a project is selected
+            $(document).on('change', '.project-dropdown', function () {
+                const row = $(this).closest('tr');
+                const projectId = $(this).val();
+                const bankContainer = row.find('.bank-container');
+                const currentRowIndex = row.data('row-index');
+
+                if (projectId) {
+                    $.ajax({
+                        url: "{{ route('getBankDetails') }}",
+                        method: "POST",
+                        data: {
+                            project_id: projectId,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function (response) {
+                            bankContainer.empty();
+                            response.forEach((bank) => {
+                                const bankEntry = `
+                                    <div class="bank-entry">
+                                        <label>${bank.name} (${bank.project_balance}):</label>
+                                        <input type="number" class="form-control bank-payment"
+                                            name="bank_amount[${currentRowIndex}][${bank.bank_id}]"
+                                            placeholder="Enter Payment Amount" step="0.01">
+                                    </div>`;
+                                bankContainer.append(bankEntry);
+                            });
+
+                            const totalBalance = response.reduce((sum, bank) => sum + bank.project_balance, 0);
+                            row.find('.balance-field').val(totalBalance);
+                        },
+                        error: function () {
+                            alert('Failed to fetch bank details. Please try again.');
+                        }
+                    });
+                } else {
+                    bankContainer.empty();
+                    row.find('.balance-field').val('');
+                }
+            });
+
+            // Add new row functionality
+            $('#addRow').on('click', function () {
+                const rowIndex = $('#paymentTable tbody tr').length;
+                const newRow = `
+                    <tr data-row-index="${rowIndex}">
+                        <td>
+                            <select class="form-select project-dropdown" name="projectname[]">
+                                <option value="" selected disabled>Select a project</option>
+                                @foreach ($budgets as $project)
+                                    <option value="{{ $project->id }}">{{ $project->reference_code }}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-control" name="head[]" required></td>
+                        <td><input type="text" class="form-control" name="description[]" required></td>
+                        <td>
+                            <div class="bank-container"></div>
+                        </td>
+                        <td><input type="number" class="form-control balance-field" name="balance[]" readonly></td>
+                        <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]" readonly></td>
+                        <td><input type="text" class="form-control" name="beneficiary_name[]" required></td>
+                        <td><input type="text" class="form-control" name="beneficiary_iban[]" required></td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                        </td>
+                    </tr>`;
+                $('#paymentTable tbody').append(newRow);
+
+                $('.project-dropdown').last().select2({
+                    placeholder: "Select a project",
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+
+            // Remove row functionality
+            $(document).on('click', '.remove-row', function () {
+                const rows = $('#paymentTable tbody tr');
+                if (rows.length > 1) {
+                    $(this).closest('tr').remove();
+                } else {
+                    alert('At least one row is required.');
+                }
+            });
+
+                // Calculate total paid amount dynamically
+    $(document).on('input', '.bank-payment', function () {
+        const row = $(this).closest('tr');
+        let totalPaid = 0;
+
+        // Sum all bank-payment fields in the current row
+        row.find('.bank-payment').each(function () {
+            const amount = parseFloat($(this).val()) || 0; // Default to 0 if the input is empty or invalid
+            totalPaid += amount;
+        });
+
+        // Update the total-paid-amount field
+        row.find('.total-paid-amount').val(totalPaid.toFixed(0)); // Ensure the value is formatted to two decimals
+    });
+
+            // Proceed payment and download PDF
+            $('#proceedPayment').on('click', function () {
+                alert('Proceed to payment logic goes here.');
+            });
+
+            $('#downloadPDF').on('click', function () {
+                window.location.href = "{{ route('paymentOrder.downloadPDF', $po->id) }}";
             });
         });
     </script>
