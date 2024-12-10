@@ -18,7 +18,8 @@ class SalaryExport implements FromCollection, WithHeadings
     }
     public function collection()
     {
-        return Salary::where('direct_cost_id', $this->id)->get()
+
+        return Salary::where('budget_project_id', $this->id)->get()
             ->map(function ($salary) {
                 $project = Project::where('id', $salary->project)->first();
                 return [

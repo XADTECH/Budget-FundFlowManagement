@@ -19,7 +19,7 @@ class FacilityCostExport implements FromCollection, WithHeadings
     public function collection()
     {
         return
-            FacilityCost::where('direct_cost_id', $this->id)-> // Eager load the project relationship
+            FacilityCost::where('budget_project_id', $this->id)-> // Eager load the project relationship
             get()
             ->map(function ($salary) {
                 $project = Project::where('id', $salary->project)->first();
