@@ -82,7 +82,6 @@ class BudgetController extends Controller
         $directCost = DirectCost::firstOrNew([
             'budget_project_id' => $project_id,
         ]);
-
         $indirectCost = IndirectCost::firstOrNew([
             'budget_project_id' => $project_id,
         ]);

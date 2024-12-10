@@ -132,7 +132,7 @@
                 </tr>
                 <tr>
                     @php
-                        $grossProfit = $amounts['total_revenue_plans'] - $totalDirectCost;
+                    $grossProfit = $amounts['total_revenue_plans'] - $totalDirectCost;
                     @endphp
                     <td>3</td>
                     <td>Gross Profit</td>
@@ -147,7 +147,7 @@
                 </tr>
                 <tr>
                     @php
-                        $npbt = $grossProfit - $totalInDirectCost;
+                    $npbt = $grossProfit - $totalInDirectCost;
                     @endphp
                     <td>5</td>
                     <td>NPBT</td>
@@ -156,7 +156,7 @@
                 </tr>
                 <tr>
                     @php
-                        $tax = $npbt * 0.009;
+                    $tax = $npbt * 0.009;
                     @endphp
                     <td>6</td>
                     <td>TAX (9%)</td>
@@ -165,7 +165,7 @@
                 </tr>
                 <tr>
                     @php
-                        $npat = $npbt - $tax;
+                    $npat = $npbt - $tax;
                     @endphp
                     <td>7</td>
                     <td>NPAT</td>
@@ -173,14 +173,15 @@
                     <td></td>
                 </tr>
                 <tr>
+
                     <td>8</td>
                     <td>Profit (%)</td>
-                    <td class="highlight">{{ number_format($npat/$amounts['total_revenue_plans'] *100) }} %</td>
+                    <td class="highlight">{{$amounts['total_revenue_plans']>0 ?number_format($npat/$amounts['total_revenue_plans'] *100):$amounts['total_revenue_plans'] }} %</td>
                     <td></td>
                 </tr>
                 <tr>
                     @php
-                        $initialInvestment = $totalDirectCost + $totalInDirectCost + $totalCapExp;
+                    $initialInvestment = $totalDirectCost + $totalInDirectCost + $totalCapExp;
                     @endphp
                     <td>9</td>
                     <td>Initial Investment</td>
@@ -189,15 +190,15 @@
                 </tr>
                 <tr>
                     @php
-                        $ROI = (($npat/$initialInvestment) * 100) / $months; 
+                    $ROI = $initialInvestment>0 && $months>0? (($npat/$initialInvestment) * 100) / $months: $initialInvestment;
                     @endphp
-                    
+
                     <td>10</td>
                     <td>ROI Annualized</td>
                     <td>{{number_format($ROI)}} %</td>
                     <td></td>
                 </tr>
-            
+
 
             </tbody>
         </table>
@@ -205,7 +206,7 @@
         <h4>Signatures</h4>
         <div>
 
-            <p>Project Manager:  {{ ucfirst(strtolower($user->first_name)) . ' ' . ucfirst(strtolower($user->last_name)) }}</p>
+            <p>Project Manager: {{ ucfirst(strtolower($user->first_name)) . ' ' . ucfirst(strtolower($user->last_name)) }}</p>
             <p>Finance Manager: ______________________</p>
         </div>
         <p>Date: __________________________</p>

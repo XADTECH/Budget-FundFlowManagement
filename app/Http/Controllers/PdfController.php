@@ -52,7 +52,13 @@ class PdfController extends Controller
         $project = Project::where('id', $budget->project_id)->first();
         $directCost = DirectCost::where('budget_project_id', $budget->id)->first();
         $capitalExp = CapitalExpenditure::where('budget_project_id', $budget->id)->first();
-        $totalCapExp = $capitalExp->sumTotalCost($budget->id);
+        $totalCapExp = 0;
+
+        if (empty($capitalExp)) {
+            $totalCapExp = 0;
+        } else {
+            $totalCapExp = $capitalExp->sumTotalCost($budget->id);
+        }
 
         // Example start and end dates from your $budget object
         $start_date = Carbon::parse($budget->start_date);
@@ -72,10 +78,11 @@ class PdfController extends Controller
         return $pdf->stream('test.pdf');
     }
 
-    public function downloadCashFlow($POID){
+    public function downloadCashFlow($POID)
+    {
 
         $budget = BudgetProject::where('id', $POID)->first();
-        $clients = BusinessClient::where('id',$budget->client_id)->first();
+        $clients = BusinessClient::where('id', $budget->client_id)->first();
         $units = BusinessUnit::where('id', $budget->unit_id)->first();
         $project = Project::where('id', $budget->project_id)->first();
         $user = User::where('id', $budget->manager_id)->first();
@@ -83,14 +90,14 @@ class PdfController extends Controller
         $cashFlows = CashFlow::where('reference_code', $budget->reference_code)->get();
 
         $allocatedBudgets = TotalBudgetAllocated::where('budget_project_id', $budget->id)->first();
-        $dpm = $allocatedBudgets->total_dpm; 
+        $dpm = $allocatedBudgets->total_dpm;
         $lpo = $allocatedBudgets->total_lpo;
-        $allocatedBudget = $allocatedBudgets->allocated_budget; 
+        $allocatedBudget = $allocatedBudgets->allocated_budget;
         $remainingBudget = $allocatedBudget - ($dpm + $lpo);
 
         //return response($allocatedBudgets);
 
-        $pdf = PDF::loadView('content.pages.pdf.cash-flow-report', compact('budget','clients','units','project','user','cashFlows','allocatedBudgets','dpm','lpo','allocatedBudget','remainingBudget'));
+        $pdf = PDF::loadView('content.pages.pdf.cash-flow-report', compact('budget', 'clients', 'units', 'project', 'user', 'cashFlows', 'allocatedBudgets', 'dpm', 'lpo', 'allocatedBudget', 'remainingBudget'));
         return $pdf->stream('test.pdf');
     }
 }
