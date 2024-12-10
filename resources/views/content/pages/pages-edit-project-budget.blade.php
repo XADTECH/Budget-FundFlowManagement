@@ -5,9 +5,6 @@
 @section('content')
 
 <style>
-
-    
-
     .limited-scroll {
         max-height: 200px;
         /* Set the maximum height as needed */
@@ -216,6 +213,11 @@
                                 <option value="Fleet Management" {{ $budget->budget_type == 'Fleet Management' ? 'selected' : '' }}>Fleet Management</option>
                                 <option value="Auto Workshop" {{ $budget->budget_type == 'Auto Workshop' ? 'selected' : '' }}>Auto Workshop</option>
                                 <option value="Etisalat Managed Service" {{ $budget->budget_type == 'Etisalat Managed Service' ? 'selected' : '' }}>Etisalat Managed Service</option>
+
+                                <option value="Operational Budget" {{ $budget->budget_type == 'Operational Budget' ? 'selected' : '' }}>Operational Budget</option>
+                                <option value="Incremental Budget" {{ $budget->budget_type == 'Incremental Budget' ? 'selected' : '' }}>Incremental Budget</option>
+                                <option value="Capital Budget" {{ $budget->budget_type == 'Capital Budget' ? 'selected' : '' }}>Capital Budget</option>
+                                <option value="Project Budget" {{ $budget->budget_type == 'Project Budget' ? 'selected' : '' }}>Project Budget</option>
                                 <option value="Other" {{ $budget->budget_type == 'Other' ? 'selected' : '' }}>Other</option>
                             </select>
                         </div>
