@@ -56,7 +56,7 @@
             <div class="dropdown-section">
                 <h3 class="dropdown-header">Direct Cost ▼</h3>
                 <div class="dropdown-content">
-                    <h5>Total Direct Cost - {{ number_format($totalDirectCost) }}</h5>
+                    <h5>Total Direct Cost : {{ number_format($totalDirectCost) }}</h5>
                     <!-- Salary Section -->
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
@@ -300,17 +300,22 @@
                         $Mcost =
                         $totalMaterialCost +
                         ($existingPettyCash->amount ?? 0) +
-                        ($existingNocPayment->amount ?? 0);
+                        ($existingNocPayment->amount ?? 0)+(@$existingSubcon->amount ?? 0)+(@$existingThirdparty->amount ?? 0);
                         @endphp
                         <span>Total Material Cost: <span
                                 style="color:#0067aa; font-weight:bold">{{ number_format($Mcost ?? 0) }}</span></span><br>
 
                         <span>Petty Cash Fund: <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($existingPettyCash->amount ?? 0) }}</span></span><br>
+                                style="color:#0067aa; font-weight:bold">{{ number_format(num: $existingPettyCash->amount ?? 0) }}</span></span><br>
 
                         <span>NOC Payment Amount: <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($existingNocPayment->amount ?? 0) }}</span></span>
+                                style="color:#0067aa; font-weight:bold">{{ number_format($existingNocPayment->amount ?? 0) }}</span></span><br>
 
+                        <span>Subcontractor Payment Amount: <span
+                                style="color:#0067aa; font-weight:bold">{{ number_format($existingSubcon->amount ?? 0) }}</span></span><br>
+
+                        <span>Third Party Payment Amount: <span
+                                style="color:#0067aa; font-weight:bold">{{ number_format($existingThirdparty->amount ?? 0) }}</span></span>
 
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
@@ -665,8 +670,8 @@
                             <option value="consumed_material">Consumed Material</option>
                             <option value="petty_cash">Petty Cash</option>
                             <option value="noc_payment">NOC Payment</option>
-                            <option value="noc_payment">Third Party</option>
-                            <option value="noc_payment">SubContractor</option>
+                            <option value="subcontractor">Subcontractor Payment</option>
+                            <option value="third_party">Third Party Payment</option>
                         </select>
                     </div>
 
@@ -735,6 +740,29 @@
                                 placeholder="Enter NOC Amount" oninput="formatNumber(this, 'noc_amount_hidden')" />
                             <input type="hidden" id="noc_amount_hidden" name="noc_amount"
                                 value="{{ old('noc_amount') }}">
+                        </div>
+                    </div>
+
+                    <div id="subcontractor" style="display:none">
+                        <div class="mb-3">
+                            <label for="subcontractor_amount_display" class="form-label">Subcontractor Amount</label>
+                            <input type="text" class="form-control" id="subcontractor_amount_display"
+                                name="subcontractor_amount_display"
+                                value="{{ old('subcontractor_amount') ? number_format(old('subcontractor_amount'), 2) : '' }}"
+                                placeholder="Enter subcontractor Amount" oninput="formatNumber(this, 'subcontractor_amount_hidden')" />
+                            <input type="hidden" id="subcontractor_amount_hidden" name="subcontractor_amount"
+                                value="{{ old('subcontractor_amount') }}">
+                        </div>
+                    </div>
+                    <div id="third_party" style="display:none">
+                        <div class="mb-3">
+                            <label for="third_party_amount_display" class="form-label">Third Party Amount</label>
+                            <input type="text" class="form-control" id="third_party_amount_display"
+                                name="third_party_amount_display"
+                                value="{{ old('third_party_amount') ? number_format(old('third_party_amount'), 2) : '' }}"
+                                placeholder="Enter Third Party Amount" oninput="formatNumber(this, 'third_party_amount_hidden')" />
+                            <input type="hidden" id="third_party_amount_hidden" name="third_party_amount"
+                                value="{{ old('third_party_amount') }}">
                         </div>
                     </div>
 
@@ -1163,11 +1191,15 @@
         const consumedMaterialFields = document.getElementById('consumedMaterialFields');
         const pettyCashFields = document.getElementById('pettyCashFields');
         const nocPaymentFields = document.getElementById('nocPaymentFields');
+        const subcontractorFields = document.getElementById('subcontractor');
+        const third_partyFields = document.getElementById('third_party');
 
         // Hide all conditional fields initially
         consumedMaterialFields.style.display = 'none';
         pettyCashFields.style.display = 'none';
         nocPaymentFields.style.display = 'none';
+        subcontractorFields.style.display = 'none';
+        third_partyFields.style.display = 'none';
 
         // On material expense selection change
         materialExpenseSelect.addEventListener('change', function() {
@@ -1177,6 +1209,8 @@
             consumedMaterialFields.style.display = 'none';
             pettyCashFields.style.display = 'none';
             nocPaymentFields.style.display = 'none';
+            subcontractorFields.style.display = 'none';
+            third_partyFields.style.display = 'none';
 
             // Remove required attributes to avoid validation issues
             document.querySelectorAll(
@@ -1196,6 +1230,12 @@
             } else if (selectedValue === 'noc_payment') {
                 nocPaymentFields.style.display = 'block';
                 nocPaymentFields.querySelector('input').setAttribute('required', 'required');
+            } else if (selectedValue === 'subcontractor') {
+                subcontractorFields.style.display = 'block';
+                subcontractorFields.querySelector('input').setAttribute('required', 'required');
+            } else if (selectedValue === 'third_party') {
+                third_partyFields.style.display = 'block';
+                third_partyFields.querySelector('input').setAttribute('required', 'required');
             }
         });
 

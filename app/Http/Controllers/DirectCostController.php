@@ -10,6 +10,8 @@ use App\Models\FacilityCost;
 use App\Models\PettyCash;
 use App\Models\NocPayment;
 use App\Models\MaterialCost;
+use App\Models\Subcontractor;
+use App\Models\ThirdParty;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 
@@ -152,6 +154,8 @@ class DirectCostController extends Controller
                 'status' => 'string|nullable',
                 'petty_cash_amount' => 'numeric|nullable',
                 'noc_amount' => 'numeric|nullable',
+                'subcontractor_amount' => 'numeric|nullable',
+                'third_party_amount' => 'numeric|nullable',
             ]);
 
             // Find or create a new DirectCost for the project
@@ -227,6 +231,44 @@ class DirectCostController extends Controller
                 ]);
 
                 return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('success', 'NOC Payment added successfully!');
+            } elseif ($validated['expense'] === 'subcontractor') {
+                // Check if the NOC amount already exists for the project
+
+
+                $existingNocPayment = Subcontractor::where('project_id', $validated['project_id'])
+                    ->where('amount', $validated['subcontractor_amount'])
+                    ->first();
+
+                if ($existingNocPayment) {
+                    return redirect('/pages/edit-project-budget/' . $validated['project_id'])->withErrors(['amount' => 'Amount already exists for this project.']);
+                }
+
+                Subcontractor::create([
+                    'project_id' => $validated['project_id'],
+                    'description' => 'Amount for Subcontractor Payment',
+                    'amount' => $validated['subcontractor_amount'],
+                ]);
+
+                return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('success', 'Subcontractor Payment added successfully!');
+            } elseif ($validated['expense'] === 'third_party') {
+                // Check if the NOC amount already exists for the project
+
+
+                $existingNocPayment = ThirdParty::where('project_id', $validated['project_id'])
+                    ->where('amount', $validated['third_party_amount'])
+                    ->first();
+
+                if ($existingNocPayment) {
+                    return redirect('/pages/edit-project-budget/' . $validated['project_id'])->withErrors(['amount' => 'Amount already exists for this project.']);
+                }
+
+                ThirdParty::create([
+                    'project_id' => $validated['project_id'],
+                    'description' => 'Amount for Third Party Payment',
+                    'amount' => $validated['third_party_amount'],
+                ]);
+
+                return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('success', 'Third Party Payment added successfully!');
             }
         } catch (Exception $e) {
             return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with('message', $e->getMessage());

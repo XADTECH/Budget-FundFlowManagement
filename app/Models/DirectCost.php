@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -36,29 +37,38 @@ class DirectCost extends Model
 
   public function revenuePlans()
   {
-      return $this->hasMany(RevenuePlan::class, 'budget_project_id');
+    return $this->hasMany(RevenuePlan::class, 'budget_project_id');
   }
 
   public function pettyCash()
   {
-      return $this->hasMany(PettyCash::class, 'project_id');
+    return $this->hasMany(PettyCash::class, 'project_id');
   }
 
   public function nocPayment()
   {
-      return $this->hasMany(NocPayment::class, 'project_id');
+    return $this->hasMany(NocPayment::class, 'project_id');
+  }
+  public function subContractor()
+  {
+    return $this->hasMany(Subcontractor::class, 'project_id', 'budget_project_id');
+  }
+  public function thirdParty()
+  {
+    return $this->hasMany(ThirdParty::class, 'project_id', 'budget_project_id');
   }
 
   public function calculateTotalDirectCost()
-    {
-        // Calculate totals from related models
-        $salariesTotal = $this->salaries()->sum('total_cost');
-        $facilitiesTotal = $this->facilitiesCosts()->sum('total_cost');
-        $materialTotal = $this->materialCosts()->sum('total_cost');
-        $pettyCashTotal = $this->pettyCash()->sum('amount');
-        $nocPaymentTotal = $this->nocPayment()->sum('amount');
+  {
+    // Calculate totals from related models
+    $salariesTotal = $this->salaries()->sum('total_cost');
+    $facilitiesTotal = $this->facilitiesCosts()->sum('total_cost');
+    $materialTotal = $this->materialCosts()->sum('total_cost');
+    $pettyCashTotal = $this->pettyCash()->sum('amount');
+    $nocPaymentTotal = $this->nocPayment()->sum('amount');
+    $subContractorTotal = $this->subContractor()->sum('amount');
+    $thirdPartyTotal = $this->thirdParty()->sum('amount');
 
-        // Return the sum of all totals
-        return $salariesTotal + $facilitiesTotal + $materialTotal + $pettyCashTotal + $nocPaymentTotal;
-    }
+    return $salariesTotal + $facilitiesTotal + $materialTotal + $pettyCashTotal + $nocPaymentTotal + $subContractorTotal + $thirdPartyTotal;
+  }
 }

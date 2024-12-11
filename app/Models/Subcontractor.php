@@ -5,14 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class NocPayment extends Model
+class Subcontractor extends Model
 {
     use HasFactory;
-
-    // Define the table name (optional if following Laravel's naming conventions)
-    protected $table = 'noc_payments';
-
-    // Define the fillable fields
+    protected $table = 'subcontractors';
     protected $fillable = [
         'project_id',
         'description',

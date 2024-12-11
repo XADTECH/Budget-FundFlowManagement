@@ -51,12 +51,17 @@
                             <div>
                                 <h5>Cash Requirement For CAPEX : {{ number_format($totalCapitalExpenditure) }} AED</h5>
                                 @php
-                                    $totalOPEX = $totalDirectCost + $totalInDirectCost + $totalNetProfitBeforeTax;
+
+                                $totalOPEX = $totalDirectCost ;
                                 @endphp
                                 <h5>Cash Requirement For OPEX: {{ number_format($totalOPEX) }} AED</h5>
                             </div>
                         </div>
                     </div>
+                    <a href="{{ route('download.budgetSummary', ['POID' => $project_id]) }}" target="_blank"
+                        class="btn btn-sm" style="background-color:#1a73e8; color:white">
+                        <i style="margin-right: 10px;" class="fas fa-file"></i> Download PDF
+                    </a>
                 </div>
             </div>
         </div>

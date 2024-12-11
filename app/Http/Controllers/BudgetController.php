@@ -30,6 +30,8 @@ use App\Models\Invoice;
 use App\Models\ApprovedBudget;
 use App\Models\Bank;
 use App\Models\RevenuePlan;
+use App\Models\Subcontractor;
+use App\Models\ThirdParty;
 use App\Models\TransferFromManagement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -80,7 +82,6 @@ class BudgetController extends Controller
         $directCost = DirectCost::firstOrNew([
             'budget_project_id' => $project_id,
         ]);
-
         $indirectCost = IndirectCost::firstOrNew([
             'budget_project_id' => $project_id,
         ]);
@@ -274,9 +275,11 @@ class BudgetController extends Controller
         $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $project_id)->sum('total_cost');
 
         $existingPettyCash = PettyCash::where('project_id', $project_id)->first();
+        $existingSubcon = Subcontractor::where('project_id', $project_id)->first();
+        $existingThirdparty = ThirdParty::where('project_id', $project_id)->first();
 
         $existingNocPayment = NocPayment::where('project_id', $project_id)->first();
-        return view('content.pages.pages-edit-project-budget', compact('project_id', 'clients', 'overHeads', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'existingNocPayment', 'existingPettyCash'));
+        return view('content.pages.pages-edit-project-budget', compact('existingSubcon', 'existingThirdparty', 'project_id', 'clients', 'overHeads', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'existingNocPayment', 'existingPettyCash'));
     }
 
     /**
