@@ -248,6 +248,14 @@ Route::middleware(['checklogin'])->group(function () {
     //delete a payment order 
     Route::delete('/paymentOrders/{id}', [PaymentOrder::class, 'destroy'])->name('paymentOrders.destroy');
 
+    //get a bank balance for payment order - saved items 
+    Route::get('/get-bank-balance/{bank_id}', [PaymentOrder::class, 'itemsGetBankBalance']);
+
+    //update payment order status 
+    Route::put('/payment-orders/{id}/status', [PaymentOrder::class, 'updateStatus'])->name('paymentOrder.updateStatus');
+
+
+
     //store purchase order
 
     Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name('add-budget-project-purchase-order');

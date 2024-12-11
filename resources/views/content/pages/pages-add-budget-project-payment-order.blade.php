@@ -6,7 +6,7 @@
 
     <style>
         .limited-scroll {
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
             display: block;
         }
@@ -19,13 +19,73 @@
         #success-alert {
             transition: opacity 0.5s ease-out;
         }
+
+        /* Adjust the size of the dropdown */
+        .form-select {
+            font-size: 0.9rem;
+            /* Slightly smaller text */
+            padding: 8px 12px;
+            /* Adjust padding for smaller height */
+            border-radius: 4px;
+            /* Ensure consistent border radius */
+        }
+
+        /* Adjust the size of the buttons */
+        .btn {
+            font-size: 0.9rem;
+            /* Set a smaller font size */
+            padding: 6px 12px;
+            /* Adjust padding for smaller buttons */
+            border-radius: 4px;
+            /* Keep a consistent border radius */
+        }
+
+        /* Specific button classes for more control */
+        .btn-success {
+            background-color: #28a745;
+            border-color: #218838;
+        }
+
+        .btn-primary {
+            background-color: #0067aa;
+            border-color: #005f8c;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #c82333;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            /* Set the width of the scrollbar */
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #0067aa;
+            /* Same color as buttons */
+            border-radius: 4px;
+            /* Rounded corners for the scrollbar thumb */
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #005f8c;
+            /* Darker shade when hovered */
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+            /* Light background for the track */
+            border-radius: 4px;
+        }
     </style>
 
     @if ($errors->any())
         <div class="alert alert-danger" id="error-alert">
             <!-- <button type="button" class="close" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button> -->
+                                    <span aria-hidden="true">&times;</span>
+                                </button> -->
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -37,8 +97,8 @@
     @if (session('success'))
         <div class="alert alert-success" id="success-alert">
             <!-- <button type="button" class="close" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button> -->
+                                        <span aria-hidden="true">&times;</span>
+                                    </button> -->
             {{ session('success') }}
         </div>
     @endif
@@ -87,61 +147,83 @@
         </div>
     </div>
 
- 
-   <!-- Payment Orders Table -->
-<div class="card mt-4">
-    <h5 class="card-header">Payment Order List</h5>
-    <div class="table-responsive text-nowrap limited-scroll">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Payment Order Number</th>
-                    <th>Approval</th>
-                    <th>Payment Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="paymentOrderTableBody">
-                @if ($paymentOrders->isEmpty())
-                    <tr id="noDataRow">
-                        <td colspan="6" class="text-center">No Data</td>
-                    </tr>
-                @else
-                    @foreach ($paymentOrders as $po)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $po->payment_date }}</td>
-                            <td>
-                                <form action="{{ route('paymentOrders.show', ['id' => $po->payment_order_number]) }}"
-                                    method="GET" style="display: inline;">
-                                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline"
-                                        style="text-decoration: underline; background: none; border: none;">
-                                        {{ $po->payment_order_number }}
-                                    </button>
-                                </form>
-                            </td>
-                            <td class="text-success" style="font-weight:bold">{{ $po->status }}</td>
-                            <td class="text-success" style="font-weight:bold">{{ $po->paid_status }}</td>
-                            <td>
-                                <!-- Delete Action -->
-                                <form action="{{ route('paymentOrders.destroy', ['id' => $po->id]) }}" method="POST"
-                                    onsubmit="return confirm('Are you sure you want to delete this Payment Order?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                @endif
-            </tbody>
-        </table>
-    </div>
-</div>
 
-    
+    <!-- Payment Orders Table -->
+    <div class="card mt-4">
+        <h5 class="card-header">Payment Order List</h5>
+        <div class="table-responsive text-nowrap limited-scroll">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Payment Order Number</th>
+                        <th>Company Name</th>
+                        <th>Approval</th>
+                        <th>Payment Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentOrderTableBody">
+                    @if ($paymentOrders->isEmpty())
+                        <tr id="noDataRow">
+                            <td colspan="6" class="text-center">No Data</td>
+                        </tr>
+                    @else
+                        @foreach ($paymentOrders as $po)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $po->payment_date }}</td>
+                                <td>
+                                    <form action="{{ route('paymentOrders.show', ['id' => $po->payment_order_number]) }}"
+                                        method="GET" style="display: inline;">
+                                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline"
+                                            style="text-decoration: underline; background: none; border: none;">
+                                            {{ $po->payment_order_number }}
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="text-secondary" style="font-weight:bold">{{ $po->company_name }}</td>
+                                <td>
+                                    @if (auth()->user()->role === 'Admin')
+                                        <form action="{{ route('paymentOrder.updateStatus', $po->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <select class="form-select project-dropdown" name="status">
+                                                <option value="pending" {{ $po->status == 'pending' ? 'selected' : '' }}>
+                                                    Pending</option>
+                                                <option value="approved" {{ $po->status == 'approved' ? 'selected' : '' }}>
+                                                    Approved</option>
+                                                <option value="rejected" {{ $po->status == 'rejected' ? 'selected' : '' }}>
+                                                    Rejected</option>
+                                            </select>
+
+                                            <button type="submit" class="btn btn-primary mt-2">Update Status</button>
+                                        </form>
+                                    @else
+                                        <span class="text-success" style="font-weight:bold">{{ $po->status }}</span>
+                                    @endif
+                                </td>
+
+                                <td class="text-success" style="font-weight:bold">{{ $po->paid_status }}</td>
+                                <td>
+                                    <!-- Delete Action -->
+                                    <form action="{{ route('paymentOrders.destroy', ['id' => $po->id]) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this Payment Order?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
 
 
 
