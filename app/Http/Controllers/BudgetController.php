@@ -47,7 +47,7 @@ class BudgetController extends Controller
     public function index()
     {
         $projects = Project::get();
-        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
+        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name', 'email']);
         $clients = BusinessClient::get();
         $units = BusinessUnit::get();
         $loggedInUserId = Auth::id();

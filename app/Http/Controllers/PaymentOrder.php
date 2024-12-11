@@ -17,6 +17,7 @@ use App\Models\ProjectBudgetSequence;
 use App\Models\PurchaseOrderController;
 use App\Models\FacilityCost;
 use App\Models\CapitalExpenditure;
+use App\Models\PaymentOrderItem;
 use App\Models\MaterialCost;
 use App\Models\Sender;
 use App\Models\LedgerEntry;
@@ -90,24 +91,46 @@ class PaymentOrder extends Controller
 
     public function show($id)
     {
+        // Retrieve the payment order by its number
         $po = PaymentOrderModel::where('payment_order_number', $id)->first();
-        $budgets = BudgetProject::all();
-        $banks = Bank::all();
 
         if (!$po) {
             return redirect()
-                ->back() // Replace 'paymentOrder.index' with your fallback route
+                ->back()
                 ->withErrors(['error' => 'Payment Order not found.']);
         }
 
+        // Retrieve related budgets, banks, and allocated budget
         $budgets = BudgetProject::all();
-
         $banks = Bank::all();
-
         $allocatedBudget = TotalBudgetAllocated::where('budget_project_id', $po->budget_project_id)->first();
 
-        // Return the view with the payment order details
-        return view('content.pages.show-budget-project-payment-order', compact('po', 'banks', 'allocatedBudget', 'budgets', 'budgets', 'banks'));
+        // Retrieve the payment order items for this payment order
+        $paymentOrderItems = PaymentOrderItem::where('payment_order_id', $po->id)->first();
+
+        // Decode the JSON items for easier handling in the view
+        $items = $paymentOrderItems ? json_decode($paymentOrderItems->items_json, true) : [];
+
+        // Pass the data to the view
+        return view('content.pages.show-budget-project-payment-order', compact('po', 'banks', 'allocatedBudget', 'budgets', 'items'));
+    }
+
+    //update status
+    public function updateStatus(Request $request, $id)
+    {
+        $po = PaymentOrderModel::findOrFail($id); // Retrieve the payment order by ID
+
+        // Validate the input
+        $request->validate([
+            'status' => 'required|string|in:pending,approved,rejected',
+        ]);
+
+        // Update the status of the payment order
+        $po->status = $request->input('status');
+        $po->save(); // Save the changes
+
+        // Redirect with a success message
+        return redirect()->back()->with('success', 'Payment order status updated successfully!');
     }
 
     //update payment order
@@ -472,7 +495,8 @@ class PaymentOrder extends Controller
     public function destroy($id)
     {
         // Find the payment order by ID
-        $paymentOrder = PaymentOrderModel::where('payment_order_number', $id)->first();
+        $paymentOrder = PaymentOrderModel::where('id', $id)->first();
+        $po_item = PaymentOrderItem::where('payment_order_id', $id)->first();
         if (!$paymentOrder) {
             return redirect()->back()->with('error', 'Payment order not found.');
         }
@@ -480,6 +504,7 @@ class PaymentOrder extends Controller
         try {
             // Delete the payment order
             $paymentOrder->delete();
+            $po_item->delete();
             return redirect()->back()->with('success', 'Payment order deleted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while deleting the payment order.');
@@ -557,7 +582,7 @@ class PaymentOrder extends Controller
     {
         $projectId = $request->input('project_id');
 
-        // Get all bank balances for the given project, along with their associated banks
+        // Retrieve all bank balances for the specified project
         $bankBalances = BankBalance::with('bank')->where('budget_project_id', $projectId)->get();
 
         // Group bank balances by bank_id
@@ -566,13 +591,15 @@ class PaymentOrder extends Controller
         // Map over each bank group to summarize data
         $response = $banksGrouped
             ->map(function ($balances, $bankId) {
-                // Get the first related bank model (they should all share the same bank_id)
+                // Each group corresponds to a single bank_id,
+                // so we take the first balance to get the associated Bank model
                 $bank = $balances->first()->bank;
 
                 // Sum all project balances for this bank
                 $projectBalance = $balances->sum('current_balance');
 
                 return [
+                    'bank_id' => $bank->id, // Include the bank ID here
                     'name' => $bank->bank_name,
                     'overall_balance' => $bank->current_balance,
                     'project_balance' => $projectBalance,
@@ -581,5 +608,72 @@ class PaymentOrder extends Controller
             ->values();
 
         return response()->json($response);
+    }
+
+    public function paymentOrderItems(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'payment_order_id' => 'required|integer',
+        ]);
+
+        // Retrieve the existing PaymentOrder
+        $paymentOrder = PaymentOrderModel::findOrFail($request->payment_order_id);
+
+        // Construct the items array
+        $items = [];
+        foreach ($request->projectname as $index => $projectId) {
+            $head = $request->head[$index];
+            $description = $request->description[$index];
+            $beneficiaryName = $request->beneficiary_name[$index];
+            $beneficiaryIban = $request->beneficiary_iban[$index];
+
+            // Collect bank allocations for this row
+            $bankAllocations = [];
+            if (isset($request->bank_amount[$index]) && is_array($request->bank_amount[$index])) {
+                foreach ($request->bank_amount[$index] as $bankId => $amount) {
+                    $bankAllocations[] = [
+                        'bank_id' => $bankId, // Use the key as bank_id
+                        'amount' => $amount, // Use the value as amount
+                    ];
+                }
+            }
+
+            $balance = $request->balance[$index] ?? 0;
+            $paid_amount = $request->paid_amount[$index] ?? 0;
+
+            $items[] = [
+                'budget_project_id' => $projectId,
+                'head' => $head,
+                'description' => $description,
+                'beneficiary_name' => $beneficiaryName,
+                'beneficiary_iban' => $beneficiaryIban,
+                'banks' => $bankAllocations, // Store bank allocations here
+                'balance' => $balance,
+                'paid_amount' => $paid_amount,
+            ];
+        }
+
+        // Save items to payment_order_items table
+        PaymentOrderItem::create([
+            'payment_order_id' => $paymentOrder->id,
+            'items_json' => json_encode($items),
+        ]);
+
+        $paymentOrder->submit_status = 'Submitted';
+        $paymentOrder->save();
+
+        return redirect()
+            ->route('paymentOrders.show', $paymentOrder->payment_order_number)
+            ->with('success', 'Payment order updated successfully.');
+    }
+
+    public function itemsGetBankBalance($bank_id)
+    {
+        // Retrieve the bank balance from the BankBalance model for the specific bank_id
+        $bankBalance = BankBalance::where('bank_id', $bank_id)->first();
+
+        // Return the balance as an integer, or 0 if no balance is found for that bank
+        return $bankBalance ? (int) $bankBalance->current_balance : 0;
     }
 }

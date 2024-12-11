@@ -153,6 +153,15 @@ Route::middleware(['checklogin'])->group(function () {
     //budget list
     Route::get('pages/budget-lists', [BudgetController::class, 'budgetsLists'])->name('budgets.list');
 
+    //store payment order items 
+    Route::post('/store-payment-order-items', [PaymentOrder::class, 'paymentOrderItems'])->name('PaymentOrderItems.store');
+
+    //delete payment order 
+    Route::delete('/payment-orders/{id}', [PaymentOrder::class, 'destroy'])->name('paymentOrders.destroy');
+
+    //download payment order 
+    Route::get('/payment-order/{id}/download-pdf', [PaymentOrder::class, 'downloadPDF'])->name('paymentOrder.downloadPDF');
+
     // Route for handling the form submission to update the budget
     Route::put('/budget/update/{id}', [BudgetController::class, 'update'])->name('update-project-budget');
 
@@ -238,6 +247,14 @@ Route::middleware(['checklogin'])->group(function () {
 
     //delete a payment order 
     Route::delete('/paymentOrders/{id}', [PaymentOrder::class, 'destroy'])->name('paymentOrders.destroy');
+
+    //get a bank balance for payment order - saved items 
+    Route::get('/get-bank-balance/{bank_id}', [PaymentOrder::class, 'itemsGetBankBalance']);
+
+    //update payment order status 
+    Route::put('/payment-orders/{id}/status', [PaymentOrder::class, 'updateStatus'])->name('paymentOrder.updateStatus');
+
+
 
     //store purchase order
 

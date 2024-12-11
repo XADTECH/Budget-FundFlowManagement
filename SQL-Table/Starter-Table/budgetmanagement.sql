@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 27, 2024 at 06:34 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Host: localhost:3306
+-- Generation Time: Dec 11, 2024 at 07:34 AM
+-- Server version: 8.0.30
+-- PHP Version: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,19 +28,19 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `allocated_budget` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `total_salary` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_facility_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_material_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_cost_overhead` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_financial_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_capital_expenditure` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `allocated_budget` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `initial_allocation_budget` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_dpm` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_lpo` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `reference_code` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `total_salary` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_facility_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_material_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_cost_overhead` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_financial_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_capital_expenditure` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `allocated_budget` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `initial_allocation_budget` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_dpm` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_lpo` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `reference_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -50,7 +50,7 @@ CREATE TABLE `allocated_budget` (
 --
 
 INSERT INTO `allocated_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `allocated_budget`, `initial_allocation_budget`, `total_dpm`, `total_lpo`, `reference_code`, `created_at`, `updated_at`) VALUES
-(26, 5, 100000.00, 122650.00, 89000.00, 14000.00, 110000.00, 250000.00, 685650.00, 513000.00, 0.00, 0.00, 'BP100320240003', '2024-11-15 08:35:48', '2024-11-15 08:49:50');
+(34, 5, 180000.00, 186000.00, 99000.00, 36650.00, 110000.00, 200000.00, 811650.00, 599000.00, 0.00, 0.00, 'BP100320240003', '2024-12-10 01:43:18', '2024-12-10 02:08:16');
 
 -- --------------------------------------------------------
 
@@ -59,18 +59,18 @@ INSERT INTO `allocated_budget` (`id`, `budget_project_id`, `total_salary`, `tota
 --
 
 CREATE TABLE `approved_budget` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `total_salary` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_facility_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_material_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_cost_overhead` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_financial_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `total_capital_expenditure` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `approved_budget` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `expected_net_profit_after_tax` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `expected_net_profit_before_tax` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `reference_code` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `total_salary` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_facility_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_material_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_cost_overhead` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_financial_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `total_capital_expenditure` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `approved_budget` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `expected_net_profit_after_tax` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `expected_net_profit_before_tax` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `reference_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -80,7 +80,7 @@ CREATE TABLE `approved_budget` (
 --
 
 INSERT INTO `approved_budget` (`id`, `budget_project_id`, `total_salary`, `total_facility_cost`, `total_material_cost`, `total_cost_overhead`, `total_financial_cost`, `total_capital_expenditure`, `approved_budget`, `expected_net_profit_after_tax`, `expected_net_profit_before_tax`, `reference_code`, `created_at`, `updated_at`) VALUES
-(50, 5, 180000.00, 107000.00, 39200.00, 14922.10, 61572.00, 276100.00, 5276100.00, 3546548.37, 3897305.90, 'BP100320240003', '2024-11-15 08:35:00', '2024-11-15 08:35:00');
+(58, 5, 180000.00, 107000.00, 39200.00, 14922.10, 61572.00, 276100.00, 5276100.00, 3546548.37, 3897305.90, 'BP100320240003', '2024-12-10 01:42:53', '2024-12-10 01:42:53');
 
 -- --------------------------------------------------------
 
@@ -89,17 +89,18 @@ INSERT INTO `approved_budget` (`id`, `budget_project_id`, `total_salary`, `total
 --
 
 CREATE TABLE `banks` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `bank_name` varchar(255) NOT NULL,
-  `bank_address` text DEFAULT NULL,
-  `iban` varchar(255) DEFAULT NULL,
-  `account` varchar(255) DEFAULT NULL,
-  `swift_code` varchar(255) DEFAULT NULL,
-  `branch` varchar(255) DEFAULT NULL,
-  `rm_detail` text DEFAULT NULL,
-  `country` text DEFAULT NULL,
-  `region` text DEFAULT NULL,
-  `balance_amount` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `id` bigint UNSIGNED NOT NULL,
+  `bank_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `bank_address` text COLLATE utf8mb4_unicode_ci,
+  `iban` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `account` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `current_balance` decimal(15,2) DEFAULT '0.00',
+  `swift_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `branch` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rm_detail` text COLLATE utf8mb4_unicode_ci,
+  `country` text COLLATE utf8mb4_unicode_ci,
+  `region` text COLLATE utf8mb4_unicode_ci,
+  `balance_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -108,17 +109,43 @@ CREATE TABLE `banks` (
 -- Dumping data for table `banks`
 --
 
-INSERT INTO `banks` (`id`, `bank_name`, `bank_address`, `iban`, `account`, `swift_code`, `branch`, `rm_detail`, `country`, `region`, `balance_amount`, `created_at`, `updated_at`) VALUES
-(97, 'ADCB', 'Khalifa St, Abu Dhabi', 'GB33BUKB20201555555555', '\"1234567890\"', 'BOFAUS3N', 'Abu Dhabi Main Branch', 'John Doe, johndoe@bank.com', 'UAE', 'Abu Dhabi', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(98, 'ADIB', 'Al Fahidi St, Dubai', 'US29WFAL100000123456789', '\"1234567890\"', 'WFBIUS6S', 'Dubai Downtown', 'Jane Smith, janesmith@wellsfargo.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(99, 'EMIRATES NBD', 'Sheikh Zayed Rd, Sharjah', 'DE12CHASE2015050001234567', '\"1234567890\"', 'CHASUS33', 'Sharjah Lincoln Park', 'Mike Johnson, mikej@chase.com', 'UAE', 'Sharjah', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(100, 'Emirates Islamic', 'Corniche Rd, Al Ain', 'FR45CITI89012345678901234', '\"1234567890\"', 'CITIUS33', 'Al Ain Pacific Branch', 'Susan Lee, susan.lee@citibank.com', 'UAE', 'Al Ain', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(101, 'HSBC', 'Hamdan St, Fujairah', 'GB12HSCB30300012345678', '\"1234567890\"', 'HSBCHKHH', 'Fujairah Central Branch', 'Robert Brown, robert.brown@hsbc.com', 'UAE', 'Fujairah', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(102, 'Barclays', 'Ras Al Khaimah', 'GB34BARC20001510012345678', '\"1234567890\"', 'BARCGB22', 'City Center Branch', 'David Green, david.green@barclays.com', 'UAE', 'Ras Al Khaimah', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(103, 'Deutsche Bank', 'Ajman St, Ajman', 'DE82DEUT60123456789012345', '\"1234567890\"', 'DEUTDEFF', 'Ajman Main', 'Lisa White, lisa.white@db.com', 'UAE', 'Ajman', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(104, 'Standard Chartered', 'Dibba, Umm Al Quwain', 'IN75SCTB1122334455667890', '\"1234567890\"', 'SCBLINBB', 'Dibba Branch', 'Amit Kumar, amit.kumar@standardchartered.com', 'UAE', 'Umm Al Quwain', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(105, 'Bank of China', 'Deira, Dubai', 'CN56BKCH49001234567890123', '\"1234567890\"', 'BKCHCNBJ', 'Deira Branch', 'Zhang Wei, zhangwei@bankofchina.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
-(106, 'ANZ Bank', 'Jumeirah, Dubai', 'AU88ANZB1234567890123456', '\"1234567890\"', 'ANZBAU2S', 'Jumeirah Branch', 'Emily Zhang, emily.zhang@anz.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25');
+INSERT INTO `banks` (`id`, `bank_name`, `bank_address`, `iban`, `account`, `current_balance`, `swift_code`, `branch`, `rm_detail`, `country`, `region`, `balance_amount`, `created_at`, `updated_at`) VALUES
+(97, 'ADCB', 'Khalifa St, Abu Dhabi', 'GB33BUKB20201555555555', '\"1234567890\"', 90000.00, 'BOFAUS3N', 'Abu Dhabi Main Branch', 'John Doe, johndoe@bank.com', 'UAE', 'Abu Dhabi', 0.00, '2024-11-08 00:47:25', '2024-12-10 01:49:12'),
+(98, 'ADIB', 'Al Fahidi St, Dubai', 'US29WFAL100000123456789', '\"1234567890\"', 107950.00, 'WFBIUS6S', 'Dubai Downtown', 'Jane Smith, janesmith@wellsfargo.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-12-10 01:47:09'),
+(99, 'EMIRATES NBD', 'Sheikh Zayed Rd, Sharjah', 'DE12CHASE2015050001234567', '\"1234567890\"', 110000.00, 'CHASUS33', 'Sharjah Lincoln Park', 'Mike Johnson, mikej@chase.com', 'UAE', 'Sharjah', 0.00, '2024-11-08 00:47:25', '2024-12-10 01:50:41'),
+(100, 'Emirates Islamic', 'Corniche Rd, Al Ain', 'FR45CITI89012345678901234', '\"1234567890\"', 40000.00, 'CITIUS33', 'Al Ain Pacific Branch', 'Susan Lee, susan.lee@citibank.com', 'UAE', 'Al Ain', 0.00, '2024-11-08 00:47:25', '2024-12-10 02:08:16'),
+(101, 'HSBC', 'Hamdan St, Fujairah', 'GB12HSCB30300012345678', '\"1234567890\"', 40000.00, 'HSBCHKHH', 'Fujairah Central Branch', 'Robert Brown, robert.brown@hsbc.com', 'UAE', 'Fujairah', 0.00, '2024-11-08 00:47:25', '2024-12-09 09:05:24'),
+(102, 'Barclays', 'Ras Al Khaimah', 'GB34BARC20001510012345678', '\"1234567890\"', 0.00, 'BARCGB22', 'City Center Branch', 'David Green, david.green@barclays.com', 'UAE', 'Ras Al Khaimah', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(103, 'Deutsche Bank', 'Ajman St, Ajman', 'DE82DEUT60123456789012345', '\"1234567890\"', 0.00, 'DEUTDEFF', 'Ajman Main', 'Lisa White, lisa.white@db.com', 'UAE', 'Ajman', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(104, 'Standard Chartered', 'Dibba, Umm Al Quwain', 'IN75SCTB1122334455667890', '\"1234567890\"', 0.00, 'SCBLINBB', 'Dibba Branch', 'Amit Kumar, amit.kumar@standardchartered.com', 'UAE', 'Umm Al Quwain', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(105, 'Bank of China', 'Deira, Dubai', 'CN56BKCH49001234567890123', '\"1234567890\"', 0.00, 'BKCHCNBJ', 'Deira Branch', 'Zhang Wei, zhangwei@bankofchina.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25'),
+(106, 'ANZ Bank', 'Jumeirah, Dubai', 'AU88ANZB1234567890123456', '\"1234567890\"', 0.00, 'ANZBAU2S', 'Jumeirah Branch', 'Emily Zhang, emily.zhang@anz.com', 'UAE', 'Dubai', 0.00, '2024-11-08 00:47:25', '2024-11-08 00:47:25');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bank_balances`
+--
+
+CREATE TABLE `bank_balances` (
+  `id` bigint UNSIGNED NOT NULL,
+  `bank_id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `fund_category` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `current_balance` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `bank_balances`
+--
+
+INSERT INTO `bank_balances` (`id`, `bank_id`, `budget_project_id`, `fund_category`, `current_balance`, `created_at`, `updated_at`) VALUES
+(9, 98, 5, NULL, 22650.00, '2024-12-10 01:47:09', '2024-12-10 01:47:09'),
+(10, 97, 5, NULL, 50000.00, '2024-12-10 01:49:12', '2024-12-10 01:49:12'),
+(11, 99, 5, NULL, 60000.00, '2024-12-10 01:50:41', '2024-12-10 01:50:41'),
+(12, 100, 5, NULL, 40000.00, '2024-12-10 02:08:16', '2024-12-10 02:08:16');
 
 -- --------------------------------------------------------
 
@@ -127,27 +154,27 @@ INSERT INTO `banks` (`id`, `bank_name`, `bank_address`, `iban`, `account`, `swif
 --
 
 CREATE TABLE `budget_project` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `reference_code` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `reference_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `project_id` bigint(20) UNSIGNED NOT NULL,
-  `unit_id` bigint(20) UNSIGNED NOT NULL,
-  `manager_id` bigint(20) UNSIGNED NOT NULL,
-  `client_id` bigint(20) UNSIGNED NOT NULL,
-  `region` varchar(255) DEFAULT NULL,
-  `site_name` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `budget_type` varchar(255) NOT NULL,
-  `country` varchar(255) NOT NULL,
-  `month` varchar(255) NOT NULL,
-  `approval_status` varchar(255) DEFAULT 'pending',
+  `project_id` bigint UNSIGNED NOT NULL,
+  `unit_id` bigint UNSIGNED NOT NULL,
+  `manager_id` bigint UNSIGNED NOT NULL,
+  `client_id` bigint UNSIGNED NOT NULL,
+  `region` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `site_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `budget_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `country` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `month` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `approval_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
   `bal_under_over_budget` decimal(15,2) DEFAULT NULL,
   `total_budget_allocated` decimal(15,2) DEFAULT NULL,
   `total_dpm_expense` decimal(15,2) DEFAULT NULL,
   `total_lpo_expense` decimal(15,2) DEFAULT NULL,
-  `approve_by` bigint(20) UNSIGNED DEFAULT NULL,
-  `status` varchar(255) DEFAULT 'Good',
+  `approve_by` bigint UNSIGNED DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'Good',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -157,8 +184,8 @@ CREATE TABLE `budget_project` (
 --
 
 INSERT INTO `budget_project` (`id`, `reference_code`, `start_date`, `end_date`, `project_id`, `unit_id`, `manager_id`, `client_id`, `region`, `site_name`, `description`, `budget_type`, `country`, `month`, `approval_status`, `bal_under_over_budget`, `total_budget_allocated`, `total_dpm_expense`, `total_lpo_expense`, `approve_by`, `status`, `created_at`, `updated_at`) VALUES
-(5, 'BP100320240003', '2024-10-03', '2024-11-03', 6, 2, 19, 1, 'Dubai', 'abu hail, dubai', 'starting new Project', 'Etisalat Managed Service', 'UAE', '2024-10-03', 'approve', NULL, 513000.00, NULL, NULL, 33, 'Good', '2024-10-03 07:18:04', '2024-11-15 08:35:48'),
-(8, 'BP110420240001', '2024-11-04', '2024-12-04', 1, 3, 33, 1, 'Dubai', 'Al Quoz Dubai', 'Fibre Cabling', 'Other', 'UAE', '2024-11-04', 'pending', NULL, NULL, NULL, NULL, NULL, 'Good', '2024-11-04 10:45:02', '2024-11-04 10:45:02');
+(5, 'BP100320240003', '2024-10-03', '2024-11-03', 6, 2, 19, 1, 'Dubai', 'abu hail, dubai', 'starting new Project', 'Etisalat Managed Service', 'UAE', '2024-10-03', 'approve', NULL, 599000.00, NULL, NULL, 33, 'Good', '2024-10-03 07:18:04', '2024-12-10 01:43:18'),
+(9, 'BP121020240001', '2024-12-10', '2025-01-10', 6, 2, 33, 1, 'Dubai', 'Al Quoz Dubai', 'starting new Project', 'Mobile Network', 'UAE', '2024-12-10', 'pending', NULL, NULL, NULL, NULL, NULL, 'Good', '2024-12-10 02:13:51', '2024-12-10 02:13:51');
 
 -- --------------------------------------------------------
 
@@ -167,11 +194,11 @@ INSERT INTO `budget_project` (`id`, `reference_code`, `start_date`, `end_date`, 
 --
 
 CREATE TABLE `business_clients` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `clientname` varchar(255) NOT NULL,
-  `clientdetail` varchar(255) DEFAULT NULL,
-  `clientremark` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `clientname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `clientdetail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `clientremark` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -192,11 +219,11 @@ INSERT INTO `business_clients` (`id`, `clientname`, `clientdetail`, `clientremar
 --
 
 CREATE TABLE `business_units` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `source` varchar(255) NOT NULL,
-  `unitdetail` varchar(255) DEFAULT NULL,
-  `unitremark` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `source` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `unitdetail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `unitremark` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -217,16 +244,16 @@ INSERT INTO `business_units` (`id`, `source`, `unitdetail`, `unitremark`, `statu
 --
 
 CREATE TABLE `capital_expenditure` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `project` varchar(255) DEFAULT NULL,
-  `po` varchar(255) NOT NULL,
-  `expenses` varchar(255) NOT NULL,
-  `total_number` int(11) NOT NULL,
-  `cost` int(11) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `project` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `po` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expenses` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_number` int NOT NULL,
+  `cost` int NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `total_cost` decimal(15,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -251,16 +278,16 @@ INSERT INTO `capital_expenditure` (`id`, `budget_project_id`, `type`, `project`,
 --
 
 CREATE TABLE `cash_flows` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `date` date NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `category` varchar(255) NOT NULL,
-  `reference_code` varchar(255) NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reference_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `cash_inflow` decimal(10,2) DEFAULT NULL,
   `cash_outflow` decimal(10,2) DEFAULT NULL,
   `committed_budget` decimal(10,2) DEFAULT NULL,
   `balance` decimal(10,2) DEFAULT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -270,16 +297,16 @@ CREATE TABLE `cash_flows` (
 --
 
 INSERT INTO `cash_flows` (`id`, `date`, `description`, `category`, `reference_code`, `cash_inflow`, `cash_outflow`, `committed_budget`, `balance`, `budget_project_id`, `created_at`, `updated_at`) VALUES
-(336, '2024-11-15', 'Initial Allocation', 'Salary', 'BP100320240003', 100000.00, 0.00, 100000.00, 100000.00, 5, '2024-11-15 08:35:48', '2024-11-15 08:35:48'),
-(337, '2024-11-15', 'Initial Allocation', 'Facility', 'BP100320240003', 100000.00, 0.00, 100000.00, 122650.00, 5, '2024-11-15 08:35:48', '2024-11-15 08:43:35'),
-(338, '2024-11-15', 'Initial Allocation', 'Material', 'BP100320240003', 39000.00, 0.00, 39000.00, 89000.00, 5, '2024-11-15 08:35:48', '2024-11-15 08:46:14'),
-(339, '2024-11-15', 'Initial Allocation', 'Overhead', 'BP100320240003', 14000.00, 0.00, 14000.00, 14000.00, 5, '2024-11-15 08:35:48', '2024-11-15 08:35:48'),
-(340, '2024-11-15', 'Initial Allocation', 'Financial', 'BP100320240003', 60000.00, 0.00, 60000.00, 110000.00, 5, '2024-11-15 08:35:48', '2024-11-15 08:49:50'),
-(341, '2024-11-15', 'Initial Allocation', 'Capital Expenditure', 'BP100320240003', 200000.00, 0.00, 200000.00, 250000.00, 5, '2024-11-15 08:35:48', '2024-11-15 08:47:59'),
-(342, '2024-11-15', 'Received Invoice', 'Facility', 'INV-01234', 22650.00, 0.00, 100000.00, 122650.00, 5, '2024-11-15 08:43:35', '2024-11-15 08:43:35'),
-(343, '2024-11-15', 'Fund Transfer From Management', 'Material', 'ASE3000', 50000.00, 0.00, 39000.00, 89000.00, 5, '2024-11-15 08:46:14', '2024-11-15 08:46:14'),
-(344, '2024-11-15', 'Account Remittance', 'Capital Expenditure', 'ASHFHUD', 50000.00, 0.00, 200000.00, 250000.00, 5, '2024-11-15 08:47:59', '2024-11-15 08:47:59'),
-(345, '2024-11-15', 'Bank Loan', 'Financial', 'AED80', 50000.00, 0.00, 60000.00, 110000.00, 5, '2024-11-15 08:49:50', '2024-11-15 08:49:50');
+(399, '2024-12-10', 'Initial Allocation', 'Salary', 'BP100320240003', 180000.00, 0.00, 180000.00, 180000.00, 5, '2024-12-10 01:43:18', '2024-12-10 01:43:18'),
+(400, '2024-12-10', 'Initial Allocation', 'Facility', 'BP100320240003', 106000.00, 0.00, 106000.00, 186000.00, 5, '2024-12-10 01:43:18', '2024-12-10 02:08:16'),
+(401, '2024-12-10', 'Initial Allocation', 'Material', 'BP100320240003', 39000.00, 0.00, 39000.00, 99000.00, 5, '2024-12-10 01:43:18', '2024-12-10 01:50:41'),
+(402, '2024-12-10', 'Initial Allocation', 'Overhead', 'BP100320240003', 14000.00, 0.00, 14000.00, 36650.00, 5, '2024-12-10 01:43:19', '2024-12-10 01:47:09'),
+(403, '2024-12-10', 'Initial Allocation', 'Financial', 'BP100320240003', 60000.00, 0.00, 60000.00, 110000.00, 5, '2024-12-10 01:43:19', '2024-12-10 01:49:12'),
+(404, '2024-12-10', 'Initial Allocation', 'Capital Expenditure', 'BP100320240003', 200000.00, 0.00, 200000.00, 200000.00, 5, '2024-12-10 01:43:19', '2024-12-10 01:43:19'),
+(405, '2024-12-10', 'Received Invoice', 'Overhead', 'INV-01234', 22650.00, 0.00, 14000.00, 36650.00, 5, '2024-12-10 01:47:09', '2024-12-10 01:47:09'),
+(406, '2024-12-10', 'Fund Transfer From Management', 'Financial', 'A900AFGH8000', 50000.00, 0.00, 60000.00, 110000.00, 5, '2024-12-10 01:49:12', '2024-12-10 01:49:12'),
+(407, '2024-12-10', 'Account Remittance', 'Material', 'A0009000123', 60000.00, 0.00, 39000.00, 99000.00, 5, '2024-12-10 01:50:41', '2024-12-10 01:50:41'),
+(408, '2024-12-10', 'Bank Loan', 'Facility', 'L-890736382', 40000.00, 0.00, 106000.00, 146000.00, 5, '2024-12-10 02:08:16', '2024-12-10 02:08:16');
 
 -- --------------------------------------------------------
 
@@ -288,13 +315,13 @@ INSERT INTO `cash_flows` (`id`, `date`, `description`, `category`, `reference_co
 --
 
 CREATE TABLE `cost_overhead` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `in_direct_cost_id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `project` varchar(255) NOT NULL,
-  `po` varchar(255) NOT NULL,
-  `expenses` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `in_direct_cost_id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `project` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `po` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expenses` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -316,15 +343,10 @@ INSERT INTO `cost_overhead` (`id`, `in_direct_cost_id`, `budget_project_id`, `ty
 (14, 3, 2, 'OverHead Cost', '2', 'OPEX', 'Visa Renewal', 68.64, '2024-10-01 08:56:17', '2024-10-01 08:58:04'),
 (15, 3, 2, 'OverHead Cost', '2', 'OPEX', 'Depreciation Tools', 1.83, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
 (21, 5, 5, 'OverHead Cost', '5', 'OPEX', 'HO Cost', 2244.34, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
-(22, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Annual Benefit', 0.59, '2024-10-03 07:20:51', '2024-11-18 03:27:15'),
+(22, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Annual Benefit', 0.59, '2024-10-03 07:20:51', '2024-12-10 04:37:39'),
 (23, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Insurance Cost', 359.72, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
 (24, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Visa Renewal', 813.28, '2024-10-03 07:20:51', '2024-10-03 07:43:04'),
-(25, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Depreciation Tools', 11504.17, '2024-10-03 07:20:51', '2024-11-18 03:27:15'),
-(26, 6, 8, 'OverHead Cost', '8', 'OPEX', 'HO Cost', 688.80, '2024-11-04 10:46:24', '2024-11-18 03:13:43'),
-(27, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Annual Benefit', 0.18, '2024-11-04 10:46:24', '2024-11-04 10:51:43'),
-(28, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Insurance Cost', 110.40, '2024-11-04 10:46:24', '2024-11-18 03:13:43'),
-(29, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Visa Renewal', 249.60, '2024-11-04 10:46:24', '2024-11-18 03:13:43'),
-(30, 6, 8, 'OverHead Cost', '8', 'OPEX', 'Depreciation Tools', 0.00, '2024-11-04 10:46:24', '2024-11-18 03:13:43');
+(25, 5, 5, 'OverHead Cost', '5', 'OPEX', 'Depreciation Tools', 11504.17, '2024-10-03 07:20:51', '2024-12-10 04:37:39');
 
 -- --------------------------------------------------------
 
@@ -333,8 +355,8 @@ INSERT INTO `cost_overhead` (`id`, `in_direct_cost_id`, `budget_project_id`, `ty
 --
 
 CREATE TABLE `direct_cost` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
   `total_cost` decimal(15,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -345,8 +367,7 @@ CREATE TABLE `direct_cost` (
 --
 
 INSERT INTO `direct_cost` (`id`, `budget_project_id`, `total_cost`, `created_at`, `updated_at`) VALUES
-(5, 5, NULL, '2024-10-03 07:20:51', '2024-10-03 07:20:51'),
-(6, 8, NULL, '2024-11-04 10:46:23', '2024-11-04 10:46:23');
+(5, 5, NULL, '2024-10-03 07:20:51', '2024-10-03 07:20:51');
 
 -- --------------------------------------------------------
 
@@ -355,22 +376,22 @@ INSERT INTO `direct_cost` (`id`, `budget_project_id`, `total_cost`, `created_at`
 --
 
 CREATE TABLE `facility_cost` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `direct_cost_id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `project` varchar(255) NOT NULL,
-  `po` varchar(255) NOT NULL DEFAULT 'OPEX',
-  `expenses` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `direct_cost_id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `project` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `po` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'OPEX',
+  `expenses` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `cost_per_month` decimal(10,2) NOT NULL,
-  `no_of_staff` int(11) DEFAULT NULL,
-  `no_of_months` int(11) NOT NULL,
+  `no_of_staff` int DEFAULT NULL,
+  `no_of_months` int NOT NULL,
   `total_cost` decimal(15,2) DEFAULT NULL,
   `average_cost` decimal(15,2) DEFAULT NULL,
-  `percentage_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `approval_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'approved',
+  `percentage_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `approval_status` enum('pending','approved','rejected') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'approved',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -399,13 +420,13 @@ INSERT INTO `facility_cost` (`id`, `direct_cost_id`, `budget_project_id`, `type`
 --
 
 CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` bigint UNSIGNED NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -415,14 +436,14 @@ CREATE TABLE `failed_jobs` (
 --
 
 CREATE TABLE `financial_cost` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `in_direct_cost_id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `po` varchar(255) NOT NULL,
-  `project` varchar(255) NOT NULL,
-  `expenses` varchar(255) NOT NULL,
-  `percentage` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `in_direct_cost_id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `po` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `project` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expenses` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `percentage` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `total_cost` decimal(15,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -437,10 +458,8 @@ INSERT INTO `financial_cost` (`id`, `in_direct_cost_id`, `budget_project_id`, `t
 (4, 2, 1, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 2701.66, '2024-10-01 02:55:24', '2024-10-03 06:04:24'),
 (5, 3, 2, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 3075.00, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
 (6, 3, 2, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 615.00, '2024-10-01 08:56:17', '2024-10-02 12:22:04'),
-(9, 5, 5, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 51310.00, '2024-10-03 07:20:51', '2024-11-18 03:27:15'),
-(10, 5, 5, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 10262.00, '2024-10-03 07:20:51', '2024-11-18 03:27:15'),
-(11, 6, 8, 'Financial Cost', 'OPEX', '1', 'Risk', '0', 6250.00, '2024-11-04 10:46:24', '2024-11-18 03:13:43'),
-(12, 6, 8, 'Financial Cost', 'OPEX', '1', 'Financial Cost', '0', 1250.00, '2024-11-04 10:46:24', '2024-11-18 03:13:43');
+(9, 5, 5, 'Financial Cost', 'OPEX', '6', 'Risk', '0', 51310.00, '2024-10-03 07:20:51', '2024-12-10 04:37:39'),
+(10, 5, 5, 'Financial Cost', 'OPEX', '6', 'Financial Cost', '0', 10262.00, '2024-10-03 07:20:51', '2024-12-10 04:37:39');
 
 -- --------------------------------------------------------
 
@@ -449,8 +468,8 @@ INSERT INTO `financial_cost` (`id`, `in_direct_cost_id`, `budget_project_id`, `t
 --
 
 CREATE TABLE `indirect_cost` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
   `total_cost` decimal(15,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -461,8 +480,7 @@ CREATE TABLE `indirect_cost` (
 --
 
 INSERT INTO `indirect_cost` (`id`, `budget_project_id`, `total_cost`, `created_at`, `updated_at`) VALUES
-(5, 5, NULL, '2024-10-03 07:20:51', '2024-10-03 07:20:51'),
-(6, 8, NULL, '2024-11-04 10:46:24', '2024-11-04 10:46:24');
+(5, 5, NULL, '2024-10-03 07:20:51', '2024-10-03 07:20:51');
 
 -- --------------------------------------------------------
 
@@ -471,26 +489,26 @@ INSERT INTO `indirect_cost` (`id`, `budget_project_id`, `total_cost`, `created_a
 --
 
 CREATE TABLE `invoice` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `date` date NOT NULL,
-  `invoice_number` varchar(255) NOT NULL,
+  `invoice_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `invoice_dr_amount_received` decimal(15,2) NOT NULL,
-  `invoice_fund_category` varchar(255) NOT NULL,
-  `invoice_destination_account` bigint(20) UNSIGNED NOT NULL,
-  `item_description` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`item_description`)),
-  `amount` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`amount`)),
-  `invoice_file` varchar(255) DEFAULT NULL,
-  `invoice_budget_project_id` bigint(20) UNSIGNED NOT NULL,
+  `invoice_fund_category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `invoice_destination_account` bigint UNSIGNED NOT NULL,
+  `item_description` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `amount` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `invoice_file` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `invoice_budget_project_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 --
 -- Dumping data for table `invoice`
 --
 
 INSERT INTO `invoice` (`id`, `date`, `invoice_number`, `invoice_dr_amount_received`, `invoice_fund_category`, `invoice_destination_account`, `item_description`, `amount`, `invoice_file`, `invoice_budget_project_id`, `created_at`, `updated_at`) VALUES
-(10, '2024-11-15', 'INV-01234', 22650.00, 'Facility', 98, '\"[\\\"Preliminary Design Services\\\",\\\"Schematic Design Services\\\",\\\"Design & Development Services\\\",\\\"sales tax\\\"]\"', '\"[\\\"5000\\\",\\\"7500\\\",\\\"10000\\\",\\\"150\\\"]\"', 'invoices/ip0l8mrdlkmJCWco68PI0t59MYbwHMIooilmXYxt.pdf', 5, '2024-11-15 08:43:35', '2024-11-15 08:43:35');
+(19, '2024-12-10', 'INV-01234', 22650.00, 'Overhead', 98, '\"[\\\"preliminary design services\\\",\\\"Schematic Design Services\\\",\\\"Design Development Services\\\",\\\"Sales Tax\\\"]\"', '\"[\\\"5000\\\",\\\"7500\\\",\\\"10000\\\",\\\"150\\\"]\"', 'public/invoices/1733809629.pdf', 5, '2024-12-10 01:47:09', '2024-12-10 01:47:09');
 
 -- --------------------------------------------------------
 
@@ -499,15 +517,15 @@ INSERT INTO `invoice` (`id`, `date`, `invoice_number`, `invoice_dr_amount_receiv
 --
 
 CREATE TABLE `ledger_entries` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `bank_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `bank_id` bigint UNSIGNED NOT NULL,
   `amount` decimal(15,2) NOT NULL,
-  `type` enum('debit','credit') NOT NULL,
-  `description` text DEFAULT NULL,
+  `type` enum('debit','credit') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `budget_project_id` bigint(20) UNSIGNED DEFAULT 0,
-  `category_type` varchar(255) DEFAULT NULL
+  `budget_project_id` bigint UNSIGNED DEFAULT '0',
+  `category_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -525,18 +543,18 @@ INSERT INTO `ledger_entries` (`id`, `bank_id`, `amount`, `type`, `description`, 
 (17, 104, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25', 0, NULL),
 (18, 105, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25', 0, NULL),
 (19, 106, 0.00, 'credit', 'Initial balance', '2024-11-08 00:47:25', '2024-11-08 00:47:25', 0, NULL),
-(99, 98, 22650.00, 'debit', 'Invoice Ref: INV-01234', '2024-11-15 08:43:35', '2024-11-15 08:43:35', 5, 'Invoice'),
-(100, 98, 5000.00, 'credit', 'Preliminary Design Services', '2024-11-15 08:43:35', '2024-11-15 08:43:35', 5, 'Invoice'),
-(101, 98, 7500.00, 'credit', 'Schematic Design Services', '2024-11-15 08:43:35', '2024-11-15 08:43:35', 5, 'Invoice'),
-(102, 98, 10000.00, 'credit', 'Design & Development Services', '2024-11-15 08:43:35', '2024-11-15 08:43:35', 5, 'Invoice'),
-(103, 98, 150.00, 'credit', 'sales tax', '2024-11-15 08:43:35', '2024-11-15 08:43:35', 5, 'Invoice'),
-(104, 97, 50000.00, 'debit', 'Bank Account (Bank Transfer) - Ref : ASE3000', '2024-11-15 08:46:14', '2024-11-15 08:46:14', 5, 'Material'),
-(105, 97, 50000.00, 'credit', 'Management Fund For Material', '2024-11-15 08:46:14', '2024-11-15 08:46:14', 5, 'Material'),
-(106, 98, 50000.00, 'debit', 'Bank (Remittance) - Ref : ASHFHUD', '2024-11-15 08:47:59', '2024-11-15 08:47:59', 5, 'Capital Expenditure'),
-(107, 98, 50000.00, 'credit', 'Remittance Received from Samba Bank for Capital Expenditure', '2024-11-15 08:47:59', '2024-11-15 08:47:59', 5, 'Capital Expenditure'),
-(108, 98, 52500.00, 'debit', 'Bank Loan - Ref: AED80', '2024-11-15 08:49:50', '2024-11-15 08:49:50', 5, 'Financial'),
-(109, 98, 2500.00, 'credit', 'Loan Interest Liability - Ref: AED80', '2024-11-15 08:49:50', '2024-11-15 08:49:50', 5, 'Financial'),
-(110, 98, 50000.00, 'credit', 'Bank Loan Principle Amount - Ref: AED80', '2024-11-15 08:49:50', '2024-11-15 08:49:50', 5, 'Financial');
+(143, 98, 22650.00, 'debit', 'Invoice Ref: INV-01234', '2024-12-10 01:47:09', '2024-12-10 01:47:09', 5, 'Invoice'),
+(144, 98, 5000.00, 'credit', 'preliminary design services', '2024-12-10 01:47:09', '2024-12-10 01:47:09', 5, 'Invoice'),
+(145, 98, 7500.00, 'credit', 'Schematic Design Services', '2024-12-10 01:47:09', '2024-12-10 01:47:09', 5, 'Invoice'),
+(146, 98, 10000.00, 'credit', 'Design Development Services', '2024-12-10 01:47:09', '2024-12-10 01:47:09', 5, 'Invoice'),
+(147, 98, 150.00, 'credit', 'Sales Tax', '2024-12-10 01:47:09', '2024-12-10 01:47:09', 5, 'Invoice'),
+(148, 97, 50000.00, 'debit', 'Bank Account (Bank Transfer) - Ref : A900AFGH8000', '2024-12-10 01:49:12', '2024-12-10 01:49:12', 5, 'Financial'),
+(149, 97, 50000.00, 'credit', 'Management Fund For Financial', '2024-12-10 01:49:12', '2024-12-10 01:49:12', 5, 'Financial'),
+(150, 99, 60000.00, 'debit', 'Remittance Ref: A0009000123', '2024-12-10 01:50:41', '2024-12-10 01:50:41', 5, 'Material'),
+(151, 101, 25000.00, 'debit', 'Loan Ref: L-890736382', '2024-12-10 01:52:42', '2024-12-10 01:52:42', 5, 'Facility'),
+(152, 100, 40400.00, 'debit', 'Bank Loan - Ref: L-890736382', '2024-12-10 02:08:16', '2024-12-10 02:08:16', 5, 'Facility'),
+(153, 100, 400.00, 'credit', 'Loan Interest Liability - Ref: L-890736382', '2024-12-10 02:08:16', '2024-12-10 02:08:16', 5, 'Facility'),
+(154, 100, 40000.00, 'credit', 'Bank Loan Principle Amount - Ref: L-890736382', '2024-12-10 02:08:16', '2024-12-10 02:08:16', 5, 'Facility');
 
 -- --------------------------------------------------------
 
@@ -545,20 +563,20 @@ INSERT INTO `ledger_entries` (`id`, `bank_id`, `amount`, `type`, `description`, 
 --
 
 CREATE TABLE `loans` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `loan_reference` varchar(255) NOT NULL,
-  `loan_provider_type` varchar(255) NOT NULL,
-  `loan_provider_name` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `loan_reference` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `loan_provider_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `loan_provider_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `loan_amount` decimal(15,2) NOT NULL,
   `loan_interest_rate` decimal(5,2) DEFAULT NULL,
-  `loan_bank_account` varchar(255) NOT NULL,
-  `fund_category` varchar(255) NOT NULL,
+  `loan_bank_account` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fund_category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `loan_repayment_start_date` date DEFAULT NULL,
-  `loan_repayment_frequency` varchar(255) NOT NULL,
-  `loan_destination_account` bigint(20) UNSIGNED DEFAULT NULL,
-  `budget_project_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `loan_repayment_frequency` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `loan_destination_account` bigint UNSIGNED DEFAULT NULL,
+  `budget_project_id` bigint UNSIGNED DEFAULT NULL,
   `loan_date` date NOT NULL,
-  `loan_description` text DEFAULT NULL,
+  `loan_description` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -568,7 +586,7 @@ CREATE TABLE `loans` (
 --
 
 INSERT INTO `loans` (`id`, `loan_reference`, `loan_provider_type`, `loan_provider_name`, `loan_amount`, `loan_interest_rate`, `loan_bank_account`, `fund_category`, `loan_repayment_start_date`, `loan_repayment_frequency`, `loan_destination_account`, `budget_project_id`, `loan_date`, `loan_description`, `created_at`, `updated_at`) VALUES
-(5, 'AED80', 'bank', 'Central Bank UAE', 50000.00, 5.00, 'AE9005500', 'Financial', '2024-11-30', 'Monthly', 98, 5, '2024-11-15', 'Loan Received For Financial Obligations', '2024-11-15 08:49:50', '2024-11-15 08:49:50');
+(8, 'L-890736382', 'bank', 'Central Bank UAE', 40000.00, 1.00, 'AE9005500', 'Facility', '2024-12-10', 'Annually', 100, 5, '2024-12-10', 'received loan for the purpose of facility management', '2024-12-10 02:08:16', '2024-12-10 02:08:16');
 
 -- --------------------------------------------------------
 
@@ -577,24 +595,24 @@ INSERT INTO `loans` (`id`, `loan_reference`, `loan_provider_type`, `loan_provide
 --
 
 CREATE TABLE `material_cost` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `direct_cost_id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `expense_head` varchar(500) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `project` varchar(255) NOT NULL,
-  `po` varchar(255) NOT NULL DEFAULT 'OPEX',
-  `expenses` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `direct_cost_id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `expense_head` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `project` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `po` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'OPEX',
+  `expenses` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `quantity` decimal(10,2) DEFAULT NULL,
-  `unit` varchar(255) DEFAULT NULL,
+  `unit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `unit_cost` decimal(10,2) DEFAULT NULL,
   `total_cost` decimal(15,2) DEFAULT NULL,
   `average_cost` decimal(15,2) DEFAULT NULL,
   `total_budget` decimal(15,2) DEFAULT NULL,
-  `approval_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'approved',
-  `percentage_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `approval_status` enum('pending','approved','rejected') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'approved',
+  `percentage_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -622,9 +640,9 @@ INSERT INTO `material_cost` (`id`, `direct_cost_id`, `budget_project_id`, `expen
 --
 
 CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) NOT NULL,
-  `batch` int(11) NOT NULL
+  `id` int UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -702,7 +720,11 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (68, '2024_11_12_054057_create_sender_table', 37),
 (69, '2024_11_15_111045_create_loans_table', 38),
 (70, '2024_12_32_114540_create_payment_orders_table', 39),
-(71, '2024_12_32_114542_create_payment_orders_table', 40);
+(71, '2024_12_32_114542_create_payment_orders_table', 40),
+(72, '2024_12_33_114542_create_payment_orders_table', 41),
+(73, '2024_12_09_083743_add_current_balance_to_banks_table', 42),
+(74, '2024_12_09_083848_create_bank_balances_table', 43),
+(75, '2024_12_10_095048_payment_order_items_table', 44);
 
 -- --------------------------------------------------------
 
@@ -711,9 +733,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `noc_payments` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `project_id` bigint(20) UNSIGNED NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `project_id` bigint UNSIGNED NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amount` decimal(15,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -735,8 +757,8 @@ INSERT INTO `noc_payments` (`id`, `project_id`, `description`, `amount`, `create
 --
 
 CREATE TABLE `password_resets` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -747,8 +769,8 @@ CREATE TABLE `password_resets` (
 --
 
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -759,34 +781,35 @@ CREATE TABLE `password_reset_tokens` (
 --
 
 CREATE TABLE `payment_orders` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `payment_order_number` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `payment_order_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `payment_date` date NOT NULL,
-  `payment_method` varchar(255) NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `beneficiary_name` varchar(255) DEFAULT NULL,
-  `iban` varchar(255) DEFAULT NULL,
-  `bank_name` varchar(255) DEFAULT NULL,
+  `payment_method` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `company_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `budget_project_id` bigint UNSIGNED DEFAULT NULL,
+  `beneficiary_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `iban` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bank_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cash_amount` decimal(15,2) DEFAULT NULL,
-  `bank_payment_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `cash_detail` varchar(255) DEFAULT NULL,
-  `bank_detail` varchar(255) DEFAULT NULL,
-  `submit_status` varchar(255) DEFAULT NULL,
-  `bank_transfer_details` text DEFAULT NULL,
-  `cash_received_by` varchar(255) DEFAULT NULL,
-  `item_amount` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`item_amount`)),
-  `item_description` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`item_description`)),
+  `bank_payment_id` bigint UNSIGNED DEFAULT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `cash_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bank_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `submit_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bank_transfer_details` text COLLATE utf8mb4_unicode_ci,
+  `cash_received_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `item_amount` json DEFAULT NULL,
+  `item_description` json DEFAULT NULL,
   `cash_date` date DEFAULT NULL,
-  `transaction_number` varchar(255) DEFAULT NULL,
-  `paid_status` varchar(255) NOT NULL DEFAULT 'not paid yet',
-  `transaction_detail` varchar(255) DEFAULT NULL,
+  `transaction_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `paid_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'not paid yet',
+  `transaction_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `transaction_amount` decimal(15,2) DEFAULT NULL,
-  `cheque_number` varchar(255) DEFAULT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `cheque_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `cheque_date` date DEFAULT NULL,
-  `cheque_file` varchar(255) DEFAULT NULL,
-  `cheque_payee` varchar(255) DEFAULT NULL,
+  `cheque_file` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cheque_payee` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `total_budget` decimal(15,2) DEFAULT NULL,
   `total_cheque_amount` decimal(15,2) DEFAULT NULL,
   `utilization` decimal(15,2) DEFAULT NULL,
@@ -800,8 +823,30 @@ CREATE TABLE `payment_orders` (
 -- Dumping data for table `payment_orders`
 --
 
-INSERT INTO `payment_orders` (`id`, `payment_order_number`, `payment_date`, `payment_method`, `budget_project_id`, `beneficiary_name`, `iban`, `bank_name`, `cash_amount`, `bank_payment_id`, `user_id`, `cash_detail`, `bank_detail`, `submit_status`, `bank_transfer_details`, `cash_received_by`, `item_amount`, `item_description`, `cash_date`, `transaction_number`, `paid_status`, `transaction_detail`, `transaction_amount`, `cheque_number`, `status`, `cheque_date`, `cheque_file`, `cheque_payee`, `total_budget`, `total_cheque_amount`, `utilization`, `total_bank_transfer`, `balance`, `created_at`, `updated_at`) VALUES
-(4, 'PO251124-CHEQUE-VEP', '2024-11-25', 'cheque', 5, NULL, NULL, NULL, NULL, 98, 33, NULL, NULL, 'Submitted', NULL, NULL, '[\"5000\"]', '[\"interest received on loan\"]', NULL, NULL, 'not paid yet', NULL, NULL, 'ASED', 'pending', '2024-11-25', 'public/cheque/1732537253.pdf', 'Mr Mohammad', 685650.00, 5000.00, 0.00, NULL, 685650.00, '2024-11-25 08:20:15', '2024-11-25 08:20:53');
+INSERT INTO `payment_orders` (`id`, `payment_order_number`, `payment_date`, `payment_method`, `company_name`, `budget_project_id`, `beneficiary_name`, `iban`, `bank_name`, `cash_amount`, `bank_payment_id`, `user_id`, `cash_detail`, `bank_detail`, `submit_status`, `bank_transfer_details`, `cash_received_by`, `item_amount`, `item_description`, `cash_date`, `transaction_number`, `paid_status`, `transaction_detail`, `transaction_amount`, `cheque_number`, `status`, `cheque_date`, `cheque_file`, `cheque_payee`, `total_budget`, `total_cheque_amount`, `utilization`, `total_bank_transfer`, `balance`, `created_at`, `updated_at`) VALUES
+(8, 'PO111224-5SM', '2024-12-11', NULL, 'Max LTD', NULL, NULL, NULL, NULL, NULL, NULL, 33, NULL, NULL, 'Submitted', NULL, NULL, NULL, NULL, NULL, NULL, 'not paid yet', NULL, NULL, NULL, 'approved', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-12-11 02:40:06', '2024-12-11 03:30:21'),
+(9, 'PO111224-LA6', '2024-12-11', NULL, 'Yalla Renovation', NULL, NULL, NULL, NULL, NULL, NULL, 33, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'not paid yet', NULL, NULL, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-12-11 03:15:26', '2024-12-11 03:15:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_order_items`
+--
+
+CREATE TABLE `payment_order_items` (
+  `id` bigint UNSIGNED NOT NULL,
+  `payment_order_id` bigint UNSIGNED NOT NULL,
+  `items_json` json DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `payment_order_items`
+--
+
+INSERT INTO `payment_order_items` (`id`, `payment_order_id`, `items_json`, `created_at`, `updated_at`) VALUES
+(5, 8, '[{\"head\": \"head\", \"banks\": [{\"amount\": \"1000\", \"bank_id\": 98}, {\"amount\": null, \"bank_id\": 97}, {\"amount\": \"4000\", \"bank_id\": 99}, {\"amount\": null, \"bank_id\": 100}], \"balance\": \"172650\", \"description\": \"salary\", \"paid_amount\": \"5000\", \"beneficiary_iban\": \"AED9303038392\", \"beneficiary_name\": \"Co&Co LTD\", \"budget_project_id\": \"5\"}]', '2024-12-11 03:04:27', '2024-12-11 03:04:27');
 
 -- --------------------------------------------------------
 
@@ -810,12 +855,12 @@ INSERT INTO `payment_orders` (`id`, `payment_order_number`, `payment_date`, `pay
 --
 
 CREATE TABLE `personal_access_tokens` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) NOT NULL,
-  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `token` varchar(64) NOT NULL,
-  `abilities` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -829,9 +874,9 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 CREATE TABLE `petty_cash` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `project_id` bigint(20) UNSIGNED NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `project_id` bigint UNSIGNED NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amount` decimal(15,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -854,8 +899,8 @@ INSERT INTO `petty_cash` (`id`, `project_id`, `description`, `amount`, `created_
 --
 
 CREATE TABLE `planned_cash` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `project_id` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `project_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `planned_amount` decimal(15,2) DEFAULT NULL,
   `received_amount` decimal(15,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -869,7 +914,7 @@ CREATE TABLE `planned_cash` (
 --
 
 CREATE TABLE `planned_cash_opening_balances` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `amount` decimal(15,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -882,11 +927,11 @@ CREATE TABLE `planned_cash_opening_balances` (
 --
 
 CREATE TABLE `projects` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `projectdetail` varchar(255) DEFAULT NULL,
-  `projectremark` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `projectdetail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `projectremark` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -910,9 +955,9 @@ INSERT INTO `projects` (`id`, `name`, `projectdetail`, `projectremark`, `status`
 --
 
 CREATE TABLE `project_budget_sequence` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `date` char(8) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `last_sequence` int(11) NOT NULL DEFAULT 0,
+  `last_sequence` int NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -925,7 +970,8 @@ INSERT INTO `project_budget_sequence` (`id`, `date`, `last_sequence`, `created_a
 (1, '10012024', 2, '2024-10-01 02:35:59', '2024-10-01 08:53:49'),
 (2, '10032024', 3, '2024-10-03 06:10:54', '2024-10-03 07:18:04'),
 (3, '10102024', 2, '2024-10-10 08:24:19', '2024-10-10 08:25:29'),
-(4, '11042024', 1, '2024-11-04 10:45:02', '2024-11-04 10:45:02');
+(4, '11042024', 1, '2024-11-04 10:45:02', '2024-11-04 10:45:02'),
+(5, '12102024', 1, '2024-12-10 02:13:51', '2024-12-10 02:13:51');
 
 -- --------------------------------------------------------
 
@@ -934,18 +980,18 @@ INSERT INTO `project_budget_sequence` (`id`, `date`, `last_sequence`, `created_a
 --
 
 CREATE TABLE `purchase_orders` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `po_number` varchar(255) NOT NULL,
-  `supplier_name` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `supplier_address` varchar(255) NOT NULL,
-  `project_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `po_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `supplier_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `supplier_address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `project_id` bigint UNSIGNED NOT NULL,
   `total_discount` decimal(10,2) DEFAULT NULL,
-  `requested_by` bigint(20) UNSIGNED NOT NULL,
-  `verified_by` varchar(255) DEFAULT NULL,
-  `prepared_by` bigint(20) UNSIGNED NOT NULL,
+  `requested_by` bigint UNSIGNED NOT NULL,
+  `verified_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prepared_by` bigint UNSIGNED NOT NULL,
   `date` date NOT NULL,
-  `payment_term` varchar(255) NOT NULL,
+  `payment_term` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `subtotal` decimal(10,2) DEFAULT NULL,
   `vat` decimal(10,2) DEFAULT NULL,
   `total` decimal(10,2) DEFAULT NULL,
@@ -953,8 +999,8 @@ CREATE TABLE `purchase_orders` (
   `budget_utilization` decimal(10,2) DEFAULT NULL,
   `budget_balance` decimal(10,2) DEFAULT NULL,
   `current_request` decimal(10,2) DEFAULT NULL,
-  `status` varchar(255) DEFAULT 'Not Submitted',
-  `is_verified` tinyint(1) NOT NULL DEFAULT 0,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'Not Submitted',
+  `is_verified` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -964,7 +1010,7 @@ CREATE TABLE `purchase_orders` (
 --
 
 INSERT INTO `purchase_orders` (`id`, `po_number`, `supplier_name`, `description`, `supplier_address`, `project_id`, `total_discount`, `requested_by`, `verified_by`, `prepared_by`, `date`, `payment_term`, `subtotal`, `vat`, `total`, `budget_total`, `budget_utilization`, `budget_balance`, `current_request`, `status`, `is_verified`, `created_at`, `updated_at`) VALUES
-(24, 'PO111620240001', 'Ali Asghar Hussani', 'starting new Project', 'Business Bay, Dubai', 5, NULL, 19, NULL, 33, '2024-11-16', 'cheque 60 days', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Not Submitted', 0, '2024-11-16 01:23:16', '2024-11-16 01:23:16');
+(25, 'PO121020240001', 'Ali Asghar Hussani', 'starting new', 'Business Bay, Dubai', 5, NULL, 19, NULL, 33, '2024-12-10', 'cheque 60 days', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Not Submitted', 0, '2024-12-10 02:37:56', '2024-12-10 02:37:56');
 
 -- --------------------------------------------------------
 
@@ -973,22 +1019,22 @@ INSERT INTO `purchase_orders` (`id`, `po_number`, `supplier_name`, `description`
 --
 
 CREATE TABLE `purchase_orders_item` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `purchase_order_id` bigint(20) UNSIGNED NOT NULL,
-  `po_number` varchar(255) NOT NULL,
-  `items` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`items`)),
-  `project_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `allocated_budget_amount` decimal(8,2) NOT NULL DEFAULT 0.00,
-  `amount_requested` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `total_vat` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `total_discount` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `balance_budget` decimal(8,2) NOT NULL DEFAULT 0.00,
-  `total_balance` decimal(8,2) NOT NULL DEFAULT 0.00,
-  `delivery_charges` decimal(8,2) NOT NULL DEFAULT 0.00,
-  `budget_utilization` decimal(8,2) NOT NULL DEFAULT 0.00,
+  `id` bigint UNSIGNED NOT NULL,
+  `purchase_order_id` bigint UNSIGNED NOT NULL,
+  `po_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `items` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `project_id` bigint UNSIGNED DEFAULT NULL,
+  `allocated_budget_amount` decimal(8,2) NOT NULL DEFAULT '0.00',
+  `amount_requested` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `total_vat` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `total_discount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `balance_budget` decimal(8,2) NOT NULL DEFAULT '0.00',
+  `total_balance` decimal(8,2) NOT NULL DEFAULT '0.00',
+  `delivery_charges` decimal(8,2) NOT NULL DEFAULT '0.00',
+  `budget_utilization` decimal(8,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -997,9 +1043,9 @@ CREATE TABLE `purchase_orders_item` (
 --
 
 CREATE TABLE `purchase_order_sequence` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `date` char(8) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `last_sequence` int(11) NOT NULL DEFAULT 0,
+  `last_sequence` int NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1018,7 +1064,8 @@ INSERT INTO `purchase_order_sequence` (`id`, `date`, `last_sequence`, `created_a
 (7, '11022024', 1, '2024-11-02 17:47:48', '2024-11-02 17:47:48'),
 (8, '11032024', 3, '2024-11-03 08:00:26', '2024-11-03 08:19:02'),
 (9, '11042024', 2, '2024-11-04 04:13:34', '2024-11-04 10:54:16'),
-(10, '11162024', 1, '2024-11-16 01:23:16', '2024-11-16 01:23:16');
+(10, '11162024', 1, '2024-11-16 01:23:16', '2024-11-16 01:23:16'),
+(11, '12102024', 1, '2024-12-10 02:37:56', '2024-12-10 02:37:56');
 
 -- --------------------------------------------------------
 
@@ -1027,18 +1074,18 @@ INSERT INTO `purchase_order_sequence` (`id`, `date`, `last_sequence`, `created_a
 --
 
 CREATE TABLE `remittance_transfers` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `remittance_reference` varchar(255) NOT NULL,
-  `remittance_payer_name` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `remittance_reference` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remittance_payer_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `remittance_amount` decimal(15,2) NOT NULL,
-  `remittance_sender_bank` varchar(255) NOT NULL,
-  `remittance_account_number` varchar(255) NOT NULL,
-  `remittance_destination_account` varchar(255) NOT NULL,
-  `fund_category` varchar(255) NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `remittance_sender_bank` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remittance_account_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remittance_destination_account` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fund_category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `budget_project_id` bigint UNSIGNED DEFAULT NULL,
   `remittance_date_received` date NOT NULL,
-  `remittance_currency` varchar(10) NOT NULL,
-  `remittance_description` text DEFAULT NULL,
+  `remittance_currency` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remittance_description` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1048,7 +1095,7 @@ CREATE TABLE `remittance_transfers` (
 --
 
 INSERT INTO `remittance_transfers` (`id`, `remittance_reference`, `remittance_payer_name`, `remittance_amount`, `remittance_sender_bank`, `remittance_account_number`, `remittance_destination_account`, `fund_category`, `budget_project_id`, `remittance_date_received`, `remittance_currency`, `remittance_description`, `created_at`, `updated_at`) VALUES
-(4, 'ASHFHUD', 'Jacob & Jo', 50000.00, 'Samba Bank', '44575938', '98', 'Capital Expenditure', 5, '2024-11-15', 'AED', 'Funds Received For the Material Supplies', '2024-11-15 08:47:59', '2024-11-15 08:47:59');
+(6, 'A0009000123', 'Jacob & Jo', 60000.00, 'Samba Bank', '44575938', '99', 'Material', 5, '2024-12-10', 'AED', 'Account Remittance for for Material Sold', '2024-12-10 01:50:40', '2024-12-10 01:50:40');
 
 -- --------------------------------------------------------
 
@@ -1057,20 +1104,20 @@ INSERT INTO `remittance_transfers` (`id`, `remittance_reference`, `remittance_pa
 --
 
 CREATE TABLE `revenue_plans` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `sn` int(11) NOT NULL DEFAULT 1,
-  `type` varchar(255) NOT NULL,
-  `project` varchar(255) DEFAULT NULL,
-  `contract` varchar(255) DEFAULT NULL,
-  `description` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `sn` int NOT NULL DEFAULT '1',
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `project` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `contract` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
   `amount` decimal(15,2) NOT NULL,
   `total_profit` decimal(15,2) DEFAULT NULL,
   `net_profit_before_tax` decimal(15,2) DEFAULT NULL,
   `tax` decimal(15,2) DEFAULT NULL,
   `net_profit_after_tax` decimal(15,2) DEFAULT NULL,
   `profit_percentage` decimal(8,4) DEFAULT NULL,
-  `approval_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'approved',
+  `approval_status` enum('pending','approved','rejected') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'approved',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1091,25 +1138,25 @@ INSERT INTO `revenue_plans` (`id`, `budget_project_id`, `sn`, `type`, `project`,
 --
 
 CREATE TABLE `salaries` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `direct_cost_id` bigint(20) UNSIGNED NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `project` varchar(255) NOT NULL,
-  `po` varchar(255) NOT NULL DEFAULT 'OPEX',
-  `expenses` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `other_expense` varchar(255) DEFAULT NULL,
-  `status` varchar(255) NOT NULL,
-  `visa_status` varchar(255) NOT NULL DEFAULT 'xad_visa',
+  `id` bigint UNSIGNED NOT NULL,
+  `direct_cost_id` bigint UNSIGNED NOT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `project` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `po` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'OPEX',
+  `expenses` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `other_expense` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `visa_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'xad_visa',
   `cost_per_month` decimal(10,2) NOT NULL,
-  `no_of_staff` int(11) NOT NULL,
-  `overseeing_sites` int(11) NOT NULL DEFAULT 0,
-  `no_of_months` int(11) NOT NULL,
+  `no_of_staff` int NOT NULL,
+  `overseeing_sites` int NOT NULL DEFAULT '0',
+  `no_of_months` int NOT NULL,
   `total_cost` decimal(15,2) DEFAULT NULL,
   `average_cost` decimal(15,2) DEFAULT NULL,
-  `percentage_cost` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `approval_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'approved',
+  `percentage_cost` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `approval_status` enum('pending','approved','rejected') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'approved',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1129,9 +1176,7 @@ INSERT INTO `salaries` (`id`, `direct_cost_id`, `budget_project_id`, `type`, `pr
 (21, 5, 5, 'Salary', '1', 'OPEX', 'Surveyor', 'Surveyor from nepal', NULL, 'new hiring', 'Xad Visa', 2000.00, 1, 0, 1, 2000.00, 2000.00, 1.00, 'approved', '2024-10-03 07:38:28', '2024-10-03 07:38:28'),
 (22, 5, 5, 'Salary', '1', 'OPEX', 'Foreman', 'site forman', NULL, 'new hiring', 'Xad Visa', 4000.00, 9, 0, 1, 36000.00, 4000.00, 0.11, 'approved', '2024-10-03 07:39:58', '2024-10-03 07:40:14'),
 (23, 5, 5, 'Salary', '1', 'OPEX', 'Project Coordinator', 'will coordinate the entire project', NULL, 'existing staff', 'Xad Visa', 4000.00, 3, 0, 1, 12000.00, 4000.00, 0.33, 'approved', '2024-10-03 07:41:23', '2024-10-03 07:41:23'),
-(25, 5, 5, 'Salary', '1', 'OPEX', 'Charge Hand', 'charge hand site supervision', NULL, 'new hiring', 'Xad Visa', 500.00, 1, 0, 1, 500.00, 500.00, 1.00, 'approved', '2024-10-03 07:43:03', '2024-10-03 07:43:03'),
-(26, 6, 8, 'Salary', '1', 'OPEX', 'Sr. Manager Operations', 'starting new project', NULL, 'new hiring', 'Xad Visa', 5000.00, 5, 5, 1, 25000.00, 5000.00, 0.20, 'approved', '2024-11-04 10:46:23', '2024-11-04 10:48:27'),
-(27, 6, 8, 'Salary', '1', 'OPEX', 'Management', 'this is overall management salary', NULL, 'existing staff', 'Xad Visa', 100000.00, 1, 0, 1, 100000.00, 100000.00, 1.00, 'approved', '2024-11-04 10:51:43', '2024-11-04 10:51:43');
+(25, 5, 5, 'Salary', '1', 'OPEX', 'Charge Hand', 'charge hand site supervision', NULL, 'new hiring', 'Xad Visa', 500.00, 1, 0, 1, 500.00, 500.00, 1.00, 'approved', '2024-10-03 07:43:03', '2024-10-03 07:43:03');
 
 -- --------------------------------------------------------
 
@@ -1140,18 +1185,18 @@ INSERT INTO `salaries` (`id`, `direct_cost_id`, `budget_project_id`, `type`, `pr
 --
 
 CREATE TABLE `sender` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `date` date NOT NULL,
-  `sender_name` varchar(255) NOT NULL,
-  `sender_for` varchar(255) NOT NULL,
-  `sender_bank_name` varchar(255) NOT NULL,
-  `sender_bank_account` varchar(255) NOT NULL,
-  `tracking_number` varchar(255) NOT NULL,
-  `amount` varchar(255) NOT NULL,
-  `fund_type` varchar(255) NOT NULL,
-  `sender_detail` varchar(255) DEFAULT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `destination_account` bigint(20) UNSIGNED NOT NULL,
+  `sender_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sender_for` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sender_bank_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sender_bank_account` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tracking_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fund_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sender_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `destination_account` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1161,10 +1206,10 @@ CREATE TABLE `sender` (
 --
 
 INSERT INTO `sender` (`id`, `date`, `sender_name`, `sender_for`, `sender_bank_name`, `sender_bank_account`, `tracking_number`, `amount`, `fund_type`, `sender_detail`, `budget_project_id`, `destination_account`, `created_at`, `updated_at`) VALUES
-(12, '2024-11-15', 'Handover & Tyke', 'Invoice', 'ADCB', 'ABC2000', 'INV-01234', '22650', 'Facility', 'Contact Person : Mr Augustin \r\nCompany Email : info@handover.com\r\nSwiftCode: SW4567', 5, 98, '2024-11-15 08:43:35', '2024-11-15 08:43:35'),
-(13, '2024-11-16', 'CEO', 'Funds Transfer From Management', 'ADCB', '87678798', 'TRK #ASE3000', '50000', 'Material', 'Fund Transfered From Management for Material Purchase', 5, 97, '2024-11-15 08:46:14', '2024-11-15 08:46:14'),
-(14, '2024-11-15', 'Jacob & Jo', 'Account Remittance', 'Samba Bank', '44575938', 'Remit #ASHFHUD', '50000', 'Capital Expenditure', 'Funds Received For the Material Supplies', 5, 98, '2024-11-15 08:47:59', '2024-11-15 08:47:59'),
-(15, '2024-11-15', 'Central Bank UAE', 'Bank Loan', 'Central Bank UAE', 'AE9005500', 'Loan Ref #AED80', '52500', 'Financial', 'Loan Received For Financial Obligations', 5, 98, '2024-11-15 08:49:50', '2024-11-15 08:49:50');
+(26, '2024-12-10', 'Handover & Tyke', 'Invoice', 'ADCB', 'AG4569930', 'INV-01234', '22650', 'Overhead', 'Mr Augustin : Invoice in Charge', 5, 98, '2024-12-10 01:47:09', '2024-12-10 01:47:09'),
+(27, '2024-12-12', 'CEO', 'Funds Transfer From Management', 'ADCB', '87678798', 'TRK #A900AFGH8000', '50000', 'Financial', 'funds transfered to support financial support from CEO', 5, 97, '2024-12-10 01:49:12', '2024-12-10 01:49:12'),
+(28, '2024-12-10', 'Jacob & Jo', 'Account Remittance', 'Samba Bank', '44575938', 'Remit #A0009000123', '60000', 'Material', 'Account Remittance for for Material Sold', 5, 99, '2024-12-10 01:50:41', '2024-12-10 01:50:41'),
+(29, '2024-12-10', 'Central Bank UAE', 'Bank Loan', 'Central Bank UAE', 'AE9005500', 'Loan Ref #L-890736382', '40400', 'Facility', 'received loan for the purpose of facility management', 5, 100, '2024-12-10 02:08:16', '2024-12-10 02:08:16');
 
 -- --------------------------------------------------------
 
@@ -1173,15 +1218,15 @@ INSERT INTO `sender` (`id`, `date`, `sender_name`, `sender_for`, `sender_bank_na
 --
 
 CREATE TABLE `supplier_prices` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `items_code` varchar(255) DEFAULT NULL,
-  `purchase_date` varchar(255) DEFAULT NULL,
-  `item_name` varchar(255) DEFAULT NULL,
-  `supplier_name` varchar(255) DEFAULT NULL,
-  `uom` varchar(255) DEFAULT NULL,
-  `price` varchar(255) DEFAULT NULL,
-  `discount` text DEFAULT NULL,
-  `remarks` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `items_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `purchase_date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `item_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `supplier_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `uom` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `price` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `discount` text COLLATE utf8mb4_unicode_ci,
+  `remarks` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -3493,18 +3538,18 @@ INSERT INTO `supplier_prices` (`id`, `items_code`, `purchase_date`, `item_name`,
 --
 
 CREATE TABLE `transfer_from_management` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `date_received` date NOT NULL,
-  `transfer_reference` varchar(255) NOT NULL,
-  `fund_category` varchar(255) NOT NULL,
-  `source_account` varchar(255) NOT NULL,
+  `transfer_reference` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fund_category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `source_account` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `transfer_amount` decimal(15,2) NOT NULL,
-  `sender_bank_name` varchar(255) NOT NULL,
-  `transfer_designation` varchar(255) NOT NULL,
+  `sender_bank_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `transfer_designation` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `transfer_date` date NOT NULL,
-  `budget_project_id` bigint(20) UNSIGNED NOT NULL,
-  `transfer_destination_account` bigint(20) UNSIGNED NOT NULL,
-  `transfer_description` text DEFAULT NULL,
+  `budget_project_id` bigint UNSIGNED NOT NULL,
+  `transfer_destination_account` bigint UNSIGNED NOT NULL,
+  `transfer_description` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -3514,7 +3559,7 @@ CREATE TABLE `transfer_from_management` (
 --
 
 INSERT INTO `transfer_from_management` (`id`, `date_received`, `transfer_reference`, `fund_category`, `source_account`, `transfer_amount`, `sender_bank_name`, `transfer_designation`, `transfer_date`, `budget_project_id`, `transfer_destination_account`, `transfer_description`, `created_at`, `updated_at`) VALUES
-(6, '2024-11-16', 'ASE3000', 'Material', '87678798', 50000.00, 'ADCB', 'CEO', '2024-11-15', 5, 97, 'Fund Transfered From Management for Material Purchase', '2024-11-15 08:46:14', '2024-11-15 08:46:14');
+(10, '2024-12-12', 'A900AFGH8000', 'Financial', '87678798', 50000.00, 'ADCB', 'CEO', '2024-12-10', 5, 97, 'funds transfered to support financial support from CEO', '2024-12-10 01:49:12', '2024-12-10 01:49:12');
 
 -- --------------------------------------------------------
 
@@ -3523,21 +3568,21 @@ INSERT INTO `transfer_from_management` (`id`, `date_received`, `transfer_referen
 --
 
 CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `xad_id` varchar(255) DEFAULT NULL,
-  `first_name` varchar(255) NOT NULL,
-  `last_name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `nationality` varchar(255) DEFAULT NULL,
-  `organization_unit` varchar(255) DEFAULT NULL,
-  `phone_number` varchar(255) DEFAULT NULL,
-  `password` varchar(60) NOT NULL,
-  `role` varchar(255) NOT NULL DEFAULT 'User',
-  `permissions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`permissions`)),
-  `profile_image` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `xad_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nationality` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `organization_unit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'User',
+  `permissions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `profile_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 --
 -- Dumping data for table `users`
@@ -3572,6 +3617,12 @@ ALTER TABLE `approved_budget`
 -- Indexes for table `banks`
 --
 ALTER TABLE `banks`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `bank_balances`
+--
+ALTER TABLE `bank_balances`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -3701,6 +3752,12 @@ ALTER TABLE `payment_orders`
   ADD UNIQUE KEY `payment_orders_payment_order_number_unique` (`payment_order_number`);
 
 --
+-- Indexes for table `payment_order_items`
+--
+ALTER TABLE `payment_order_items`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
@@ -3810,223 +3867,235 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `allocated_budget`
 --
 ALTER TABLE `allocated_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `approved_budget`
 --
 ALTER TABLE `approved_budget`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `banks`
 --
 ALTER TABLE `banks`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+
+--
+-- AUTO_INCREMENT for table `bank_balances`
+--
+ALTER TABLE `bank_balances`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `budget_project`
 --
 ALTER TABLE `budget_project`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `business_clients`
 --
 ALTER TABLE `business_clients`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `business_units`
 --
 ALTER TABLE `business_units`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `capital_expenditure`
 --
 ALTER TABLE `capital_expenditure`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `cash_flows`
 --
 ALTER TABLE `cash_flows`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=346;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=410;
 
 --
 -- AUTO_INCREMENT for table `cost_overhead`
 --
 ALTER TABLE `cost_overhead`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `direct_cost`
 --
 ALTER TABLE `direct_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `facility_cost`
 --
 ALTER TABLE `facility_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `financial_cost`
 --
 ALTER TABLE `financial_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `indirect_cost`
 --
 ALTER TABLE `indirect_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `invoice`
 --
 ALTER TABLE `invoice`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `ledger_entries`
 --
 ALTER TABLE `ledger_entries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
 
 --
 -- AUTO_INCREMENT for table `loans`
 --
 ALTER TABLE `loans`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `material_cost`
 --
 ALTER TABLE `material_cost`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `noc_payments`
 --
 ALTER TABLE `noc_payments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `payment_orders`
 --
 ALTER TABLE `payment_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `payment_order_items`
+--
+ALTER TABLE `payment_order_items`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `petty_cash`
 --
 ALTER TABLE `petty_cash`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `planned_cash`
 --
 ALTER TABLE `planned_cash`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `planned_cash_opening_balances`
 --
 ALTER TABLE `planned_cash_opening_balances`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `project_budget_sequence`
 --
 ALTER TABLE `project_budget_sequence`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders_item`
 --
 ALTER TABLE `purchase_orders_item`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_sequence`
 --
 ALTER TABLE `purchase_order_sequence`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `remittance_transfers`
 --
 ALTER TABLE `remittance_transfers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `revenue_plans`
 --
 ALTER TABLE `revenue_plans`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `salaries`
 --
 ALTER TABLE `salaries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `sender`
 --
 ALTER TABLE `sender`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `supplier_prices`
 --
 ALTER TABLE `supplier_prices`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2285;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2285;
 
 --
 -- AUTO_INCREMENT for table `transfer_from_management`
 --
 ALTER TABLE `transfer_from_management`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables

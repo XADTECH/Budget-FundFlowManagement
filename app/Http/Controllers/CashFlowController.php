@@ -217,56 +217,6 @@ class CashFlowController extends Controller
                     return redirect()->back()->with('success', 'Funds Transfer recorded and cash flow updated.');
                     break;
 
-                case 'Bank Loan':
-                    // return response($request->all());
-                    $request->validate([
-                        'loan_reference' => 'required|string|max:255|unique:loans,loan_reference',
-                        'loan_provider_name' => 'required|string|max:255',
-                        'loan_provider_type' => 'required|string|max:255',
-                        'loan_bank_account' => 'required|string|max:255',
-                        'loan_amount' => 'required|numeric|min:0',
-                        'loan_interest_rate' => 'nullable|numeric|min:0|max:100',
-                        'loan_destination_account' => 'required|integer|exists:banks,id',
-                        'budget_project_id' => 'required|integer|exists:budget_project,id',
-                        'fund_category' => 'required|string|in:Financial,Salary,Facility,Material,Overhead,Capital Expenditure',
-                        'loan_repayment_start_date' => 'nullable|date|after_or_equal:today',
-                        'loan_repayment_frequency' => 'required|string|in:Monthly,Quarterly,Annually',
-                        'loan_date' => 'required|date',
-                        'loan_description' => 'nullable|string|max:1000',
-                    ]);
-
-                    Loan::create([
-                        'loan_reference' => $request->loan_reference,
-                        'loan_provider_name' => $request->loan_provider_name,
-                        'loan_provider_type' => $request->loan_provider_type,
-                        'loan_bank_account' => $request->loan_bank_account,
-                        'loan_amount' => $request->loan_amount,
-                        'loan_interest_rate' => $request->loan_interest_rate,
-                        'loan_destination_account' => $request->loan_destination_account,
-                        'budget_project_id' => $request->budget_project_id,
-                        'fund_category' => $request->fund_category,
-                        'loan_repayment_start_date' => $request->loan_repayment_start_date,
-                        'loan_repayment_frequency' => $request->loan_repayment_frequency,
-                        'loan_date' => $request->loan_date,
-                        'loan_description' => $request->loan_description,
-                    ]);
-
-                    LedgerEntry::create([
-                        'bank_id' => $request->loan_destination_account,
-                        'amount' => abs($request->loan_amount),
-                        'type' => 'debit',
-                        'description' => 'Loan Ref: ' . $request->loan_reference,
-                        'budget_project_id' => $request->budget_project_id,
-                        'category_type' => $request->fund_category,
-                    ]);
-
-                    $this->updateOverallBankBalance($request->loan_destination_account, $request->loan_amount, 'debit');
-                    $this->updateProjectBankBalance($request->loan_destination_account, $request->budget_project_id, $request->loan_amount, 'debit');
-                    $this->maintainCashFlow($request->budget_project_id, $request->fund_category, $request->loan_amount, 'Bank Loan', $request->loan_reference, $request->date);
-
-                    return redirect()->back()->with('success', 'Bank loan recorded and cash flow updated.');
-                    break;
-
                 case 'Account Remittance':
                     $request->merge([
                         'remittance_amount' => str_replace(',', '', $request->input('remittance_amount')), // Remove commas for numeric validation
@@ -309,11 +259,119 @@ class CashFlowController extends Controller
                         'category_type' => $request->fund_category,
                     ]);
 
+                    $senderData = [
+                        'date' => $request->remittance_date_received,
+                        'sender_for' => 'Account Remittance',
+                        'sender_name' => $request->remittance_payer_name, // Assuming sender is payer
+                        'sender_bank_name' => $request->remittance_sender_bank,
+                        'sender_bank_account' => $request->remittance_account_number,
+                        'tracking_number' => 'Remit #' . $request->remittance_reference,
+                        'amount' => $request->remittance_amount,
+                        'fund_type' => $request->fund_category,
+                        'sender_detail' => $request->remittance_description,
+                        'budget_project_id' => $request->budget_project_id,
+                        'destination_account' => $request->remittance_destination_account,
+                    ];
+
+                    Sender::create($senderData);
+
                     $this->updateOverallBankBalance($request->remittance_destination_account, $request->remittance_amount, 'debit');
                     $this->updateProjectBankBalance($request->remittance_destination_account, $request->budget_project_id, $request->remittance_amount, 'debit');
                     $this->maintainCashFlow($request->budget_project_id, $request->fund_category, $request->remittance_amount, 'Account Remittance', $request->remittance_reference, $request->date);
 
                     return redirect()->back()->with('success', 'Account remittance recorded and cash flow updated.');
+                    break;
+
+                case 'Bank Loan':
+                    // return response($request->all());
+                    $validatedData = $request->validate([
+                        'loan_reference' => 'required|string|max:255|unique:loans,loan_reference',
+                        'loan_provider_type' => 'required|string|max:50', // e.g., 'bank', 'director'
+                        'loan_provider_name' => 'required|string|max:255',
+                        'loan_amount' => 'required|numeric|min:0',
+                        'loan_interest_rate' => 'nullable|numeric|min:0|max:100',
+                        'loan_bank_account' => 'required|string|max:50',
+                        'fund_category' => 'required|string|in:Financial,Overhead,Salary,Facility,Material',
+                        'loan_repayment_start_date' => 'nullable|date',
+                        'loan_repayment_frequency' => 'required|string|in:Monthly,Quarterly,Annually',
+                        'loan_destination_account' => 'nullable|exists:banks,id',
+                        'budget_project_id' => 'nullable|exists:budget_project,id',
+                        'loan_date' => 'required|date',
+                        'loan_description' => 'nullable|string|max:1000',
+                    ]);
+
+                    Loan::create($validatedData);
+
+                    // Create debit ledger entry for the principal loan amount received
+                    $interestAmount = $request->loan_amount * ($request->loan_interest_rate / 100);
+
+                    $loanData = [
+                        'date' => $request->loan_date,
+                        'sender_for' => 'Bank Loan', // Reflect the purpose as a loan
+                        'sender_name' => $request->loan_provider_name, // Loan provider name
+                        'sender_bank_name' => $request->loan_provider_name, // Assuming the loan provider is the sender bank
+                        'sender_bank_account' => $request->loan_bank_account,
+                        'tracking_number' => 'Loan Ref #' . $request->loan_reference, // Unique loan reference number
+                        'amount' => abs($request->loan_amount + $interestAmount),
+                        'fund_type' => $request->fund_category, // Fund category (e.g., Finance)
+                        'sender_detail' => $request->loan_description, // Loan purpose or description
+                        'budget_project_id' => $request->budget_project_id, // Associated budget project
+                        'destination_account' => $request->loan_destination_account, // Destination bank account ID
+                    ];
+
+                    Sender::create($loanData);
+
+                    LedgerEntry::create([
+                        'bank_id' => $request->loan_destination_account, // Destination bank account ID
+                        'amount' => abs($request->loan_amount + $interestAmount), // Debit the loan amount received
+                        'type' => 'debit',
+                        'description' => 'Bank Loan - Ref: ' . $request->loan_reference,
+                        'budget_project_id' => $request->budget_project_id, // Associated budget project
+                        'category_type' => $request->fund_category, // Fund category (e.g., Finance)
+                        'transaction_date' => $request->loan_date, // Loan date
+                    ]);
+
+                    // Optionally, create a credit ledger entry for the interest liability
+                    if (!empty($request->loan_interest_rate)) {
+                        $interestAmount = $request->loan_amount * ($request->loan_interest_rate / 100);
+
+                        LedgerEntry::create([
+                            'bank_id' => $request->loan_destination_account, // Destination bank account ID
+                            'amount' => abs($interestAmount), // Credit the interest amount
+                            'type' => 'credit',
+                            'description' => 'Loan Interest Liability - Ref: ' . $request->loan_reference,
+                            'budget_project_id' => $request->budget_project_id, // Associated budget project
+                            'category_type' => $request->fund_category, // Fund category (e.g., Finance)
+                            'transaction_date' => $request->loan_date, // Loan date
+                        ]);
+
+                        LedgerEntry::create([
+                            'bank_id' => $request->loan_destination_account, // Destination bank account ID
+                            'amount' => abs($request->loan_amount), // Credit the interest amount
+                            'type' => 'credit',
+                            'description' => 'Bank Loan Principle Amount - Ref: ' . $request->loan_reference,
+                            'budget_project_id' => $request->budget_project_id, // Associated budget project
+                            'category_type' => $request->fund_category, // Fund category (e.g., Finance)
+                            'transaction_date' => $request->loan_date, // Loan date
+                        ]);
+                    }
+
+                    $this->updateOverallBankBalance($request->loan_destination_account, $request->loan_amount, 'debit');
+                    $this->updateProjectBankBalance($request->loan_destination_account, $request->budget_project_id, $request->loan_amount, 'debit');
+                    $this->maintainCashFlow($request->budget_project_id, $request->fund_category, $request->loan_amount, 'Bank Loan', $request->loan_reference, $request->date);
+
+                    // Update cash flow for loan
+                    $this->maintainCashFlow(
+                        $request->budget_project_id, // The associated budget project ID
+                        $request->fund_category, // The fund category (e.g., Finance)
+                        abs($request->loan_amount), // Ensure the amount is positive
+                        'Bank Loan', // Description updated to reflect loan type
+                        $request->loan_reference, // The unique loan reference
+                        $request->loan_date, // Loan date
+                    );
+
+                    return redirect()->back()->with('success', 'Loan Received and Record Saved Successfully !');
+
                     break;
             }
         } else {

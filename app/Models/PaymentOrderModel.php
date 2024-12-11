@@ -9,7 +9,6 @@ class PaymentOrderModel extends Model
 {
     use HasFactory;
 
-    use HasFactory;
 
     protected $table = 'payment_orders';
 
@@ -44,6 +43,11 @@ class PaymentOrderModel extends Model
         'utilization',
         'balance',
     ];
+
+    public function items()
+    {
+        return $this->hasMany(PaymentOrderItem::class, 'payment_order_id');
+    }
 
 
     /**
