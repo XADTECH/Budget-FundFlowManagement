@@ -51,7 +51,8 @@
                             <div>
                                 <h5>Cash Requirement For CAPEX : {{ number_format($totalCapitalExpenditure) }} AED</h5>
                                 @php
-                                $totalOPEX = $totalDirectCost + $totalInDirectCost + $totalNetProfitBeforeTax;
+
+                                $totalOPEX = $totalDirectCost ;
                                 @endphp
                                 <h5>Cash Requirement For OPEX: {{ number_format($totalOPEX) }} AED</h5>
                             </div>
