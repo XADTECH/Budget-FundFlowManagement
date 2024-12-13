@@ -42,12 +42,12 @@ class DirectCost extends Model
 
   public function pettyCash()
   {
-    return $this->hasMany(PettyCash::class, 'project_id');
+    return $this->hasMany(PettyCash::class, 'project_id', 'budget_project_id');
   }
 
   public function nocPayment()
   {
-    return $this->hasMany(NocPayment::class, 'project_id');
+    return $this->hasMany(NocPayment::class, 'project_id', 'budget_project_id');
   }
   public function subContractor()
   {
@@ -68,7 +68,6 @@ class DirectCost extends Model
     $nocPaymentTotal = $this->nocPayment()->sum('amount');
     $subContractorTotal = $this->subContractor()->sum('amount');
     $thirdPartyTotal = $this->thirdParty()->sum('amount');
-
     return $salariesTotal + $facilitiesTotal + $materialTotal + $pettyCashTotal + $nocPaymentTotal + $subContractorTotal + $thirdPartyTotal;
   }
 }

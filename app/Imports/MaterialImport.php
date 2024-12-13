@@ -32,7 +32,7 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
     public function model(array $row)
     {
 
-        dd($row);
+
         // Find the related budget project
         $budgetProject = BudgetProject::find($this->bg_id);
         $directCost = DirectCost::firstOrNew([
