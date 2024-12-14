@@ -14,6 +14,7 @@ class PaymentOrderItem extends Model
     protected $fillable = [
         'payment_order_id',
         'items_json',
+        'currency'
     ];
 
     public function order()

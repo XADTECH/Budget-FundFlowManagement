@@ -443,6 +443,7 @@ class BudgetController extends Controller
 
         return redirect('/pages/edit-project-budget/' . $budgetProject->id)->with('success', 'Revenue added successfully!');
     }
+    
     public function findByReferenceCode(Request $request)
     {
         // Get the reference code from the request

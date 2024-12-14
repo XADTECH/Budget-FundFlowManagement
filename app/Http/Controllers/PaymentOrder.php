@@ -55,11 +55,11 @@ class PaymentOrder extends Controller
     //store payment order
     public function store(Request $request)
     {
-        // return response($request->all());
 
         $validated = $request->validate([
             'to_date' => 'required|date',
             'company_name' => 'required|string',
+            'currency' => 'required|string',
         ]);
 
         $currentUser = auth()->user();
@@ -80,6 +80,7 @@ class PaymentOrder extends Controller
             'company_name' => $validated['company_name'],
             'created_at' => now(),
             'updated_at' => now(),
+            'currency' => $request->currency,
             'user_id' => $currentUser->id,
         ];
 
@@ -511,72 +512,6 @@ class PaymentOrder extends Controller
         }
     }
 
-    //get total amount for payment order
-    public function getTotalAmount(Request $request)
-    {
-        // return response($request->all());
-        try {
-            $fundType = $request->input('fund_type');
-
-            // Fetch the project ID
-            $projectId = $request->project_id;
-            if (!$projectId) {
-                return response()->json(['error' => 'Invalid Project ID'], 404);
-            }
-
-            $totalAmount = 0;
-
-            // Handle fund type logic
-            switch ($fundType) {
-                case 'Invoice':
-                    // Calculate total amount from Invoice
-                    $invoiceAmount = Invoice::where('invoice_budget_project_id', $projectId)->sum('invoice_dr_amount_received');
-                    $totalAmount = $invoiceAmount;
-
-                    // Get a sample invoice record to retrieve bank-related info
-                    $invoiceRecord = Invoice::where('invoice_budget_project_id', $projectId)->first();
-                    $bankId = $invoiceRecord ? $invoiceRecord->invoice_destination_account : null;
-                    break;
-
-                case 'Remittance':
-                    // Calculate total amount from RemittanceTransfer
-                    $remittanceAmount = RemittanceTransfer::where('budget_project_id', $projectId)->sum('remittance_amount');
-                    $totalAmount = $remittanceAmount;
-
-                    // Get a sample remittance record to retrieve bank-related info
-                    $remittanceRecord = RemittanceTransfer::where('budget_project_id', $projectId)->first();
-                    $bankId = $remittanceRecord ? $remittanceRecord->remittance_destination_account : null;
-                    break;
-
-                case 'Transfer':
-                    // Calculate total amount from TransferFromManagement
-                    $transferAmount = TransferFromManagement::where('budget_project_id', $projectId)->sum('transfer_amount');
-                    $totalAmount = $transferAmount;
-
-                    // Get a sample transfer record to retrieve bank-related info
-                    $transferRecord = TransferFromManagement::where('budget_project_id', $projectId)->first();
-                    $bankId = $transferRecord ? $transferRecord->transfer_destination_account : null;
-                    break;
-
-                default:
-                    return response()->json(['error' => 'Invalid Fund Type'], 400);
-            }
-
-            // Return JSON response with total amount and bank id
-            return response()->json([
-                'total' => $totalAmount,
-                'bank_id' => $bankId,
-            ]);
-        } catch (\Exception $e) {
-            // Log the error for debugging
-            \Log::error('Error in getTotalAmount: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            // Return a generic error message
-            return response()->json(['error' => 'An error occurred while fetching the total amount. Please try again.'], 500);
-        }
-    }
 
     public function getBankDetails(Request $request)
     {
@@ -612,6 +547,8 @@ class PaymentOrder extends Controller
 
     public function paymentOrderItems(Request $request)
     {
+        // return response($request->all());
+
         // Validate the request
         $validated = $request->validate([
             'payment_order_id' => 'required|integer',
@@ -650,6 +587,7 @@ class PaymentOrder extends Controller
                 'beneficiary_iban' => $beneficiaryIban,
                 'banks' => $bankAllocations, // Store bank allocations here
                 'balance' => $balance,
+                'processed' => false,
                 'paid_amount' => $paid_amount,
             ];
         }
@@ -676,4 +614,28 @@ class PaymentOrder extends Controller
         // Return the balance as an integer, or 0 if no balance is found for that bank
         return $bankBalance ? (int) $bankBalance->current_balance : 0;
     }
+
+    public function processItem(Request $request)
+{
+    $data = $request->all(); // Contains all the row's data
+
+    return response($data);
+    
+    // Perform bank deductions and update processed status
+    // Example:
+    $processedItem = Item::find($data['budget_project_id']);
+    $processedItem->update(['processed' => true]);
+
+    // Deduct from bank balances
+    foreach ($data['banks'] as $bank) {
+        $bankRecord = Bank::find($bank['bank_id']);
+        if ($bankRecord) {
+            $bankRecord->balance -= $bank['amount'];
+            $bankRecord->save();
+        }
+    }
+
+    return redirect()->back()->with('success', 'Item processed successfully.');
+}
+
 }

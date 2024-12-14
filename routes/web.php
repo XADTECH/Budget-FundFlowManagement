@@ -156,11 +156,23 @@ Route::middleware(['checklogin'])->group(function () {
     //store payment order items 
     Route::post('/store-payment-order-items', [PaymentOrder::class, 'paymentOrderItems'])->name('PaymentOrderItems.store');
 
+    //get projects 
+    Route::post('/get-projects', [BudgetController::class, 'getProjects'])->name('getProjects');
+
     //delete payment order 
     Route::delete('/payment-orders/{id}', [PaymentOrder::class, 'destroy'])->name('paymentOrders.destroy');
 
     //download payment order 
     Route::get('/payment-order/{id}/download-pdf', [PaymentOrder::class, 'downloadPDF'])->name('paymentOrder.downloadPDF');
+
+    //process single item 
+    Route::post('/process-item', [PaymentOrder::class, 'processItem'])->name('processItem');
+
+    //upload documents for multiple projects 
+    Route::post('/payment-orders/upload-document', [DocumentController::class, 'uploadDocumentsForPaymentOrder'])
+    ->name('paymentOrders.uploadDocument');
+
+
 
     // Route for handling the form submission to update the budget
     Route::put('/budget/update/{id}', [BudgetController::class, 'update'])->name('update-project-budget');

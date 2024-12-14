@@ -84,8 +84,8 @@
     @if ($errors->any())
         <div class="alert alert-danger" id="error-alert">
             <!-- <button type="button" class="close" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button> -->
+                                        <span aria-hidden="true">&times;</span>
+                                    </button> -->
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -97,8 +97,8 @@
     @if (session('success'))
         <div class="alert alert-success" id="success-alert">
             <!-- <button type="button" class="close" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button> -->
+                                            <span aria-hidden="true">&times;</span>
+                                        </button> -->
             {{ session('success') }}
         </div>
     @endif
@@ -124,15 +124,32 @@
                     <form id="paymentOrderForm" method="POST" action="{{ route('paymentOrders.store') }}">
                         @csrf
                         <div class="row">
+                            <!-- To Date -->
                             <div class="col-sm-6">
                                 <label for="to_date" class="form-label">To Date</label>
                                 <input type="date" id="to_date" class="form-control" name="to_date"
                                     placeholder="Select To Date" required />
                             </div>
+
+                            <!-- Company Name -->
                             <div class="col-sm-6">
                                 <label for="company_name" class="form-label">Company Name</label>
                                 <input type="text" id="company_name" class="form-control" name="company_name"
                                     placeholder="Enter Company Name" required />
+                            </div>
+                        </div>
+
+                        <!-- Currency Selection -->
+                        <div class="row mt-3">
+                            <div class="col-sm-6">
+                                <label for="currency" class="form-label">Currency</label>
+                                <select id="currency" name="currency" class="form-control" required>
+                                    <option value="">Select Currency</option>
+                                    <option value="AED">AED</option>
+                                    <option value="SAR">SAR</option>
+                                    <option value="POUND">POUND</option>
+                                    <option value="USD">USD</option>
+                                </select>
                             </div>
                         </div>
 
@@ -142,6 +159,7 @@
                     </form>
                 </div>
             </div>
+
 
 
         </div>
@@ -161,6 +179,7 @@
                         <th>Company Name</th>
                         <th>Approval</th>
                         <th>Payment Status</th>
+                        <th>Currency</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -206,6 +225,7 @@
                                 </td>
 
                                 <td class="text-success" style="font-weight:bold">{{ $po->paid_status }}</td>
+                                <td class="text-mute" style="font-weight:bold">{{ $po->currency }}</td>
                                 <td>
                                     <!-- Delete Action -->
                                     <form action="{{ route('paymentOrders.destroy', ['id' => $po->id]) }}" method="POST"
