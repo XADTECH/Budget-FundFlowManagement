@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('total_capital_expenditure', 15, 2)->default(0);
             $table->decimal('allocated_budget', 15, 2)->default(0);  
             $table->decimal('initial_allocation_budget', 15, 2)->default(0);  
+            $table->decimal('remaining_fund', 10, 2)->default(0)->nullable();
             $table->decimal('total_dpm', 15, 2)->default(0);  
             $table->decimal('total_lpo', 15, 2)->default(0);   
             $table->string('reference_code');

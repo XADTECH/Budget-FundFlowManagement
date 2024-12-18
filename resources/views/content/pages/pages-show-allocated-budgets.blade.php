@@ -107,6 +107,7 @@
                                 <th>Total LPO</th>
                             </tr>
                         </thead>
+                 
                         <tbody>
                             @foreach ($allocatedBudgets as $budgetProject)
                                 @php
@@ -119,7 +120,7 @@
                                     <td>{{ number_format($approvedBudget->approved_budget, 0) }}</td>
                                     <td>{{ number_format($budgetProject->initial_allocation_budget, 0) }}</td>
                                     <td>{{ number_format($budgetProject->total_dpm + $budgetProject->total_lpo, 0) }}</td>
-                                    <td>{{ number_format($total_amount, 0) }}</td>
+                                    <td>{{ number_format($budgetProject->remaining_fund, 0) }}</td>
                                     <td>{{ number_format($budgetProject->allocated_budget, 0) }}</td>
                                     <td>{{ number_format($approvedBudget->approved_budget - $budgetProject->allocated_budget, 0) }}
                                     </td>

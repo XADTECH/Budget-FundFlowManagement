@@ -316,36 +316,17 @@
                                             <button type="button"
                                                 class="btn btn-danger btn-sm remove-row">Remove</button>
                                         @endif
-
-                                        <!-- Process Button -->
-                                        <form method="POST" action="{{ route('processItem') }}" class="d-inline">
-                                            @csrf
-                                            <input type="hidden" name="budget_project_id"
-                                                value="{{ $item['budget_project_id'] }}">
-                                            <input type="hidden" name="head" value="{{ $item['head'] }}">
-                                            <input type="hidden" name="description"
-                                                value="{{ $item['description'] }}">
-                                            <input type="hidden" name="paid_amount"
-                                                value="{{ $item['paid_amount'] }}">
-                                            <input type="hidden" name="beneficiary_name"
-                                                value="{{ $item['beneficiary_name'] }}">
-                                            <input type="hidden" name="beneficiary_iban"
-                                                value="{{ $item['beneficiary_iban'] }}">
-                                            <input type="hidden" name="processed" value="{{ $item['processed'] }}">
-
-                                            <!-- Process Button -->
-                                            <button type="submit"
-                                                class="btn btn-sm {{ $item['processed'] ? 'btn-secondary' : 'btn-success' }} processed-btn"
-                                                {{ $item['processed'] || $po->status !== 'approved' ? 'disabled' : '' }}>
-                                                {{ $item['processed'] ? 'Processed' : 'Process' }}
-                                                @if ($item['processed'])
-                                                    <span class="ms-1 d-flex justify-content-center align-items-center"
-                                                        style="width: 16px; height: 16px; background-color: white; color: green; border-radius: 50%; font-size: 12px; font-weight: bold;">
-                                                        ✓
-                                                    </span>
-                                                @endif
-                                            </button>
-                                        </form>
+                                        <a href="{{ route('processItem', ['id' => $item['id'], 'po_id' => $item["payment_order_id"]]) }}"
+                                            class="btn btn-sm {{ $item['processed'] ? 'btn-secondary' : 'btn-success' }} processed-btn"
+                                            {{ $item['processed'] || $po->status !== 'approved' ? 'disabled' : '' }}>
+                                            {{ $item['processed'] ? 'Processed' : 'Process' }}
+                                            @if ($item['processed'])
+                                                <span class="ms-1 d-flex justify-content-center align-items-center"
+                                                    style="width: 16px; height: 16px; background-color: white; color: green; border-radius: 50%; font-size: 12px; font-weight: bold;">
+                                                    ✓
+                                                </span>
+                                            @endif
+                                        </a>
 
                                         <!-- Upload Documents Button -->
                                         <button type="button" class="upload-doc-btn" data-bs-toggle="modal"
@@ -355,8 +336,7 @@
 
                                         <!-- Modal -->
                                         <div class="modal fade" id="uploadModal-{{ $index }}" tabindex="-1"
-                                            aria-labelledby="uploadModalLabel-{{ $index }}"
-                                            aria-hidden="true">
+                                            aria-labelledby="uploadModalLabel-{{ $index }}" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-lg"
                                                 style="max-width: 60%;">
                                                 <div class="modal-content">
@@ -364,8 +344,8 @@
                                                         <h5 class="modal-title"
                                                             id="uploadModalLabel-{{ $index }}">Upload Documents
                                                         </h5>
-                                                        <button type="button" class="btn-close"
-                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form method="POST"
@@ -500,6 +480,7 @@
                             ✓
                         </span>
                     </button>
+
                     @if ($po->paid_status !== 'not paid yet')
                         <button type="button" class="btn btn-primary" id="downloadPDF">
                             Download PDF
@@ -507,6 +488,7 @@
                     @endif
                 @else
                     <button type="submit" class="btn btn-primary">Submit Payment Order</button>
+                    <input type="hidden" name="process" value="not process">
                     <button type="button" id="addRow" class="btn btn-success ms-2">Add Item</button>
                 @endif
             </div>
@@ -609,7 +591,7 @@
             function getFileTypeIcon(fileType) {
                 if (fileType.includes('pdf')) return '<i class="fas fa-file-pdf text-danger"></i>';
                 if (fileType.includes('excel') || fileType.includes('spreadsheet'))
-                return '<i class="fas fa-file-excel text-success"></i>';
+                    return '<i class="fas fa-file-excel text-success"></i>';
                 if (fileType.includes('image')) return '<i class="fas fa-file-image text-primary"></i>';
                 return '<i class="fas fa-file-alt text-secondary"></i>';
             }
