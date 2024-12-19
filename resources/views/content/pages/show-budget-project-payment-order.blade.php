@@ -15,6 +15,75 @@
             background-color: #f7f7f7;
         }
 
+        .upload-doc-btn {
+            background-color: #17a2b8;
+            /* Info color */
+            color: #ffffff;
+            /* White text */
+            border: none;
+            /* Remove border */
+            border-radius: 2px;
+            /* Slightly rounded corners */
+            font-size: 10px;
+            /* Smaller text for compact look */
+            padding: 6px 12px;
+            /* Compact padding */
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow for depth */
+            display: block;
+            /* Make button a block element */
+            margin: 0 auto;
+            /* Center horizontally */
+            text-align: center;
+            /* Center text inside the button */
+            transition: background-color 0.3s ease;
+            /* Smooth hover effect */
+            width: auto;
+            /* Automatically adjust width to content */
+            height: auto;
+            /* Automatically adjust height */
+        }
+
+        .upload-doc-btn:hover {
+            background-color: #138496;
+            /* Slightly darker shade on hover */
+            cursor: pointer;
+        }
+
+        .upload-doc-btn i {
+            font-size: 12px;
+            /* Adjust icon size to match smaller button */
+        }
+
+        .processed-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            background-color: #6c757d;
+            /* Gray color */
+            color: #ffffff;
+            cursor: not-allowed;
+        }
+
+        .processed-btn span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            color: green;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+            /* Add space between text and tick */
+        }
+
         .container-fluid {
             background-color: #fff;
             padding: 30px;
@@ -158,12 +227,22 @@
                 {{ session('success') }}
             </div>
         @endif
-
-        <div class="text-center mb-4">
-            <h5 class="header-title">{{ $po->company_name }}</h5>
-            <p>Payment Order No: {{ $po->payment_order_number }}</p>
-            <p>Date: {{ $po->payment_date }}</p>
+        <div class="text-center mb-4"
+            style="font-family: Arial, sans-serif; color: #333; padding: 10px; border-bottom: 1px solid #ccc;">
+            <h5 class="header-title" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 5px;">
+                {{ $po->company_name }}
+            </h5>
+            <p style="font-size: 0.9rem; margin: 3px 0;">
+                <strong>Payment Order No:</strong> {{ $po->payment_order_number }}
+            </p>
+            <p style="font-size: 0.9rem; margin: 3px 0;">
+                <strong>Date:</strong> {{ $po->payment_date }}
+            </p>
+            <p style="font-size: 0.9rem; margin: 3px 0;">
+                <strong>Currency:</strong> {{ $po->currency }}
+            </p>
         </div>
+
 
         <form id="paymentForm" method="POST" action="{{ route('PaymentOrderItems.store') }}">
             @csrf
@@ -228,10 +307,75 @@
                                 <td><input type="text" class="form-control" name="beneficiary_iban[]"
                                         value="{{ $item['beneficiary_iban'] }}" readonly></td>
                                 <td>
-                                    @if ($po->submit_status === 'Submitted')
-                                        <button type="button" class="btn btn-danger btn-sm remove-row"
-                                            disabled>Remove</button>
-                                    @endif
+                                    <div class="d-flex flex-column justify-content-start align-items-center gap-2">
+                                        <!-- Remove Button -->
+                                        @if ($po->submit_status === 'Submitted')
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                disabled>Remove</button>
+                                        @else
+                                            <button type="button"
+                                                class="btn btn-danger btn-sm remove-row">Remove</button>
+                                        @endif
+                                        <a href="{{ route('processItem', ['id' => $item['id'], 'po_id' => $item["payment_order_id"]]) }}"
+                                            class="btn btn-sm {{ $item['processed'] ? 'btn-secondary' : 'btn-success' }} processed-btn"
+                                            {{ $item['processed'] || $po->status !== 'approved' ? 'disabled' : '' }}>
+                                            {{ $item['processed'] ? 'Processed' : 'Process' }}
+                                            @if ($item['processed'])
+                                                <span class="ms-1 d-flex justify-content-center align-items-center"
+                                                    style="width: 16px; height: 16px; background-color: white; color: green; border-radius: 50%; font-size: 12px; font-weight: bold;">
+                                                    ✓
+                                                </span>
+                                            @endif
+                                        </a>
+
+                                        <!-- Upload Documents Button -->
+                                        <button type="button" class="upload-doc-btn" data-bs-toggle="modal"
+                                            data-bs-target="#uploadModal-{{ $index }}">
+                                            <i class="fas fa-upload"></i> Upload
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="uploadModal-{{ $index }}" tabindex="-1"
+                                            aria-labelledby="uploadModalLabel-{{ $index }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg"
+                                                style="max-width: 60%;">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title"
+                                                            id="uploadModalLabel-{{ $index }}">Upload Documents
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="POST"
+                                                            action="{{ route('paymentOrders.uploadDocument') }}"
+                                                            enctype="multipart/form-data">
+                                                            @csrf
+                                                            <input type="hidden" name="budget_project_id"
+                                                                value="{{ $item['budget_project_id'] }}">
+                                                            <input type="hidden" name="head"
+                                                                value="{{ $item['head'] }}">
+                                                            <input type="hidden" name="description"
+                                                                value="{{ $item['description'] }}">
+                                                            <div class="mb-3">
+                                                                <label for="uploadFile-{{ $index }}"
+                                                                    class="form-label">Choose File</label>
+                                                                <input class="form-control" type="file"
+                                                                    id="uploadFile-{{ $index }}"
+                                                                    name="document"
+                                                                    accept=".pdf,.png,.jpg,.jpeg,.xls,.xlsx" required>
+                                                            </div>
+                                                            <div class="text-end">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Upload</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -253,13 +397,70 @@
                                 </td>
                                 <td><input type="number" class="form-control balance-field" name="balance[]">
                                 </td>
-                                <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]">
+                                <td><input type="number" class="form-control total-paid-amount"
+                                        name="paid_amount[]">
                                 </td>
-                                <td><input type="text" class="form-control" name="beneficiary_name[]" required></td>
-                                <td><input type="text" class="form-control" name="beneficiary_iban[]" required></td>
+                                <td><input type="text" class="form-control" name="beneficiary_name[]" required>
+                                </td>
+                                <td><input type="text" class="form-control" name="beneficiary_iban[]" required>
+                                </td>
                                 <td>
                                     @if (!$po->is_submitted)
-                                        <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm remove-row">Remove</button>
+
+                                        <button type="button" class="upload-doc-btn mt-2">
+                                            <i class="fas fa-upload"></i> Upload
+                                        </button>
+
+
+                                        <!-- Modal for Upload -->
+
+                                        <div class="modal fade" id="uploadModal" tabindex="-1"
+                                            aria-labelledby="uploadModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg"
+                                                style="max-width: 60%;">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="uploadModalLabel">Upload Documents
+                                                        </h5>
+                                                        <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <p><strong>Selected Projects:</strong></p>
+                                                            <div id="selectedProjectsPreview"
+                                                                class="border rounded p-3"
+                                                                style="max-height: 200px; overflow-y: auto;">
+                                                                <p class="text-muted">No projects selected yet.</p>
+                                                            </div>
+                                                        </div>
+                                                        <form id="uploadForm" method="POST"
+                                                            action="{{ route('paymentOrders.uploadDocument') }}"
+                                                            enctype="multipart/form-data">
+                                                            @csrf
+                                                            <div id="selectedProjectsInputs"></div>
+                                                            <!-- Dynamically add hidden inputs for selected projects -->
+                                                            <div class="mb-3">
+                                                                <label for="uploadFile" class="form-label">Choose
+                                                                    Files</label>
+                                                                <input class="form-control" type="file"
+                                                                    id="uploadFile" name="documents[]" multiple
+                                                                    accept=".pdf,.png,.jpg,.jpeg,.xls,.xlsx">
+                                                            </div>
+                                                            <div id="filePreviewContainer" class="mt-3">
+                                                                <p class="text-muted">No files selected yet.</p>
+                                                            </div>
+                                                            <div class="text-end mt-3">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Upload</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endif
                                 </td>
                             </tr>
@@ -271,10 +472,15 @@
 
             <div class="mt-4 text-center">
                 @if ($po->submit_status == 'Submitted')
-                    <button type="button" class="btn btn-success" id="proceedPayment"
+                    <button type="button" class="btn btn-success d-flex align-items-center" id="proceedPayment"
                         @if ($po->status == 'pending') disabled @endif>
-                        Proceed Payment
+                        Proceed All
+                        <span class="ms-2 d-flex justify-content-center align-items-center"
+                            style="width: 20px; height: 20px; background-color: white; color: green; border-radius: 50%; font-size: 14px; font-weight: bold;">
+                            ✓
+                        </span>
                     </button>
+
                     @if ($po->paid_status !== 'not paid yet')
                         <button type="button" class="btn btn-primary" id="downloadPDF">
                             Download PDF
@@ -282,6 +488,7 @@
                     @endif
                 @else
                     <button type="submit" class="btn btn-primary">Submit Payment Order</button>
+                    <input type="hidden" name="process" value="not process">
                     <button type="button" id="addRow" class="btn btn-success ms-2">Add Item</button>
                 @endif
             </div>
@@ -304,6 +511,115 @@
                 allowClear: true,
                 width: '100%'
             });
+            // Pass the budgets data to JavaScript
+            const budgets = @json($budgets);
+
+            $(document).on('click', '.upload-doc-btn', function() {
+                const row = $(this).closest('tr');
+                const projectDropdown = row.find('.project-dropdown');
+                const selectedProjectId = projectDropdown.val();
+
+                if (selectedProjectId) {
+                    // Find the project details
+                    const selectedProject = budgets.find(budget => budget.id == selectedProjectId);
+
+                    if (selectedProject) {
+                        const previewContainer = $('#selectedProjectsPreview');
+                        const inputsContainer = $('#selectedProjectsInputs');
+
+                        // Prevent duplicate entries
+                        if (!inputsContainer.find(`input[value="${selectedProjectId}"]`).length) {
+                            // Add a preview entry
+                            previewContainer.append(`
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                        <p class="mb-0"><strong>${selectedProject.reference_code}</strong> (${selectedProject.region} - ${selectedProject.site_name})</p>
+                        <button type="button" class="btn btn-sm btn-danger remove-project" data-project-id="${selectedProjectId}">Remove</button>
+                    </div>
+                `);
+
+                            // Add a hidden input for the project
+                            inputsContainer.append(`
+                    <input type="hidden" name="budget_project_ids[]" value="${selectedProjectId}">
+                `);
+
+                            // Remove "No projects selected yet" placeholder
+                            previewContainer.find('.text-muted').remove();
+                        }
+
+                        // Open the modal
+                        $('#uploadModal').modal('show');
+                    } else {
+                        alert('Selected project not found in the budget list.');
+                    }
+                } else {
+                    alert('Please select a project first.');
+                }
+            });
+
+            $(document).on('change', '#uploadFile', function() {
+                const files = this.files; // Get selected files
+                const previewContainer = $('#filePreviewContainer');
+
+                previewContainer.empty(); // Clear previous previews
+
+                if (files.length === 0) {
+                    previewContainer.html('<p class="text-muted">No files selected yet.</p>');
+                    return;
+                }
+
+                // Loop through the selected files
+                Array.from(files).forEach((file, index) => {
+                    const fileName = file.name;
+                    const fileType = file.type;
+
+                    const fileTypeIcon = getFileTypeIcon(fileType);
+
+                    const filePreview = `
+            <div class="d-flex align-items-center justify-content-between border p-2 rounded mb-2">
+                <div class="d-flex align-items-center">
+                    <span class="me-2">${fileTypeIcon}</span>
+                    <p class="mb-0">${fileName}</p>
+                </div>
+                <button type="button" class="btn btn-sm btn-danger remove-file-btn" data-index="${index}">Remove</button>
+            </div>
+        `;
+                    previewContainer.append(filePreview);
+                });
+            });
+
+            // Function to map file types to icons
+            function getFileTypeIcon(fileType) {
+                if (fileType.includes('pdf')) return '<i class="fas fa-file-pdf text-danger"></i>';
+                if (fileType.includes('excel') || fileType.includes('spreadsheet'))
+                    return '<i class="fas fa-file-excel text-success"></i>';
+                if (fileType.includes('image')) return '<i class="fas fa-file-image text-primary"></i>';
+                return '<i class="fas fa-file-alt text-secondary"></i>';
+            }
+
+            // Remove selected file from the input and preview
+            $(document).on('click', '.remove-file-btn', function() {
+                const fileIndex = $(this).data('index');
+                const fileInput = $('#uploadFile')[0];
+                const dt = new DataTransfer();
+
+                // Re-add all files except the one being removed
+                Array.from(fileInput.files).forEach((file, index) => {
+                    if (index !== fileIndex) {
+                        dt.items.add(file);
+                    }
+                });
+
+                fileInput.files = dt.files; // Update the file input's files
+                $(this).closest('.d-flex').remove(); // Remove the preview entry
+
+                // Show "No files selected" if no files are left
+                if (fileInput.files.length === 0) {
+                    $('#filePreviewContainer').html('<p class="text-muted">No files selected yet.</p>');
+                }
+            });
+
+
+
 
             // Fetch and load bank details when a project is selected
             function loadBankDetails(row, projectId) {
@@ -379,6 +695,9 @@
                         <td><input type="text" class="form-control" name="beneficiary_iban[]" required></td>
                         <td>
                             <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                                     <button type="button" class="upload-doc-btn mt-2">
+                                            <i class="fas fa-upload"></i> Upload
+                                        </button>
                         </td>
                     </tr>`;
                 $('#paymentTable tbody').append(newRow);
@@ -389,6 +708,8 @@
                     width: '100%'
                 });
             });
+
+
 
             // Remove row functionality
             $(document).on('click', '.remove-row', function() {

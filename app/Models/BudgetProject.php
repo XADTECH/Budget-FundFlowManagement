@@ -49,6 +49,11 @@ class BudgetProject extends Model
         return $this->hasMany(CostOverhead::class, 'budget_project_id');
     }
 
+    public function project()
+{
+    return $this->belongsTo(Project::class, 'project_id');
+}
+
     public function financialCosts()
     {
         return $this->hasMany(FinancialCost::class, 'budget_project_id');

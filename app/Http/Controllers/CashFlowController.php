@@ -446,6 +446,7 @@ class CashFlowController extends Controller
             ->orderBy('date', 'desc')
             ->first();
 
+
         // Calculate the initial balance
         $balance = $lastCashFlow ? $lastCashFlow->balance : 0;
 
@@ -459,17 +460,12 @@ class CashFlowController extends Controller
                 ->withInput();
         }
 
-        // // Assuming there is a method to get the total allocated budget for the specific category
         $allocatedBudget = $this->getCategoryBudget($allocatedBudgetEntry, $category);
-
-        // dd([
-        //     'balance' => $balance,
-        //     'amount_received' => $amountReceived
-        // ]);
 
         // Handle cash inflow
         if ($amountReceived > 0) {
             $balance += $amountReceived;
+            $allocatedBudgetEntry->remaining_fund += $amountReceived;;
             $this->addCategoryBudget($allocatedBudgetEntry, $category, $amountReceived, $lastCashFlow);
         }
 
@@ -529,37 +525,48 @@ class CashFlowController extends Controller
     // Helper method to add cash inflow to the corresponding category budget
     private function addCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category, $cashInflow, $lastCashFlow)
     {
+
+
         switch ($category) {
             case 'Salary':
                 $allocatedBudgetEntry->total_salary += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+
+
                 break;
             case 'Facility':
                 $allocatedBudgetEntry->total_facility_cost += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+         
+           
                 break;
             case 'Material':
                 $allocatedBudgetEntry->total_material_cost += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+              
+           
                 break;
             case 'Overhead':
                 $allocatedBudgetEntry->total_cost_overhead += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+            
+           
                 break;
             case 'Financial':
                 $allocatedBudgetEntry->total_financial_cost += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-
+        
                 break;
             case 'Capital Expenditure':
                 $allocatedBudgetEntry->total_capital_expenditure += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
+      
                 break;
         }
 

@@ -443,6 +443,7 @@ class BudgetController extends Controller
 
         return redirect('/pages/edit-project-budget/' . $budgetProject->id)->with('success', 'Revenue added successfully!');
     }
+    
     public function findByReferenceCode(Request $request)
     {
         // Get the reference code from the request
@@ -648,6 +649,7 @@ class BudgetController extends Controller
 
         // Get the filtered allocated budgets
         $allocatedBudgets = $query->get();
+
 
         // Fetch approved budget and total allocations related to the budget project, if provided
         $approvedBudget = $request->has('budget_project_id') ? ApprovedBudget::where('budget_project_id', $request->budget_project_id)->first() : null;
