@@ -11,7 +11,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BusinessUnitController;
 use App\Http\Controllers\BusinessClientController;
-use App\Http\Controllers\PurcahseOrderController;
+use App\Http\Controllers\PurcahseOrderController; // Correct spelling here
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,9 @@ Route::post('/add-cash-receive', [PlannedCashController::class, 'addcashreceiveA
 
 //add bank record
 Route::post('/add-bank-record', [BankController::class, 'addRecord'])->name('add-bank-record');
+
+//get po items 
+Route::get('/get-purchase-order/{poNumber}', [PurcahseOrderController::class, 'getPurchaseOrder']);
 
 
 //get all bank records

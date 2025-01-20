@@ -522,30 +522,88 @@ class PaymentOrder extends Controller
     }
 
     public function processItem(Request $request)
-    {
-        $id = $request->query('id');
-        $poID = $request->query('po_id');
+{
+    $id = $request->query('id');
+    $poID = $request->query('po_id');
 
-        // Find the item by payment_order_id
-        $items = PaymentOrderItem::where('payment_order_id', $poID)->first();
+    // Find the item by payment_order_id
+    $items = PaymentOrderItem::where('payment_order_id', $poID)->first();
 
-        if (!$items) {
-            return response()->json(['error' => 'Item not found'], 404);
-        }
-
-        // Decode the JSON column into an array
-        $itemsArray = json_decode($items->items_json, true);
-
-        // Search for the specific record by ID
-        $record = collect($itemsArray)->firstWhere('id', $id);
-
-        if (!$record) {
-            return response()->json(['error' => 'Record not found in items_json'], 404);
-        }
-
-        // Return the found record as JSON
-        return response()->json($record);
+    if (!$items) {
+        return response()->json(['error' => 'Item not found'], 404);
     }
+
+    // Decode the JSON column into an array
+    $itemsArray = json_decode($items->items_json, true);
+
+    // Search for the specific record by ID
+    $record = collect($itemsArray)->firstWhere('id', $id);
+
+    if (!$record) {
+        return response()->json(['error' => 'Record not found in items_json'], 404);
+    }
+
+    // Step 1: Loop through banks and update BankBalance
+    foreach ($record['banks'] as $bank) {
+        // Update the bank balance
+        $bankBalance = BankBalance::where('bank_id', $bank['bank_id'])
+            ->where('budget_project_id', $record['budget_project_id'])
+            ->first();
+
+        if ($bankBalance) {
+            $bankBalance->current_balance -= $bank['amount'];
+            $bankBalance->save();
+
+            // Step 2: Create bank ledger entry
+            LedgerEntry::create([
+                'bank_id' => $bank['bank_id'],
+                'amount' => abs($bank['amount']), // Debit amount
+                'type' => 'debit',
+                'budget_project_id' => $record['budget_project_id'],
+                'category_type' => $record['head'], // Category (e.g., salary)
+                'description' =>  $record['head'], // Description from the record
+            ]);
+
+             // Step 2: Create bank ledger entry
+             LedgerEntry::create([
+                'bank_id' => $bank['bank_id'],
+                'amount' => abs($bank['amount']), // Debit amount
+                'type' => 'credit',
+                'budget_project_id' => $record['budget_project_id'],
+                'category_type' => $record['head'], // Category (e.g., salary)
+                'description' => $record['description'], // Description from the record
+            ]);
+        }
+    }
+
+    // Step 3: Update remaining_fund in TotalBudgetAllocated
+    $totalBudgetAllocated = TotalBudgetAllocated::where('budget_project_id', $record['budget_project_id'])->first();
+
+    if ($totalBudgetAllocated) {
+        $totalBudgetAllocated->remaining_fund -= $record['paid_amount'];
+        $totalBudgetAllocated->save();
+
+        // Update balance in the record
+        $record['balance'] = $totalBudgetAllocated->remaining_fund;
+    }
+
+    // Step 4: Mark processed as true
+    $updatedItemsArray = collect($itemsArray)->map(function ($item) use ($id, $record) {
+        if ($item['id'] === $id) {
+            $item['processed'] = true;
+            $item['balance'] = $record['balance']; // Update the balance
+        }
+        return $item;
+    });
+
+    // Step 5: Save the updated JSON back to the database
+    $items->items_json = json_encode($updatedItemsArray->toArray());
+    $items->save();
+
+    return response()->json(['success' => true, 'message' => 'Item processed successfully']);
+}
+
+    
 
     public function getBankDetails(Request $request)
     {
@@ -650,6 +708,7 @@ class PaymentOrder extends Controller
         PaymentOrderItem::create([
             'payment_order_id' => $paymentOrder->id,
             'items_json' => json_encode($items),
+            'budget_project_id' => $projectId,
         ]);
 
         $paymentOrder->submit_status = 'Submitted';
@@ -686,7 +745,9 @@ class PaymentOrder extends Controller
         $item->processed = true;
         $item->save();
 
-        return redirect()->back()->with('success', 'Item processed successfully.');
+        return redirect()
+            ->route('paymentOrders.show', $paymentOrder->payment_order_number)
+            ->with('success', 'Payment order item processed');
     }
 
     private function handleProcessAll(Request $request)

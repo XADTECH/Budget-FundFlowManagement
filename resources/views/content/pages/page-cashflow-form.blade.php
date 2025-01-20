@@ -54,8 +54,8 @@
                                     <option disabled selected value>Choose Fund Type</option>
                                     <option value="Inflow" {{ old('fund_type') == 'Inflow' ? 'selected' : '' }}>Inflow
                                     </option>
-                                    <option value="Outflow" {{ old('fund_type') == 'Outflow' ? 'selected' : '' }}>Outflow
-                                    </option>
+                                    {{-- <option value="Outflow" {{ old('fund_type') == 'Outflow' ? 'selected' : '' }}>Outflow
+                                    </option> --}}
                                 </select>
                             </div>
                         </div>
@@ -155,8 +155,9 @@
                                 </div>
                             </div>
                         </div>
+
                         <!-- Invoice Fields - Visible only when "Invoice" is selected -->
-                        <div id="invoiceFields" class="hidden mt-4">
+                        {{-- <div id="invoiceFields" class="hidden mt-4">
                             <h6>Invoice Details</h6>
                             <div class="row">
                                 <div class="col-sm-4">
@@ -279,7 +280,190 @@
                                 <button type="button" class="btn btn-secondary mt-2" onclick="addInvoiceItem()">Add
                                     Item</button>
                             </div>
+                        </div> --}}
+
+                        <div id="invoiceFields" class="hidden mt-4">
+                            <h6>Invoice Details</h6>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="invoice_number" class="form-label">Invoice Number</label>
+                                    <input type="text" id="invoice_number" class="form-control" name="invoice_number"
+                                        value="{{ old('invoice_number') }}" placeholder="Enter Invoice Number" />
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="dr_amount_received" class="form-label">DR Amount Received</label>
+                                    <input type="number" id="invoice_dr_amount_received" class="form-control" name="invoice_dr_amount_received"
+                                        value="{{ old('invoice_dr_amount_received') }}" placeholder="Enter DR Amount Received"
+                                        oninput="calculateDistribution()" />
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="budget_project_id" class="form-label">Budget Project</label>
+                                    <select class="form-select" name="invoice_budget_project_id">
+                                        <option disabled selected value>Choose Project</option>
+                                        @foreach ($budgetProjects as $project)
+                                            <option value="{{ $project->id }}"
+                                                {{ old('invoice_budget_project_id') == $project->id ? 'selected' : '' }}>
+                                                {{ $project->reference_code }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        
+                            <!-- Distribution Table -->
+                            <div class="mt-4">
+                                <h6>Distribute DR Amount to Various Heads</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Head</th>
+                                                <th style="width: 15%">Percentage (%)</th>
+                                                <th style="width: 20%">Calculated Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Salary -->
+                                            <tr>
+                                                <td>Salary</td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[salary][percentage]"
+                                                        id="dist_salary_percentage" value="0" oninput="calculateDistribution()">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[salary][amount]"
+                                                        id="dist_salary_amount" value="0" readonly>
+                                                </td>
+                                            </tr>
+                                            <!-- Facility -->
+                                            <tr>
+                                                <td>Facility</td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[facility][percentage]"
+                                                        id="dist_facility_percentage" value="0" oninput="calculateDistribution()">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[facility][amount]"
+                                                        id="dist_facility_amount" value="0" readonly>
+                                                </td>
+                                            </tr>
+                                            <!-- Material -->
+                                            <tr>
+                                                <td>Material</td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[material][percentage]"
+                                                        id="dist_material_percentage" value="0" oninput="calculateDistribution()">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[material][amount]"
+                                                        id="dist_material_amount" value="0" readonly>
+                                                </td>
+                                            </tr>
+                                            <!-- Overhead -->
+                                            <tr>
+                                                <td>Overhead</td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[overhead][percentage]"
+                                                        id="dist_overhead_percentage" value="0" oninput="calculateDistribution()">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[overhead][amount]"
+                                                        id="dist_overhead_amount" value="0" readonly>
+                                                </td>
+                                            </tr>
+                                            <!-- Financial -->
+                                            <tr>
+                                                <td>Financial</td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[financial][percentage]"
+                                                        id="dist_financial_percentage" value="0" oninput="calculateDistribution()">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[financial][amount]"
+                                                        id="dist_financial_amount" value="0" readonly>
+                                                </td>
+                                            </tr>
+                                            <!-- Capital Expenditure -->
+                                            <tr>
+                                                <td>Capital Expenditure</td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[capex][percentage]"
+                                                        id="dist_capex_percentage" value="0" oninput="calculateDistribution()">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="distribution[capex][amount]"
+                                                        id="dist_capex_amount" value="0" readonly>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        
+                            <!-- Bank and File Upload -->
+                            <div class="row mt-3">
+                                <div class="col-sm-6">
+                                    <label for="bank" class="form-label">Bank</label>
+                                    <select id="invoice_destination_account" name="invoice_destination_account" class="form-control">
+                                        <option value="">Select Receiving Account</option>
+                                        @foreach ($banks as $bank)
+                                            <option value="{{ $bank->id }}">{{ $bank->bank_name }} - {{ $bank->country }} - {{ $bank->region }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                        
+                                <div class="col-sm-6">
+                                    <label for="invoice_file" class="form-label">Upload Invoice</label>
+                                    <input type="file" id="invoice_file" class="form-control" name="invoice_file" />
+                                </div>
+                            </div>
+                        
+                            <!-- Sender Details -->
+                            <div class="row mt-3">
+                                <div class="col-sm-4">
+                                    <label for="invoice_sender_name" class="form-label">Sender Name</label>
+                                    <input type="text" id="invoice_sender_name" class="form-control" name="invoice_sender_name"
+                                        value="{{ old('invoice_sender_name') }}" placeholder="Enter Sender Name" />
+                                </div>
+                                <div class="col-sm-8">
+                                    <label for="invoice_sender_bank_name" class="form-label">Sender Bank Name</label>
+                                    <input type="text" id="invoice_sender_bank_name" class="form-control" name="invoice_sender_bank_name"
+                                        value="{{ old('invoice_sender_bank_name') }}" placeholder="Enter Sender Bank Name" />
+                                </div>
+                            </div>
+                        
+                            <div class="row mt-4">
+                                <div class="col-sm-4">
+                                    <label for="invoice_sender_bank_account" class="form-label">Sender Bank Account Number</label>
+                                    <input type="text" id="invoice_sender_bank_account" class="form-control" name="invoice_sender_bank_account"
+                                        value="{{ old('invoice_sender_bank_account') }}" placeholder="Enter Sender Bank Account Number" />
+                                </div>
+                                <div class="col-sm-8">
+                                    <label for="sender_detail" class="form-label">Sender Details</label>
+                                    <textarea id="sender_detail" name="sender_detail" class="form-control" rows="4" cols="50"
+                                        placeholder="Enter details here...">{{ old('sender_detail') }}</textarea>
+                                </div>
+                            </div>
+                        
+                            <!-- Invoice Items -->
+                            <div class="mt-4">
+                                <h6>Invoice Items</h6>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Item Description</th>
+                                            <th>Amount</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoiceItems">
+                                        <!-- Dynamic Rows Will Be Added Here -->
+                                    </tbody>
+                                </table>
+                                <button type="button" class="btn btn-secondary mt-2" onclick="addInvoiceItem()">Add Item</button>
+                            </div>
                         </div>
+                        
 
 
                         <!-- Account Remittance Fields -->
@@ -579,7 +763,8 @@
                                         <option value="Overhead"
                                             {{ old('fund_category') == 'Overhead' ? 'selected' : '' }}>Overhead
                                         </option>
-                                        <option value="Financial" {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
+                                        <option value="Financial"
+                                            {{ old('fund_category') == 'Finance' ? 'selected' : '' }}>
                                             Finance</option>
                                         <option value="Capital Expenditure"
                                             {{ old('fund_category') == 'Capital Expenditure' ? 'selected' : '' }}>
@@ -661,6 +846,36 @@
     </div>
 
     <script>
+        function calculateDistribution() {
+            // 1) Grab total DR amount
+            const drAmount = parseFloat(document.getElementById('invoice_dr_amount_received').value) || 0;
+
+            // 2) Grab all percentages
+            const salaryPct = parseFloat(document.getElementById('dist_salary_percentage').value) || 0;
+            const facilityPct = parseFloat(document.getElementById('dist_facility_percentage').value) || 0;
+            const materialPct = parseFloat(document.getElementById('dist_material_percentage').value) || 0;
+            const overheadPct = parseFloat(document.getElementById('dist_overhead_percentage').value) || 0;
+            const financialPct = parseFloat(document.getElementById('dist_financial_percentage').value) || 0;
+            const capexPct = parseFloat(document.getElementById('dist_capex_percentage').value) || 0;
+
+            // 3) Check total percentage *before* doing any calculations
+            const totalPct = salaryPct + facilityPct + materialPct + overheadPct + financialPct + capexPct;
+            if (totalPct > 100) {
+                alert("Warning: The total of all percentages exceeds 100%!");
+                // Stop here so it doesn’t assign new values to the Calculated Amount fields
+                return;
+            }
+
+            // 4) If total is OK, do the calculations
+            document.getElementById('dist_salary_amount').value = ((salaryPct / 100) * drAmount).toFixed(2);
+            document.getElementById('dist_facility_amount').value = ((facilityPct / 100) * drAmount).toFixed(2);
+            document.getElementById('dist_material_amount').value = ((materialPct / 100) * drAmount).toFixed(2);
+            document.getElementById('dist_overhead_amount').value = ((overheadPct / 100) * drAmount).toFixed(2);
+            document.getElementById('dist_financial_amount').value = ((financialPct / 100) * drAmount).toFixed(2);
+            document.getElementById('dist_capex_amount').value = ((capexPct / 100) * drAmount).toFixed(2);
+        }
+
+
         // Toggle Fund Type UI
         function toggleFundTypeUI() {
             const fundType = document.getElementById('fund_type').value;

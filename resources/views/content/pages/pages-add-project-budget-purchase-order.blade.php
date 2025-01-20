@@ -150,22 +150,23 @@
                     <th>Requested By</th>
                     <th>Budget Allocated</th>
                     <th>Status</th>
+                    <th>Action</th> <!-- New column for actions -->
                 </tr>
             </thead>
             <tbody id="project-table-body" class="table-border-bottom-0">
                 @if($purchaseOrders->isEmpty())
                 <tr>
-                    <td colspan="8" class="text-center">No Data</td> <!-- Adjust colspan based on the number of columns in the table -->
+                    <td colspan="9" class="text-center">No Data</td> <!-- Adjust colspan for new Action column -->
                 </tr>
                 @else
                 @foreach($purchaseOrders as $po)
-
+        
                 @php
                 $requestPerson = $userList->firstWhere('id', $po->requested_by);
                 $preparedPerson = $userList->firstWhere('id', $po->prepared_by);
                 $budget = $budgetList->firstWhere('id', $po->project_id);
                 @endphp
-
+        
                 <tr>
                     <!-- PO Number -->
                     <td style="color:#0067aa">
@@ -173,7 +174,7 @@
                             {{ $po->po_number ?? 'N/A' }}
                         </a>
                     </td>
-
+        
                     <!-- Budget Reference Code -->
                     <td style="color:#0067aa">
                         @if($budget)
@@ -184,36 +185,48 @@
                         <span style="color: red;">No Budget</span>
                         @endif
                     </td>
-
+        
                     <!-- Supplier Name -->
                     <td>{{ $po->supplier_name ?? 'N/A' }}</td>
-
+        
                     <!-- Description -->
                     <td>{{ $po->description ?? 'N/A' }}</td>
-
+        
                     <!-- Prepared By -->
-                    <td>{{ optional($preparedPerson)->first_name ?? 'N/A' }}</td>
-
+                    <td>{{ optional($preparedPerson)->first_name . ' ' . optional($preparedPerson)->last_name ?? 'N/A' }}</td>
+        
                     <!-- Requested By -->
                     <td>{{ optional($requestPerson)->first_name ?? 'N/A' }}</td>
-
+        
                     <!-- Total Budget Allocated -->
                     <td>
                         @if (is_null(optional($budget)->total_budget_allocated) || $budget->total_budget_allocated <= 0)
                             <span style="color: red;">Budget Not Allocated</span>
-                            @else
+                        @else
                             {{ number_format($budget->total_budget_allocated, 2) }}
-                            @endif
+                        @endif
                     </td>
-
+        
                     <!-- PO Status -->
-                    <td>{{ $po->status ?? 'N/A' }}</td>
+                    <td>
+                        <span class="badge {{ $po->status === 'submitted' ? 'bg-success' : 'bg-secondary' }}">
+                            {{ $po->status ?? 'N/A' }}
+                        </span>
+                    </td>        
+                    <!-- Action -->
+                    <td>
+                        <form action="{{ route('purchaseOrder.destroy', ['POID' => $po->po_number]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this Purchase Order?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
                 @endif
             </tbody>
-
         </table>
+        
     </div>
 </div>
 

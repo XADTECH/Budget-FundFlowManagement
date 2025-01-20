@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('payment_order_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('payment_order_id');
+            $table->unsignedBigInteger('budget_project_id')->nullable();
             $table->json('items_json')->nullable();
             $table->timestamps();
         });

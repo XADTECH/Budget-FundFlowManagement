@@ -159,7 +159,6 @@ class PurcahseOrderController extends Controller
         $facilities = FacilityCost::where('budget_project_id', $purchaseOrder->project_id)->get();
         $capitalExpenses = CapitalExpenditure::where('budget_project_id', $purchaseOrder->project_id)->get();
         $financial = FinancialCost::where('budget_project_id', $purchaseOrder->project_id)->get();
-        $overhead = CostOverhead::where('budget_project_id', $purchaseOrder->project_id)->get();
 
         // Calculate budget utilization details
         $balanceBudget = $budget->getRemainingBudget();
@@ -169,11 +168,14 @@ class PurcahseOrderController extends Controller
         $materialBudget = $totalBudgetAllocated?->committed_allocated_material_cost;
         $capitalExpensesTotal = $totalBudgetAllocated?->committed_allocated_capital_expenditure;
         $financialBudget = $totalBudgetAllocated?->committed_allocated_financial_cost;
-        $overheadBudget = $totalBudgetAllocated?->committed_allocated_cost_overhead;
-        $totalBudget = $totalBudgetAllocated?->committed_allocated_budget;
+        $costOverheadBudget = $totalBudgetAllocated?->committed_allocated_cost_overhead;
+        $totalBudget = $totalBudgetAllocated?->allocated_budget;
+
+        // Fetch capital expenditures (as a collection)
+        $capitalExpensesTotal = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->pluck('total_capital_expenditure');
 
         // Returning the view with compact data
-        return view('content.pages.show-budget-project-purchase-order', compact('purchaseOrder', 'overhead', 'overheadBudget', 'capitalExpensesTotal', 'salaryBudget', 'facilityBudget', 'materialBudget', 'financialBudget', 'capitalExpenses', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus', 'materials', 'financial', 'salaries', 'facilities', 'totalBudget'));
+        return view('content.pages.show-budget-project-purchase-order', compact('purchaseOrder', 'capitalExpensesTotal', 'salaryBudget', 'facilityBudget', 'materialBudget', 'financialBudget', 'capitalExpenses', 'budget', 'clients', 'units', 'budgets', 'requested', 'prepared', 'utilization', 'balanceBudget', 'poStatus', 'materials', 'financial', 'salaries', 'facilities', 'totalBudget'));
     }
 
     //save purchase order & store purchase order item
@@ -193,53 +195,49 @@ class PurcahseOrderController extends Controller
             // Fetch the purchase order ID using poNumber
             $purchaseOrder = PurchaseOrder::where('po_number', $request->poNumber)->firstOrFail();
 
+            // Append total discount and VAT to each item
+            $items = $request->items;
+            foreach ($items as &$item) {
+                $item['totalDiscount'] = $request->totalDiscount; // Add total discount
+                $item['totalVAT'] = $request->totalVAT; // Add total VAT
+            }
+
+            // Encode the modified items as JSON
+            $encodedItems = json_encode($items);
+
+            return response($encodedItems);
+
             // Update purchase order details
             $purchaseOrder->subtotal = $request->totalAmount;
             $purchaseOrder->vat = $request->totalVAT;
             $purchaseOrder->total_discount = $request->totalDiscount;
 
-            // Add total discount and VAT to each item safely
-            $items = array_map(function ($item) use ($request) {
-                $item['totalDiscount'] = $request->totalDiscount ?? 0;
-                $item['totalVAT'] = $request->totalVAT ?? 0;
-                return $item;
-            }, $request->items);
-
-            $encodedItems = json_encode($items);
-
-
             // Process each item and update the budget
-            foreach ($items as $item) {
-                // Ensure required keys exist to prevent errors
-                if (!isset($item['b_id'], $item['category'], $item['itemTotal'])) {
-                    continue;
-                }
-
-                // return response()->json($item);
-
+            foreach ($encodedItems as $item) {
                 $budget = TotalBudgetAllocated::where('budget_project_id', $item['b_id'])->first();
+
                 if ($budget) {
                     switch ($item['category']) {
                         case 'salary':
-                            $budget->committed_allocated_salary -= $item['itemTotal'] ?? 0;
+                            $budget->committed_allocated_salary -= $item['itemTotal'];
                             break;
                         case 'material':
-                            $budget->committed_allocated_material_cost -= $item['itemTotal'] ?? 0;
+                            $budget->committed_allocated_material_cost -= $item['itemTotal'];
                             break;
                         case 'facilities':
-                            $budget->committed_allocated_facility_cost -= $item['itemTotal'] ?? 0;
+                            $budget->committed_allocated_facility_cost -= $item['itemTotal'];
                             break;
                         case 'capital_expenses':
-                            $budget->committed_allocated_capital_expenditure -= $item['itemTotal'] ?? 0;
+                            $budget->committed_allocated_capital_expenditure -= $item['itemTotal'];
                             break;
                         case 'financial':
-                            $budget->committed_allocated_financial_cost -= $item['itemTotal'] ?? 0;
+                            $budget->committed_allocated_financial_cost -= $item['itemTotal'];
                             break;
-                        default:
-                            \Log::warning('Unknown category found: ' . $item['category']);
-                            continue 2; // Skip this iteration if category is not valid
+                        case 'overhead':
+                            $budget->committed_allocated_cost_overhead -= $item['itemTotal'];
+                            break;
                     }
-                    $budget->committed_allocated_budget -= $item['itemTotal'];
+                    $budget->committed_remaining_fund -= $item['itemTotal'];
                     $budget->save();
                 }
             }
@@ -259,6 +257,38 @@ class PurcahseOrderController extends Controller
                 'delivery_charges' => (float) $request->deliveryCharges,
                 'status' => $request->status,
             ]);
+
+            // Fetch the total budget allocated record
+            // $totalBudgetAllocated = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->first();
+            // $lastCashFlow = CashFlow::where('budget_project_id', $purchaseOrder->project_id)
+            //     ->where('category', 'Material')
+            //     ->orderBy('date', 'desc')
+            //     ->first();
+
+            // if ($totalBudgetAllocated) {
+            //     // Update total_lpo by adding the total_amount
+            //     $totalBudgetAllocated->total_lpo += $request->totalAmount;
+            //     $totalBudgetAllocated->total_material_cost -= $request->totalAmount;
+            //     $totalBudgetAllocated->allocated_budget -= $request->totalAmount;
+
+            //     $lastCashFlow->balance -= $request->totalAmount;
+            //     $lastCashFlow->save();
+
+            //     CashFlow::create([
+            //         'date' => $purchaseOrder->date,
+            //         'description' => $purchaseOrder->description,
+            //         'category' => 'Material',
+            //         'cash_inflow' => $request->cash_inflow ?? 0.0, // Ensure cash inflow is recorded
+            //         'cash_outflow' => $request->totalAmount ?? 0.0, // Ensure cash outflow is recorded
+            //         'committed_budget' => $lastCashFlow ? $lastCashFlow->committed_budget : 0,
+            //         'balance' => $lastCashFlow->balance,
+            //         'reference_code' => $poItems->po_number, // Reference code generated dynamically
+            //         'budget_project_id' => $purchaseOrder->project_id,
+            //     ]);
+
+            //     // Save the updated record
+            //     $totalBudgetAllocated->save();
+            // }
 
             // Update purchase order status
             $purchaseOrder->status = 'submitted';

@@ -15,6 +15,15 @@
             background-color: #f7f7f7;
         }
 
+        .processed-btn[disabled] {
+            cursor: not-allowed;
+            /* Default behavior */
+            pointer-events: none;
+            /* Ensures the button is not clickable */
+            opacity: 0.6;
+            /* Makes it visually look disabled */
+        }
+
         .upload-doc-btn {
             background-color: #17a2b8;
             /* Info color */
@@ -209,7 +218,7 @@
     <div class="container-fluid mt-4">
         <!-- Back Button -->
         <div class="mb-3">
-            <button class="btn btn-secondary" onclick="history.back()">Back</button>
+            <a href="{{ route('paymentOrders.create') }}" class="btn btn-secondary">Back</a>
         </div>
 
         @if ($errors->any())
@@ -316,17 +325,35 @@
                                             <button type="button"
                                                 class="btn btn-danger btn-sm remove-row">Remove</button>
                                         @endif
-                                        <a href="{{ route('processItem', ['id' => $item['id'], 'po_id' => $item["payment_order_id"]]) }}"
-                                            class="btn btn-sm {{ $item['processed'] ? 'btn-secondary' : 'btn-success' }} processed-btn"
-                                            {{ $item['processed'] || $po->status !== 'approved' ? 'disabled' : '' }}>
-                                            {{ $item['processed'] ? 'Processed' : 'Process' }}
-                                            @if ($item['processed'])
+
+                                        @if ($item['processed'])
+                                            <!-- Processed Button (Disabled and Danger) -->
+                                            <a href="#" class="btn btn-sm btn-danger processed-btn" disabled>
+                                                Processed
+                                            </a>
+                                        @elseif ($po->status === 'pending')
+                                            <!-- Process Button (Enabled and Success) -->
+                                            <a href="{{ route('processItem', ['id' => $item['id'], 'po_id' => $item['payment_order_id']]) }}"
+                                                class="btn btn-sm btn-success processed-btn" @disabled(true)>
+                                                Process
                                                 <span class="ms-1 d-flex justify-content-center align-items-center"
                                                     style="width: 16px; height: 16px; background-color: white; color: green; border-radius: 50%; font-size: 12px; font-weight: bold;">
                                                     ✓
                                                 </span>
-                                            @endif
-                                        </a>
+                                            </a>
+                                        @else
+                                            <!-- Process Button (Disabled and Success) -->
+                                            <a href="{{ route('processItem', ['id' => $item['id'], 'po_id' => $item['payment_order_id']]) }}" class="btn btn-sm btn-success processed-btn" onclick="return confirmProcess();">
+                                                Process
+                                                <span class="ms-1 d-flex justify-content-center align-items-center"
+                                                    style="width: 16px; height: 16px; background-color: white; color: gray; border-radius: 50%; font-size: 12px; font-weight: bold;">
+                                                    ✓
+                                                </span>
+                                            </a>
+                                        @endif
+
+
+
 
                                         <!-- Upload Documents Button -->
                                         <button type="button" class="upload-doc-btn" data-bs-toggle="modal"
@@ -344,8 +371,8 @@
                                                         <h5 class="modal-title"
                                                             id="uploadModalLabel-{{ $index }}">Upload Documents
                                                         </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
+                                                        <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form method="POST"
@@ -766,6 +793,10 @@
                 @endif
             @endforeach
         });
+
+        function confirmProcess() {
+            return confirm("Are you sure you want to process this item?");
+        }
     </script>
 </body>
 

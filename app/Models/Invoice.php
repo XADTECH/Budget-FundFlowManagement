@@ -17,8 +17,8 @@ class Invoice extends Model
         'date',
         'invoice_number',
         'invoice_dr_amount_received',
-        'invoice_fund_category',
         'invoice_destination_account',
+        'fund_type',
         'item_description',
         'amount',
         'invoice_file',
@@ -29,6 +29,8 @@ class Invoice extends Model
     protected $casts = [
         'item_description' => 'array', // Cast JSON column to array
         'amount' => 'array', // Cast JSON column to array
+        'fund_type' => 'array', // Automatically casts JSON to array
+
     ];
 
     // Define any relationships (if applicable)

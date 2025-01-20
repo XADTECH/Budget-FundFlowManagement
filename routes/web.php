@@ -269,6 +269,10 @@ Route::middleware(['checklogin'])->group(function () {
     //store purchase order
 
     Route::post('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'storePurchaseOrder'])->name('add-budget-project-purchase-order');
+
+    //destry purchase order 
+    Route::delete('/purchase-order/{POID}', [PurcahseOrderController::class, 'destroy'])->name('purchaseOrder.destroy');
+
     
     //add purchase order 
     Route::get('/pages/add-budget-project-purchase-order', [PurcahseOrderController::class, 'addPurchaseOrder'])->name('add-budget-project-purchase-order');

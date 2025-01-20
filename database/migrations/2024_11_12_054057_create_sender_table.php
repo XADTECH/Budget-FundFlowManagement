@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('sender_name'); 
             $table->string('sender_for'); 
             $table->string('sender_bank_name'); 
+            $table->json('fund_type')->nullable(); 
             $table->string('sender_bank_account'); 
             $table->string('tracking_number'); 
             $table->string('amount'); 
-            $table->string('fund_type'); 
             $table->string('sender_detail')->nullable(); 
             $table->unsignedBigInteger('budget_project_id');
             $table->unsignedBigInteger('destination_account');

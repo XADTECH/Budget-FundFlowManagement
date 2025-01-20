@@ -28,6 +28,8 @@ use App\Models\TotalBudgetAllocated;
 use App\Models\Salary;
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\PaymentOrderItem;
+use App\Models\PaymentOrderModel;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Validator;
@@ -264,8 +266,13 @@ class ProjectController extends Controller
             RemittanceTransfer::where('budget_project_id', $projectId)->delete();
             Loan::where('budget_project_id', $projectId)->delete();
             BankBalance::where('budget_project_id', $projectId)->delete();
+            $paymentOrder = PaymentOrderItem::where('budget_project_id', $projectId)->first();
 
-
+            if ($paymentOrder) {
+                PaymentOrderModel::where('id', $paymentOrder->payment_order_id)->delete();
+            }
+            
+            PaymentOrderItem::where('budget_project_id', $projectId)->delete();
             $po = PurchaseOrder::where('project_id', $projectId)->first();
 
             if ($po) {

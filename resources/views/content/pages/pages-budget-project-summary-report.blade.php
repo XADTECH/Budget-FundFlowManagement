@@ -896,7 +896,7 @@
                 <div class="col-md-6">
                     <label for="status" class="form-label">Approval Status</label>
                     <select class="form-select" name="status" id="status">
-                        <option value="" disabled selected>Choose Approval</option>
+                        <option disabled selected>Choose</option>
                         <option value="pending">Pending</option>
                         <option value="hold">Hold</option>
                         <option value="reject">Reject</option>

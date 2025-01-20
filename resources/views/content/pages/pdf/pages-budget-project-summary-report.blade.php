@@ -102,16 +102,18 @@
                 <td style="text-align: left;  padding: 8px; width: 50%;">
 
                 </td>
-                <td style="border: 1px solid #000; padding: 8px;  width: 50%;">
+                {{-- <td style="border: 1px solid #000; padding: 8px;  width: 50%;">
                     <b> Verified By:</b> {{ $prepared->verified_by ?? 'not verified' }}
+                </td> --}}
+                <td style="border: 1px solid #000; padding: 8px;  width: 50%;">
+                    <b> Project Name :  </b> {{ $budget->budget_type ?? 'N/A' }}
                 </td>
-
             </tr>
             <tr>
                 <td style="text-align: left;  padding: 8px; width: 50%;">
 
                 </td>
-                <td style="border: 1px solid #000; padding: 8px;  width: 50%;"><b>Prepared By:</b> {{$prepared->first_name}}</td>
+                <td style="border: 1px solid #000; padding: 8px;  width: 50%;"><b>Prepared By:</b> {{$prepared->first_name . ' ' . $prepared->last_name}}</td>
 
             </tr>
 
@@ -130,7 +132,7 @@
         @foreach (@$purchaseOrder->items as $items)
         @foreach (json_decode($items->items) as $item)
         <tr>
-            <td style="border: 1px solid #000; padding: 8px;width: 50%;">{{@$item->item}}</td>
+            <td style="border: 1px solid #000; padding: 8px;width: 50%;">{{@$item->itemNo}}</td>
             <td style="border: 1px solid #000; padding: 8px;width: 20%;">{{@$item->description}}</td>
             <td style="border: 1px solid #000; padding: 8px;width: 50%;">{{@$item->quantity}} </td>
             <td style="border: 1px solid #000; padding: 8px;width: 20%;">{{@$item->unitPrice}}</td>

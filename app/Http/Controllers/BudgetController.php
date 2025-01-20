@@ -443,7 +443,7 @@ class BudgetController extends Controller
 
         return redirect('/pages/edit-project-budget/' . $budgetProject->id)->with('success', 'Revenue added successfully!');
     }
-    
+
     public function findByReferenceCode(Request $request)
     {
         // Get the reference code from the request
@@ -550,12 +550,19 @@ class BudgetController extends Controller
         $totalBudget = TotalBudgetAllocated::create([
             'budget_project_id' => $budget->id,
             'total_salary' => $allocations['salary']['allocated'],
+            'committed_allocated_salary' => $allocations['salary']['allocated'], // Initialize committed salary
             'total_facility_cost' => $allocations['facility']['allocated'],
+            'committed_allocated_facility_cost' => $allocations['facility']['allocated'], // Initialize committed facility
             'total_material_cost' => $allocations['material']['allocated'],
+            'committed_allocated_material_cost' => $allocations['material']['allocated'], // Initialize committed material
             'total_cost_overhead' => $allocations['overhead']['allocated'],
+            'committed_allocated_cost_overhead' => $allocations['overhead']['allocated'], // Initialize committed overhead
             'total_financial_cost' => $allocations['financial']['allocated'],
+            'committed_allocated_financial_cost' => $allocations['financial']['allocated'], // Initialize committed financial
             'total_capital_expenditure' => $allocations['Capital Expenditure']['allocated'],
+            'committed_allocated_capital_expenditure' => $allocations['Capital Expenditure']['allocated'], // Initialize committed capital expenditure
             'allocated_budget' => $totalAllocatedBudget,
+            'committed_allocated_budget' => $totalAllocatedBudget,
             'initial_allocation_budget' => $totalAllocatedBudget,
             'reference_code' => $budget->reference_code,
         ]);
@@ -649,7 +656,6 @@ class BudgetController extends Controller
 
         // Get the filtered allocated budgets
         $allocatedBudgets = $query->get();
-
 
         // Fetch approved budget and total allocations related to the budget project, if provided
         $approvedBudget = $request->has('budget_project_id') ? ApprovedBudget::where('budget_project_id', $request->budget_project_id)->first() : null;

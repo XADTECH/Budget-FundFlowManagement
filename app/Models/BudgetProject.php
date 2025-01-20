@@ -98,7 +98,7 @@ class BudgetProject extends Model
         // Check if there's related budget allocation data
         if ($budgetAllocated) {
             // Remaining budget is total budget allocated minus total expenses
-            return $budgetAllocated->allocated_budget - $this->getUtilization();
+            return $budgetAllocated->committed_allocated_budget - $this->getUtilization();
         }
 
         // Return null or 0 if there's no related budget allocation

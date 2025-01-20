@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Models\Sender;
 use App\Models\LedgerEntry;
 use App\Models\BankBalance;
+use App\Models\Distribution;
 use App\Models\TotalBudgetAllocated;
 use App\Models\RemittanceTransfer;
 use App\Models\TransferFromManagement;
@@ -30,9 +31,6 @@ class CashFlowController extends Controller
 
     public function store(Request $request)
     {
-        // return response($request->all());
-        // Initial validation for required fields
-
         $request->validate([
             'date' => 'required|date',
             'fund_type' => 'required|string',
@@ -44,13 +42,18 @@ class CashFlowController extends Controller
         if ($request->fund_type === 'Inflow') {
             switch ($request->main_category) {
                 case 'Invoice':
+                    // return response()->json($request->all());
+                    if (!$this->isBudgetAllocated($request->invoice_budget_project_id)) {
+                        return redirect()
+                            ->back()
+                            ->withErrors(['error' => 'Budget is not allocated for this project.']);
+                    }
                     $request->validate([
                         'fund_type' => 'required|string',
                         'main_category' => 'required|string',
                         'invoice_number' => 'required|string',
                         'invoice_dr_amount_received' => 'required|numeric',
                         'invoice_budget_project_id' => 'required|integer',
-                        'invoice_fund_category' => 'required|string',
                         'invoice_destination_account' => 'required|integer',
                         'item_description' => 'required|array',
                         'item_description.*' => 'string',
@@ -61,6 +64,7 @@ class CashFlowController extends Controller
                         'invoice_sender_bank_name' => 'required|string',
                         'invoice_sender_bank_account' => 'required|string',
                         'sender_detail' => 'nullable|string',
+                        'distribution' => 'nullable|array', // distribution might be an object like { salary: {amount, percentage} ...}
                     ]);
 
                     // Process the invoice data
@@ -69,11 +73,17 @@ class CashFlowController extends Controller
                         'invoice_number' => $request->invoice_number,
                         'invoice_dr_amount_received' => $request->invoice_dr_amount_received,
                         'invoice_fund_category' => $request->invoice_fund_category,
+                        'fund_type' => $request->input('distribution'), // Save the distribution array directly
                         'invoice_destination_account' => $request->invoice_destination_account,
                         'item_description' => json_encode($request->item_description), // Storing as JSON
                         'amount' => json_encode($request->amount), // Storing as JSON
                         'invoice_budget_project_id' => $request->invoice_budget_project_id,
                     ];
+
+                    // If there's a distribution object, store it as JSON on the Invoice (optional)
+                    if ($request->has('distribution')) {
+                        $invoiceData['distribution'] = json_encode($request->distribution);
+                    }
 
                     // Handle file upload if it exists
                     if ($request->hasFile('invoice_file')) {
@@ -98,12 +108,17 @@ class CashFlowController extends Controller
                         'sender_bank_name' => $request->invoice_sender_bank_name,
                         'sender_bank_account' => $request->invoice_sender_bank_account,
                         'tracking_number' => $request->invoice_number,
+                        'fund_type' => $request->input('distribution'), 
                         'amount' => $request->invoice_dr_amount_received,
-                        'fund_type' => $request->invoice_fund_category,
                         'sender_detail' => $request->sender_detail,
                         'budget_project_id' => $request->invoice_budget_project_id,
                         'destination_account' => $request->invoice_destination_account,
                     ];
+
+                    // If distribution is provided, store on Sender too (optional)
+                    if ($request->has('distribution')) {
+                        $senderData['distribution'] = json_encode($request->distribution);
+                    }
 
                     // Save the sender data
                     Sender::create($senderData);
@@ -117,6 +132,10 @@ class CashFlowController extends Controller
                         'category_type' => $request->main_category,
                         'description' => 'Invoice Ref: ' . $request->invoice_number,
                     ]);
+
+                    if ($request->has('distribution')) {
+                        $this->handleCashFlowDistribution($request);
+                    }
 
                     // Process and store each item in the ledger as a credit entry
                     foreach ($request->item_description as $index => $description) {
@@ -137,12 +156,18 @@ class CashFlowController extends Controller
                     $this->updateProjectBankBalance($request->invoice_destination_account, $request->invoice_budget_project_id, $request->invoice_dr_amount_received, 'debit');
 
                     // Update cash flow
-                    $this->maintainCashFlow($request->invoice_budget_project_id, $request->invoice_fund_category, $request->invoice_dr_amount_received, 'Received Invoice', $request->invoice_number, $request->date);
+                    $this->handleCashFlowDistribution($request);
+                    // $this->maintainCashFlow($request->invoice_budget_project_id, $head, $request->invoice_dr_amount_received, 'Received Invoice', $request->invoice_number, $request->date);
 
                     return redirect()->back()->with('success', 'Invoice recorded and cash flow updated.');
                     break;
 
                 case 'Funds Transfer from Management':
+                    if (!$this->isBudgetAllocated($request->budget_project_id)) {
+                        return redirect()
+                            ->back()
+                            ->withErrors(['error' => 'Budget is not allocated for this project.']);
+                    }
                     $request->validate([
                         'date_received' => 'required|date',
                         'transfer_reference' => 'required|string|max:255|unique:transfer_from_management,transfer_reference',
@@ -218,6 +243,11 @@ class CashFlowController extends Controller
                     break;
 
                 case 'Account Remittance':
+                    if (!$this->isBudgetAllocated($request->budget_project_id)) {
+                        return redirect()
+                            ->back()
+                            ->withErrors(['error' => 'Budget is not allocated for this project.']);
+                    }
                     $request->merge([
                         'remittance_amount' => str_replace(',', '', $request->input('remittance_amount')), // Remove commas for numeric validation
                     ]);
@@ -254,7 +284,16 @@ class CashFlowController extends Controller
                         'bank_id' => $request->remittance_destination_account,
                         'amount' => abs($request->remittance_amount),
                         'type' => 'debit',
-                        'description' => 'Remittance Ref: ' . $request->remittance_reference,
+                        'description' => 'Bank Account - Remittance Ref: ' . $request->remittance_reference,
+                        'budget_project_id' => $request->budget_project_id,
+                        'category_type' => $request->fund_category,
+                    ]);
+
+                    LedgerEntry::create([
+                        'bank_id' => $request->remittance_destination_account,
+                        'amount' => abs($request->remittance_amount),
+                        'type' => 'credit',
+                        'description' => $request->remittance_description,
                         'budget_project_id' => $request->budget_project_id,
                         'category_type' => $request->fund_category,
                     ]);
@@ -283,6 +322,11 @@ class CashFlowController extends Controller
                     break;
 
                 case 'Bank Loan':
+                    if (!$this->isBudgetAllocated($request->budget_project_id)) {
+                        return redirect()
+                            ->back()
+                            ->withErrors(['error' => 'Budget is not allocated for this project.']);
+                    }
                     // return response($request->all());
                     $validatedData = $request->validate([
                         'loan_reference' => 'required|string|max:255|unique:loans,loan_reference',
@@ -312,7 +356,7 @@ class CashFlowController extends Controller
                         'sender_bank_name' => $request->loan_provider_name, // Assuming the loan provider is the sender bank
                         'sender_bank_account' => $request->loan_bank_account,
                         'tracking_number' => 'Loan Ref #' . $request->loan_reference, // Unique loan reference number
-                        'amount' => abs($request->loan_amount + $interestAmount),
+                        'amount' => abs($request->loan_amount),
                         'fund_type' => $request->fund_category, // Fund category (e.g., Finance)
                         'sender_detail' => $request->loan_description, // Loan purpose or description
                         'budget_project_id' => $request->budget_project_id, // Associated budget project
@@ -361,14 +405,14 @@ class CashFlowController extends Controller
                     $this->maintainCashFlow($request->budget_project_id, $request->fund_category, $request->loan_amount, 'Bank Loan', $request->loan_reference, $request->date);
 
                     // Update cash flow for loan
-                    $this->maintainCashFlow(
-                        $request->budget_project_id, // The associated budget project ID
-                        $request->fund_category, // The fund category (e.g., Finance)
-                        abs($request->loan_amount), // Ensure the amount is positive
-                        'Bank Loan', // Description updated to reflect loan type
-                        $request->loan_reference, // The unique loan reference
-                        $request->loan_date, // Loan date
-                    );
+                    // $this->maintainCashFlow(
+                    //     $request->budget_project_id, // The associated budget project ID
+                    //     $request->fund_category, // The fund category (e.g., Finance)
+                    //     abs($request->loan_amount), // Ensure the amount is positive
+                    //     'Bank Loan', // Description updated to reflect loan type
+                    //     $request->loan_reference, // The unique loan reference
+                    //     $request->loan_date, // Loan date
+                    // );
 
                     return redirect()->back()->with('success', 'Loan Received and Record Saved Successfully !');
 
@@ -408,15 +452,60 @@ class CashFlowController extends Controller
         }
     }
 
+    private function isBudgetAllocated($budgetProjectId)
+    {
+        return TotalBudgetAllocated::where('budget_project_id', $budgetProjectId)->exists();
+    }
+
     private function updateOverallBankBalance($bankId, $amount, $type)
     {
-        $bank = Bank::findOrFail($bankId);
-        if ($type === 'debit') {
-            $bank->current_balance += $amount;
-        } elseif ($type === 'credit') {
-            $bank->current_balance -= $amount;
+        // $bank = Bank::findOrFail($bankId);
+        // if ($type === 'debit') {
+        //     $bank->current_balance += $amount;
+        // } elseif ($type === 'credit') {
+        //     $bank->current_balance -= $amount;
+        // }
+        // $bank->save();
+    }
+
+    private function handleCashFlowDistribution(Request $request)
+    {
+        // If distribution is present, loop over each head
+        if ($request->has('distribution')) {
+            foreach ($request->distribution as $head => $distData) {
+                // e.g. $head = 'salary'; $distData = ['percentage' => '50', 'amount' => '25000.00']
+                $distAmount = (float) ($distData['amount'] ?? 0);
+
+                // Skip zero amounts
+                if ($distAmount <= 0) {
+                    continue;
+                }
+
+                // Map the distribution head to the exact category your maintainCashFlow logic expects
+                $categoryName = match (strtolower($head)) {
+                    'salary' => 'Salary',
+                    'facility' => 'Facility',
+                    'material' => 'Material',
+                    'overhead' => 'Overhead',
+                    'financial' => 'Financial',
+                    'capex', 'capital expenditure' => 'Capital Expenditure',
+                    default => 'Other', // or skip if not recognized
+                };
+
+                // Now call maintainCashFlow for this partial distribution
+                $this->maintainCashFlow(
+                    $request->invoice_budget_project_id, // The project ID
+                    $categoryName, // e.g. "Salary"
+                    $distAmount, // e.g. 25000
+                    "Received Invoice for {$categoryName}", // description
+                    $request->invoice_number, // reference
+                    $request->date, // date
+                );
+            }
+        } else {
+            // No distribution array => single call to maintainCashFlow
+            $this->maintainCashFlow($request->invoice_budget_project_id, $request->invoice_fund_category ?? $request->main_category, $request->invoice_dr_amount_received, 'Received Invoice (No Distribution)', $request->invoice_number, $request->date);
         }
-        $bank->save();
     }
 
     /**
@@ -446,7 +535,6 @@ class CashFlowController extends Controller
             ->orderBy('date', 'desc')
             ->first();
 
-
         // Calculate the initial balance
         $balance = $lastCashFlow ? $lastCashFlow->balance : 0;
 
@@ -465,7 +553,7 @@ class CashFlowController extends Controller
         // Handle cash inflow
         if ($amountReceived > 0) {
             $balance += $amountReceived;
-            $allocatedBudgetEntry->remaining_fund += $amountReceived;;
+            $allocatedBudgetEntry->remaining_fund += $amountReceived;
             $this->addCategoryBudget($allocatedBudgetEntry, $category, $amountReceived, $lastCashFlow);
         }
 
@@ -481,25 +569,6 @@ class CashFlowController extends Controller
             'reference_code' => trim($trackNumber),
             'budget_project_id' => $budget_project_id,
         ]);
-    }
-
-    private function handleCashOutFlow()
-    {
-        // // Handle cash outflow
-        // if ($request->cash_outflow > 0) {
-        //     if ($request->cash_outflow > $allocatedBudget) {
-        //         return redirect()
-        //             ->back()
-        //             ->withErrors(['insufficient_budget' => "Insufficient funds for {$request->category} cash outflow transaction."])
-        //             ->withInput();
-        //     }
-
-        //     $balance -= $request->cash_outflow;
-        //     $this->deductCategoryBudget($allocatedBudgetEntry, $request->category, $request->cash_outflow, $lastCashFlow);
-        // }
-
-        // // Generate a unique reference code
-        // $referenceCode = 'DPM' . time();
     }
 
     private function getCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category)
@@ -525,48 +594,42 @@ class CashFlowController extends Controller
     // Helper method to add cash inflow to the corresponding category budget
     private function addCategoryBudget(TotalBudgetAllocated $allocatedBudgetEntry, $category, $cashInflow, $lastCashFlow)
     {
-
-
         switch ($category) {
             case 'Salary':
                 $allocatedBudgetEntry->total_salary += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
 
-
                 break;
             case 'Facility':
                 $allocatedBudgetEntry->total_facility_cost += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-         
-           
+
                 break;
             case 'Material':
                 $allocatedBudgetEntry->total_material_cost += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-              
-           
+
                 break;
             case 'Overhead':
                 $allocatedBudgetEntry->total_cost_overhead += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-            
-           
+
                 break;
             case 'Financial':
                 $allocatedBudgetEntry->total_financial_cost += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-        
+
                 break;
             case 'Capital Expenditure':
                 $allocatedBudgetEntry->total_capital_expenditure += $cashInflow;
                 $allocatedBudgetEntry->allocated_budget += $cashInflow;
                 $lastCashFlow->balance += $cashInflow; // Update last cash flow balance
-      
+
                 break;
         }
 

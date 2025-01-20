@@ -16,10 +16,10 @@ return new class extends Migration
             $table->date('date');
             $table->string('invoice_number')->unique(); 
             $table->decimal('invoice_dr_amount_received', 15, 2); 
-            $table->string('invoice_fund_category'); 
             $table->unsignedBigInteger('invoice_destination_account'); 
             $table->json('item_description'); 
             $table->json('amount'); 
+            $table->json('fund_type')->nullable(); 
             $table->string('invoice_file')->nullable(); 
             $table->unsignedBigInteger('invoice_budget_project_id'); 
             $table->timestamps();

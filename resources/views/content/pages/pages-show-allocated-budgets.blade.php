@@ -107,7 +107,7 @@
                                 <th>Total LPO</th>
                             </tr>
                         </thead>
-                 
+
                         <tbody>
                             @foreach ($allocatedBudgets as $budgetProject)
                                 @php
@@ -149,66 +149,92 @@
         </div>
     @endif
 
-     <!-- Sender Dropdown Section -->
-     @if ($sndr && $sndr->isNotEmpty())
-     <div class="card mt-4">
-         <div class="card-body">
-             <div class="dropdown-section">
-                 <h3 class="dropdown-header" onclick="toggleDropdown(event)">Senders ▼ {{ $sndr->count() }}</h3>
-                 <div class="dropdown-content">
-                     <h5>Total Senders: {{ $sndr->count() }}</h5>
+    <!-- Sender Dropdown Section -->
+    @if ($sndr && $sndr->isNotEmpty())
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="dropdown-section">
+                    <h3 class="dropdown-header" onclick="toggleDropdown(event)">Senders ▼ {{ $sndr->count() }}</h3>
+                    <div class="dropdown-content">
+                        <h5>Total Senders: {{ $sndr->count() }}</h5>
 
-                     <div class="table-responsive text-nowrap limited-scroll mt-2">
-                         <table class="table table-bordered table-hover">
-                             <thead>
-                                 <tr>
-                                     <th>#</th>
-                                     <th>Date</th>
-                                     <th>Tracking #</th>
-                                     <th>Sender Name</th>
-                                     <th>Amount</th>
-                                     <th>Status</th>
-                                     <th>Sender Bank Name</th>
-                                     <th>Sender Bank Account</th>
-                                     <th>Destination Account</th>
-                                     <th>Fund Type</th>
-                                     <th>Details</th>
-                                 </tr>
-                             </thead>
-                             <tbody>
-                                 @foreach ($sndr as $index => $sender)
-                                     <tr>
-                                         <td>{{ $index + 1 }}</td>
-                                         <td>{{ $sender->date }}</td>
-                                         <td>{{ $sender->tracking_number }}</td>
-                                         <td>{{ $sender->sender_name }}</td>
-                                         <td>{{ number_format($sender->amount, 0) }}</td>
-                                         <td>{{ $sender->sender_for }}</td>
-                                         <td>{{ $sender->sender_bank_name }}</td>
-                                         <td>{{ $sender->sender_bank_account }}</td>
-                                         @php
-                                             $bank = $banks->where('id', $sender->destination_account)->first();
-                                         @endphp
-                                         <td>
-                                             <a
-                                                 href="{{ route('banks.projectledger', ['bank_id' => $bank->id, 'budget_project_id' => $sender->budget_project_id]) }}">
-                                                 {{ $bank->bank_name }}
-                                             </a>
-                                         </td>
-                                         <td>{{ $sender->fund_type }}</td>
-
-
-                                         <td>{!! nl2br(e($sender->sender_detail)) !!}</td>
-                                     </tr>
-                                 @endforeach
-                             </tbody>
-                         </table>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
- @endif
+                        <div class="table-responsive text-nowrap limited-scroll mt-2">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Tracking #</th>
+                                        <th>Sender Name</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Sender Bank Name</th>
+                                        <th>Sender Bank Account</th>
+                                        <th>Destination Account</th>
+                                        <th>Fund Type</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($sndr as $index => $sender)
+                                        @php
+                                            // If the model is already casting fund_type as array, no need to json_decode.
+                                            $fundTypes = $sender->fund_type;  
+                                            $bank = $banks->where('id', $sender->destination_account)->first();
+                                        @endphp
+                                
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $sender->date }}</td>
+                                            <td>{{ $sender->tracking_number }}</td>
+                                            <td>{{ $sender->sender_name }}</td>
+                                            <td>{{ number_format($sender->amount, 0) }}</td>
+                                            <td>{{ $sender->sender_for }}</td>
+                                            <td>{{ $sender->sender_bank_name }}</td>
+                                            <td>{{ $sender->sender_bank_account }}</td>
+                                            <td>
+                                                <a href="{{ route('banks.projectledger', [
+                                                    'bank_id' => $bank->id, 
+                                                    'budget_project_id' => $sender->budget_project_id
+                                                ]) }}">
+                                                    {{ $bank->bank_name }}
+                                                </a>
+                                            </td>
+                                            <!-- Nested table for Fund Types -->
+                                            <td>
+                                                <table class="table table-sm table-bordered mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Head</th>
+                                                            <th>Amount</th>
+                                                            <th>Percentage</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($fundTypes as $head => $data)
+                                                            <tr>
+                                                                <td>{{ ucfirst($head) }}</td>
+                                                                <td>{{ isset($data['amount']) ? number_format($data['amount'], 0) : 0 }}</td>
+                                                                <td>{{ isset($data['percentage']) ? $data['percentage'] : 0 }}%</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>{!! nl2br(e($sender->sender_detail)) !!}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                
+                                
+                 
+                                </table>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                @endif
 
     <!-- Invoices Dropdown Section -->
     @if ($invoices && $invoices->isNotEmpty())
@@ -227,7 +253,7 @@
                                         <th>#</th>
                                         <th>Date</th>
                                         <th>Invoice Number</th>
-                                        <th>Fund Category</th>
+                                        <th>Funds</th>
                                         <th>Amount Received</th>
                                         <th>Bank</th>
                                         <th>Invoice File</th>
@@ -239,12 +265,32 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $invoice->date }}</td>
                                             <td>{{ $invoice->invoice_number }}</td>
-                                            <td>{{ $invoice->invoice_fund_category }}</td>
+                                            <td>
+                                                @php
+                                                    $fundTypes = is_array($invoice->fund_type) ? $invoice->fund_type : json_decode($invoice->fund_type, true);
+                                                @endphp
+                                                <table class="table table-sm table-bordered mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Head</th>
+                                                            <th>Amount</th>
+                                                            <th>Percentage</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($fundTypes as $head => $data)
+                                                            <tr>
+                                                                <td>{{ ucfirst($head) }}</td>
+                                                                <td>{{ isset($data['amount']) ? number_format($data['amount'], 0) : 0 }}</td>
+                                                                <td>{{ isset($data['percentage']) ? $data['percentage'] : 0 }}%</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </td>
                                             <td>{{ number_format($invoice->invoice_dr_amount_received, 0) }}</td>
                                             @php
-                                                $bank = $banks
-                                                    ->where('id', $invoice->invoice_destination_account)
-                                                    ->first();
+                                                $bank = $banks->where('id', $invoice->invoice_destination_account)->first();
                                             @endphp
                                             <td>
                                                 <a
@@ -252,11 +298,9 @@
                                                     {{ $bank->bank_name }}
                                                 </a>
                                             </td>
-
                                             <td>
                                                 @if ($invoice->invoice_file)
-                                                    <a href="{{ asset('/' . $invoice->invoice_file) }}"
-                                                        target="_blank">View</a>
+                                                    <a href="{{ asset('/' . $invoice->invoice_file) }}" target="_blank">View</a>
                                                 @else
                                                     No file
                                                 @endif
@@ -264,6 +308,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+                                
                             </table>
                         </div>
                     </div>
@@ -435,16 +480,16 @@
                                             <td>{{ number_format($loan->loan_amount, 0) }}</td>
                                             <td>{{ number_format($loan->loan_interest_rate, 0) }}</td>
                                             @php
-                                            $destinationBank = $banks
-                                                ->where('id', $loan->loan_destination_account)
-                                                ->first();
-                                        @endphp
-                                        <td>
-                                            <a
-                                                href="{{ route('banks.projectledger', ['bank_id' => $loan->loan_destination_account, 'budget_project_id' => $loan->budget_project_id]) }}">
-                                                {{ $destinationBank->bank_name ?? 'N/A' }}
-                                            </a>
-                                        </td>
+                                                $destinationBank = $banks
+                                                    ->where('id', $loan->loan_destination_account)
+                                                    ->first();
+                                            @endphp
+                                            <td>
+                                                <a
+                                                    href="{{ route('banks.projectledger', ['bank_id' => $loan->loan_destination_account, 'budget_project_id' => $loan->budget_project_id]) }}">
+                                                    {{ $destinationBank->bank_name ?? 'N/A' }}
+                                                </a>
+                                            </td>
                                             <td>{{ $loan->loan_provider_type }}</td>
                                             <td>{{ $loan->loan_repayment_start_date }}</td>
                                             <td>{{ $loan->loan_date }}</td>
