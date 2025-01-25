@@ -11,16 +11,12 @@ use App\Models\Project;
 use App\Models\Salary;
 use App\Models\CashFlow;
 use App\Models\Bank;
-use App\Models\BankBalance;
 use App\Models\PurchaseOrder;
 use App\Models\ProjectBudgetSequence;
 use App\Models\PurchaseOrderController;
 use App\Models\FacilityCost;
 use App\Models\CapitalExpenditure;
-use App\Models\PaymentOrderItem;
 use App\Models\MaterialCost;
-use App\Models\Sender;
-use App\Models\LedgerEntry;
 use App\Models\CostOverhead;
 use App\Models\FinancialCost;
 use App\Models\DirectCost;
@@ -35,12 +31,8 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use App\Models\Invoice;
-use App\Models\RemittanceTransfer;
-use App\Models\TransferFromManagement;
 
 class PaymentOrder extends Controller
 {
@@ -56,31 +48,38 @@ class PaymentOrder extends Controller
     //store payment order
     public function store(Request $request)
     {
+        // Validate the request
         $validated = $request->validate([
-            'to_date' => 'required|date',
-            'company_name' => 'required|string',
-            'currency' => 'required|string',
+            'payment_date' => 'required|date',
+            'payment_method' => 'required|string',
+            'budget_project_id' => 'required|string',
         ]);
 
         $currentUser = auth()->user();
 
         // Extract formatted date (DDMMYYYY)
-        $formattedDate = Carbon::parse($validated['to_date'])->format('dmy');
+        $formattedDate = Carbon::parse($validated['payment_date'])->format('dmy');
+
+        // Convert payment method to uppercase and replace spaces with dashes
+        $formattedMethod = Str::upper(Str::slug($validated['payment_method'], '-'));
 
         // Generate a random 3-letter string
         $randomLetters = strtoupper(Str::random(3)); // Generate a random string of 3 characters and convert to uppercase
 
+        // Format the method and date
+        $formattedMethod = Str::upper(Str::slug($validated['payment_method'], '-'));
+
         // Generate unique payment order number
-        $paymentOrderNumber = "PO{$formattedDate}-{$randomLetters}";
+        $paymentOrderNumber = "PO{$formattedDate}-{$formattedMethod}-{$randomLetters}";
 
         // Create the payment order
         $paymentOrder = [
             'payment_order_number' => $paymentOrderNumber,
-            'payment_date' => $validated['to_date'],
-            'company_name' => $validated['company_name'],
+            'payment_date' => $validated['payment_date'],
+            'payment_method' => $validated['payment_method'],
+            'budget_project_id' => $validated['budget_project_id'],
             'created_at' => now(),
             'updated_at' => now(),
-            'currency' => $request->currency,
             'user_id' => $currentUser->id,
         ];
 
@@ -92,46 +91,22 @@ class PaymentOrder extends Controller
 
     public function show($id)
     {
-        // Retrieve the payment order by its number
         $po = PaymentOrderModel::where('payment_order_number', $id)->first();
 
         if (!$po) {
             return redirect()
-                ->back()
+                ->back() // Replace 'paymentOrder.index' with your fallback route
                 ->withErrors(['error' => 'Payment Order not found.']);
         }
 
-        // Retrieve related budgets, banks, and allocated budget
-        $budgets = BudgetProject::all();
+        $budget = BudgetProject::where('id', $po->budget_project_id)->first();
+        $project = Project::find($budget->project_id);
         $banks = Bank::all();
+
         $allocatedBudget = TotalBudgetAllocated::where('budget_project_id', $po->budget_project_id)->first();
 
-        // Retrieve the payment order items for this payment order
-        $paymentOrderItems = PaymentOrderItem::where('payment_order_id', $po->id)->first();
-
-        // Decode the JSON items for easier handling in the view
-        $items = $paymentOrderItems ? json_decode($paymentOrderItems->items_json, true) : [];
-
-        // Pass the data to the view
-        return view('content.pages.show-budget-project-payment-order', compact('po', 'banks', 'allocatedBudget', 'budgets', 'items'));
-    }
-
-    //update status
-    public function updateStatus(Request $request, $id)
-    {
-        $po = PaymentOrderModel::findOrFail($id); // Retrieve the payment order by ID
-
-        // Validate the input
-        $request->validate([
-            'status' => 'required|string|in:pending,approved,rejected',
-        ]);
-
-        // Update the status of the payment order
-        $po->status = $request->input('status');
-        $po->save(); // Save the changes
-
-        // Redirect with a success message
-        return redirect()->back()->with('success', 'Payment order status updated successfully!');
+        // Return the view with the payment order details
+        return view('content.pages.show-budget-project-payment-order', compact('po', 'banks', 'allocatedBudget', 'budget', 'project'));
     }
 
     //update payment order
@@ -496,271 +471,17 @@ class PaymentOrder extends Controller
     public function destroy($id)
     {
         // Find the payment order by ID
-        $paymentOrder = PaymentOrderModel::where('id', $id)->first();
-
-        // Check if the payment order exists
+        $paymentOrder = PaymentOrderModel::where('payment_order_number', $id)->first();
         if (!$paymentOrder) {
             return redirect()->back()->with('error', 'Payment order not found.');
         }
 
         try {
-            // Find the associated payment order item
-            $po_item = PaymentOrderItem::where('payment_order_id', $id)->first();
-
-            // Delete the payment order item if it exists
-            if ($po_item) {
-                $po_item->delete();
-            }
-
             // Delete the payment order
             $paymentOrder->delete();
-
             return redirect()->back()->with('success', 'Payment order deleted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while deleting the payment order.');
         }
-    }
-
-    public function processItem(Request $request)
-{
-    $id = $request->query('id');
-    $poID = $request->query('po_id');
-
-    // Find the item by payment_order_id
-    $items = PaymentOrderItem::where('payment_order_id', $poID)->first();
-
-    if (!$items) {
-        return response()->json(['error' => 'Item not found'], 404);
-    }
-
-    // Decode the JSON column into an array
-    $itemsArray = json_decode($items->items_json, true);
-
-    // Search for the specific record by ID
-    $record = collect($itemsArray)->firstWhere('id', $id);
-
-    if (!$record) {
-        return response()->json(['error' => 'Record not found in items_json'], 404);
-    }
-
-    // Step 1: Loop through banks and update BankBalance
-    foreach ($record['banks'] as $bank) {
-        // Update the bank balance
-        $bankBalance = BankBalance::where('bank_id', $bank['bank_id'])
-            ->where('budget_project_id', $record['budget_project_id'])
-            ->first();
-
-        if ($bankBalance) {
-            $bankBalance->current_balance -= $bank['amount'];
-            $bankBalance->save();
-
-            // Step 2: Create bank ledger entry
-            LedgerEntry::create([
-                'bank_id' => $bank['bank_id'],
-                'amount' => abs($bank['amount']), // Debit amount
-                'type' => 'debit',
-                'budget_project_id' => $record['budget_project_id'],
-                'category_type' => $record['head'], // Category (e.g., salary)
-                'description' =>  $record['head'], // Description from the record
-            ]);
-
-             // Step 2: Create bank ledger entry
-             LedgerEntry::create([
-                'bank_id' => $bank['bank_id'],
-                'amount' => abs($bank['amount']), // Debit amount
-                'type' => 'credit',
-                'budget_project_id' => $record['budget_project_id'],
-                'category_type' => $record['head'], // Category (e.g., salary)
-                'description' => $record['description'], // Description from the record
-            ]);
-        }
-    }
-
-    // Step 3: Update remaining_fund in TotalBudgetAllocated
-    $totalBudgetAllocated = TotalBudgetAllocated::where('budget_project_id', $record['budget_project_id'])->first();
-
-    if ($totalBudgetAllocated) {
-        $totalBudgetAllocated->remaining_fund -= $record['paid_amount'];
-        $totalBudgetAllocated->save();
-
-        // Update balance in the record
-        $record['balance'] = $totalBudgetAllocated->remaining_fund;
-    }
-
-    // Step 4: Mark processed as true
-    $updatedItemsArray = collect($itemsArray)->map(function ($item) use ($id, $record) {
-        if ($item['id'] === $id) {
-            $item['processed'] = true;
-            $item['balance'] = $record['balance']; // Update the balance
-        }
-        return $item;
-    });
-
-    // Step 5: Save the updated JSON back to the database
-    $items->items_json = json_encode($updatedItemsArray->toArray());
-    $items->save();
-
-    return response()->json(['success' => true, 'message' => 'Item processed successfully']);
-}
-
-    
-
-    public function getBankDetails(Request $request)
-    {
-        $projectId = $request->input('project_id');
-
-        // Retrieve all bank balances for the specified project
-        $bankBalances = BankBalance::with('bank')->where('budget_project_id', $projectId)->get();
-
-        // Group bank balances by bank_id
-        $banksGrouped = $bankBalances->groupBy('bank_id');
-
-        // Map over each bank group to summarize data
-        $response = $banksGrouped
-            ->map(function ($balances, $bankId) {
-                // Each group corresponds to a single bank_id,
-                // so we take the first balance to get the associated Bank model
-                $bank = $balances->first()->bank;
-
-                // Sum all project balances for this bank
-                $projectBalance = $balances->sum('current_balance');
-
-                return [
-                    'bank_id' => $bank->id, // Include the bank ID here
-                    'name' => $bank->bank_name,
-                    'overall_balance' => $bank->current_balance,
-                    'project_balance' => $projectBalance,
-                ];
-            })
-            ->values();
-
-        return response()->json($response);
-    }
-
-    public function paymentOrderItems(Request $request)
-    {
-        $validated = $request->validate([
-            'payment_order_id' => 'required|integer',
-            'process' => 'required|string', // Ensure 'process' field is present
-        ]);
-
-        switch ($request->process) {
-            case 'not process':
-                return $this->handleNotProcess($request);
-
-            case 'process':
-                return $this->handleProcess($request);
-
-            case 'process all':
-                return $this->handleProcessAll($request);
-
-            default:
-                return redirect()->back()->with('error', 'Invalid process value.');
-        }
-    }
-
-    private function handleNotProcess(Request $request)
-    {
-        // Retrieve the existing PaymentOrder
-        $paymentOrder = PaymentOrderModel::findOrFail($request->payment_order_id);
-
-        // Construct the items array
-        $items = [];
-        foreach ($request->projectname as $index => $projectId) {
-            $head = $request->head[$index];
-            $description = $request->description[$index];
-            $beneficiaryName = $request->beneficiary_name[$index];
-            $beneficiaryIban = $request->beneficiary_iban[$index];
-
-            // Collect bank allocations for this row
-            $bankAllocations = [];
-            if (isset($request->bank_amount[$index]) && is_array($request->bank_amount[$index])) {
-                foreach ($request->bank_amount[$index] as $bankId => $amount) {
-                    $bankAllocations[] = [
-                        'bank_id' => $bankId,
-                        'amount' => $amount,
-                    ];
-                }
-            }
-
-            $balance = $request->balance[$index] ?? 0;
-            $paid_amount = $request->paid_amount[$index] ?? 0;
-
-            // Add a unique identifier
-            $uniqueId = Str::uuid()->toString();
-
-            $items[] = [
-                'id' => $uniqueId, // Unique identifier for each record
-                'budget_project_id' => $projectId,
-                'payment_order_id' => $paymentOrder->id,
-                'head' => $head,
-                'description' => $description,
-                'beneficiary_name' => $beneficiaryName,
-                'beneficiary_iban' => $beneficiaryIban,
-                'banks' => $bankAllocations,
-                'balance' => $balance,
-                'processed' => false,
-                'paid_amount' => $paid_amount,
-            ];
-        }
-
-        // Save items to the database or perform additional processing
-        PaymentOrderItem::create([
-            'payment_order_id' => $paymentOrder->id,
-            'items_json' => json_encode($items),
-            'budget_project_id' => $projectId,
-        ]);
-
-        $paymentOrder->submit_status = 'Submitted';
-        $paymentOrder->save();
-
-        return redirect()
-            ->route('paymentOrders.show', $paymentOrder->payment_order_number)
-            ->with('success', 'Payment order updated successfully.');
-    }
-
-    // Function to handle "process"
-    private function handleProcess(Request $request)
-    {
-        return response($request->all());
-        // Validate necessary fields for processing
-        $validated = $request->validate([
-            'budget_project_id' => 'required|integer',
-            'head' => 'required|string',
-            'description' => 'required|string',
-            'paid_amount' => 'required|numeric',
-            'beneficiary_name' => 'required|string',
-            'beneficiary_iban' => 'required|string',
-        ]);
-
-        // Process the item
-        $item = PaymentOrderItem::where('budget_project_id', $validated['budget_project_id'])
-            ->where('head', $validated['head'])
-            ->first();
-
-        if (!$item) {
-            return redirect()->back()->with('error', 'Item not found.');
-        }
-
-        $item->processed = true;
-        $item->save();
-
-        return redirect()
-            ->route('paymentOrders.show', $paymentOrder->payment_order_number)
-            ->with('success', 'Payment order item processed');
-    }
-
-    private function handleProcessAll(Request $request)
-    {
-        return response($request->all());
-    }
-
-    public function itemsGetBankBalance($bank_id)
-    {
-        // Retrieve the bank balance from the BankBalance model for the specific bank_id
-        $bankBalance = BankBalance::where('bank_id', $bank_id)->first();
-
-        // Return the balance as an integer, or 0 if no balance is found for that bank
-        return $bankBalance ? (int) $bankBalance->current_balance : 0;
     }
 }

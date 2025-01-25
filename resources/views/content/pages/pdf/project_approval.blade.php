@@ -156,7 +156,7 @@
                 </tr>
                 <tr>
                     @php
-                    $tax = $npbt * 0.009;
+                    $tax = $npbt * 0.09;
                     @endphp
                     <td>6</td>
                     <td>TAX (9%)</td>
@@ -181,7 +181,7 @@
                 </tr>
                 <tr>
                     @php
-                    $initialInvestment = $totalDirectCost + $totalInDirectCost + $totalCapExp;
+                    $initialInvestment = $totalDirectCost + $totalInDirectCost ;
                     @endphp
                     <td>9</td>
                     <td>Initial Investment</td>
@@ -193,10 +193,10 @@
                     $ROI = $initialInvestment>0 && $months>0? (($npat/$initialInvestment) * 100) / $months: $initialInvestment;
                     @endphp
 
-                    <td>10</td>
-                    <td>ROI Annualized</td>
-                    <td>{{number_format($ROI)}} %</td>
-                    <td></td>
+                    <!--<td>10</td>-->
+                    <!--<td>ROI Annualized</td>-->
+                    <!--<td>{{number_format($ROI)}} %</td>-->
+                    <!--<td></td>-->
                 </tr>
 
 

@@ -15,9 +15,13 @@
     <ul class="menu-inner py-1 ps ps--active-y">
 
         @if (Auth::user()->role == 'Admin')
-
         @include('layouts.sections.menu.adminsidebar')
         @endif
+
+        @if (Auth::user()->role == 'CEO')
+        @include('layouts.sections.menu.ceo')
+        @endif
+
 
         @if (Auth::user()->role == 'Project Manager')
         @include('layouts.sections.menu.pmosidebar')

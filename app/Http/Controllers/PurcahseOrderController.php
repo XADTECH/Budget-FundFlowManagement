@@ -56,6 +56,7 @@ class PurcahseOrderController extends Controller
     //add / show purchase order
     public function storePurchaseOrder(Request $request)
     {
+
         try {
             // Validate the incoming request data
             $validatedData = $request->validate([
@@ -69,7 +70,7 @@ class PurcahseOrderController extends Controller
             ]);
 
             // Check if allocated budget exists
-            $allocatedBudgetExists = TotalBudgetAllocated::where('budget_project_id', $request->project_name)->exists();
+            $allocatedBudgetExists = TotalBudgetAllocated::where('budget_project_id', $request->project_id)->exists();
 
             if (!$allocatedBudgetExists) {
                 // Return back with error if the budget is not allocated
@@ -77,6 +78,9 @@ class PurcahseOrderController extends Controller
                     ->back()
                     ->withErrors(['budget' => 'Budget is Not Allocated']);
             }
+
+            // return response()->json($allocatedBudgetExists);
+
 
             $currentDate = Carbon::now();
             $monthName = $currentDate->format('M'); // Short month name (e.g. Jan, Feb)
@@ -108,7 +112,7 @@ class PurcahseOrderController extends Controller
             $purchaseOrder->supplier_address = $validatedData['supplier_address'];
             $purchaseOrder->description = $validatedData['description'];
             $purchaseOrder->po_number = $referenceCode;
-            $purchaseOrder->project_id = $request->project_name;
+            $purchaseOrder->project_id = $request->project_id;
             $purchaseOrder->requested_by = $validatedData['project_person_id'];
             $purchaseOrder->prepared_by = Auth::id();
             $purchaseOrder->save();
@@ -388,5 +392,17 @@ class PurcahseOrderController extends Controller
             'totalAmount' => $totalAmount,
             'items' => $filteredItems->values(), // Include only filtered items
         ]);
+    }
+
+    //get projects for purchase order
+    public function getProjects()
+    {
+        $search = $request->input('search');
+    
+    $projects = BudgetProject::where('reference_code', 'LIKE', "%{$search}%")
+                ->limit(10)
+                ->get(['id', 'reference_code']);
+
+    return response()->json($projects);
     }
 }

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Models;
+
 use App\Models\Salary;
 use App\Models\CapitalExpenditure;
 use App\Models\IndirectCost;
@@ -55,50 +57,50 @@ class CostOverhead extends Model
         $costOverhead->expenses = $expenseHead;
         $costOverhead->budget_project_id = $budget_project_id;
 
-        // Perform specific calculations based on the expense head
-        switch ($expenseHead) {
-            case 'HO Cost':
-                // Sum percentage_cost for 'Xad Visa' salaries related to the project
-                $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $budget_project_id)->sum('percentage_cost');
+        // // Perform specific calculations based on the expense head
+        // switch ($expenseHead) {
+        //     case 'HO Cost':
+        //         // Sum percentage_cost for 'Xad Visa' salaries related to the project
+        //         $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $budget_project_id)->sum('percentage_cost');
 
-                $costOverhead->amount = $amount * $sumAmount ?? 0;
-                break;
+        //         $costOverhead->amount = $amount * $sumAmount ?? 0;
+        //         break;
 
-            case 'Annual Benefit':
-                // Sum total_cost for all salaries related to the project
-                $sumAmount = Salary::where('budget_project_id', $budget_project_id)->sum('percentage_cost');
-                $costOverhead->amount = $amount * $sumAmount ?? 0;
-                break;
+        //     case 'Annual Benefit':
+        //         // Sum total_cost for all salaries related to the project
+        //         $sumAmount = Salary::where('budget_project_id', $budget_project_id)->sum('percentage_cost');
+        //         $costOverhead->amount = $amount * $sumAmount ?? 0;
+        //         break;
 
-            case 'Insurance Cost':
-                // Sum percentage_cost for 'Xad Visa' salaries related to the project
-                $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $budget_project_id)->sum('percentage_cost');
-                $costOverhead->amount = $amount * $sumAmount ?? 0;
-                break;
+        //     case 'Insurance Cost':
+        //         // Sum percentage_cost for 'Xad Visa' salaries related to the project
+        //         $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $budget_project_id)->sum('percentage_cost');
+        //         $costOverhead->amount = $amount * $sumAmount ?? 0;
+        //         break;
 
-            case 'Visa Renewal':
-                // Sum percentage_cost for 'Xad Visa' salaries related to the project
-                $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $budget_project_id)->sum('percentage_cost');
-                $costOverhead->amount = $amount * $sumAmount ?? 0;
-                break;
+        //     case 'Visa Renewal':
+        //         // Sum percentage_cost for 'Xad Visa' salaries related to the project
+        //         $sumAmount = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $budget_project_id)->sum('percentage_cost');
+        //         $costOverhead->amount = $amount * $sumAmount ?? 0;
+        //         break;
 
-            case 'Depreciation Tools':
-                // Sum total_cost for capital expenditures related to the project and divide by 24
-                $sumAmount = CapitalExpenditure::where('budget_project_id', $budget_project_id)->sum('total_cost') / 24;
-                $costOverhead->amount = $sumAmount ?? 0;
+        //     case 'Depreciation Tools':
+        //         // Sum total_cost for capital expenditures related to the project and divide by 24
+        //         $sumAmount = CapitalExpenditure::where('budget_project_id', $budget_project_id)->sum('total_cost') / 24;
+        //         $costOverhead->amount = $sumAmount ?? 0;
 
-                break;
+        //         break;
 
-            case 'Other':
-                // Set the amount directly for 'Other' expenses
-                $costOverhead->amount = $amount;
-                break;
+        //     case 'Other':
+        //         // Set the amount directly for 'Other' expenses
+        //         $costOverhead->amount = $amount;
+        //         break;
 
-            default:
-                // Default calculation if no specific expense head is selected
-                $costOverhead->amount = $amount;
-                break;
-        }
+        //     default:
+        //         // Default calculation if no specific expense head is selected
+        //         $costOverhead->amount = $amount;
+        //         break;
+        // }
 
         // Save or further processing for $costOverhead
         $costOverhead->save();
@@ -124,7 +126,7 @@ class CostOverhead extends Model
         $depreciation = $costOverheadInstance->depreciationTools($project_id); // Ensure project_id is passed here
 
         // Total overhead
-        return $totalCostOverhead + $depreciation;
+        return $totalCostOverhead;
     }
 
     // Define the relationship with TotalBudgetAllocated based on the project

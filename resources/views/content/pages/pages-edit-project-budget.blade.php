@@ -59,17 +59,20 @@
     }
 </style>
 <h4 class="py-3 mb-4">
-    <span class="text-muted fw-light">Budget Management /</span> Edit Project Budget
+    <span class="text-muted fw-light">Budget Management /</span> Edit Project Budget - {{$budget->reference_code}}
 </h4>
+
+
 
 <div class="row">
     <div class="col-md-12">
 
-        <!-- Alert box HTML -->
-        <div id="responseAlert" class="alert alert-info alert-dismissible fade show" role="alert" style="display: none; width:80%; margin:10px auto">
-            <span id="alertMessage"></span>
-            <button type="button" class="btn-close" aria-label="Close"></button>
-        </div>
+      <div class="container mt-4">
+            <div id="responseAlertnew" class="alert alert-info alert-dismissible fade show" role="alert"
+                 style="display:none; width:80%; margin:10px auto">
+                <span id="alertMessagenew"></span>
+                <button type="button" class="btn-close" aria-label="Close"></button>
+            </div>
 
         @if ($errors->any())
         <div class="alert alert-danger" id="error-alert">
@@ -96,7 +99,17 @@
         <!-- Project Form -->
         <div class="card">
             <div class="card-body">
-                <h6>Edit Budget</h6>
+                   <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h6>Enter Budget</h6>
+
+                
+                <a href="{{ route('download.budgetSummary', ['POID' => $project_id]) }}" target="_blank"
+                    class="btn btn-sm" style="background-color:#1a73e8; color:white">
+                    <i style="margin-right: 10px;" class="fas fa-file"></i> Download Summary
+                </a>
+
+            </div>
+
                 <form action="{{ route('update-project-budget', $budget->id) }}" method="POST">
                     @csrf
                     @method('PUT') <!-- Use PUT method for updating -->
@@ -219,6 +232,7 @@
                                 <option value="Capital Budget" {{ $budget->budget_type == 'Capital Budget' ? 'selected' : '' }}>Capital Budget</option>
                                 <option value="Project Budget" {{ $budget->budget_type == 'Project Budget' ? 'selected' : '' }}>Project Budget</option>
                                 <option value="Other" {{ $budget->budget_type == 'Other' ? 'selected' : '' }}>Other</option>
+
                             </select>
                         </div>
                     </div>

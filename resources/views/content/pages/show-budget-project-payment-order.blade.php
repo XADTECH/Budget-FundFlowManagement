@@ -1,803 +1,467 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts/contentNavbarLayout')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Order</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@section('title', 'Create Payment Order')
+
+@section('content')
+
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 20px;
         }
 
-        .processed-btn[disabled] {
-            cursor: not-allowed;
-            /* Default behavior */
-            pointer-events: none;
-            /* Ensures the button is not clickable */
-            opacity: 0.6;
-            /* Makes it visually look disabled */
-        }
-
-        .upload-doc-btn {
-            background-color: #17a2b8;
-            /* Info color */
-            color: #ffffff;
-            /* White text */
-            border: none;
-            /* Remove border */
-            border-radius: 2px;
-            /* Slightly rounded corners */
-            font-size: 10px;
-            /* Smaller text for compact look */
-            padding: 6px 12px;
-            /* Compact padding */
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            /* Subtle shadow for depth */
-            display: block;
-            /* Make button a block element */
-            margin: 0 auto;
-            /* Center horizontally */
-            text-align: center;
-            /* Center text inside the button */
-            transition: background-color 0.3s ease;
-            /* Smooth hover effect */
-            width: auto;
-            /* Automatically adjust width to content */
-            height: auto;
-            /* Automatically adjust height */
-        }
-
-        .upload-doc-btn:hover {
-            background-color: #138496;
-            /* Slightly darker shade on hover */
-            cursor: pointer;
-        }
-
-        .upload-doc-btn i {
-            font-size: 12px;
-            /* Adjust icon size to match smaller button */
-        }
-
-        .processed-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 12px;
-            font-size: 14px;
-            border: none;
-            border-radius: 4px;
-            background-color: #6c757d;
-            /* Gray color */
-            color: #ffffff;
-            cursor: not-allowed;
-        }
-
-        .processed-btn span {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
+        .container {
+            max-width: 90%;
+            margin: auto;
             background-color: white;
-            color: green;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 8px;
-            /* Add space between text and tick */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         }
 
-        .container-fluid {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        .form-section {
+            margin-bottom: 30px;
         }
 
-        .header-title {
-            font-size: 1.4rem;
-            color: #005d77;
-            font-weight: bold;
+        .form-section h4 {
+            color: #1a73e8;
+            margin-bottom: 20px;
         }
 
-        .container-fluid p {
-            font-size: 0.95rem;
-            color: #7d7d7d;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        th,
-        td {
-            text-align: center;
-            vertical-align: middle;
-            padding: 12px 10px;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #0067aa;
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .form-control,
-        .form-select {
-            font-size: 0.85rem;
-            padding: 8px 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #0067aa;
-            box-shadow: 0 0 5px rgba(0, 103, 170, 0.5);
-        }
-
-        .btn {
-            font-size: 0.85rem;
-            font-weight: bold;
-            padding: 8px 15px;
+        .form-control {
             border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 10px;
         }
 
         .btn-primary {
-            background-color: #0067aa;
-            border-color: #005f8c;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .btn-success {
-            background-color: #28a745;
-            border-color: #218838;
+        .btn-primary:hover {
+            background-color: #135ba3;
         }
 
-        .btn-danger {
-            background-color: #dc3545;
-            border-color: #c82333;
+        .table-container {
+            margin-top: 20px;
+            overflow-x: auto;
         }
 
-        .bank-container {
+        .payment-order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .payment-order-table th,
+        .payment-order-table td {
+            border: 1px solid #ccc;
             padding: 10px;
+            text-align: center;
+        }
+
+        .payment-order-table th {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .add-item-btn {
+            margin-top: 20px;
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-item-btn:hover {
+            background-color: #218838;
+        }
+
+        #pdfPreviewContainer {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
             background-color: #f9f9f9;
-            border-radius: 6px;
-        }
-
-        .bank-entry {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .bank-entry label {
-            flex: 1;
-            font-size: 0.85rem;
-            color: #495057;
-        }
-
-        .bank-entry input {
-            flex: 2;
-            font-size: 0.85rem;
-            border-radius: 4px;
-            padding: 8px;
-        }
-
-        .remove-row {
-            font-size: 0.8rem;
-            padding: 5px 10px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-
-            th,
-            td {
-                font-size: 0.8rem;
-                padding: 8px;
-            }
-
-            .btn {
-                font-size: 0.75rem;
-                padding: 6px 12px;
-            }
         }
     </style>
-</head>
 
-<body>
-    <div class="container-fluid mt-4">
-        <!-- Back Button -->
-        <div class="mb-3">
-            <a href="{{ route('paymentOrders.create') }}" class="btn btn-secondary">Back</a>
+
+    @if ($errors->any())
+        <div class="alert alert-danger" id="error-alert">
+            <!-- <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button> -->
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
+    @endif
 
-        @if ($errors->any())
-            <div class="alert alert-danger" id="error-alert">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="alert alert-success" id="success-alert">
-                {{ session('success') }}
-            </div>
-        @endif
-        <div class="text-center mb-4"
-            style="font-family: Arial, sans-serif; color: #333; padding: 10px; border-bottom: 1px solid #ccc;">
-            <h5 class="header-title" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 5px;">
-                {{ $po->company_name }}
-            </h5>
-            <p style="font-size: 0.9rem; margin: 3px 0;">
-                <strong>Payment Order No:</strong> {{ $po->payment_order_number }}
-            </p>
-            <p style="font-size: 0.9rem; margin: 3px 0;">
-                <strong>Date:</strong> {{ $po->payment_date }}
-            </p>
-            <p style="font-size: 0.9rem; margin: 3px 0;">
-                <strong>Currency:</strong> {{ $po->currency }}
-            </p>
+    @if (session('success'))
+        <div class="alert alert-success" id="success-alert">
+            <!-- <button type="button" class="close" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button> -->
+            {{ session('success') }}
         </div>
+    @endif
 
-
-        <form id="paymentForm" method="POST" action="{{ route('PaymentOrderItems.store') }}">
+    <div class="container">
+        <form action="{{ route('paymentOrders.update', ['id' => $po->payment_order_number]) }}" method="POST"
+            enctype="multipart/form-data">
             @csrf
-            <div class="table-responsive">
-                <table id="paymentTable" class="table">
-                    <thead>
-                        <tr style="background: #005f8c">
-                            <th>Project</th>
-                            <th>Head</th>
-                            <th>Description</th>
-                            <th>Bank</th>
-                            <th>Balance</th>
-                            <th>Paid Amount</th>
-                            <th>Beneficiary Name</th>
-                            <th>Beneficiary IBAN/Account</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Loop through existing items -->
-                        @forelse ($items as $index => $item)
-                            <tr data-row-index="{{ $index }}">
-                                <td>
-                                    <select class="form-select project-dropdown" name="projectname[]"
-                                        @if (isset($item['budget_project_id'])) disabled @endif>
-                                        @foreach ($budgets as $project)
-                                            <option value="{{ $project->id }}"
-                                                {{ $project->id == $item['budget_project_id'] ? 'selected' : '' }}>
-                                                {{ $project->reference_code }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td><input type="text" class="form-control" name="head[]"
-                                        value="{{ $item['head'] }}" readonly></td>
-                                <td><input type="text" class="form-control" name="description[]"
-                                        value="{{ $item['description'] }}" readonly></td>
-                                <td>
-                                    <div class="bank-container">
-                                        @foreach ($item['banks'] as $bank)
-                                            <div class="bank-entry">
-                                                <label>
-                                                    {{ $banks->find($bank['bank_id'])->bank_name ?? '' }}:
-                                                    <span class="bank-balance" id="balance-{{ $bank['bank_id'] }}">
-                                                        <!-- This will dynamically show the balance -->
-                                                        (Loading...)
-                                                    </span>
-                                                </label>
-                                                <input type="number" class="form-control bank-payment"
-                                                    name="bank_amount[{{ $index }}][{{ $bank['bank_id'] }}]"
-                                                    value="{{ $bank['amount'] }}" step="0.01" readonly>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </td>
-                                <td><input type="number" class="form-control balance-field" name="balance[]"
-                                        value="{{ $item['balance'] }}" readonly></td>
-                                <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]"
-                                        value="{{ $item['paid_amount'] }}" readonly></td>
-                                <td><input type="text" class="form-control" name="beneficiary_name[]"
-                                        value="{{ $item['beneficiary_name'] }}" readonly></td>
-                                <td><input type="text" class="form-control" name="beneficiary_iban[]"
-                                        value="{{ $item['beneficiary_iban'] }}" readonly></td>
-                                <td>
-                                    <div class="d-flex flex-column justify-content-start align-items-center gap-2">
-                                        <!-- Remove Button -->
-                                        @if ($po->submit_status === 'Submitted')
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                disabled>Remove</button>
-                                        @else
-                                            <button type="button"
-                                                class="btn btn-danger btn-sm remove-row">Remove</button>
-                                        @endif
+            @method('PUT') <!-- Indicates a PUT request -->
+            <!-- Payment Order Details -->
+            <div class="form-section">
+                <h4>Payment Order Details</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="payment_order_number" class="form-label">Payment Order Number</label>
+                        <input type="text" id="payment_order_number" name="payment_order_number" class="form-control"
+                            value="{{ $po->payment_order_number ?? 'No Value' }}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="budget_reference_code" class="form-label">Budget Project</label>
+                        <input type="text" id="budget_reference_code" name="budget_reference_code" class="form-control"
+                            value="{{ $budget->reference_code ?? 'No Value' }}" readonly>
+                    </div>
 
-                                        @if ($item['processed'])
-                                            <!-- Processed Button (Disabled and Danger) -->
-                                            <a href="#" class="btn btn-sm btn-danger processed-btn" disabled>
-                                                Processed
-                                            </a>
-                                        @elseif ($po->status === 'pending')
-                                            <!-- Process Button (Enabled and Success) -->
-                                            <a href="{{ route('processItem', ['id' => $item['id'], 'po_id' => $item['payment_order_id']]) }}"
-                                                class="btn btn-sm btn-success processed-btn" @disabled(true)>
-                                                Process
-                                                <span class="ms-1 d-flex justify-content-center align-items-center"
-                                                    style="width: 16px; height: 16px; background-color: white; color: green; border-radius: 50%; font-size: 12px; font-weight: bold;">
-                                                    ✓
-                                                </span>
-                                            </a>
-                                        @else
-                                            <!-- Process Button (Disabled and Success) -->
-                                            <a href="{{ route('processItem', ['id' => $item['id'], 'po_id' => $item['payment_order_id']]) }}" class="btn btn-sm btn-success processed-btn" onclick="return confirmProcess();">
-                                                Process
-                                                <span class="ms-1 d-flex justify-content-center align-items-center"
-                                                    style="width: 16px; height: 16px; background-color: white; color: gray; border-radius: 50%; font-size: 12px; font-weight: bold;">
-                                                    ✓
-                                                </span>
-                                            </a>
-                                        @endif
-
-
-
-
-                                        <!-- Upload Documents Button -->
-                                        <button type="button" class="upload-doc-btn" data-bs-toggle="modal"
-                                            data-bs-target="#uploadModal-{{ $index }}">
-                                            <i class="fas fa-upload"></i> Upload
-                                        </button>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="uploadModal-{{ $index }}" tabindex="-1"
-                                            aria-labelledby="uploadModalLabel-{{ $index }}" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered modal-lg"
-                                                style="max-width: 60%;">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title"
-                                                            id="uploadModalLabel-{{ $index }}">Upload Documents
-                                                        </h5>
-                                                        <button type="button" class="btn-close"
-                                                            data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form method="POST"
-                                                            action="{{ route('paymentOrders.uploadDocument') }}"
-                                                            enctype="multipart/form-data">
-                                                            @csrf
-                                                            <input type="hidden" name="budget_project_id"
-                                                                value="{{ $item['budget_project_id'] }}">
-                                                            <input type="hidden" name="head"
-                                                                value="{{ $item['head'] }}">
-                                                            <input type="hidden" name="description"
-                                                                value="{{ $item['description'] }}">
-                                                            <div class="mb-3">
-                                                                <label for="uploadFile-{{ $index }}"
-                                                                    class="form-label">Choose File</label>
-                                                                <input class="form-control" type="file"
-                                                                    id="uploadFile-{{ $index }}"
-                                                                    name="document"
-                                                                    accept=".pdf,.png,.jpg,.jpeg,.xls,.xlsx" required>
-                                                            </div>
-                                                            <div class="text-end">
-                                                                <button type="submit"
-                                                                    class="btn btn-primary">Upload</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <!-- If no items, show an empty row -->
-                            <tr data-row-index="0">
-                                <td>
-                                    <select class="form-select project-dropdown" name="projectname[]">
-                                        <option value="" selected disabled>Select a project</option>
-                                        @foreach ($budgets as $project)
-                                            <option value="{{ $project->id }}">{{ $project->reference_code }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td><input type="text" class="form-control" name="head[]" required></td>
-                                <td><input type="text" class="form-control" name="description[]" required></td>
-                                <td>
-                                    <div class="bank-container"></div>
-                                </td>
-                                <td><input type="number" class="form-control balance-field" name="balance[]">
-                                </td>
-                                <td><input type="number" class="form-control total-paid-amount"
-                                        name="paid_amount[]">
-                                </td>
-                                <td><input type="text" class="form-control" name="beneficiary_name[]" required>
-                                </td>
-                                <td><input type="text" class="form-control" name="beneficiary_iban[]" required>
-                                </td>
-                                <td>
-                                    @if (!$po->is_submitted)
-                                        <button type="button"
-                                            class="btn btn-danger btn-sm remove-row">Remove</button>
-
-                                        <button type="button" class="upload-doc-btn mt-2">
-                                            <i class="fas fa-upload"></i> Upload
-                                        </button>
-
-
-                                        <!-- Modal for Upload -->
-
-                                        <div class="modal fade" id="uploadModal" tabindex="-1"
-                                            aria-labelledby="uploadModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered modal-lg"
-                                                style="max-width: 60%;">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="uploadModalLabel">Upload Documents
-                                                        </h5>
-                                                        <button type="button" class="btn-close"
-                                                            data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="mb-3">
-                                                            <p><strong>Selected Projects:</strong></p>
-                                                            <div id="selectedProjectsPreview"
-                                                                class="border rounded p-3"
-                                                                style="max-height: 200px; overflow-y: auto;">
-                                                                <p class="text-muted">No projects selected yet.</p>
-                                                            </div>
-                                                        </div>
-                                                        <form id="uploadForm" method="POST"
-                                                            action="{{ route('paymentOrders.uploadDocument') }}"
-                                                            enctype="multipart/form-data">
-                                                            @csrf
-                                                            <div id="selectedProjectsInputs"></div>
-                                                            <!-- Dynamically add hidden inputs for selected projects -->
-                                                            <div class="mb-3">
-                                                                <label for="uploadFile" class="form-label">Choose
-                                                                    Files</label>
-                                                                <input class="form-control" type="file"
-                                                                    id="uploadFile" name="documents[]" multiple
-                                                                    accept=".pdf,.png,.jpg,.jpeg,.xls,.xlsx">
-                                                            </div>
-                                                            <div id="filePreviewContainer" class="mt-3">
-                                                                <p class="text-muted">No files selected yet.</p>
-                                                            </div>
-                                                            <div class="text-end mt-3">
-                                                                <button type="submit"
-                                                                    class="btn btn-primary">Upload</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforelse
-
-                    </tbody>
-                </table>
+                    <div class="col-md-4">
+                        <label for="project_name" class="form-label">Project Name</label>
+                        <input type="text" id="project_name" name="project_name" class="form-control"
+                            value="{{ $project->name ?? 'No Value' }}" readonly>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-4 text-center">
-                @if ($po->submit_status == 'Submitted')
-                    <button type="button" class="btn btn-success d-flex align-items-center" id="proceedPayment"
-                        @if ($po->status == 'pending') disabled @endif>
-                        Proceed All
-                        <span class="ms-2 d-flex justify-content-center align-items-center"
-                            style="width: 20px; height: 20px; background-color: white; color: green; border-radius: 50%; font-size: 14px; font-weight: bold;">
-                            ✓
-                        </span>
-                    </button>
+            <!-- Beneficiary Details -->
 
-                    @if ($po->paid_status !== 'not paid yet')
-                        <button type="button" class="btn btn-primary" id="downloadPDF">
-                            Download PDF
-                        </button>
-                    @endif
+            @if ($po->payment_method === 'cash')
+                <!-- Cash -->
+                <div id="cashFields" class="form-section">
+                    <h4>Cash Payment Details</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="cashReceivedBy" class="form-label">Received By</label>
+                            <input type="text" id="cashReceivedBy" name="cash_received_by" class="form-control"
+                                placeholder="Enter Receiver's Name" value="{{ $po->cash_received_by ?? '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="cashDate" class="form-label">Payment Date</label>
+                            <input type="date" id="cashDate" name="cash_date" class="form-control"
+                                value="{{ optional($po)->cash_date ? \Carbon\Carbon::parse($po->cash_date)->format('Y-m-d') : '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="cashAmount" class="form-label">Cash Amount</label>
+                            <input type="text" id="cashAmount" name="cash_amount" class="form-control"
+                                value="{{ old('cash_amount', isset($po->cash_amount) ? number_format($po->cash_amount, 0) : '') }}"
+                                placeholder="Enter cash amount" oninput="formatNumber(this)">
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <label for="cashDetail" class="form-label">Cash Detail</label>
+                            <textarea id="cashDetail" name="cash_detail" class="form-control" rows="2"
+                                placeholder="Enter cash details here...">{{ old('cash_detail', $po->cash_detail ?? '') }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            @elseif($po->payment_method === 'online transaction')
+                <!-- Online Transaction -->
+                <div id="onlineTransactionFields" class="form-section">
+                    <h4>Online Transaction Details</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="transaction_number" class="form-label">Transaction Number</label>
+                            <input type="text" id="transaction_number" name="transaction_number" class="form-control"
+                                placeholder="Enter Transaction ID" value="{{ $po->transaction_number ?? '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="transactionAmount" class="form-label">Transaction Amount</label>
+                            <input type="text" id="transactionAmount" name="transaction_amount" class="form-control"
+                                value="{{ old('transaction_amount', isset($po->transaction_amount) ? number_format($po->transaction_amount, 0) : '') }}"
+                                placeholder="Enter transaction amount" oninput="formatNumber(this)">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="transaction_detail" class="form-label">Transaction Detail</label>
+                            <textarea id="transaction_detail" name="transaction_detail" class="form-control"
+                                placeholder="Please enter detail..." rows="3">{{ $po->transaction_detail ?? '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            @elseif($po->payment_method === 'cheque')
+                <!-- Cheque -->
+                <div id="chequeFields" class="form-section">
+                    <h4>Cheque Payment Details</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="chequeNumber" class="form-label">Cheque Number</label>
+                            <input type="text" id="chequeNumber" name="cheque_number" class="form-control"
+                                placeholder="Enter Cheque Number"
+                                value="{{ old('cheque_number', $po->cheque_number ?? '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="chequeDate" class="form-label">Cheque Date</label>
+                            <input type="date" id="chequeDate" name="cheque_date" class="form-control"
+                                value="{{ old('cheque_date', $po->cheque_date ?? '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="totalChequeAmount" class="form-label">Total Cheque Amount</label>
+                            <input type="text" id="totalChequeAmount" name="total_cheque_amount" class="form-control"
+                                placeholder="Enter Cash Amount"
+                                value="{{ old('total_cheque_amount', isset($po->total_cheque_amount) ? number_format($po->total_cheque_amount, 0) : '') }}"
+                                oninput="formatNumber(this)">
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-4 d-flex flex-column justify-content-center">
+                            <label for="chequeFile" class="form-label mb-1">Upload Cheque (PDF)</label>
+                            @if (!empty($po->cheque_file))
+                                <a href="{{ asset($po->cheque_file) }}" target="_blank" class="btn btn-link p-0 m-0">
+                                    View Current File (PDF)
+                                </a>
+                            @else
+                                <input type="file" id="chequeFile" name="cheque_file" class="form-control"
+                                    accept="application/pdf">
+                            @endif
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="chequePayee" class="form-label">Payee Name</label>
+                            <input type="text" id="chequePayee" name="cheque_payee" class="form-control"
+                                placeholder="Enter Payee Name"
+                                value="{{ old('cheque_payee', $po->cheque_payee ?? '') }}">
+                        </div>
+                    </div>
+
+                    <!-- PDF Preview Section -->
+                    <div id="pdfPreviewContainer" class="mt-4 d-none">
+                        <h5>PDF Preview:</h5>
+                        <embed id="pdfPreview" src="" type="application/pdf" width="100%" height="400px" />
+                    </div>
+                </div>
+                
+            @elseif($po->payment_method === 'bank transfer')
+                <!-- Bank Transfer -->
+                <div id="bankTransferFields" class="form-section">
+                    <h4>Bank Transfer Details</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="beneficiaryName" class="form-label">Beneficiary Name</label>
+                            <input type="text" id="beneficiaryName" name="beneficiary_name" class="form-control"
+                                placeholder="Enter Beneficiary Name" value="{{ $po->beneficiary_name ?? '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="iban" class="form-label">IBAN/Account Number</label>
+                            <input type="text" id="iban" name="iban" class="form-control"
+                                placeholder="Enter IBAN/Account" value="{{ $po->iban ?? '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="bankAmount" class="form-label">Total Bank Transfer Amount</label>
+                            <input type="text" id="bankAmount" name="total_bank_transfer" class="form-control"
+                                value="{{ old('total_bank_transfer', isset($po->total_bank_transfer) ? number_format($po->total_bank_transfer, 0) : '') }}"
+                                placeholder="Enter total transfer amount" oninput="formatNumber(this)">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label for="bankName" class="form-label">Bank Name</label>
+                            <input type="text" id="bankName" name="bank_name" class="form-control"
+                                placeholder="Enter Bank Name" value="{{ $po->bank_name ?? '' }}">
+                        </div>
+                        <div class="col-md-8">
+                            <label for="bankTransfer" class="form-label">Details</label>
+                            <textarea id="bankTransfer" name="bank_transfer_details" class="form-control" placeholder="Enter Paid To"
+                                rows="3">{{ $po->bank_transfer_details ?? '' }}</textarea>
+                        </div>
+
+                    </div>
+                </div>
+            @else
+                <p class="text-muted">Please select a valid payment method to see relevant fields.</p>
+            @endif
+
+
+            <!-- Payment Items -->
+            <div class="form-section">
+                <h4>Payment Items</h4>
+                <div class="table-container">
+                    <table class="payment-order-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentItems">
+                            <!-- Check if item_description and item_amount exist -->
+                            @if (isset($po->item_description) && isset($po->item_amount))
+                                @php
+                                    // Decode JSON strings into PHP arrays
+                                    $itemDescriptions = json_decode($po->item_description, true);
+                                    $itemAmounts = json_decode($po->item_amount, true);
+                                @endphp
+
+                                @foreach ($itemDescriptions as $index => $description)
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="item_description[]" class="form-control"
+                                                value="{{ $description }}" placeholder="Enter Description"
+                                                {{ isset($po) && $po->submit_status === 'Submitted' ? 'readonly' : '' }}>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="item_amount[]" class="form-control"
+                                                value="{{ number_format((float) $itemAmounts[$index], 0) }}"
+                                                placeholder="Enter Amount"
+                                                {{ isset($po) && $po->submit_status === 'Submitted' ? 'readonly' : '' }}
+                                                oninput="formatNumber(this)">
+                                        </td>
+                                        <td>
+                                            @if (isset($po) && $po->submit_status !== 'Submitted')
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="removeItem(this)">Remove</button>
+                                            @else
+                                                <span class="text-muted">Locked</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (isset($po) && $po->submit_status === 'Submitted')
+                    <div class="add-item-btn disabled" style="opacity: 0.6;"
+                        title="Cannot add items to a submitted order">
+                        + Add Item
+                    </div>
                 @else
-                    <button type="submit" class="btn btn-primary">Submit Payment Order</button>
-                    <input type="hidden" name="process" value="not process">
-                    <button type="button" id="addRow" class="btn btn-success ms-2">Add Item</button>
+                    <div class="add-item-btn" onclick="addItem()">+ Add Item</div>
                 @endif
             </div>
 
-            <input type="hidden" name="payment_order_id" value="{{ $po->id }}" />
+
+            <!-- Budget Summary -->
+            <div class="form-section">
+                <h4>Budget Summary</h4>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="totalBudget" class="form-label">Total Budget</label>
+                        <input type="text" id="totalBudget" name="total_budget" class="form-control"
+                            placeholder="Enter Total Budget"
+                            value="{{ number_format($allocatedBudget->allocated_budget, 0) }}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="utilization" class="form-label">Utilization</label>
+                        <input type="text" id="utilization" name="utilization" class="form-control"
+                            placeholder="Enter Utilization"
+                            value="{{ number_format($allocatedBudget->total_dpm + $allocatedBudget->total_lpo, 0) }}"
+                            readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="balance" class="form-label">Balance</label>
+                        <input type="text" id="balance" name="balance" class="form-control"
+                            placeholder="Enter Balance"
+                            value="{{ number_format($allocatedBudget->allocated_budget - ($allocatedBudget->total_dpm + $allocatedBudget->total_lpo), 0) }}"
+                            readonly>
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="bank_payment_id" class="form-label">Bank Receiving</label>
+                        <select id="bank_payment_id" name="bank_payment_id" class="form-select">
+                            <option value="">Select Payment Account</option>
+                            @foreach ($banks as $bank)
+                                <option value="{{ $bank->id }}" @if (isset($po) && $po->bank_payment_id == $bank->id) selected @endif>
+                                    {{ $bank->bank_name }} - {{ $bank->country }} - {{ $bank->region }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <input type="hidden" value="{{ $po->payment_method }}" name="payment_order_method" />
+
+            <!-- Submit Button -->
+            <div class="text-end mt-4">
+                @if (isset($po) && $po->submit_status !== 'Submitted')
+                    <button type="submit" class="btn btn-primary">
+                        Submit Payment Order
+                    </button>
+                @else
+                    <button type="submit" class="btn btn-primary" disabled>
+                        Submitted
+                    </button>
+                @endif
+            </div>
         </form>
     </div>
 
-    <!-- Bootstrap JS and jQuery -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <script>
-        $(document).ready(function() {
-            // Initialize Select2
-            $('.project-dropdown').select2({
-                placeholder: "Select a project",
-                allowClear: true,
-                width: '100%'
-            });
-            // Pass the budgets data to JavaScript
-            const budgets = @json($budgets);
+        // Dynamically add items to the payment order
+        function addItem() {
+            const tableBody = document.getElementById('paymentItems');
+            const row = document.createElement('tr');
 
-            $(document).on('click', '.upload-doc-btn', function() {
-                const row = $(this).closest('tr');
-                const projectDropdown = row.find('.project-dropdown');
-                const selectedProjectId = projectDropdown.val();
-
-                if (selectedProjectId) {
-                    // Find the project details
-                    const selectedProject = budgets.find(budget => budget.id == selectedProjectId);
-
-                    if (selectedProject) {
-                        const previewContainer = $('#selectedProjectsPreview');
-                        const inputsContainer = $('#selectedProjectsInputs');
-
-                        // Prevent duplicate entries
-                        if (!inputsContainer.find(`input[value="${selectedProjectId}"]`).length) {
-                            // Add a preview entry
-                            previewContainer.append(`
-                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                        <p class="mb-0"><strong>${selectedProject.reference_code}</strong> (${selectedProject.region} - ${selectedProject.site_name})</p>
-                        <button type="button" class="btn btn-sm btn-danger remove-project" data-project-id="${selectedProjectId}">Remove</button>
-                    </div>
-                `);
-
-                            // Add a hidden input for the project
-                            inputsContainer.append(`
-                    <input type="hidden" name="budget_project_ids[]" value="${selectedProjectId}">
-                `);
-
-                            // Remove "No projects selected yet" placeholder
-                            previewContainer.find('.text-muted').remove();
-                        }
-
-                        // Open the modal
-                        $('#uploadModal').modal('show');
-                    } else {
-                        alert('Selected project not found in the budget list.');
-                    }
-                } else {
-                    alert('Please select a project first.');
-                }
-            });
-
-            $(document).on('change', '#uploadFile', function() {
-                const files = this.files; // Get selected files
-                const previewContainer = $('#filePreviewContainer');
-
-                previewContainer.empty(); // Clear previous previews
-
-                if (files.length === 0) {
-                    previewContainer.html('<p class="text-muted">No files selected yet.</p>');
-                    return;
-                }
-
-                // Loop through the selected files
-                Array.from(files).forEach((file, index) => {
-                    const fileName = file.name;
-                    const fileType = file.type;
-
-                    const fileTypeIcon = getFileTypeIcon(fileType);
-
-                    const filePreview = `
-            <div class="d-flex align-items-center justify-content-between border p-2 rounded mb-2">
-                <div class="d-flex align-items-center">
-                    <span class="me-2">${fileTypeIcon}</span>
-                    <p class="mb-0">${fileName}</p>
-                </div>
-                <button type="button" class="btn btn-sm btn-danger remove-file-btn" data-index="${index}">Remove</button>
-            </div>
+            row.innerHTML = `
+            <td><input type="text" name="item_description[]" class="form-control" placeholder="Enter Description" ></td>
+            <td><input type="text" name="item_amount[]" class="form-control" placeholder="Enter Amount"  oninput="formatNumber(this)"></td>
+      
+            <td><button type="button" class="btn btn-danger" onclick="removeItem(this)">Remove</button></td>
         `;
-                    previewContainer.append(filePreview);
-                });
-            });
 
-            // Function to map file types to icons
-            function getFileTypeIcon(fileType) {
-                if (fileType.includes('pdf')) return '<i class="fas fa-file-pdf text-danger"></i>';
-                if (fileType.includes('excel') || fileType.includes('spreadsheet'))
-                    return '<i class="fas fa-file-excel text-success"></i>';
-                if (fileType.includes('image')) return '<i class="fas fa-file-image text-primary"></i>';
-                return '<i class="fas fa-file-alt text-secondary"></i>';
+            tableBody.appendChild(row);
+        }
+
+        function previewPDF(event) {
+            const file = event.target.files[0];
+            if (file && file.type === "application/pdf") {
+                const fileURL = URL.createObjectURL(file); // Generate a URL for the uploaded file
+                document.getElementById('pdfPreview').src = fileURL; // Set the src of the embed element
+                document.getElementById('pdfPreviewContainer').classList.remove('d-none'); // Show the preview container
+            } else {
+                alert("Please upload a valid PDF file.");
+                document.getElementById('chequeFile').value = ""; // Reset the input field if the file is invalid
+                document.getElementById('pdfPreviewContainer').classList.add('d-none'); // Hide the preview container
             }
-
-            // Remove selected file from the input and preview
-            $(document).on('click', '.remove-file-btn', function() {
-                const fileIndex = $(this).data('index');
-                const fileInput = $('#uploadFile')[0];
-                const dt = new DataTransfer();
-
-                // Re-add all files except the one being removed
-                Array.from(fileInput.files).forEach((file, index) => {
-                    if (index !== fileIndex) {
-                        dt.items.add(file);
-                    }
-                });
-
-                fileInput.files = dt.files; // Update the file input's files
-                $(this).closest('.d-flex').remove(); // Remove the preview entry
-
-                // Show "No files selected" if no files are left
-                if (fileInput.files.length === 0) {
-                    $('#filePreviewContainer').html('<p class="text-muted">No files selected yet.</p>');
-                }
-            });
+        }
 
 
+        // Remove an item from the table
+        function removeItem(button) {
+            button.closest('tr').remove();
+        }
 
+        function formatNumber(input) {
+            // Remove any existing commas
+            let value = input.value.replace(/,/g, '');
 
-            // Fetch and load bank details when a project is selected
-            function loadBankDetails(row, projectId) {
-                const bankContainer = row.find('.bank-container');
-
-                $.ajax({
-                    url: "{{ route('getBankDetails') }}",
-                    method: "POST",
-                    data: {
-                        project_id: projectId,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        bankContainer.empty();
-
-                        // Populate bank balances and existing amounts (if available)
-                        response.forEach((bank) => {
-                            const bankEntry = `
-                        <div class="bank-entry">
-                            <label>${bank.name} (Balance: ${bank.project_balance}):</label>
-                            <input type="number" class="form-control bank-payment"
-                                name="bank_amount[${row.data('row-index')}][${bank.bank_id}]"
-                                value="${bank.amount || ''}" step="0.01" >
-                        </div>`;
-                            bankContainer.append(bankEntry);
-                        });
-
-                        // Update total balance for the row
-                        const totalBalance = response.reduce((sum, bank) => sum + parseFloat(bank
-                            .project_balance || 0), 0);
-                        row.find('.balance-field').val(totalBalance);
-                    },
-                    error: function() {
-                        alert('Failed to fetch bank details. Please try again.');
-                    }
-                });
+            // Ensure it is a number
+            if (!isNaN(value) && value !== '') {
+                // Add commas for thousands separator
+                input.value = parseFloat(value).toLocaleString('en-US');
+            } else {
+                input.value = ''; // Reset if not a valid number
             }
-
-            // Handle project dropdown change for fetching bank details
-            $(document).on('change', '.project-dropdown', function() {
-                const row = $(this).closest('tr');
-                const projectId = $(this).val();
-
-                if (projectId) {
-                    loadBankDetails(row, projectId);
-                } else {
-                    row.find('.bank-container').empty();
-                    row.find('.balance-field').val('');
-                }
-            });
-
-            // Add new row functionality
-            $('#addRow').on('click', function() {
-                const rowIndex = $('#paymentTable tbody tr').length;
-                const newRow = `
-                    <tr data-row-index="${rowIndex}">
-                        <td>
-                            <select class="form-select project-dropdown" name="projectname[]">
-                                <option value="" selected disabled>Select a project</option>
-                                @foreach ($budgets as $project)
-                                    <option value="{{ $project->id }}">{{ $project->reference_code }}</option>
-                                @endforeach
-                            </select>
-                        </td>
-                        <td><input type="text" class="form-control" name="head[]" required></td>
-                        <td><input type="text" class="form-control" name="description[]" required></td>
-                        <td>
-                            <div class="bank-container"></div>
-                        </td>
-                        <td><input type="number" class="form-control balance-field" name="balance[]" ></td>
-                        <td><input type="number" class="form-control total-paid-amount" name="paid_amount[]" ></td>
-                        <td><input type="text" class="form-control" name="beneficiary_name[]" required></td>
-                        <td><input type="text" class="form-control" name="beneficiary_iban[]" required></td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
-                                     <button type="button" class="upload-doc-btn mt-2">
-                                            <i class="fas fa-upload"></i> Upload
-                                        </button>
-                        </td>
-                    </tr>`;
-                $('#paymentTable tbody').append(newRow);
-
-                $('.project-dropdown').last().select2({
-                    placeholder: "Select a project",
-                    allowClear: true,
-                    width: '100%'
-                });
-            });
-
-
-
-            // Remove row functionality
-            $(document).on('click', '.remove-row', function() {
-                const rows = $('#paymentTable tbody tr');
-                if (rows.length > 1) {
-                    $(this).closest('tr').remove();
-                } else {
-                    alert('At least one row is required.');
-                }
-            });
-
-            // Calculate total paid amount dynamically
-            $(document).on('input', '.bank-payment', function() {
-                const row = $(this).closest('tr');
-                let totalPaid = 0;
-
-                // Sum all bank-payment fields in the current row
-                row.find('.bank-payment').each(function() {
-                    const amount = parseFloat($(this).val()) ||
-                        0; // Default to 0 if the input is empty or invalid
-                    totalPaid += amount;
-                });
-
-                // Update the total-paid-amount field
-                row.find('.total-paid-amount').val(totalPaid.toFixed(
-                    0)); // Ensure the value is formatted to two decimals
-            });
-
-            // Proceed payment and download PDF
-            $('#proceedPayment').on('click', function() {
-                alert('Proceed to payment logic goes here.');
-            });
-
-            $('#downloadPDF').on('click', function() {
-                window.location.href = "{{ route('paymentOrder.downloadPDF', $po->id) }}";
-            });
-
-            // Fetch the balance for each bank when the page loads
-            @foreach ($items as $index => $item)
-                @if (isset($item['banks']) && count($item['banks']) > 0)
-                    @foreach ($item['banks'] as $bank)
-                        $.ajax({
-                            url: '/get-bank-balance/' + {{ $bank['bank_id'] }},
-                            method: 'GET',
-                            success: function(response) {
-                                // Update the balance display in the corresponding span element
-                                $('#balance-{{ $bank['bank_id'] }}').text('(' + response + ')');
-                            },
-                            error: function() {
-                                alert('Failed to fetch balance for bank ID: {{ $bank['bank_id'] }}');
-                            }
-                        });
-                    @endforeach
-                @endif
-            @endforeach
-        });
-
-        function confirmProcess() {
-            return confirm("Are you sure you want to process this item?");
         }
     </script>
-</body>
 
-</html>
+@endsection

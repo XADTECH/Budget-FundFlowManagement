@@ -8,7 +8,9 @@ use App\Models\Salary;
 use App\Models\FacilityCost;
 use App\Models\MaterialCost;
 use App\Models\PettyCash;
-use App\Models\NOCPayment;
+use App\Models\NocPayment;
+use App\Models\Subcontractor;
+use App\Models\ThirdParty;
 
 class FinancialCost extends Model
 {
@@ -54,11 +56,14 @@ class FinancialCost extends Model
         $facilityTotal = FacilityCost::where('budget_project_id', $budgetProjectId)->sum('total_cost');
         $pettyCashTotal = PettyCash::where('project_id', $budgetProjectId)->sum('amount');
         $nocPaymentTotal = NocPayment::where('project_id', $budgetProjectId)->sum('amount');
-
-        $percentage = $this->total_cost / 100;
-
+        
+          $subContractorTotal = Subcontractor::where('project_id', $budgetProjectId)->sum('amount');
+         $thirdPartyTotal = ThirdParty::where('project_id', $budgetProjectId)->sum('amount');
+         
+         $perct = $this->percentage / 100;
+        
         // Aggregate all totals
-        $overallTotalCost = $percentage * ($salaryTotal + $materialTotal + $facilityTotal + $pettyCashTotal + $nocPaymentTotal);
+        $overallTotalCost = $perct * ($salaryTotal + $materialTotal + $facilityTotal + $pettyCashTotal + $nocPaymentTotal +    $subContractorTotal +   $thirdPartyTotal);
 
         return $overallTotalCost;
     }

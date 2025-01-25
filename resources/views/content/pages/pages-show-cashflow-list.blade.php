@@ -65,10 +65,11 @@
                             <th>Category</th>
                             <th>Reference</th>
                             <th>Cash Inflow</th>
-                            <th>Balance</th>
-                            <th>Total LPO</th>
-                            {{-- <th>Cash Outflow</th> --}}
+                            <th>Cash Outflow</th>
+                            {{-- <th>Committed Budget</th> --}}
                             <th>Total DPM</th>
+                            <th>Total LPO</th>
+                            <th>Balance</th>
                             <th>Project Manager</th>
 
                             {{-- <th>Total Budget Allocated</th> --}}
@@ -98,8 +99,8 @@
                                         @endphp
 
                                         @if ($inv)
-                                            <a href="{{ asset('storage/' . $inv->invoice_file) }}"
-                                                target="_blank">{{ $cashFlow->reference_code }}</a>
+                                        <a href="{{ asset('storage/' . $inv->invoice_file) }}" target="_blank">{{ $cashFlow->reference_code }}</a>
+
                                         @else
                                             {{ $cashFlow->reference_code }}
                                         @endif
@@ -110,15 +111,14 @@
                                 <td class="{{ $index >= 6 && $cashFlow->cash_inflow > 0 ? 'text-primary' : '' }}">
                                     {{ number_format($cashFlow->cash_inflow, 0) }}
                                 </td>
-                                <td>{{ number_format($cashFlow->balance, 0) }}</td>
-                                <td>{{ number_format($dpm->total_lpo, 0) }}</td>
-                                {{-- <td class="{{ $index >= 6 && $cashFlow->cash_outflow > 0 ? 'text-danger' : '' }}">
+                                <td class="{{ $index >= 6 && $cashFlow->cash_outflow > 0 ? 'text-danger' : '' }}">
                                     {{ number_format($cashFlow->cash_outflow, 0) }}
-                                </td> --}}
-
+                                </td>
+                                {{-- <td>{{ number_format($cashFlow->committed_budget, 0) }}</td> --}}
 
                                 <td>{{ number_format($dpm->total_dpm, 0) }}</td>
-
+                                <td>{{ number_format($dpm->total_lpo, 0) }}</td>
+                                <td>{{ number_format($cashFlow->balance, 0) }}</td>
                                 {{-- <td>{{ $cashFlow->reference_code }}</td> --}}
 
                                 <td>{{ $user->first_name ?? 'N/A' }}</td>

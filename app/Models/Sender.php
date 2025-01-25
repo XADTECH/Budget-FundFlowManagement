@@ -19,16 +19,12 @@ class Sender extends Model
         'sender_for',
         'sender_bank_name',
         'sender_bank_account',
-        'tracking_number',
         'fund_type',
+        'tracking_number',
         'amount',
         'destination_account',
         'sender_detail',  // Optional field for additional fund-specific details
         'budget_project_id',  // Foreign key to link the sender to a budget project
-    ];
-
-    protected $casts = [
-        'fund_type' => 'array', // Automatically casts JSON to array
     ];
 
     // Relationship with BudgetProject (if applicable)

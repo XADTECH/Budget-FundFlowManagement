@@ -113,12 +113,20 @@ Route::middleware(['checklogin'])->group(function () {
     Route::get('/revenueplan/export/{id}', [ImportExportController::class, 'revenueplanexport'])->name('revenueplan-export');
 
     Route::post('/revenue-import', [ImportExportController::class, 'uploadRevenue'])->name('revenue.import');
+    
+    // Update Revenue
+Route::post('/pages/update-budget-project-revenue/{id}', [BudgetController::class, 'updateRevenue'])->name('update-budget-project-revenue');
+
+// Delete Revenue
+Route::post('/pages/delete-budget-project-revenue/{id}', [BudgetController::class, 'deleteRevenue'])->name('delete-budget-project-revenue');
 
     //project management
     Route::get('/pages/add-project-name', [ProjectController::class, 'showaddProjectView'])->name('add-project-name');
     Route::get('/pages/add-business-unit', [ProjectController::class, 'showaddBusinessUnit'])->name('add-business-unit');
     Route::get('/pages/add-business-client', [ProjectController::class, 'showaddBusinessClient'])->name('add-business-client');
     Route::get('/pages/budget-project-report-summary/{id}', [ProjectController::class, 'showBudgetProjectReport'])->name('budget-project-report-summary');
+    Route::post('/bulk-delete-capital', [ProjectController::class, 'bulkDeleteCapital']);
+
     Route::post('/apporve-budget', [ProjectController::class, 'approveBudgetStatus'])->name('approve-status');
 
     // Route to handle DELETE request for salary
@@ -129,6 +137,23 @@ Route::middleware(['checklogin'])->group(function () {
 
     //delete project budget
     Route::delete('/budgets/{id}', [BudgetController::class, 'destroy'])->name('budgets.destroy');
+    
+    
+    // Bulk Delete Salary
+    Route::post('/bulk-delete-salary', [ProjectController::class, 'bulkDeleteSalary'])->name('bulk.delete.salary');
+
+    // Bulk Delete Facilities
+    Route::post('/bulk-delete-facilities', [ProjectController::class, 'bulkDeleteFacilities'])->name('bulk.delete.facilities');
+
+    // Bulk Delete Materials
+    Route::post('/bulk-delete-material', [ProjectController::class, 'bulkDeleteMaterial'])->name('bulk.delete.material');
+    
+     // Bulk Delete overhead
+    Route::post('/bulk-delete-overhead', [ProjectController::class, 'bulkDeleteOverhead'])->name('bulk.delete.overhead');
+
+    // Bulk Delete financial
+    Route::post('/bulk-delete-financial', [ProjectController::class, 'bulkDeleteFinancial'])->name('bulk.delete.financial');
+
 
     //update material
     Route::put('/pages/update-budget-project-material/{id}', [ProjectController::class, 'updateMaterial'])->name('update.updateMaterial');
@@ -157,7 +182,7 @@ Route::middleware(['checklogin'])->group(function () {
     Route::post('/store-payment-order-items', [PaymentOrder::class, 'paymentOrderItems'])->name('PaymentOrderItems.store');
 
     //get projects 
-    Route::post('/get-projects', [BudgetController::class, 'getProjects'])->name('getProjects');
+    Route::get('/get-projects', [PurcahseOrderController::class, 'getProjects'])->name('getProjects');
 
     //delete payment order 
     Route::delete('/payment-orders/{id}', [PaymentOrder::class, 'destroy'])->name('paymentOrders.destroy');

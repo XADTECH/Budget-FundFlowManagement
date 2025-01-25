@@ -17,7 +17,6 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
-use Illuminate\Support\Str;
 
 class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure
 {
@@ -32,7 +31,7 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
     public function model(array $row)
     {
 
-        dd($row);
+        // dd($row);
         // Find the related budget project
         $budgetProject = BudgetProject::find($this->bg_id);
         $directCost = DirectCost::firstOrNew([
@@ -45,9 +44,7 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
         }
 
         // Conditionally store fields based on the expense type
-        if ($row['expense_head'] === 'consumed_material' || Str::lower(
-            $row['expense_head']
-        ) === 'consumed material') {
+        if ($row['expense_head'] === 'consumed_material' || $row['expense_head'] === 'consumed material') {
 
 
             $materialCost = new MaterialCost();
@@ -74,7 +71,7 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
 
             // Redirect back to the edit page with a success message
             return;
-        } elseif ($row['expenses'] === 'petty_cash' || Str::lower($row['expenses']) === 'petty cash') {
+        } elseif ($row['expenses'] === 'petty_cash') {
             // Check if the petty cash amount already exists for the project
             $existingPettyCash = PettyCash::where('project_id', $row['project_id'])
                 ->where('amount', $row['petty_cash_amount'])
@@ -91,7 +88,7 @@ class MaterialImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
             ]);
 
             return redirect('/pages/edit-project-budget/' . $row['project_id'])->with('success', 'Petty Cash added successfully!');
-        } elseif ($row['expense'] === 'noc_payment' || Str::lower($row['expenses']) === 'noc payment') {
+        } elseif ($row['expense'] === 'noc_payment') {
             // Check if the NOC amount already exists for the project
             $existingNocPayment = NocPayment::where('project_id', $row['project_id'])
                 ->where('amount', $row['noc_amount'])

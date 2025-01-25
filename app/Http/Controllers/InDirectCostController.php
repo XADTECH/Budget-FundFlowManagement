@@ -17,17 +17,14 @@ class InDirectCostController extends Controller
 {
   public function storeCostOverhead(Request $request)
   {
-    // Return the request data as JSON for debugging purposes (remove in production)
-    //return response()->json($request->all());
 
-    // Validate the incoming request
     $validated = $request->validate([
       'type' => 'required|string',
-      'project' => 'required|exists:projects,id', // Ensure `projects` table exists
+      'project' => 'required', // Ensure `projects` table exists
       'po' => 'required|string',
       'expense' => 'required|string',
       'other_expense' => 'nullable|String',
-      'amount' => 'required|numeric', // Corrected to `numeric`
+      'amount' => 'required', // Corrected to `numeric`
       'project_id' => 'required|string', // Ensure `budget_projects` table exists
     ]);
 
@@ -40,7 +37,6 @@ class InDirectCostController extends Controller
     if (!$indirectCost->exists) {
       $indirectCost->save();
     }
-
     // return response($validated['expense']);
 
     // Assuming you have a method to check if the value exists
@@ -62,7 +58,7 @@ class InDirectCostController extends Controller
     $costOverhead->expenses = $validated['other_expense'] ?? $validated['expense'];
     $costOverhead->amount = $validated['amount'];
     $costOverhead->budget_project_id = $validated['project_id'];
-    $costOverhead->amount = $costOverhead->calculateBasedOnExpenseHead();
+    // $costOverhead->amount = $costOverhead->calculateBasedOnExpenseHead();
     $costOverhead->save();
 
     return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with(
@@ -84,8 +80,9 @@ class InDirectCostController extends Controller
       'project' => 'required|exists:projects,id', // Ensure `projects` table exists
       'po' => 'required|string',
       'expense' => 'required|string',
-      'amount' => 'required|numeric|min:0|max:45', // Ensure the amount is between 0 and 45
-      'project_id' => 'required|string', // Ensure `budget_projects` table exists
+      'project_id' => 'required|string', 
+       'percentage' => 'nullable|numeric|min:0|max:100',  // Allow null and validate within 0-100 range
+        'financial_amount' => 'nullable|numeric|min:0',  // Allow null and validate positive values
     ]);
 
     // Check if the expense for Risk or Financial Cost already exists for this budget_project_id
@@ -93,7 +90,7 @@ class InDirectCostController extends Controller
       ->where('expenses', $validated['expense'])
       ->exists();
 
-  
+
 
     if ($existingExpense) {
       // Return error if the same expense already exists
@@ -108,6 +105,8 @@ class InDirectCostController extends Controller
     if (!$IndirectCost->exists) {
       $IndirectCost->save();
     }
+    
+   
 
     // Create a new salary record
     $financialcost = new FinancialCost();
@@ -116,11 +115,25 @@ class InDirectCostController extends Controller
     $financialcost->project = $validated['project'];
     $financialcost->po = $validated['po'];
     $financialcost->expenses = $validated['expense'];
-    $financialcost->total_cost = $validated['amount'];
-    $financialcost->percentage = $validated['amount'];
+     $financialcost->percentage = $validated['percentage'] ?? 0;
     $financialcost->budget_project_id = $validated['project_id'];
-    $financialcost->total_cost = $financialcost->calculateTotalCost($validated['project_id']);
+    
+    
+     // Determine whether to use percentage or financial amount
+    if (!is_null($validated['percentage'])) {
+       
+        $financialcost->total_cost = $financialcost->calculateTotalCost($validated['project_id']);
+        
+        
 
+    } else {
+        $financialcost->expenses = $request->finance_head;
+
+        $financialcost->total_cost = $validated['financial_amount'];
+    }
+    
+    
+    
     $financialcost->save();
 
     return redirect('/pages/edit-project-budget/' . $validated['project_id'])->with(
@@ -128,6 +141,7 @@ class InDirectCostController extends Controller
       'Financial Cost added successfully!'
     );
   }
+  
   public function updateFinancial(Request $request, $id)
   {
 
@@ -194,10 +208,11 @@ class InDirectCostController extends Controller
     $costOverhead->type = $validated['type'];
     $costOverhead->project = $validated['project'];
     $costOverhead->po = $validated['po'];
-    $costOverhead->expenses = $validated['other_expense'] ?? $validated['expense'];
+        $costOverhead->expenses = $validated['other_expense'] ?? $validated['expenses'];
+
     $costOverhead->amount = $validated['amount'];
     $costOverhead->budget_project_id = $validated['budget_project_id'];
-    $costOverhead->amount = $costOverhead->calculateBasedOnExpenseHead();
+    // $costOverhead->amount = $costOverhead->calculateBasedOnExpenseHead();
     $costOverhead->update();
 
     return response()->json(['success' => true]);

@@ -1,6 +1,6 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', 'Project Budgeting - summary')
+@section('title', 'Purchase Order - summary')
 
 @section('content')
 

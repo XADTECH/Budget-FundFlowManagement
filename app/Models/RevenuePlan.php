@@ -46,6 +46,14 @@ class RevenuePlan extends Model
         $this->save();
     }
     
+      public function sumTotalAmount($budgetProjectId)
+    {
+        $totalAmount = RevenuePlan::where('budget_project_id', $budgetProjectId)->sum('amount');
+
+        return $totalAmount;
+    
+    }
+    
     
 
     public function calculateNetProfitBeforeTax($totalDirectCost, $totalIndirectCost)

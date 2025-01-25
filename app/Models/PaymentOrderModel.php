@@ -9,13 +9,13 @@ class PaymentOrderModel extends Model
 {
     use HasFactory;
 
+    use HasFactory;
 
     protected $table = 'payment_orders';
 
     protected $fillable = [
         'payment_order_number',
         'payment_date',
-        'company_name',
         'payment_method',
         'budget_project_id',
         'beneficiary_name',
@@ -43,11 +43,6 @@ class PaymentOrderModel extends Model
         'utilization',
         'balance',
     ];
-
-    public function items()
-    {
-        return $this->hasMany(PaymentOrderItem::class, 'payment_order_id');
-    }
 
 
     /**

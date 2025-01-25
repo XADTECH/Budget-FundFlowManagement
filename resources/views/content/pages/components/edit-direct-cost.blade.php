@@ -39,65 +39,78 @@
         /* Color of the scrollbar track */
     }
 </style>
+
 <div id="loading-overlay"
     style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
     <div class="spinner-border text-light" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
 </div>
-<div class="container mt-4">
-    <div id="responseAlertnew" class="alert alert-info alert-dismissible fade show" role="alert"
-        style="display:none; width:80%; margin:10px auto">
-        <span id="alertMessagenew"></span>
-        <button type="button" class="btn-close" aria-label="Close"></button>
-    </div>
+
     <div class="card mt-4">
         <div class="card-body">
             <div class="dropdown-section">
                 <h3 class="dropdown-header">Direct Cost ▼</h3>
                 <div class="dropdown-content">
                     <h5>Total Direct Cost : {{ number_format($totalDirectCost) }}</h5>
-                    <!-- Salary Section -->
+
+                    <!-- ========================= Salary Section ========================= -->
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Salary</h3>
                             <div class="d-flex">
                                 <div style="display: flex; align-items: center; justify-content: right;">
                                     <!-- Separate Form for File Upload -->
-                                    <form action="{{ route('salary.import') }}" method="POST" enctype="multipart/form-data"
-                                        id="salary-file-upload-form" class="m-2">
+                                    <form action="{{ route('salary.import') }}" method="POST"
+                                          enctype="multipart/form-data"
+                                          id="salary-file-upload-form" class="m-2">
                                         @csrf
                                         <!-- Hidden file input -->
                                         <input type="file" name="file" id="salary-file-upload" style="display: none;" required>
                                         <input type="hidden" name="bg_id" value="{{$project_id}}">
                                         <!-- Upload Button Triggers File Input -->
                                         <button type="button" class="btn btn-primary btn-custom"
-                                            onclick="salarytriggerFileUpload()">Upload</button>
+                                                onclick="salarytriggerFileUpload()">Upload
+                                        </button>
                                     </form>
 
                                     <!-- Download Button -->
-                                    <a href="{{ route('sarlary-export',$project_id) }}" class="btn btn-primary btn-custom m-2">
+                                    <a href="{{ route('sarlary-export',$project_id) }}"
+                                       class="btn btn-primary btn-custom m-2">
                                         Download Excel
                                     </a>
-
-
                                 </div>
+
                                 @if ($budget->approval_status === 'pending')
-                                <button class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#addNewSalaryModal">ADD NEW</button>
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#addNewSalaryModal">ADD NEW</button>
                                 @else
-                                <button class="btn btn-secondary" disabled>Approved</button>
+                                    <button class="btn btn-secondary" disabled>Approved</button>
                                 @endif
                             </div>
                         </div>
-                        <p>Total Salary Cost : <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($totalSalary, 0) }}<span></p>
+
+                        <p>Total Salary Cost :
+                            <span style="color:#0067aa; font-weight:bold">
+                                {{ number_format($totalSalary, 0) }}
+                            </span>
+                        </p>
+
+                        <!-- Bulk Delete Button for Salary -->
+                        <button id="deleteSelectedSalariesBtn" class="btn btn-danger mb-2" style="display: none;">
+                            Delete Selected
+                        </button>
+
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>#</th> <!-- Index column -->
+                                        <!-- NEW: Checkbox for "Select All" in Salary -->
+                                        <th>
+                                            <input type="checkbox" id="selectAllSalary" />
+                                        </th>
 
+                                        <th>#</th> <!-- Index column -->
                                         <th>TYPE</th>
                                         <th>PROJECT</th>
                                         <th>PO</th>
@@ -113,18 +126,21 @@
                                         <th>Visa Status</th>
                                         <th>%</th>
                                         <th>Action</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->salaries as $salary)
-                                    <tr>
-
-                                        @php
+                                    @php
                                         $project = $projects->where('id', $salary->project)->first();
-                                        @endphp
-                                        <td>{{ $loop->iteration }}</td> <!-- Index -->
+                                    @endphp
+                                    <tr>
+                                        <!-- NEW: Checkbox for each Salary row -->
+                                        <td>
+                                            <input type="checkbox" class="selectSalaryCheckbox"
+                                                   value="{{ $salary->id }}">
+                                        </td>
 
+                                        <td>{{ $loop->iteration }}</td> <!-- Index -->
                                         <td>{{ $salary->type ?? 'no entry' }}</td>
                                         <td>{{ $project->name ?? 'no entry' }}</td>
                                         <td>{{ $salary->po ?? 'no entry' }}</td>
@@ -139,22 +155,22 @@
                                         <td>{{ number_format($salary->total_cost) ?? 'no entry' }}</td>
                                         <td>{{ $salary->visa_status ?? 'no entry' }}</td>
                                         <td>{{ $salary->percentage_cost ?? 'no entry' }}</td>
+
                                         <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"><i
-                                                        class="bx bx-dots-vertical-rounded"></i></button>
+                                                        data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item editSalaryBtn"
-                                                        data-id="{{ $salary->id }}"
-                                                        data-firstname="${user.first_name}"
-                                                        data-lastname="${user.last_name}"
-                                                        data-phonenumber="${user.phone_number}"
-                                                        data-email="${user.email}" data-role="${user.role}"><i
-                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                       data-id="{{ $salary->id }}">
+                                                        <i class="bx bx-edit-alt me-1"></i> Edit
+                                                    </a>
                                                     <a class="dropdown-item deletesalary-btn"
-                                                        data-id="{{ $salary->id }}"><i
-                                                            class="bx bx-trash me-1"></i> Delete</a>
+                                                       data-id="{{ $salary->id }}">
+                                                        <i class="bx bx-trash me-1"></i> Delete
+                                                    </a>
                                                 </div>
                                             </div>
                                         </td>
@@ -164,48 +180,66 @@
                             </table>
                         </div>
                     </div>
-                    <!-- Facilities Cost Section -->
+                    <!-- ====================== End Salary Section ========================= -->
+
+                    <!-- ==================== Facilities Cost Section ====================== -->
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Facilities Cost</h3>
                             <div class="d-flex">
                                 <div style="display: flex; align-items: center; justify-content: right;">
                                     <!-- Separate Form for File Upload -->
-                                    <form action="{{ route('facilities.import') }}" method="POST" enctype="multipart/form-data"
-                                        id="facilities-file-upload-form" class="m-2">
+                                    <form action="{{ route('facilities.import') }}" method="POST"
+                                          enctype="multipart/form-data"
+                                          id="facilities-file-upload-form" class="m-2">
                                         @csrf
                                         <!-- Hidden file input -->
-                                        <input type="file" name="facilities-file" id="facilities-file-upload" style="display: none;" required>
+                                        <input type="file" name="facilities-file" id="facilities-file-upload"
+                                               style="display: none;" required>
                                         <input type="hidden" name="bg_id" value="{{$project_id}}">
                                         <!-- Upload Button Triggers File Input -->
                                         <button type="button" class="btn btn-primary btn-custom"
-                                            onclick="facilitiestriggerFileUpload()">Upload</button>
+                                                onclick="facilitiestriggerFileUpload()">Upload
+                                        </button>
                                     </form>
 
                                     <!-- Download Button -->
-                                    <a href="{{ route('facility-export',$project_id) }}" class="btn btn-primary btn-custom m-2">
+                                    <a href="{{ route('facility-export',$project_id) }}"
+                                       class="btn btn-primary btn-custom m-2">
                                         Download Excel
                                     </a>
-
-
                                 </div>
+
                                 @if ($budget->approval_status === 'pending')
-                                <button class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#addNewFacilitiesModal">ADD NEW</button>
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#addNewFacilitiesModal">ADD NEW</button>
                                 @else
-                                <button class="btn btn-secondary" disabled>Approved</button>
+                                    <button class="btn btn-secondary" disabled>Approved</button>
                                 @endif
                             </div>
                         </div>
-                        <p>Total Facility Cost : <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($totalFacilityCost, 0) }}<span>
+
+                        <p>Total Facility Cost :
+                            <span style="color:#0067aa; font-weight:bold">
+                                {{ number_format($totalFacilityCost, 0) }}
+                            </span>
                         </p>
+
+                        <!-- Bulk Delete Button for Facilities -->
+                        <button id="deleteSelectedFacilitiesBtn" class="btn btn-danger mb-2" style="display: none;">
+                            Delete Selected
+                        </button>
+
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>#</th> <!-- Index column -->
+                                        <!-- NEW: Checkbox for "Select All" in Facilities -->
+                                        <th>
+                                            <input type="checkbox" id="selectAllFacilities" />
+                                        </th>
 
+                                        <th>#</th> <!-- Index column -->
                                         <th>TYPE</th>
                                         <th>PROJECT</th>
                                         <th>PO</th>
@@ -223,10 +257,16 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->facilityCosts as $facility)
-                                    <tr>
-                                        @php
+                                    @php
                                         $project = $projects->where('id', $facility->project)->first();
-                                        @endphp
+                                    @endphp
+                                    <tr>
+                                        <!-- NEW: Checkbox for each Facilities row -->
+                                        <td>
+                                            <input type="checkbox" class="selectFacilitiesCheckbox"
+                                                   value="{{ $facility->id }}">
+                                        </td>
+
                                         <td>{{ $loop->iteration }}</td> <!-- Index -->
                                         <td>{{ $facility->type ?? 'no entry' }}</td>
                                         <td>{{ $project->name ?? 'no entry' }}</td>
@@ -243,15 +283,18 @@
                                         <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"><i
-                                                        class="bx bx-dots-vertical-rounded"></i></button>
+                                                        data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item edit-btn editFacilitesBtn"
-                                                        data-id="{{ $facility->id }}"><i
-                                                            class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                    <a class="dropdown-item editFacilitesBtn"
+                                                       data-id="{{ $facility->id }}">
+                                                        <i class="bx bx-edit-alt me-1"></i> Edit
+                                                    </a>
                                                     <a class="dropdown-item deletefacilities"
-                                                        data-id="{{ $facility->id }}"><i
-                                                            class="bx bx-trash me-1"></i> Delete</a>
+                                                       data-id="{{ $facility->id }}">
+                                                        <i class="bx bx-trash me-1"></i> Delete
+                                                    </a>
                                                 </div>
                                             </div>
                                         </td>
@@ -261,7 +304,9 @@
                             </table>
                         </div>
                     </div>
-                    <!-- Material Cost Section -->
+                    <!-- ================== End Facilities Cost Section ==================== -->
+
+                    <!-- ===================== Material Cost Section ====================== -->
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3>Material Cost</h3>
@@ -269,58 +314,89 @@
                             <div class="d-flex">
                                 <div style="display: flex; align-items: center; justify-content: right;">
                                     <!-- Separate Form for File Upload -->
-                                    <form action="{{ route('material.import') }}" method="POST" enctype="multipart/form-data"
-                                        id="material-file-upload-form" class="m-2">
+                                    <form action="{{ route('material.import') }}" method="POST"
+                                          enctype="multipart/form-data"
+                                          id="material-file-upload-form" class="m-2">
                                         @csrf
                                         <!-- Hidden file input -->
-                                        <input type="file" name="material-file" id="material-file-upload" style="display: none;" required>
+                                        <input type="file" name="material-file" id="material-file-upload"
+                                               style="display: none;" required>
                                         <input type="hidden" name="bg_id" value="{{$project_id}}">
 
                                         <!-- Upload Button Triggers File Input -->
                                         <button type="button" class="btn btn-primary btn-custom"
-                                            onclick="materialtriggerFileUpload()">Upload</button>
+                                                onclick="materialtriggerFileUpload()">Upload
+                                        </button>
                                     </form>
 
                                     <!-- Download Button -->
-                                    <a href="{{ route('material-export',$project_id) }}" class="btn btn-primary btn-custom m-2">
+                                    <a href="{{ route('material-export',$project_id) }}"
+                                       class="btn btn-primary btn-custom m-2">
                                         Download Excel
                                     </a>
-
-
                                 </div>
+
                                 @if ($budget->approval_status === 'pending')
-                                <button class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#addNewMaterialModal">ADD NEW</button>
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#addNewMaterialModal">ADD NEW</button>
                                 @else
-                                <button class="btn btn-secondary" disabled>Approved</button>
+                                    <button class="btn btn-secondary" disabled>Approved</button>
                                 @endif
                             </div>
                         </div>
+
                         @php
-                        $Mcost =
-                        $totalMaterialCost +
-                        ($existingPettyCash->amount ?? 0) +
-                        ($existingNocPayment->amount ?? 0)+(@$existingSubcon->amount ?? 0)+(@$existingThirdparty->amount ?? 0);
+                            $Mcost = $totalMaterialCost +
+                                     ($existingPettyCash->amount ?? 0) +
+                                     ($existingNocPayment->amount ?? 0) +
+                                     (@$existingSubcon->amount ?? 0) +
+                                     (@$existingThirdparty->amount ?? 0);
                         @endphp
-                        <span>Total Material Cost: <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($Mcost ?? 0) }}</span></span><br>
 
-                        <span>Petty Cash Fund: <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format(num: $existingPettyCash->amount ?? 0) }}</span></span><br>
+                        <span>Total Material Cost:
+                            <span style="color:#0067aa; font-weight:bold">
+                                {{ number_format($Mcost ?? 0) }}
+                            </span>
+                        </span><br>
 
-                        <span>NOC Payment Amount: <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($existingNocPayment->amount ?? 0) }}</span></span><br>
+                        <span>Petty Cash Fund:
+                            <span style="color:#0067aa; font-weight:bold">
+                                {{ number_format(num: $existingPettyCash->amount ?? 0) }}
+                            </span>
+                        </span><br>
 
-                        <span>Subcontractor Payment Amount: <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($existingSubcon->amount ?? 0) }}</span></span><br>
+                        <span>NOC Payment Amount:
+                            <span style="color:#0067aa; font-weight:bold">
+                                {{ number_format($existingNocPayment->amount ?? 0) }}
+                            </span>
+                        </span><br>
 
-                        <span>Third Party Payment Amount: <span
-                                style="color:#0067aa; font-weight:bold">{{ number_format($existingThirdparty->amount ?? 0) }}</span></span>
+                        <span>Subcontractor Payment Amount:
+                            <span style="color:#0067aa; font-weight:bold">
+                                {{ number_format($existingSubcon->amount ?? 0) }}
+                            </span>
+                        </span><br>
+
+                        <span>Third Party Payment Amount:
+                            <span style="color:#0067aa; font-weight:bold">
+                                {{ number_format($existingThirdparty->amount ?? 0) }}
+                            </span>
+                        </span>
+
+                        <!-- Bulk Delete Button for Material -->
+                        <button id="deleteSelectedMaterialsBtn" class="btn btn-danger mb-2" style="display: none;">
+                            Delete Selected
+                        </button>
 
                         <div class="table-responsive text-nowrap limited-scroll mt-2">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <!-- NEW: Checkbox for "Select All" in Materials -->
+                                        <th>
+                                            <input type="checkbox" id="selectAllMaterials" />
+                                        </th>
+
                                         <th>#</th> <!-- Index Column -->
                                         <th>TYPE</th>
                                         <th>PROJECT</th>
@@ -339,63 +415,82 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($budget->materialCosts as $material)
-                                    @php
-                                    $project = $projects->where('id', $material->project)->first();
-                                    @endphp
+                                        @php
+                                            $project = $projects->where('id', $material->project)->first();
+                                        @endphp
 
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td> <!-- Display Index -->
-                                        <td>{{ $material->type ?? 'no entry' }}</td>
-                                        <td>{{ $project->name ?? 'no entry' }}</td>
-                                        <td>{{ $material->po ?? 'no entry' }}</td>
-                                        <td>{{ $material->expenses ?? 'no entry' }}</td>
-                                        <td>{{ $material->status ?? 'no entry' }}</td>
-                                        <td>{{ $material->description ?? 'no entry' }}</td>
-                                        <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
-                                        <td>{{ $material->unit ?? 'no entry' }}</td>
-                                        <td>{{ isset($material->unit_cost) ? number_format($material->unit_cost, 0) : 'no entry' }}
-                                        </td>
-                                        <td>{{ isset($material->total_cost) ? number_format($material->total_cost, 0) : 'no entry' }}
-                                        </td>
-                                        <td>{{ isset($material->average_cost) ? number_format($material->average_cost, 0) : 'no entry' }}
-                                        </td>
-                                        <td>{{ isset($material->percentage_cost) ? $material->percentage_cost : 'no entry' }}
-                                        </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown">
-                                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item editMaterialBtn"
-                                                        data-id="{{ $material->id }}">
-                                                        <i class="bx bx-edit-alt me-1"></i> Edit
-                                                    </a>
-                                                    <a class="dropdown-item deleteMaterialBtn"
-                                                        data-id="{{ $material->id }}">
-                                                        <i class="bx bx-trash me-1"></i> Delete
-                                                    </a>
+                                        <tr>
+                                            <!-- NEW: Checkbox for each Material row -->
+                                            <td>
+                                                <input type="checkbox" class="selectMaterialsCheckbox"
+                                                       value="{{ $material->id }}">
+                                            </td>
+
+                                            <td>{{ $loop->iteration }}</td> <!-- Display Index -->
+                                            <td>{{ $material->type ?? 'no entry' }}</td>
+                                            <td>{{ $project->name ?? 'no entry' }}</td>
+                                            <td>{{ $material->po ?? 'no entry' }}</td>
+                                            <td>{{ $material->expenses ?? 'no entry' }}</td>
+                                            <td>{{ $material->status ?? 'no entry' }}</td>
+                                            <td>{{ $material->description ?? 'no entry' }}</td>
+                                            <td>{{ number_format($material->quantity) ?? 'no entry' }}</td>
+                                            <td>{{ $material->unit ?? 'no entry' }}</td>
+                                            <td>
+                                                {{ isset($material->unit_cost)
+                                                   ? number_format($material->unit_cost, 0)
+                                                   : 'no entry' }}
+                                            </td>
+                                            <td>
+                                                {{ isset($material->total_cost)
+                                                   ? number_format($material->total_cost, 0)
+                                                   : 'no entry' }}
+                                            </td>
+                                            <td>
+                                                {{ isset($material->average_cost)
+                                                   ? number_format($material->average_cost, 0)
+                                                   : 'no entry' }}
+                                            </td>
+                                            <td>
+                                                {{ isset($material->percentage_cost)
+                                                   ? $material->percentage_cost
+                                                   : 'no entry' }}
+                                            </td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                            data-bs-toggle="dropdown">
+                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item editMaterialBtn"
+                                                           data-id="{{ $material->id }}">
+                                                            <i class="bx bx-edit-alt me-1"></i> Edit
+                                                        </a>
+                                                        <a class="dropdown-item deleteMaterialBtn"
+                                                           data-id="{{ $material->id }}">
+                                                            <i class="bx bx-trash me-1"></i> Delete
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-
                         </div>
-
                     </div>
+                    <!-- =================== End Material Cost Section ===================== -->
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- =========================== Modals (Add + Edit) =========================== -->
+
 <!-- Salary Modal -->
 <div class="modal fade" id="addNewSalaryModal" tabindex="-1" aria-labelledby="addNewSalaryModalLabel"
-    aria-hidden="true">
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -417,10 +512,11 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="po" class="form-label">PO Type</label>
                         <select class="form-select" id="po" name="po" required>
@@ -428,6 +524,7 @@
                             <option selected value="OPEX">OPEX</option>
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="expense" class="form-label">Expense Head</label>
                         <select class="form-select" id="expense" name="expense" required>
@@ -459,66 +556,60 @@
                     <div class="mb-3" id="overseeing-sites-field" style="display: none;">
                         <label for="overseeing_sites" class="form-label">Number of Overseeing Sites</label>
                         <input type="number" class="form-control" id="overseeing_sites" name="overseeing_sites"
-                            placeholder="Enter number of sites">
+                               placeholder="Enter number of sites">
                     </div>
 
                     <div class="mb-3" id="other-field" style="display: none;">
                         <label for="other_expense" class="form-label">Other</label>
                         <input type="text" class="form-control" id="other_expense" name="other_expense"
-                            placeholder="Specify other expense">
+                               placeholder="Specify other expense">
                     </div>
 
                     <div class="mb-3">
                         <label for="visa_status" class="form-label">Visa Status</label>
                         <select class="form-select" id="visa_status" name="visa_status" required>
                             <option value="" disabled>Select Visa Status</option>
-                            <option value="Xad Visa"
-                                {{ old('visa_status', $model->visa_status ?? '') == 'Xad Visa' ? 'selected' : '' }}>Xad
-                                Visa</option>
-                            <option value="Contractor"
-                                {{ old('visa_status', $model->visa_status ?? '') == 'Contractor' ? 'selected' : '' }}>
-                                Contractor</option>
+                            <option value="Xad Visa">Xad Visa</option>
+                            <option value="Contractor">Contractor</option>
                         </select>
                     </div>
-
-
-                    {{-- <div class="mb-3">
-                        <label for="cost_per_month" class="form-label">Cost Per Month</label>
-                        <input type="number" class="form-control" id="cost_per_month" name="cost_per_month"
-                            placeholder="e.g., 5000.00" step="0.01" required>
-                    </div> --}}
 
                     <div class="mb-3">
                         <label for="cost_per_month_display" class="form-label">Cost Per Month</label>
                         <input type="text" class="form-control" id="cost_per_month_display"
-                            name="cost_per_month_display"
-                            value="{{ old('cost_per_month') ? number_format(old('cost_per_month'), 2) : '' }}"
-                            placeholder="e.g., 5000.00" oninput="formatNumber(this, 'cost_per_month_hidden')"
-                            required />
+                               name="cost_per_month_display"
+                               value="{{ old('cost_per_month') ? number_format(old('cost_per_month'), 2) : '' }}"
+                               placeholder="e.g., 5000.00"
+                               oninput="formatNumber(this, 'cost_per_month_hidden')"
+                               required />
                         <input type="hidden" id="cost_per_month_hidden" name="cost_per_month"
-                            value="{{ old('cost_per_month') }}">
+                               value="{{ old('cost_per_month') }}">
                     </div>
 
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <input type="text" class="form-control" id="description" name="description"
-                            placeholder="e.g., we are starting new project" required>
+                               placeholder="e.g., we are starting new project" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <input type="text" class="form-control" id="status" name="status"
-                            placeholder="e.g., New Hiring" required>
+                               placeholder="e.g., New Hiring" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="noOfPerson" class="form-label">No Of Persons</label>
-                        <input type="number" class="form-control" id="noOfPerson" name="noOfPerson" step="any"
-                            placeholder="e.g., 5" value="1" required>
+                        <input type="number" class="form-control" id="noOfPerson" name="noOfPerson"
+                               step="any" placeholder="e.g., 5" value="1" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="months" class="form-label">Months</label>
-                        <input type="number" class="form-control" id="months" name="months" step="any"
-                            placeholder="e.g., 12" value="1" required>
+                        <input type="number" class="form-control" id="months" name="months"
+                               step="any" placeholder="e.g., 12" value="1" required>
                     </div>
+
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
 
                     <button type="submit" class="btn btn-primary">Add Salary</button>
@@ -527,11 +618,12 @@
         </div>
     </div>
 </div>
-
+<!-- End Salary Modal -->
 
 <!-- Facilities Modal -->
-<div class="modal fade" id="addNewFacilitiesModal" tabindex="-1" aria-labelledby="addNewFacilitiesModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="addNewFacilitiesModal" tabindex="-1"
+     aria-labelledby="addNewFacilitiesModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -540,7 +632,7 @@
             </div>
             <div class="modal-body">
                 <form id="addNewFacilitiesForm" action="{{ url('/pages/add-budget-project-facility-cost') }}"
-                    method="POST">
+                      method="POST">
                     @csrf
                     <div class="mb-3">
                         <label for="type" class="form-label">Type</label>
@@ -554,10 +646,11 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="po" class="form-label">PO</label>
                         <select class="form-select" id="po" name="po" required>
@@ -565,6 +658,7 @@
                             <option selected value="OPEX">OPEX</option>
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="expense" class="form-label">Expense Head</label>
                         <select class="form-select" id="facilityExpense" name="expense" required>
@@ -572,6 +666,9 @@
                             <option value="Accommodation">Accommodation</option>
                             <option value="Fuel">Fuel</option>
                             <option value="SIM">SIM</option>
+                            <option value="Store">Store</option>
+                            <option value="Wareshouse">Wareshouse</option>
+                            <option value="Vehicle">Vehicle</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
@@ -579,43 +676,47 @@
                     <div class="mb-3" id="otherFacilityExpenseField" style="display: none;">
                         <label for="other_expense" class="form-label">Other</label>
                         <input type="text" class="form-control" id="other_expense" name="other_expense"
-                            placeholder="Specify other expense">
+                               placeholder="Specify other expense">
                     </div>
-
-
 
                     <div class="mb-3">
                         <label for="facility_cost_per_month_display" class="form-label">Cost Per Month</label>
                         <input type="text" class="form-control" id="facility_cost_per_month_display"
-                            name="cost_per_month_display"
-                            value="{{ old('cost_per_month') ? number_format(old('cost_per_month'), 2) : '' }}"
-                            placeholder="e.g., 5000.00" oninput="formatNumber(this, 'facility_cost_per_month_hidden')"
-                            required />
+                               name="cost_per_month_display"
+                               value="{{ old('cost_per_month') ? number_format(old('cost_per_month'), 2) : '' }}"
+                               placeholder="e.g., 5000.00"
+                               oninput="formatNumber(this, 'facility_cost_per_month_hidden')"
+                               required />
                         <input type="hidden" id="facility_cost_per_month_hidden" name="cost_per_month"
-                            value="{{ old('cost_per_month') }}">
+                               value="{{ old('cost_per_month') }}">
                     </div>
-
 
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <input type="text" class="form-control" id="description" name="description"
-                            placeholder="eg, Fuel, SIM, Accomodation" required>
+                               placeholder="eg, Fuel, SIM, Accomodation" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <input type="text" class="form-control" id="status" name="status"
-                            placeholder="eg, new old upgrade " required>
+                               placeholder="eg, new old upgrade " required>
                     </div>
+
                     <div class="mb-3">
                         <label for="noOfPerson" class="form-label">No Of Person</label>
-                        <input type="number" class="form-control" value="0" id="noOfPerson" name="noOfPerson"
-                            step="any" placeholder="eg, no of person or blank" required>
+                        <input type="number" class="form-control" value="0" id="noOfPerson"
+                               name="noOfPerson" step="any"
+                               placeholder="eg, no of person or blank" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="months" class="form-label">Months</label>
-                        <input type="number" class="form-control" id="months" value="0" name="months"
-                            step="any" placeholder="eg, no of months" required>
+                        <input type="number" class="form-control" id="months" value="0"
+                               name="months" step="any"
+                               placeholder="eg, no of months" required>
                     </div>
+
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
                     <button type="submit" class="btn btn-primary">Add Facilities Cost</button>
                 </form>
@@ -623,12 +724,12 @@
         </div>
     </div>
 </div>
-
-
+<!-- End Facilities Modal -->
 
 <!-- Material Modal -->
-<div class="modal fade" id="addNewMaterialModal" tabindex="-1" aria-labelledby="addNewMaterialModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="addNewMaterialModal" tabindex="-1"
+     aria-labelledby="addNewMaterialModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -637,7 +738,7 @@
             </div>
             <div class="modal-body">
                 <form id="addNewMaterialForm" action="{{ url('/pages/add-budget-project-material-cost') }}"
-                    method="POST">
+                      method="POST">
                     @csrf
                     <div class="mb-3">
                         <label for="type" class="form-label">Type</label>
@@ -651,10 +752,11 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="po" class="form-label">PO</label>
                         <select class="form-select" id="po" name="po" required>
@@ -679,13 +781,14 @@
                     <div id="consumedMaterialFields" style="display:none">
                         <div class="mb-3">
                             <label for="material_head" class="form-label">Material Head</label>
-                            <input type="text" class="form-control" id="material_head" name="material_head"
-                                step="any" placeholder="e.g... Wire, Cable, Material ..">
+                            <input type="text" class="form-control" id="material_head"
+                                   name="material_head" step="any"
+                                   placeholder="e.g... Wire, Cable, Material ..">
                         </div>
                         <div class="mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity"
-                                step="any" placeholder="e.g., 100">
+                            <input type="number" class="form-control" id="quantity"
+                                   name="quantity" step="any" placeholder="e.g., 100">
                         </div>
                         <div class="mb-3">
                             <label for="unit" class="form-label">Unit</label>
@@ -699,21 +802,23 @@
                         <div class="mb-3">
                             <label for="unit_cost_display" class="form-label">Unit Cost</label>
                             <input type="text" class="form-control" id="unit_cost_display"
-                                name="unit_cost_display"
-                                value="{{ old('unit_cost') ? number_format(old('unit_cost'), 2) : '' }}"
-                                placeholder="e.g., 50.00" oninput="formatNumber(this, 'unit_cost_hidden')" />
+                                   name="unit_cost_display"
+                                   value="{{ old('unit_cost') ? number_format(old('unit_cost'), 2) : '' }}"
+                                   placeholder="e.g., 50.00"
+                                   oninput="formatNumber(this, 'unit_cost_hidden')" />
                             <input type="hidden" id="unit_cost_hidden" name="unit_cost"
-                                value="{{ old('unit_cost') }}">
+                                   value="{{ old('unit_cost') }}">
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <input type="text" class="form-control" id="description" name="description"
-                                placeholder="e.g., 100-meter Ethernet cable">
+                            <input type="text" class="form-control" id="description"
+                                   name="description"
+                                   placeholder="e.g., 100-meter Ethernet cable">
                         </div>
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
                             <input type="text" class="form-control" id="status" name="status"
-                                placeholder="e.g., Purchased, in stock">
+                                   placeholder="e.g., Purchased, in stock">
                         </div>
                     </div>
 
@@ -722,11 +827,12 @@
                         <div class="mb-3">
                             <label for="petty_cash_display" class="form-label">Amount</label>
                             <input type="text" class="form-control" id="petty_cash_display"
-                                name="petty_cash_display"
-                                value="{{ old('petty_cash_amount') ? number_format(old('petty_cash_amount'), 2) : '' }}"
-                                placeholder="Enter Petty Cash" oninput="formatNumber(this, 'petty_cash_hidden')" />
+                                   name="petty_cash_display"
+                                   value="{{ old('petty_cash_amount') ? number_format(old('petty_cash_amount'), 2) : '' }}"
+                                   placeholder="Enter Petty Cash"
+                                   oninput="formatNumber(this, 'petty_cash_hidden')" />
                             <input type="hidden" id="petty_cash_hidden" name="petty_cash_amount"
-                                value="{{ old('petty_cash_amount') }}">
+                                   value="{{ old('petty_cash_amount') }}">
                         </div>
                     </div>
 
@@ -735,34 +841,40 @@
                         <div class="mb-3">
                             <label for="noc_amount_display" class="form-label">NOC Description</label>
                             <input type="text" class="form-control" id="noc_amount_display"
-                                name="noc_amount_display"
-                                value="{{ old('noc_amount') ? number_format(old('noc_amount'), 2) : '' }}"
-                                placeholder="Enter NOC Amount" oninput="formatNumber(this, 'noc_amount_hidden')" />
+                                   name="noc_amount_display"
+                                   value="{{ old('noc_amount') ? number_format(old('noc_amount'), 2) : '' }}"
+                                   placeholder="Enter NOC Amount"
+                                   oninput="formatNumber(this, 'noc_amount_hidden')" />
                             <input type="hidden" id="noc_amount_hidden" name="noc_amount"
-                                value="{{ old('noc_amount') }}">
+                                   value="{{ old('noc_amount') }}">
                         </div>
                     </div>
 
                     <div id="subcontractor" style="display:none">
                         <div class="mb-3">
-                            <label for="subcontractor_amount_display" class="form-label">Subcontractor Amount</label>
+                            <label for="subcontractor_amount_display" class="form-label">
+                                Subcontractor Amount
+                            </label>
                             <input type="text" class="form-control" id="subcontractor_amount_display"
-                                name="subcontractor_amount_display"
-                                value="{{ old('subcontractor_amount') ? number_format(old('subcontractor_amount'), 2) : '' }}"
-                                placeholder="Enter subcontractor Amount" oninput="formatNumber(this, 'subcontractor_amount_hidden')" />
+                                   name="subcontractor_amount_display"
+                                   value="{{ old('subcontractor_amount') ? number_format(old('subcontractor_amount'), 2) : '' }}"
+                                   placeholder="Enter subcontractor Amount"
+                                   oninput="formatNumber(this, 'subcontractor_amount_hidden')" />
                             <input type="hidden" id="subcontractor_amount_hidden" name="subcontractor_amount"
-                                value="{{ old('subcontractor_amount') }}">
+                                   value="{{ old('subcontractor_amount') }}">
                         </div>
                     </div>
+
                     <div id="third_party" style="display:none">
                         <div class="mb-3">
                             <label for="third_party_amount_display" class="form-label">Third Party Amount</label>
                             <input type="text" class="form-control" id="third_party_amount_display"
-                                name="third_party_amount_display"
-                                value="{{ old('third_party_amount') ? number_format(old('third_party_amount'), 2) : '' }}"
-                                placeholder="Enter Third Party Amount" oninput="formatNumber(this, 'third_party_amount_hidden')" />
+                                   name="third_party_amount_display"
+                                   value="{{ old('third_party_amount') ? number_format(old('third_party_amount'), 2) : '' }}"
+                                   placeholder="Enter Third Party Amount"
+                                   oninput="formatNumber(this, 'third_party_amount_hidden')" />
                             <input type="hidden" id="third_party_amount_hidden" name="third_party_amount"
-                                value="{{ old('third_party_amount') }}">
+                                   value="{{ old('third_party_amount') }}">
                         </div>
                     </div>
 
@@ -773,10 +885,11 @@
         </div>
     </div>
 </div>
+<!-- End Material Modal -->
 
 <!-- Edit Salary Modal -->
 <div class="modal fade" id="editSalaryModal" tabindex="-1" aria-labelledby="editSalaryModalLabel"
-    aria-hidden="true">
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -788,6 +901,7 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" id="edit_salary_id" name="id">
+
                     <div class="mb-3">
                         <label for="edit_type" class="form-label">Type</label>
                         <select class="form-select" id="edit_type" name="type" required>
@@ -800,7 +914,7 @@
                         <label for="edit_project" class="form-label">Project</label>
                         <select class="form-select" id="edit_project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -844,13 +958,15 @@
                     <div class="mb-3" id="edit_overseeing-sites-field" style="display: none;">
                         <label for="edit_overseeing_sites" class="form-label">Number of Overseeing Sites</label>
                         <input type="number" class="form-control" id="edit_overseeing_sites"
-                            name="overseeing_sites" placeholder="Enter number of sites">
+                               name="overseeing_sites"
+                               placeholder="Enter number of sites">
                     </div>
 
                     <div class="mb-3" id="edit_other-field" style="display: none;">
                         <label for="edit_other_expense" class="form-label">Other</label>
-                        <input type="text" class="form-control" id="edit_other_expense" name="other_expense"
-                            placeholder="Specify other expense">
+                        <input type="text" class="form-control" id="edit_other_expense"
+                               name="other_expense"
+                               placeholder="Specify other expense">
                     </div>
 
                     <div class="mb-3">
@@ -864,32 +980,35 @@
 
                     <div class="mb-3">
                         <label for="edit_cost_per_month" class="form-label">Cost Per Month</label>
-                        <input type="number" class="form-control" id="edit_cost_per_month" name="cost_per_month"
-                            placeholder="e.g., 5000.00" step="0.01" required>
+                        <input type="number" class="form-control" id="edit_cost_per_month"
+                               name="cost_per_month" placeholder="e.g., 5000.00" step="0.01" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="edit_description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="edit_description" name="description"
-                            placeholder="e.g., we are starting new project" required>
+                        <input type="text" class="form-control" id="edit_description"
+                               name="description"
+                               placeholder="e.g., we are starting new project" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="edit_status" class="form-label">Status</label>
                         <input type="text" class="form-control" id="edit_status" name="status"
-                            placeholder="e.g., New Hiring" required>
+                               placeholder="e.g., New Hiring" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="edit_noOfPerson" class="form-label">No Of Persons</label>
-                        <input type="number" class="form-control" id="edit_noOfPerson" name="no_of_staff"
-                            step="any" placeholder="e.g., 5" required>
+                        <input type="number" class="form-control" id="edit_noOfPerson"
+                               name="no_of_staff" step="any"
+                               placeholder="e.g., 5" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="edit_months" class="form-label">Months</label>
-                        <input type="number" class="form-control" id="edit_months" name="no_of_months"
-                            step="any" placeholder="e.g., 12" required>
+                        <input type="number" class="form-control" id="edit_months"
+                               name="no_of_months" step="any"
+                               placeholder="e.g., 12" required>
                     </div>
 
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
@@ -900,9 +1019,12 @@
         </div>
     </div>
 </div>
+<!-- End Edit Salary Modal -->
 
-<div class="modal fade" id="editFacilitiesModal" tabindex="-1" aria-labelledby="editFacilitiesModalLabel"
-    aria-hidden="true">
+<!-- Edit Facilities Modal -->
+<div class="modal fade" id="editFacilitiesModal" tabindex="-1"
+     aria-labelledby="editFacilitiesModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -913,6 +1035,7 @@
                 <form id="editFacilitiesForm" method="POST">
                     @csrf
                     @method('PUT')
+
                     <div class="mb-3">
                         <label for="type" class="form-label">Type</label>
                         <select class="form-select" id="type" name="type" required>
@@ -925,10 +1048,11 @@
                         <label for="project" class="form-label">Project</label>
                         <select class="form-select" id="project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="po" class="form-label">PO</label>
                         <select class="form-select" id="po" name="po" required>
@@ -936,6 +1060,7 @@
                             <option selected value="OPEX">OPEX</option>
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="expense" class="form-label">Expense Head</label>
                         <select class="form-select editfaci" id="facilityExpense" name="expenses" required>
@@ -943,54 +1068,69 @@
                             <option value="Accommodation">Accommodation</option>
                             <option value="Fuel">Fuel</option>
                             <option value="SIM">SIM</option>
+                            <option value="Store">Store</option>
+                            <option value="Wareshouse">Wareshouse</option>
+                            <option value="Vehicle">Vehicle</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
 
                     <div class="mb-3" id="otherFacilityExpenseField" style="display: none;">
                         <label for="other_expense" class="form-label">Other</label>
-                        <input type="text" class="form-control" id="other_expense" name="other_expense"
-                            placeholder="Specify other expense">
+                        <input type="text" class="form-control" id="other_expense"
+                               name="other_expense"
+                               placeholder="Specify other expense">
                     </div>
-
-
 
                     <div class="mb-3">
                         <label for="cost_per_month" class="form-label">Cost Per Month</label>
                         <input type="number" class="form-control" id="faci_cost_per_month"
-                            placeholder="eg,cost per month" name="cost_per_month" required>
+                               placeholder="eg,cost per month" name="cost_per_month" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="editfacilitydescription" name="description"
-                            placeholder="eg, Fuel, SIM, Accomodation" required>
+                        <input type="text" class="form-control" id="editfacilitydescription"
+                               name="description"
+                               placeholder="eg, Fuel, SIM, Accomodation" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <input type="text" class="form-control" id="editstatus" name="status"
-                            placeholder="eg, new old upgrade " required>
+                               placeholder="eg, new old upgrade " required>
                     </div>
+
                     <div class="mb-3">
                         <label for="noOfPerson" class="form-label">No Of Person</label>
-                        <input type="number" class="form-control" value="0" id="editfacilitynoOfPerson"
-                            name="no_of_staff" step="any" placeholder="eg, no of person or blank" required>
+                        <input type="number" class="form-control" value="0"
+                               id="editfacilitynoOfPerson"
+                               name="no_of_staff" step="any"
+                               placeholder="eg, no of person or blank" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="months" class="form-label">Months</label>
                         <input type="number" class="form-control" id="eidtfacilitymonths" value="0"
-                            name="no_of_months" step="any" placeholder="eg, no of months" required>
+                               name="no_of_months" step="any"
+                               placeholder="eg, no of months" required>
                     </div>
+
                     <input type="hidden" id="edit_facility_id" name="id">
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
+
                     <button type="submit" class="btn btn-primary">Update Facilities Cost</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+<!-- End Edit Facilities Modal -->
 
-<div class="modal fade" id="editMaterialModal" tabindex="-1" aria-labelledby="editMaterialModalLabel"
-    aria-hidden="true">
+<!-- Edit Material Modal -->
+<div class="modal fade" id="editMaterialModal" tabindex="-1"
+     aria-labelledby="editMaterialModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -1002,6 +1142,7 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" id="edit_material_id" name="id">
+
                     <div class="mb-3">
                         <label for="edit_material_type" class="form-label">Type</label>
                         <select class="form-select" id="edit_material_type" name="type" required>
@@ -1014,7 +1155,7 @@
                         <label for="edit_material_project" class="form-label">Project</label>
                         <select class="form-select" id="edit_material_project" name="project" required>
                             @foreach ($projects as $project)
-                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -1033,6 +1174,8 @@
                             <option value="consumed_material">Consumed Material</option>
                             <option value="petty_cash">Petty Cash</option>
                             <option value="noc_payment">NOC Payment</option>
+                            <option value="subcontractor">Subcontractor</option>
+                            <option value="third_party">Third Party</option>
                         </select>
                     </div>
 
@@ -1040,11 +1183,13 @@
                     <div id="edit_consumedMaterialFields">
                         <div class="mb-3">
                             <label for="edit_material_head" class="form-label">Material Head</label>
-                            <input type="text" class="form-control" id="edit_material_head" name="material_head">
+                            <input type="text" class="form-control" id="edit_material_head"
+                                   name="material_head">
                         </div>
                         <div class="mb-3">
                             <label for="edit_quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="edit_quantity" name="quantity">
+                            <input type="number" class="form-control" id="edit_quantity"
+                                   name="quantity">
                         </div>
                         <div class="mb-3">
                             <label for="edit_unit" class="form-label">Unit</label>
@@ -1057,8 +1202,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="edit_unit_cost" class="form-label">Unit Cost</label>
-                            <input type="number" class="form-control" id="edit_unit_cost" name="unit_cost"
-                                step="any">
+                            <input type="number" class="form-control" id="edit_unit_cost"
+                                   name="unit_cost" step="any">
                         </div>
                     </div>
 
@@ -1067,7 +1212,7 @@
                         <div class="mb-3">
                             <label for="edit_petty_cash_amount" class="form-label">Amount</label>
                             <input type="number" class="form-control" id="edit_petty_cash_amount"
-                                name="petty_cash_amount" step="any">
+                                   name="petty_cash_amount" step="any">
                         </div>
                     </div>
 
@@ -1075,20 +1220,39 @@
                     <div id="edit_nocPaymentFields" style="display:none">
                         <div class="mb-3">
                             <label for="edit_noc_amount" class="form-label">NOC Description</label>
-                            <input type="text" class="form-control" id="edit_noc_amount" name="noc_amount">
+                            <input type="text" class="form-control" id="edit_noc_amount"
+                                   name="noc_amount">
+                        </div>
+                    </div>
+
+                    <!-- Fields for Subcontractor -->
+                    <div id="edit_subcontractorFields" style="display:none">
+                        <div class="mb-3">
+                            <label for="edit_subcontractor_amount" class="form-label">Subcontractor Amount</label>
+                            <input type="number" class="form-control" id="edit_subcontractor_amount"
+                                   name="subcontractor_amount" step="any">
+                        </div>
+                    </div>
+
+                    <!-- Fields for Third Party -->
+                    <div id="edit_thirdPartyFields" style="display:none">
+                        <div class="mb-3">
+                            <label for="edit_thirdparty_amount" class="form-label">Third Party Amount</label>
+                            <input type="number" class="form-control" id="edit_thirdparty_amount"
+                                   name="third_party_amount" step="any">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="edit_material_description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="edit_material_description" name="description"
-                            required>
+                        <input type="text" class="form-control" id="edit_material_description"
+                               name="description" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="edit_material_status" class="form-label">Status</label>
                         <input type="text" class="form-control" id="edit_material_status" name="status"
-                            required>
+                               required>
                     </div>
 
                     <input type="hidden" name="project_id" value="{{ $budget->id }}">
@@ -1098,13 +1262,15 @@
         </div>
     </div>
 </div>
-
+<!-- End Edit Material Modal -->
 
 <script>
+    // =========================== Show any success messages on page load =========================
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const successMessage = urlParams.get('success');
         if (successMessage) {
+            console.log(successMessage)
             showAlert('success', decodeURIComponent(successMessage));
             const newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
@@ -1115,18 +1281,7 @@
         window.location.href = window.location.pathname + '?success=' + encodeURIComponent(message);
     }
 
-
-    function materialtriggerFileUpload() {
-        document.getElementById('material-file-upload').click();
-    }
-    document.getElementById('material-file-upload').addEventListener('change', function() {
-        const overlay = document.getElementById('loading-overlay');
-        overlay.style.display = 'flex'; // Show the spinner
-        setTimeout(() => {
-            document.getElementById('material-file-upload-form').submit(); // Submit form after delay
-        }, 500); // Small delay to ensure spinner is visible
-    });
-
+    // =========================== File Upload: Salary, Facilities, Material ======================
     function salarytriggerFileUpload() {
         document.getElementById('salary-file-upload').click();
     }
@@ -1149,137 +1304,134 @@
         }, 500); // Small delay to ensure spinner is visible
     });
 
+    function materialtriggerFileUpload() {
+        document.getElementById('material-file-upload').click();
+    }
+    document.getElementById('material-file-upload').addEventListener('change', function() {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex'; // Show the spinner
+        setTimeout(() => {
+            document.getElementById('material-file-upload-form').submit(); // Submit form after delay
+        }, 500);
+    });
+
+    // =========================== Number Formatting ===========================
     function formatNumber(input, hiddenFieldId) {
         // Remove non-digit characters (except for decimal point)
         let value = input.value.replace(/[^0-9.]/g, '');
 
         if (value) {
             let parts = value.split('.');
-            let integerPart = parseInt(parts[0]).toLocaleString('en-US');
+            let integerPart = parseInt(parts[0] || 0).toLocaleString('en-US');
             let formattedValue = integerPart;
 
             if (parts[1] !== undefined) {
-                formattedValue += '.' + parts[1].slice(0, 2); // Allow up to 2 decimal places
+                formattedValue += '.' + parts[1].slice(0, 2); // up to 2 decimal places
             }
 
             input.value = formattedValue;
             document.getElementById(hiddenFieldId).value = value;
-
-            // Log the value for debugging
-            console.log("Formatted Value:", formattedValue);
-            console.log("Hidden Field Value:", value);
         } else {
             input.value = '';
             document.getElementById(hiddenFieldId).value = '';
         }
     }
 
-
-    function facilityExpenseHandling() {
-
-        const facilityExpenseSelect = document.getElementById('facilityExpense');
-        const otherFacilityExpenseField = document.getElementById('otherFacilityExpenseField');
-
-        facilityExpenseSelect.addEventListener('change', function() {
-            otherFacilityExpenseField.style.display = (this.value === 'other') ? 'block' : 'none';
-        });
-
-    }
-
-    function materialExpensehandling() {
-        const materialExpenseSelect = document.getElementById('materialexpenseHead');
-        const consumedMaterialFields = document.getElementById('consumedMaterialFields');
-        const pettyCashFields = document.getElementById('pettyCashFields');
-        const nocPaymentFields = document.getElementById('nocPaymentFields');
-        const subcontractorFields = document.getElementById('subcontractor');
-        const third_partyFields = document.getElementById('third_party');
-
-        // Hide all conditional fields initially
-        consumedMaterialFields.style.display = 'none';
-        pettyCashFields.style.display = 'none';
-        nocPaymentFields.style.display = 'none';
-        subcontractorFields.style.display = 'none';
-        third_partyFields.style.display = 'none';
-
-        // On material expense selection change
-        materialExpenseSelect.addEventListener('change', function() {
-            const selectedValue = this.value;
-
-            // Hide all fields first
-            consumedMaterialFields.style.display = 'none';
-            pettyCashFields.style.display = 'none';
-            nocPaymentFields.style.display = 'none';
-            subcontractorFields.style.display = 'none';
-            third_partyFields.style.display = 'none';
-
-            // Remove required attributes to avoid validation issues
-            document.querySelectorAll(
-                    '#consumedMaterialFields input, #pettyCashFields input, #nocPaymentFields input'
-                )
-                .forEach(input => input.removeAttribute('required'));
-
-            // Show and enable validation for relevant fields
-            if (selectedValue === 'consumed_material') {
-                consumedMaterialFields.style.display = 'block';
-                consumedMaterialFields.querySelectorAll('input').forEach(input => input
-                    .setAttribute(
-                        'required', 'required'));
-            } else if (selectedValue === 'petty_cash') {
-                pettyCashFields.style.display = 'block';
-                pettyCashFields.querySelector('input').setAttribute('required', 'required');
-            } else if (selectedValue === 'noc_payment') {
-                nocPaymentFields.style.display = 'block';
-                nocPaymentFields.querySelector('input').setAttribute('required', 'required');
-            } else if (selectedValue === 'subcontractor') {
-                subcontractorFields.style.display = 'block';
-                subcontractorFields.querySelector('input').setAttribute('required', 'required');
-            } else if (selectedValue === 'third_party') {
-                third_partyFields.style.display = 'block';
-                third_partyFields.querySelector('input').setAttribute('required', 'required');
-            }
-        });
-
-    }
-
+    // =========================== Conditional Field Handling ===========================
+    // Salary Expense -> Overseeing sites & "other" expense
     function salaryExpenseHandling() {
         const expenseSelect = document.getElementById('expense');
         const overseeingSitesField = document.getElementById('overseeing-sites-field');
         const otherField = document.getElementById('other-field');
 
         expenseSelect.addEventListener('change', function() {
-            var selectedValue = this.value;
-            var showOverseeingSites = [
+            const selectedValue = this.value;
+            const showOverseeingSites = [
                 'Sr. Client Relationship Manager',
                 'Sr. Manager Operations',
                 'Project Manager',
                 'Sr. Civil Project Engineer'
             ].includes(selectedValue);
 
-            // Show or hide the overseeing sites field
             overseeingSitesField.style.display = showOverseeingSites ? 'block' : 'none';
-
-            // Show or hide the other field
             otherField.style.display = (selectedValue === 'other') ? 'block' : 'none';
         });
     }
 
+    // Facility Expense -> "other" expense
+    function facilityExpenseHandling() {
+        const facilityExpenseSelect = document.getElementById('facilityExpense');
+        const otherFacilityExpenseField = document.getElementById('otherFacilityExpenseField');
+
+        facilityExpenseSelect.addEventListener('change', function() {
+            otherFacilityExpenseField.style.display = (this.value === 'other') ? 'block' : 'none';
+        });
+    }
+
+    // Material Expense -> show/hide consumed material, petty cash, NOC, subcontractor, third party
+    function materialExpensehandling() {
+        const materialExpenseSelect = document.getElementById('materialexpenseHead');
+        const consumedMaterialFields = document.getElementById('consumedMaterialFields');
+        const pettyCashFields = document.getElementById('pettyCashFields');
+        const nocPaymentFields = document.getElementById('nocPaymentFields');
+        const subcontractorFields = document.getElementById('subcontractor');
+        const thirdPartyFields = document.getElementById('third_party');
+
+        materialExpenseSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+
+            // Hide everything first
+            consumedMaterialFields.style.display = 'none';
+            pettyCashFields.style.display = 'none';
+            nocPaymentFields.style.display = 'none';
+            subcontractorFields.style.display = 'none';
+            thirdPartyFields.style.display = 'none';
+
+            // Remove "required" to avoid conflicts
+            document.querySelectorAll('#consumedMaterialFields input, #pettyCashFields input, #nocPaymentFields input, #subcontractor input, #third_party input')
+                    .forEach(input => input.removeAttribute('required'));
+
+            // Show relevant fields
+            if (selectedValue === 'consumed_material') {
+                consumedMaterialFields.style.display = 'block';
+                consumedMaterialFields.querySelectorAll('input').forEach(input =>
+                    input.setAttribute('required', 'required')
+                );
+            }
+            else if (selectedValue === 'petty_cash') {
+                pettyCashFields.style.display = 'block';
+                pettyCashFields.querySelector('input').setAttribute('required', 'required');
+            }
+            else if (selectedValue === 'noc_payment') {
+                nocPaymentFields.style.display = 'block';
+                nocPaymentFields.querySelector('input').setAttribute('required', 'required');
+            }
+            else if (selectedValue === 'subcontractor') {
+                subcontractorFields.style.display = 'block';
+                subcontractorFields.querySelector('input').setAttribute('required', 'required');
+            }
+            else if (selectedValue === 'third_party') {
+                thirdPartyFields.style.display = 'block';
+                thirdPartyFields.querySelector('input').setAttribute('required', 'required');
+            }
+        });
+    }
+
+    // Initialize conditional fields on page load
+    salaryExpenseHandling();
     facilityExpenseHandling();
     materialExpensehandling();
-    salaryExpenseHandling();
 
-
-    // Handle form submission
-    const form = document.getElementById('addNewMaterialForm');
-    form.addEventListener('submit', function(event) {
-        // Ensure the currently visible fields are focusable and valid
-        const visibleFields = form.querySelectorAll('input[required], select[required]');
+    // =========================== Form Validation for Material Add ===========================
+    document.getElementById('addNewMaterialForm').addEventListener('submit', function(event) {
+        const visibleFields = this.querySelectorAll('input[required], select[required]');
         let isValid = true;
 
         visibleFields.forEach(field => {
             if (!field.checkValidity()) {
                 field.focus();
                 isValid = false;
-                return false; // Stop the loop if invalid
+                return false;
             }
         });
 
@@ -1287,9 +1439,10 @@
             event.preventDefault();
         }
     });
-    // Function to open the modal for editing an existing salary
+
+    // =========================== Edit Salary ===========================
     function openEditSalaryModal(id) {
-        // Fetch the salary data and populate the form
+        // AJAX get existing data
         $.ajax({
             url: `/pages/get-salary-data/${id}`,
             type: 'GET',
@@ -1306,10 +1459,13 @@
                 $('#edit_noOfPerson').val(data.no_of_staff);
                 $('#edit_months').val(data.no_of_months);
 
-                // Handle conditional fields
-                if (['Sr. Client Relationship Manager', 'Sr. Manager Operations', 'Project Manager',
-                        'Sr. Civil Project Engineer'
-                    ].includes(data.expense)) {
+                // Overseeing sites
+                if ([
+                    'Sr. Client Relationship Manager',
+                    'Sr. Manager Operations',
+                    'Project Manager',
+                    'Sr. Civil Project Engineer'
+                ].includes(data.expenses)) {
                     $('#edit_overseeing-sites-field').show();
                     $('#edit_overseeing_sites').val(data.overseeing_sites);
                 } else {
@@ -1331,11 +1487,11 @@
         });
     }
 
-    // Event listener for edit form submission
+    // Update Salary
     $('#editSalaryForm').on('submit', function(e) {
         e.preventDefault();
-        var form = $(this);
-        var id = $('#edit_salary_id').val();
+        const form = $(this);
+        const id = $('#edit_salary_id').val();
 
         $.ajax({
             type: "POST",
@@ -1355,12 +1511,15 @@
         });
     });
 
-    // Event listener for expense field to show/hide conditional fields
+    // On change event for "edit_expense"
     $('#edit_expense').on('change', function() {
-        var selectedValue = $(this).val();
-        if (['Sr. Client Relationship Manager', 'Sr. Manager Operations', 'Project Manager',
-                'Sr. Civil Project Engineer'
-            ].includes(selectedValue)) {
+        const selectedValue = $(this).val();
+        if ([
+            'Sr. Client Relationship Manager',
+            'Sr. Manager Operations',
+            'Project Manager',
+            'Sr. Civil Project Engineer'
+        ].includes(selectedValue)) {
             $('#edit_overseeing-sites-field').show();
         } else {
             $('#edit_overseeing-sites-field').hide();
@@ -1373,15 +1532,14 @@
         }
     });
 
-    // Add click event listeners to your edit buttons
+    // Open Edit Salary Modal from table
     $('.editSalaryBtn').on('click', function() {
-        var id = $(this).data('id');
+        const id = $(this).data('id');
         openEditSalaryModal(id);
     });
 
-
+    // =========================== Edit Facilities ===========================
     function openEditFacilitesModal(id) {
-        // Fetch the salary data and populate the form
         $.ajax({
             url: `/pages/get-facility-data/${id}`,
             type: 'GET',
@@ -1394,16 +1552,10 @@
                 $('#editstatus').val(data.status);
                 $('#faci_cost_per_month').val(data.cost_per_month);
                 $('#editfacilitydescription').val(data.description);
-                $('#edit_status').val(data.status);
                 $('#editfacilitynoOfPerson').val(data.no_of_staff);
                 $('#eidtfacilitymonths').val(data.no_of_months);
 
-                // Handle conditional fields
-                // if (['Facility Cost', 'Other'].includes(data.type)) {
-                //     $('#edit_overseeing_sites').val(data.overseeing_sites);
-                // }
-
-                if (data.expense === 'other') {
+                if (data.expenses === 'other') {
                     $('#otherFacilityExpenseField').show();
                     $('#other_expense').val(data.other_expense);
                 } else {
@@ -1413,15 +1565,15 @@
                 $('#editFacilitiesModal').modal('show');
             },
             error: function() {
-                alert('Error fetching salary data');
+                alert('Error fetching facility data');
             }
         });
     }
 
     $('#editFacilitiesForm').on('submit', function(e) {
         e.preventDefault();
-        var form = $(this);
-        var id = $('#edit_facility_id').val();
+        const form = $(this);
+        const id = $('#edit_facility_id').val();
 
         $.ajax({
             type: "POST",
@@ -1430,132 +1582,64 @@
             success: function(data) {
                 if (data.success) {
                     $('#editFacilitiesModal').modal('hide');
-                    handleSuccess('Material cost updated successfully');
+                    handleSuccess('Facility cost updated successfully');
                 } else {
-                    alert('Error updating salary data');
+                    alert('Error updating facility data');
                 }
             },
             error: function() {
-                alert('Error updating salary data');
+                alert('Error updating facility data');
             }
         });
     });
 
     $('.editFacilitesBtn').on('click', function() {
-        var id = $(this).data('id');
+        const id = $(this).data('id');
         openEditFacilitesModal(id);
     });
 
-
-    document.querySelectorAll('.deletesalary-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            const userId = this.getAttribute('data-id');
-
-            // Confirm deletion with the user
-            if (confirm('Are you sure you want to delete this project record?')) {
-                deleteSalary(userId); // Call the function to delete the record
-            }
-        });
-    });
-
-    function deleteSalary(id) {
-        fetch('/api/delete-salary', { // Replace with your actual API endpoint
-                method: 'POST',
-                body: JSON.stringify({
-                    id: id
-                }),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    handleSuccess('Record deleted successfully');
-                } else {
-                    showAlert('danger', data.message || 'An error occurred while deleting the User record.');
-                }
-            })
-            .catch(error => {
-                console.error('Network error:', error);
-                showAlert('danger', 'A network error occurred. Please try again.');
-            });
-    }
-
-
-    document.querySelectorAll('.deletefacilities').forEach(button => {
-        button.addEventListener('click', function(e) {
-            const userId = this.getAttribute('data-id');
-
-            // Confirm deletion with the user
-            if (confirm('Are you sure you want to delete this project record?')) {
-                deleteFacilities(userId); // Call the function to delete the record
-            }
-        });
-    });
-
-    function deleteFacilities(id) {
-        fetch('/api/delete-facilities', { // Replace with your actual API endpoint
-                method: 'POST',
-                body: JSON.stringify({
-                    id: id
-                }),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    handleSuccess('Record deleted successfully');
-                } else {
-                    showAlert('danger', data.message || 'An error occurred while deleting the User record.');
-                }
-            })
-            .catch(error => {
-                console.error('Network error:', error);
-                showAlert('danger', 'A network error occurred. Please try again.');
-            });
-    }
-
+    // =========================== Edit Material ===========================
     function openEditMaterialModal(id) {
         $.ajax({
             url: `/pages/get-material-data/${id}`,
             type: 'GET',
             success: function(data) {
-                // Populate your form fields based on the returned data
                 $('#edit_material_id').val(data.id);
                 $('#edit_material_type').val(data.type);
                 $('#edit_material_project').val(data.project);
                 $('#edit_material_po').val(data.po);
                 $('#edit_material_expense').val(data.expense);
 
-                // Show/hide fields based on the expense type
+                // Hide all
+                $('#edit_consumedMaterialFields').hide();
+                $('#edit_pettyCashFields').hide();
+                $('#edit_nocPaymentFields').hide();
+                $('#edit_subcontractorFields').hide();
+                $('#edit_thirdPartyFields').hide();
+
+                // Pre-fill the fields
+                $('#edit_material_head').val(data.material_head || '');
+                $('#edit_quantity').val(data.quantity || '');
+                $('#edit_unit').val(data.unit || '');
+                $('#edit_unit_cost').val(data.unit_cost || '');
+                $('#edit_material_description').val(data.description || '');
+                $('#edit_material_status').val(data.status || '');
+                $('#edit_petty_cash_amount').val(data.petty_cash_amount || '');
+                $('#edit_noc_amount').val(data.noc_amount || '');
+                $('#edit_subcontractor_amount').val(data.subcontractor_amount || '');
+                $('#edit_thirdparty_amount').val(data.third_party_amount || '');
+
+                // Show relevant
                 if (data.expense === 'consumed_material') {
                     $('#edit_consumedMaterialFields').show();
-                    $('#edit_pettyCashFields, #edit_nocPaymentFields').hide();
-                    $('#edit_material_head').val(data.material_head);
-                    $('#edit_quantity').val(data.quantity);
-                    $('#edit_unit').val(data.unit);
-                    $('#edit_unit_cost').val(data.unit_cost);
-                    $('#edit_material_description').val(data.description);
-                    $('#edit_material_status').val(data.status);
                 } else if (data.expense === 'petty_cash') {
                     $('#edit_pettyCashFields').show();
-                    $('#edit_consumedMaterialFields, #edit_nocPaymentFields').hide();
-                    $('#edit_petty_cash_amount').val(data.petty_cash_amount);
-                    $('#edit_material_description').val(data.description);
                 } else if (data.expense === 'noc_payment') {
                     $('#edit_nocPaymentFields').show();
-                    $('#edit_consumedMaterialFields, #edit_pettyCashFields').hide();
-                    $('#edit_noc_amount').val(data.noc_amount);
-                    $('#edit_material_description').val(data.description);
+                } else if (data.expense === 'subcontractor') {
+                    $('#edit_subcontractorFields').show();
+                } else if (data.expense === 'third_party') {
+                    $('#edit_thirdPartyFields').show();
                 }
 
                 $('#editMaterialModal').modal('show');
@@ -1568,8 +1652,8 @@
 
     $('#editMaterialForm').on('submit', function(e) {
         e.preventDefault();
-        var form = $(this);
-        var id = $('#edit_material_id').val();
+        const form = $(this);
+        const id = $('#edit_material_id').val();
 
         $.ajax({
             type: "POST",
@@ -1590,61 +1674,303 @@
     });
 
     $('#edit_material_expense').on('change', function() {
-        var selectedValue = $(this).val();
-        $('#edit_consumedMaterialFields, #edit_pettyCashFields, #edit_nocPaymentFields').hide();
+        const selectedValue = $(this).val();
+        $('#edit_consumedMaterialFields').hide();
+        $('#edit_pettyCashFields').hide();
+        $('#edit_nocPaymentFields').hide();
+        $('#edit_subcontractorFields').hide();
+        $('#edit_thirdPartyFields').hide();
+
         if (selectedValue === 'consumed_material') {
             $('#edit_consumedMaterialFields').show();
         } else if (selectedValue === 'petty_cash') {
             $('#edit_pettyCashFields').show();
         } else if (selectedValue === 'noc_payment') {
             $('#edit_nocPaymentFields').show();
+        } else if (selectedValue === 'subcontractor') {
+            $('#edit_subcontractorFields').show();
+        } else if (selectedValue === 'third_party') {
+            $('#edit_thirdPartyFields').show();
         }
     });
 
-    // Add click event listeners to your edit buttons
     $('.editMaterialBtn').on('click', function() {
-        var id = $(this).data('id');
+        const id = $(this).data('id');
         openEditMaterialModal(id);
     });
 
-    function deleteMaterial(id) {
-        if (confirm('Are you sure you want to delete this material cost record?')) {
-            fetch('/api/delete-material', { // Replace with your actual API endpoint
-                    method: 'POST',
-                    body: JSON.stringify({
-                        id: id
-                    }),
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                    if (data.success) {
-                        handleSuccess('Record deleted successfully');
-                    } else {
-                        showAlert('danger', data.message || 'An error occurred while deleting the User record.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Network error:', error);
-                    showAlert('danger', 'A network error occurred. Please try again.');
-                });
-        }
-    }
-
-    // Add click event listeners to your delete buttons
-    $('.deleteMaterialBtn').on('click', function() {
-        var id = $(this).data('id');
-        deleteMaterial(id);
+    // =========================== Single-Delete (existing) ===========================
+    // Salary single delete
+    document.querySelectorAll('.deletesalary-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const salaryId = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this Salary record?')) {
+                deleteSalary(salaryId);
+            }
+        });
     });
 
+    function deleteSalary(id) {
+        fetch('/api/delete-salary', {
+            method: 'POST',
+            body: JSON.stringify({ id: id }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                handleSuccess('Record deleted successfully');
+            } else {
+                showAlert('danger', data.message || 'An error occurred while deleting the record.');
+            }
+        })
+        .catch(error => {
+            console.error('Network error:', error);
+            showAlert('danger', 'A network error occurred. Please try again.');
+        });
+    }
 
+    // Facilities single delete
+    document.querySelectorAll('.deletefacilities').forEach(button => {
+        button.addEventListener('click', function() {
+            const facilityId = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this facility record?')) {
+                deleteFacilities(facilityId);
+            }
+        });
+    });
 
+    function deleteFacilities(id) {
+        fetch('/api/delete-facilities', {
+            method: 'POST',
+            body: JSON.stringify({ id: id }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                handleSuccess('Record deleted successfully');
+            } else {
+                showAlert('danger', data.message || 'An error occurred while deleting the record.');
+            }
+        })
+        .catch(error => {
+            console.error('Network error:', error);
+            showAlert('danger', 'A network error occurred. Please try again.');
+        });
+    }
+
+    // Material single delete
+    document.querySelectorAll('.deleteMaterialBtn').forEach(button => {
+        button.addEventListener('click', function() {
+            const materialId = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this material record?')) {
+                deleteMaterial(materialId);
+            }
+        });
+    });
+
+    function deleteMaterial(id) {
+        fetch('/api/delete-material', {
+            method: 'POST',
+            body: JSON.stringify({ id: id }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                handleSuccess('Record deleted successfully');
+            } else {
+                showAlert('danger', data.message || 'An error occurred while deleting the record.');
+            }
+        })
+        .catch(error => {
+            console.error('Network error:', error);
+            showAlert('danger', 'A network error occurred. Please try again.');
+        });
+    }
+
+    // =========================== Bulk Delete (NEW) ===========================
+    // 1) Salary Bulk Delete
+    const selectAllSalary = document.getElementById('selectAllSalary');
+    const salaryCheckboxes = document.querySelectorAll('.selectSalaryCheckbox');
+    const deleteSelectedSalariesBtn = document.getElementById('deleteSelectedSalariesBtn');
+
+    selectAllSalary.addEventListener('change', function() {
+        salaryCheckboxes.forEach(cb => cb.checked = this.checked);
+        toggleBulkDeleteButton(salaryCheckboxes, deleteSelectedSalariesBtn);
+    });
+
+    salaryCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            // If not all are checked, uncheck "selectAll" 
+            if (!cb.checked) selectAllSalary.checked = false;
+            toggleBulkDeleteButton(salaryCheckboxes, deleteSelectedSalariesBtn);
+        });
+    });
+
+    deleteSelectedSalariesBtn.addEventListener('click', function() {
+        const selectedIds = Array.from(salaryCheckboxes)
+                                .filter(cb => cb.checked)
+                                .map(cb => cb.value);
+
+        if (selectedIds.length === 0) return;
+
+        if (!confirm('Are you sure you want to delete the selected salaries?')) {
+            return;
+        }
+
+        // Bulk delete fetch call
+        fetch('/bulk-delete-salary', {
+            method: 'POST',
+            body: JSON.stringify({ ids: selectedIds }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                handleSuccess('Selected Salary records deleted successfully');
+            } else {
+                showAlert('danger', data.message || 'An error occurred during bulk deletion.');
+            }
+        })
+        .catch(error => {
+            console.error('Network error:', error);
+            showAlert('danger', 'A network error occurred. Please try again.');
+        });
+    });
+
+    // 2) Facilities Bulk Delete
+    const selectAllFacilities = document.getElementById('selectAllFacilities');
+    const facilitiesCheckboxes = document.querySelectorAll('.selectFacilitiesCheckbox');
+    const deleteSelectedFacilitiesBtn = document.getElementById('deleteSelectedFacilitiesBtn');
+
+    selectAllFacilities.addEventListener('change', function() {
+        facilitiesCheckboxes.forEach(cb => cb.checked = this.checked);
+        toggleBulkDeleteButton(facilitiesCheckboxes, deleteSelectedFacilitiesBtn);
+    });
+
+    facilitiesCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            if (!cb.checked) selectAllFacilities.checked = false;
+            toggleBulkDeleteButton(facilitiesCheckboxes, deleteSelectedFacilitiesBtn);
+        });
+    });
+
+    deleteSelectedFacilitiesBtn.addEventListener('click', function() {
+        const selectedIds = Array.from(facilitiesCheckboxes)
+                                .filter(cb => cb.checked)
+                                .map(cb => cb.value);
+
+        if (selectedIds.length === 0) return;
+
+        if (!confirm('Are you sure you want to delete the selected facilities?')) {
+            return;
+        }
+
+        fetch('/bulk-delete-facilities', {
+            method: 'POST',
+            body: JSON.stringify({ ids: selectedIds }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                handleSuccess('Selected Facility records deleted successfully');
+            } else {
+                showAlert('danger', data.message || 'An error occurred during bulk deletion.');
+            }
+        })
+        .catch(error => {
+            console.error('Network error:', error);
+            showAlert('danger', 'A network error occurred. Please try again.');
+        });
+    });
+
+    // 3) Materials Bulk Delete
+    const selectAllMaterials = document.getElementById('selectAllMaterials');
+    const materialsCheckboxes = document.querySelectorAll('.selectMaterialsCheckbox');
+    const deleteSelectedMaterialsBtn = document.getElementById('deleteSelectedMaterialsBtn');
+
+    selectAllMaterials.addEventListener('change', function() {
+        materialsCheckboxes.forEach(cb => cb.checked = this.checked);
+        toggleBulkDeleteButton(materialsCheckboxes, deleteSelectedMaterialsBtn);
+    });
+
+    materialsCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            if (!cb.checked) selectAllMaterials.checked = false;
+            toggleBulkDeleteButton(materialsCheckboxes, deleteSelectedMaterialsBtn);
+        });
+    });
+
+    deleteSelectedMaterialsBtn.addEventListener('click', function() {
+        const selectedIds = Array.from(materialsCheckboxes)
+                                .filter(cb => cb.checked)
+                                .map(cb => cb.value);
+
+        if (selectedIds.length === 0) return;
+
+        if (!confirm('Are you sure you want to delete the selected materials?')) {
+            return;
+        }
+
+        fetch('/bulk-delete-material', {
+            method: 'POST',
+            body: JSON.stringify({ ids: selectedIds }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                handleSuccess('Selected Material records deleted successfully');
+            } else {
+                showAlert('danger', data.message || 'An error occurred during bulk deletion.');
+            }
+        })
+        .catch(error => {
+            console.error('Network error:', error);
+            showAlert('danger', 'A network error occurred. Please try again.');
+        });
+    });
+
+    // =========================== Helper: Show/Hide Bulk Delete Button ===========================
+    function toggleBulkDeleteButton(checkboxes, button) {
+        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+        button.style.display = anyChecked ? 'inline-block' : 'none';
+    }
+
+    // =========================== General Alert ===========================
     function showAlert(type, message) {
         const alertBox = document.getElementById('responseAlertnew');
         const alertMessage = document.getElementById('alertMessagenew');

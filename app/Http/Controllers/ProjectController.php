@@ -9,7 +9,6 @@ use App\Models\CapitalExpenditure;
 use App\Models\Loan;
 use App\Models\CostOverhead;
 use App\Models\DirectCost;
-use App\Models\BankBalance;
 use App\Models\FacilityCost;
 use App\Models\FinancialCost;
 use App\Models\IndirectCost;
@@ -28,9 +27,13 @@ use App\Models\TotalBudgetAllocated;
 use App\Models\Salary;
 use Illuminate\Http\Request;
 use App\Models\Project;
-use App\Models\PaymentOrderItem;
-use App\Models\PaymentOrderModel;
 use App\Models\User;
+use App\Models\Subcontractor;
+use App\Models\ThirdParty;
+use App\Models\PettyCash;
+use App\Models\NocPayment;
+
+
 use Exception;
 use Illuminate\Support\Facades\Validator;
 
@@ -153,75 +156,73 @@ class ProjectController extends Controller
     // Show budget project report summary
     public function showBudgetProjectReport($id)
     {
-        // Optionally, fetch project details using the ID
-        // $project = Project::findOrFail($id);
-
-        // Pass the project data to the view
-        $budget = BudgetProject::with(['directCosts', 'indirectCosts', 'revenuePlans', 'salaries', 'facilityCosts', 'materialCosts', 'costOverheads', 'financialCosts', 'capitalExpenditures'])
-            ->where('id', $id)
-            ->first();
-
-        // Retrieve additional data for the view
-        $projects = Project::findOrFail($budget->project_id);
-
-        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
-
-        $clients = BusinessClient::findOrFail($budget->client_id);
-        $units = BusinessUnit::findOrFail($budget->unit_id);
-
+        // Fetch the budget project with related models
+        $budget = BudgetProject::with([
+            'directCosts', 'indirectCosts', 'revenuePlans', 'salaries', 
+            'facilityCosts', 'materialCosts', 'costOverheads', 
+            'financialCosts', 'capitalExpenditures'
+        ])->where('id', $id)->first();
+    
+        if (!$budget) {
+            return redirect()->back()->with('error', 'Budget project not found');
+        }
+    
+        // Fetch additional project-related details
+        $existingPettyCash = PettyCash::where('project_id', $budget->id)->first();
+        $existingSubcon = Subcontractor::where('project_id', $budget->id)->first();
+        $existingThirdparty = ThirdParty::where('project_id', $budget->id)->first();
+        $existingNocPayment = NocPayment::where('project_id', $budget->id)->first();
+    
+        // Ensure related entities exist before accessing them
+        $projects = Project::find($budget->project_id) ?? new Project();
+        $clients = BusinessClient::find($budget->client_id) ?? new BusinessClient();
+        $units = BusinessUnit::find($budget->unit_id) ?? new BusinessUnit();
+    
+        $users = User::all();
+    
+        // Fetch all records with safety checks
         $allProjects = Project::all();
         $facilities = FacilityCost::all();
         $materials = MaterialCost::all();
-        $overheads = costOverhead::all();
-        $financials = financialCost::all();
-        $capitalExpenditures = capitalExpenditure::all();
+        $overheads = CostOverhead::all();
+        $financials = FinancialCost::all();
+        $capitalExpenditures = CapitalExpenditure::all();
         $revenuePlans = RevenuePlan::all();
         $salaries = Salary::all();
-
-        $directCost = DirectCost::firstOrNew([
-            'budget_project_id' => $id,
-        ]);
-
-        $indirectCost = IndirectCost::firstOrNew([
-            'budget_project_id' => $id,
-        ]);
-
+    
+        // Retrieve direct and indirect cost with default values
+        $directCost = DirectCost::firstOrNew(['budget_project_id' => $id]);
+        $indirectCost = IndirectCost::firstOrNew(['budget_project_id' => $id]);
+    
         // Retrieve the most recent RevenuePlan record
         $latestRevenuePlan = RevenuePlan::where('budget_project_id', $id)->latest('created_at')->first();
-
-        // Check if a record was found
-        if ($latestRevenuePlan) {
-            // Get the net_profit_after_tax value from the latest record
-            $totalNetProfitAfterTax = $latestRevenuePlan->net_profit_after_tax;
-            $totalNetProfitBeforeTax = $latestRevenuePlan->net_profit_before_tax;
-        } else {
-            // Handle the case where no records are found
-            $totalNetProfitAfterTax = 0; // Or handle accordingly
-            $totalNetProfitBeforeTax = 0; // Or handle accordingly
-        }
-
-        // Initialize total costs to 0
-        $totalDirectCost = 0;
-        $totalInDirectCost = 0;
-
-        // Calculate direct cost if it exists
-        if ($directCost->exists) {
-            $totalDirectCost = $directCost->calculateTotalDirectCost();
-        }
-
-        // Calculate indirect cost if it exists
-        if ($indirectCost->exists) {
-            $totalInDirectCost = $indirectCost->calculateTotalIndirectCost();
-        }
-
-        $totalSalary = Salary::where('budget_project_id', $id)->sum('total_cost');
-        $totalFacilityCost = FacilityCost::where('budget_project_id', $id)->sum('total_cost');
-        $totalMaterialCost = MaterialCost::where('budget_project_id', $id)->sum('total_cost');
-        $totalCostOverhead = CostOverhead::where('budget_project_id', $id)->sum('amount');
-        $totalFinancialCost = FinancialCost::where('budget_project_id', $id)->sum('total_cost');
-        $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $id)->sum('total_cost');
-
-        return view('content.pages.pages-budget-project-summary-report', compact('id', 'clients', 'projects', 'units', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'allProjects', 'facilities', 'materials', 'overheads', 'financials', 'capitalExpenditures', 'revenuePlans', 'salaries'));
+    
+        // Check if a revenue plan record was found
+        $totalNetProfitAfterTax = $latestRevenuePlan->net_profit_after_tax ?? 0;
+        $totalNetProfitBeforeTax = $latestRevenuePlan->net_profit_before_tax ?? 0;
+        $totalRevenue = $latestRevenuePlan ? $latestRevenuePlan->sumTotalAmount($budget->id) ?? 0 : 0;
+    
+        // Calculate total costs with null checks
+        $totalDirectCost = $directCost->exists ? $directCost->calculateTotalDirectCost() : 0;
+        $totalInDirectCost = $indirectCost->exists ? $indirectCost->calculateTotalIndirectCost() : 0;
+    
+        // Summing cost-related data, defaulting to 0 if null
+        $totalSalary = Salary::where('budget_project_id', $id)->sum('total_cost') ?? 0;
+        $totalFacilityCost = FacilityCost::where('budget_project_id', $id)->sum('total_cost') ?? 0;
+        $totalMaterialCost = MaterialCost::where('budget_project_id', $id)->sum('total_cost') ?? 0;
+        $totalCostOverhead = CostOverhead::where('budget_project_id', $id)->sum('amount') ?? 0;
+        $totalFinancialCost = FinancialCost::where('budget_project_id', $id)->sum('total_cost') ?? 0;
+        $totalCapitalExpenditure = CapitalExpenditure::where('budget_project_id', $id)->sum('total_cost') ?? 0;
+    
+        return view('content.pages.pages-budget-project-summary-report', compact(
+            'id', 'clients', 'projects', 'units', 'users', 'budget', 'totalDirectCost', 
+            'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 
+            'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 
+            'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'allProjects', 
+            'facilities', 'materials', 'overheads', 'financials', 'capitalExpenditures', 
+            'revenuePlans', 'salaries', 'totalRevenue', 'existingPettyCash', 
+            'existingSubcon', 'existingThirdparty', 'existingNocPayment'
+        ));
     }
 
     public function approveBudgetStatus(Request $request)
@@ -265,14 +266,7 @@ class ProjectController extends Controller
             TransferFromManagement::where('budget_project_id', $projectId)->delete();
             RemittanceTransfer::where('budget_project_id', $projectId)->delete();
             Loan::where('budget_project_id', $projectId)->delete();
-            BankBalance::where('budget_project_id', $projectId)->delete();
-            $paymentOrder = PaymentOrderItem::where('budget_project_id', $projectId)->first();
 
-            if ($paymentOrder) {
-                PaymentOrderModel::where('id', $paymentOrder->payment_order_id)->delete();
-            }
-            
-            PaymentOrderItem::where('budget_project_id', $projectId)->delete();
             $po = PurchaseOrder::where('project_id', $projectId)->first();
 
             if ($po) {
@@ -372,6 +366,113 @@ class ProjectController extends Controller
         $financialCost->delete();
         return redirect()->back()->with('success', 'Revenue Cost deleted successfully.');
     }
+    
+    //bulk delete salary
+    public function bulkDeleteSalary(Request $request)
+    {
+        // Retrieve the array of IDs from the request
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || count($ids) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No IDs provided for bulk delete.'
+            ], 400);
+        }
+
+        // Perform the bulk deletion
+        Salary::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Salaries deleted successfully.'
+        ]);
+    }
+
+    /**
+     * Bulk delete Facilities
+     */
+    public function bulkDeleteFacilities(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (!is_array($ids) || count($ids) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No IDs provided for bulk delete.'
+            ], 400);
+        }
+
+        FacilityCost::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Facilities deleted successfully.'
+        ]);
+    }
+    
+
+    /**
+     * Bulk delete Material
+     */
+    public function bulkDeleteMaterial(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (!is_array($ids) || count($ids) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No IDs provided for bulk delete.'
+            ], 400);
+        }
+
+        MaterialCost::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Materials deleted successfully.'
+        ]);
+    }
+    
+    public function bulkDeleteOverhead(Request $request)
+{
+    $ids = $request->input('ids', []);
+    if (!is_array($ids) || empty($ids)) {
+        return response()->json(['success' => false, 'message' => 'No IDs provided'], 400);
+    }
+    CostOverhead::whereIn('id', $ids)->delete();
+    return response()->json(['success' => true, 'message' => 'Overhead costs deleted']);
+}
+
+public function bulkDeleteFinancial(Request $request)
+{
+    $ids = $request->input('ids', []);
+    if (!is_array($ids) || empty($ids)) {
+        return response()->json(['success' => false, 'message' => 'No IDs provided'], 400);
+    }
+    FinancialCost::whereIn('id', $ids)->delete();
+    return response()->json(['success' => true, 'message' => 'Financial costs deleted']);
+}
+
+//bulk delete capital expenditure
+public function bulkDeleteCapital(Request $request)
+{
+    $ids = $request->input('ids', []);
+    if (!is_array($ids) || count($ids) === 0) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No IDs provided for deletion.'
+        ], 400);
+    }
+
+    // Adjust the model name if your model is not "CapitalExpenditure"
+    CapitalExpenditure::whereIn('id', $ids)->delete();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'CAPEX records deleted successfully.'
+    ]);
+}
+
+
 
     //UPDATE SALARY
     public function update(Request $request, $id)
@@ -395,6 +496,8 @@ class ProjectController extends Controller
         $facility->calculateAverageCost();
         return redirect()->back()->with('success', 'Facility cost updated successfully');
     }
+    
+    
 
     public function updateMaterial(Request $request, $id)
     {

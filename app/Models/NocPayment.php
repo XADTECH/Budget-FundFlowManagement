@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +21,6 @@ class NocPayment extends Model
     // Define the relationship with the Project model
     public function project()
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(BudgetProject::class);
     }
 }

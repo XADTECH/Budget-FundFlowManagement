@@ -46,6 +46,6 @@ class PurchaseOrder extends Model
     // Define the relationship with the PurchaseOrderItem model
     public function items()
     {
-        return $this->hasMany(PurchaseOrderItem::class, 'po_number', 'po_number');
+        return $this->hasMany(PurchaseOrderItem::class, 'purchase_order_id');
     }
 }

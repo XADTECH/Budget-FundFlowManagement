@@ -6,7 +6,7 @@
 
     <style>
         .limited-scroll {
-            max-height: 220px;
+            max-height: 200px;
             overflow-y: auto;
             display: block;
         }
@@ -19,73 +19,13 @@
         #success-alert {
             transition: opacity 0.5s ease-out;
         }
-
-        /* Adjust the size of the dropdown */
-        .form-select {
-            font-size: 0.9rem;
-            /* Slightly smaller text */
-            padding: 8px 12px;
-            /* Adjust padding for smaller height */
-            border-radius: 4px;
-            /* Ensure consistent border radius */
-        }
-
-        /* Adjust the size of the buttons */
-        .btn {
-            font-size: 0.9rem;
-            /* Set a smaller font size */
-            padding: 6px 12px;
-            /* Adjust padding for smaller buttons */
-            border-radius: 4px;
-            /* Keep a consistent border radius */
-        }
-
-        /* Specific button classes for more control */
-        .btn-success {
-            background-color: #28a745;
-            border-color: #218838;
-        }
-
-        .btn-primary {
-            background-color: #0067aa;
-            border-color: #005f8c;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            border-color: #c82333;
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            /* Set the width of the scrollbar */
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: #0067aa;
-            /* Same color as buttons */
-            border-radius: 4px;
-            /* Rounded corners for the scrollbar thumb */
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: #005f8c;
-            /* Darker shade when hovered */
-        }
-
-        ::-webkit-scrollbar-track {
-            background-color: #f1f1f1;
-            /* Light background for the track */
-            border-radius: 4px;
-        }
     </style>
 
     @if ($errors->any())
         <div class="alert alert-danger" id="error-alert">
             <!-- <button type="button" class="close" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button> -->
+                <span aria-hidden="true">&times;</span>
+            </button> -->
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -97,8 +37,8 @@
     @if (session('success'))
         <div class="alert alert-success" id="success-alert">
             <!-- <button type="button" class="close" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button> -->
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
             {{ session('success') }}
         </div>
     @endif
@@ -124,31 +64,31 @@
                     <form id="paymentOrderForm" method="POST" action="{{ route('paymentOrders.store') }}">
                         @csrf
                         <div class="row">
-                            <!-- To Date -->
                             <div class="col-sm-6">
-                                <label for="to_date" class="form-label">To Date</label>
-                                <input type="date" id="to_date" class="form-control" name="to_date"
-                                    placeholder="Select To Date" required />
+                                <label for="payment_date" class="form-label">Payment Date</label>
+                                <input type="date" id="payment_date" class="form-control" name="payment_date"
+                                    placeholder="Enter Payment Date" required />
                             </div>
-
-                            <!-- Company Name -->
                             <div class="col-sm-6">
-                                <label for="company_name" class="form-label">Company Name</label>
-                                <input type="text" id="company_name" class="form-control" name="company_name"
-                                    placeholder="Enter Company Name" required />
+                                <label for="payment_method" class="form-label">Payment Method</label>
+                                <select id="payment_method" name="payment_method" class="form-select" required>
+                                    <option disabled selected value>Choose Method</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="online transaction">Online Transaction</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="bank transfer">Bank Transfer</option>
+                                </select>
                             </div>
                         </div>
 
-                        <!-- Currency Selection -->
-                        <div class="row mt-3">
-                            <div class="col-sm-6">
-                                <label for="currency" class="form-label">Currency</label>
-                                <select id="currency" name="currency" class="form-control" required>
-                                    <option value="">Select Currency</option>
-                                    <option value="AED">AED</option>
-                                    <option value="SAR">SAR</option>
-                                    <option value="POUND">POUND</option>
-                                    <option value="USD">USD</option>
+                        <div class="row mt-4">
+                            <div class="col-sm-4">
+                                <label for="project_name" class="form-label">Choose Project </label>
+                                <select class="form-select" name="budget_project_id">
+                                    <option disabled selected value>Choose</option>
+                                    @foreach ($projects as $budget)
+                                        <option value="{{ $budget->id }}">{{ $budget->reference_code }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -160,11 +100,8 @@
                 </div>
             </div>
 
-
-
         </div>
     </div>
-
 
     <!-- Payment Orders Table -->
     <div class="card mt-4">
@@ -175,18 +112,19 @@
                     <tr>
                         <th>#</th>
                         <th>Date</th>
-                        <th>Payment Order Number</th>
-                        <th>Company Name</th>
+                        <th>Purchase Order Number</th>
+                        <th>Payment Method</th>
+                        <th>Project Reference</th>
+                        <th>Prepared</th>
                         <th>Approval</th>
-                        <th>Payment Status</th>
-                        <th>Currency</th>
-                        <th>Actions</th>
+                        <th>payment status</th>
+
                     </tr>
                 </thead>
                 <tbody id="paymentOrderTableBody">
                     @if ($paymentOrders->isEmpty())
                         <tr id="noDataRow">
-                            <td colspan="6" class="text-center">No Data</td>
+                            <td colspan="3" class="text-center">No Data</td>
                         </tr>
                     @else
                         @foreach ($paymentOrders as $po)
@@ -201,40 +139,19 @@
                                             {{ $po->payment_order_number }}
                                         </button>
                                     </form>
-                                </td>
-                                <td class="text-secondary" style="font-weight:bold">{{ $po->company_name }}</td>
-                                <td>
-                                    @if (auth()->user()->role === 'Admin')
-                                        <form action="{{ route('paymentOrder.updateStatus', $po->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <select class="form-select project-dropdown" name="status">
-                                                <option value="pending" {{ $po->status == 'pending' ? 'selected' : '' }}>
-                                                    Pending</option>
-                                                <option value="approved" {{ $po->status == 'approved' ? 'selected' : '' }}>
-                                                    Approved</option>
-                                                <option value="rejected" {{ $po->status == 'rejected' ? 'selected' : '' }}>
-                                                    Rejected</option>
-                                            </select>
 
-                                            <button type="submit" class="btn btn-primary mt-2">Update Status</button>
-                                        </form>
-                                    @else
-                                        <span class="text-success" style="font-weight:bold">{{ $po->status }}</span>
-                                    @endif
                                 </td>
-
+                                <td>{{ $po->payment_method }}</td>
+                                @php
+                                    $name = $projects->where('id', $po->budget_project_id)->first();
+                                @endphp
+                                <td>{{ $name->reference_code }}</td>
+                                @php
+                                    $user = $users->where('id', $po->user_id)->first();
+                                @endphp
+                                <td>{{ $user->email }}</td>
+                                <td class="text-success" style="font-weight:bold">{{ $po->status }}</td>
                                 <td class="text-success" style="font-weight:bold">{{ $po->paid_status }}</td>
-                                <td class="text-mute" style="font-weight:bold">{{ $po->currency }}</td>
-                                <td>
-                                    <!-- Delete Action -->
-                                    <form action="{{ route('paymentOrders.destroy', ['id' => $po->id]) }}" method="POST"
-                                        onsubmit="return confirm('Are you sure you want to delete this Payment Order?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
-                                </td>
                             </tr>
                         @endforeach
                     @endif
@@ -242,5 +159,7 @@
             </table>
         </div>
     </div>
+
+
 
 @endsection
