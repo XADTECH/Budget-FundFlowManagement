@@ -127,7 +127,6 @@ class BudgetController extends Controller
         $salaryExists = Salary::where('visa_status', 'Xad Visa')->where('budget_project_id', $project_id)->exists();
         $financialExists = FinancialCost::where('budget_project_id', $project_id)->exists();
 
-        
         // Retrieve additional data for the view
         $projects = Project::get();
         $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
@@ -138,7 +137,7 @@ class BudgetController extends Controller
 
         // Retrieve the most recent RevenuePlan record
         $latestRevenuePlan = RevenuePlan::where('budget_project_id', $project_id)->latest('created_at')->first();
-        
+
         $totalRevenue = 0;
 
         // Check if a record was found
@@ -146,7 +145,7 @@ class BudgetController extends Controller
             // Get the net_profit_after_tax value from the latest record
             $totalNetProfitAfterTax = $latestRevenuePlan->net_profit_after_tax;
             $totalNetProfitBeforeTax = $latestRevenuePlan->net_profit_before_tax;
-$totalRevenue = $latestRevenuePlan->sumTotalAmount($project_id) ?? 0;
+            $totalRevenue = $latestRevenuePlan->sumTotalAmount($project_id) ?? 0;
         } else {
             // Handle the case where no records are found
             $totalNetProfitAfterTax = 0; // Or handle accordingly
@@ -166,7 +165,7 @@ $totalRevenue = $latestRevenuePlan->sumTotalAmount($project_id) ?? 0;
         $existingThirdparty = ThirdParty::where('project_id', $project_id)->first();
 
         $existingNocPayment = NocPayment::where('project_id', $project_id)->first();
-        return view('content.pages.pages-edit-project-budget', compact('existingSubcon', 'existingThirdparty', 'project_id', 'clients', 'overHeads', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'existingNocPayment', 'existingPettyCash','totalRevenue'));
+        return view('content.pages.pages-edit-project-budget', compact('existingSubcon', 'existingThirdparty', 'project_id', 'clients', 'overHeads', 'projects', 'units', 'budgets', 'users', 'budget', 'totalDirectCost', 'totalSalary', 'totalFacilityCost', 'totalMaterialCost', 'totalInDirectCost', 'totalCostOverhead', 'totalFinancialCost', 'totalNetProfitAfterTax', 'totalCapitalExpenditure', 'totalNetProfitBeforeTax', 'existingNocPayment', 'existingPettyCash', 'totalRevenue'));
     }
 
     /**
@@ -422,6 +421,8 @@ $totalRevenue = $latestRevenuePlan->sumTotalAmount($project_id) ?? 0;
 
         // Calculate total allocated budget
         $totalAllocatedBudget = array_sum(array_column($allocations, 'allocated'));
+        // Calculate total committed (approved) budget
+        $totalCommittedBudget = array_sum(array_column($allocations, 'allocated'));
 
         $budget = BudgetProject::where('id', $request->input('project'))->first();
 
@@ -435,23 +436,52 @@ $totalRevenue = $latestRevenuePlan->sumTotalAmount($project_id) ?? 0;
         // Store the allocation in the TotalBudgetAllocated model
         $totalBudget = TotalBudgetAllocated::create([
             'budget_project_id' => $budget->id,
-            'total_salary' => $allocations['salary']['allocated'],
-            'total_facility_cost' => $allocations['facility']['allocated'],
-            'total_material_cost' => $allocations['material']['allocated'],
-            'total_cost_overhead' => $allocations['overhead']['allocated'],
-            'total_financial_cost' => $allocations['financial']['allocated'],
-            'total_capital_expenditure' => $allocations['Capital Expenditure']['allocated'],
+        
+            // Swap assigned values for salary
+            'total_salary' => $allocations['salary']['allocated'], 
+            'committed_allocated_salary' => $allocations['salary']['allocated'], 
+        
+            // Swap assigned values for facility cost
+            'total_facility_cost' => $allocations['facility']['allocated'], 
+            'committed_allocated_facility_cost' => $allocations['facility']['allocated'], 
+        
+            // Swap assigned values for material cost
+            'total_material_cost' => $allocations['material']['allocated'], 
+            'committed_allocated_material_cost' => $allocations['material']['allocated'], 
+        
+            // Swap assigned values for overhead cost
+            'total_cost_overhead' => $allocations['overhead']['allocated'], 
+            'committed_allocated_cost_overhead' => $allocations['overhead']['allocated'], 
+        
+            // Swap assigned values for financial cost
+            'total_financial_cost' => $allocations['financial']['allocated'], 
+            'committed_allocated_financial_cost' => $allocations['financial']['allocated'], 
+        
+            // Swap assigned values for capital expenditure
+            'total_capital_expenditure' => $allocations['Capital Expenditure']['allocated'], 
+            'committed_allocated_capital_expenditure' => $allocations['Capital Expenditure']['allocated'], 
+        
+            // Swap the allocated budget fields
             'allocated_budget' => $totalAllocatedBudget,
+            
             'initial_allocation_budget' => $totalAllocatedBudget,
+        
+            // Store the committed allocated budget as the previously allocated one
+            'committed_allocated_budget' => $totalCommittedBudget, 
+        
+            // If you want to store the entire allocated budget as the "remaining" initially:
+            'committed_remaining_fund' => $totalCommittedBudget,
+        
             'reference_code' => $budget->reference_code,
         ]);
+        
 
         // Optionally update the BudgetProject model's total budget allocation
         BudgetProject::where('id', $request->input('project'))->update([
             'total_budget_allocated' => $totalAllocatedBudget,
         ]);
 
-        // Iterate through the allocations and save each one to the database
+        //Iterate through the allocations and save each one to the database
         foreach ($allocations as $category => $allocation) {
             // Create a cash flow entry for each category
             CashFlow::create([
@@ -755,13 +785,11 @@ $totalRevenue = $latestRevenuePlan->sumTotalAmount($project_id) ?? 0;
         $cashFlows = $project->cashFlows()->get();
         return view('projects.cash_flow', compact('project', 'cashFlows'));
     }
-    
-    
-        //update and delete revenue 
+
+    //update and delete revenue
     public function updateRevenue(Request $request, $id)
     {
-
-            // return response($request->all());
+        // return response($request->all());
         $request->validate([
             'type' => 'required|string|max:255',
             'project' => 'required|exists:projects,id',

@@ -34,6 +34,7 @@ class TotalBudgetAllocated extends Model
         'remaining_fund', // Remaining funds
         'total_dpm', // Total daily payment
         'total_lpo', // Total Local Purchase Order (LPO)
+        'committed_total_lpo', // Committed total LPO
     ];
 
     // Define relationships

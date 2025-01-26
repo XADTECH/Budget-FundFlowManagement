@@ -34,11 +34,11 @@ class PurcahseOrderController extends Controller
     //add / show purchase order
     public function addPurchaseOrder(Request $request)
     {
-        $users = User::whereIn('role', ['Project Manager', 'Client Manager'])->get(['id', 'first_name', 'last_name']);
+        $users = User::all();
 
         $projects = BudgetProject::all();
         $loggedInUserId = Auth::id();
-        if (auth()->user()->role == 'Admin' || auth()->user()->role == 'Finance Manager') {
+        if (auth()->user()->role == 'Admin' || auth()->user()->role == 'Finance Manager' || auth()->user()->role == 'CEO') {
             $purchaseOrders = PurchaseOrder::all();
         } else {
             $purchaseOrders = PurchaseOrder::where('prepared_by', $loggedInUserId)->get();
@@ -46,9 +46,9 @@ class PurcahseOrderController extends Controller
 
         // Retrieve budgets where manager_id matches the logged-in user ID
         $budgets = BudgetProject::where('manager_id', $loggedInUserId)->get();
-        $budgetList = BudgetProject::get();
-        $userList = User::get();
-        $supplierlist = SupplierPrice::get();
+        $budgetList = BudgetProject::all();
+        $userList = User::all();
+        $supplierlist = SupplierPrice::all();
 
         return view('content.pages.pages-add-project-budget-purchase-order', compact('supplierlist', 'budgets', 'purchaseOrders', 'users', 'userList', 'budgetList', 'projects'));
     }
@@ -56,6 +56,8 @@ class PurcahseOrderController extends Controller
     //add / show purchase order
     public function storePurchaseOrder(Request $request)
     {
+
+        // return response($request->all());
 
         try {
             // Validate the incoming request data
@@ -130,6 +132,8 @@ class PurcahseOrderController extends Controller
     //save purchase order item
     public function editPurchaseOrder($POID)
     {
+
+       
         // Fetching the Purchase Order
         $purchaseOrder = PurchaseOrder::where('po_number', $POID)->first();
 
@@ -190,93 +194,143 @@ class PurcahseOrderController extends Controller
                 'poNumber' => 'required|string',
                 'items' => 'required|array', // Validate that items are an array
                 'totalAmount' => 'required|numeric',
-                'totalDiscount' => 'required|numeric',
-                'totalVAT' => 'required|numeric',
+                'totalDiscount' => 'nullable|numeric',
+                'totalVAT' => 'nullable|numeric',
+                'deliveryCharges' => 'nullable|numeric',
             ]);
-
+    
             // Fetch the purchase order ID using poNumber
             $purchaseOrder = PurchaseOrder::where('po_number', $request->poNumber)->firstOrFail();
-
-            // Update purchase order details
-            $purchaseOrder->subtotal = $request->totalAmount;
-            $purchaseOrder->vat = $request->totalVAT;
-            $purchaseOrder->total_discount = $request->totalDiscount;
-
+    
+            // Calculate the total amount considering discount, VAT, and delivery charges
+            $totalAmountWithExtras = $request->totalAmount 
+                                    - ($request->totalDiscount ?? 0) 
+                                    + ($request->totalVAT ?? 0) 
+                                    + ($request->deliveryCharges ?? 0);
+    
+            // Fetch budget related to the project
+            $budget = TotalBudgetAllocated::where('budget_project_id', $purchaseOrder->project_id)->first();
+    
+            if (!$budget) {
+                return back()->withErrors(['error' => 'Budget not found for this project.']);
+            }
+    
+            // Calculate available balance after considering utilization
+            $availableBalance = $budget->committed_allocated_budget - $budget->committed_total_lpo;
+    
+            // Ensure the new PO does not exceed the available budget
+            if ($totalAmountWithExtras > $availableBalance) {
+                return back()->withErrors(['error' => 'Insufficient balance budget for this project.']);
+            }
+    
             // Add total discount and VAT to each item safely
             $items = array_map(function ($item) use ($request) {
                 $item['totalDiscount'] = $request->totalDiscount ?? 0;
                 $item['totalVAT'] = $request->totalVAT ?? 0;
+                $item['deliveryCharges'] = $request->deliveryCharges ?? 0;
                 return $item;
             }, $request->items);
-
+    
             $encodedItems = json_encode($items);
-
-
-            // Process each item and update the budget
+    
+            // Process each item and update the budget allocation for different categories
             foreach ($items as $item) {
                 // Ensure required keys exist to prevent errors
                 if (!isset($item['b_id'], $item['category'], $item['itemTotal'])) {
                     continue;
                 }
-
-                // return response()->json($item);
-
-                $budget = TotalBudgetAllocated::where('budget_project_id', $item['b_id'])->first();
-                if ($budget) {
-                    switch ($item['category']) {
-                        case 'salary':
-                            $budget->committed_allocated_salary -= $item['itemTotal'] ?? 0;
-                            break;
-                        case 'material':
-                            $budget->committed_allocated_material_cost -= $item['itemTotal'] ?? 0;
-                            break;
-                        case 'facilities':
-                            $budget->committed_allocated_facility_cost -= $item['itemTotal'] ?? 0;
-                            break;
-                        case 'capital_expenses':
-                            $budget->committed_allocated_capital_expenditure -= $item['itemTotal'] ?? 0;
-                            break;
-                        case 'financial':
-                            $budget->committed_allocated_financial_cost -= $item['itemTotal'] ?? 0;
-                            break;
-                        default:
-                            \Log::warning('Unknown category found: ' . $item['category']);
-                            continue 2; // Skip this iteration if category is not valid
-                    }
-                    $budget->committed_allocated_budget -= $item['itemTotal'];
-                    $budget->save();
+    
+                $itemTotal = $item['itemTotal'] ?? 0;
+                $insufficientBudgetMessage = null;
+    
+                // Check category budget and overall committed budget before deduction
+                switch ($item['category']) {
+                    case 'salary':
+                        if ($budget->committed_allocated_salary >= $itemTotal && $budget->committed_allocated_budget >= $itemTotal) {
+                            $budget->committed_allocated_salary -= $itemTotal;
+                            $budget->committed_remaining_fund -= $itemTotal;
+                        } else {
+                            $insufficientBudgetMessage = 'Insufficient budget for salary category. Project ID: ' . $item['b_id'];
+                        }
+                        break;
+                    case 'material':
+                        if ($budget->committed_allocated_material_cost >= $itemTotal && $budget->committed_remaining_fund >= $itemTotal) {
+                            $budget->committed_allocated_material_cost -= $itemTotal;
+                            $budget->committed_remaining_fund -= $itemTotal;
+                        } else {
+                            $insufficientBudgetMessage = 'Insufficient budget for material category. Project ID: ' . $item['b_id'];
+                        }
+                        break;
+                    case 'facilities':
+                        if ($budget->committed_allocated_facility_cost >= $itemTotal && $budget->committed_remaining_fund >= $itemTotal) {
+                            $budget->committed_allocated_facility_cost -= $itemTotal;
+                            $budget->committed_remaining_fund -= $itemTotal;
+                        } else {
+                            $insufficientBudgetMessage = 'Insufficient budget for facilities category. Project ID: ' . $item['b_id'];
+                        }
+                        break;
+                    case 'capital_expenses':
+                        if ($budget->committed_allocated_capital_expenditure >= $itemTotal && $budget->committed_remaining_fund >= $itemTotal) {
+                            $budget->committed_allocated_capital_expenditure -= $itemTotal;
+                            $budget->committed_remaining_fund -= $itemTotal;
+                        } else {
+                            $insufficientBudgetMessage = 'Insufficient budget for capital expenses category. Project ID: ' . $item['b_id'];
+                        }
+                        break;
+                    case 'financial':
+                        if ($budget->committed_allocated_financial_cost >= $itemTotal && $budget->committed_allocated_budget >= $itemTotal) {
+                            $budget->committed_allocated_financial_cost -= $itemTotal;
+                            $budget->committed_allocated_budget -= $itemTotal;
+                        } else {
+                            $insufficientBudgetMessage = 'Insufficient budget for financial category. Project ID: ' . $item['b_id'];
+                        }
+                        break;
+                    default:
+                        $insufficientBudgetMessage = 'Unknown category found: ' . $item['category'];
                 }
+    
+                // If any category check failed, return back with error message
+                if ($insufficientBudgetMessage) {
+                    \Log::warning($insufficientBudgetMessage);
+                    return back()->withErrors(['budget_error' => $insufficientBudgetMessage]);
+                }
+    
+                // Add the total calculated amount (VAT, discount, delivery charges) to committed_total_lpo
+                $budget->committed_total_lpo += $totalAmountWithExtras;
             }
-
+    
+            // Update utilization and balance budget
+            $budget->budget_utilization += $totalAmountWithExtras;
+            $budget->balance_budget = $budget->allocated_budget - $budget->budget_utilization;
+            $budget->save();
+    
             // Save the purchase order items
-            $poItems = PurchaseOrderItem::create([
+            PurchaseOrderItem::create([
                 'purchase_order_id' => $purchaseOrder->id,
                 'po_number' => $request->poNumber,
                 'items' => $encodedItems, // Save the modified items with total discount and VAT
-                'allocated_budget_amount' => (float) $request->totalBudget, // Directly cast to float
-                'budget_utilization' => (float) $request->utilization, // Directly cast to float
-                'total_discount' => (float) $request->totalDiscount, // Directly cast to float
-                'total_vat' => (float) $request->totalVAT, // Directly cast to float
-                'balance_budget' => $request->balanceBudget, // Directly cast to float
-                'amount_requested' => (float) $request->requestAmount, // Directly cast to float
-                'total_balance' => (float) $request->total_balanceBudget, // Directly cast to float
-                'delivery_charges' => (float) $request->deliveryCharges,
-                'status' => $request->status,
+                'balance_budget' => (float) $budget->balance_budget, // Updated balance budget
+                'budget_utilization' => (float) $budget->budget_utilization, // Updated utilization
+                'total_discount' => (float) $request->totalDiscount ?? 0, 
+                'total_vat' => (float) $request->totalVAT ?? 0, 
+                'amount_requested' => $totalAmountWithExtras,
+                'delivery_charges' => (float) $request->deliveryCharges ?? 0,
+                'status' => 'submitted',
             ]);
-
+    
             // Update purchase order status
             $purchaseOrder->status = 'submitted';
             $purchaseOrder->is_verified = 1;
             $purchaseOrder->save();
-
-            // Return success response
+    
             return response()->json(['message' => 'Purchase order items saved successfully!'], 200);
         } catch (\Exception $e) {
             \Log::error('Error saving purchase order items: ' . $e->getMessage());
-
             return response()->json(['message' => 'Failed to save purchase order items. ' . $e->getMessage()], 500);
         }
     }
+    
+
 
     //destroy purchase order
     public function destroy($POID)
@@ -288,26 +342,27 @@ class PurcahseOrderController extends Controller
                 ->back()
                 ->withErrors(['error' => 'You are not authorized to delete this Purchase Order.']);
         }
-
+    
         // Fetch the Purchase Order
         $purchaseOrder = PurchaseOrder::where('po_number', $POID)->first();
-
+    
         // Check if the Purchase Order exists
         if (!$purchaseOrder) {
             return redirect()
                 ->back()
                 ->withErrors(['error' => 'Purchase Order not found!']);
         }
-
-        // Delete associated Purchase Order Items
-        $purchaseOrder->items()->delete();
-
+    
+        // Delete associated Purchase Order Items using direct query
+        PurchaseOrderItem::where('purchase_order_id', $purchaseOrder->id)->delete();
+    
         // Delete the Purchase Order
-        $purchaseOrder->delete();
-
+        PurchaseOrder::where('id', $purchaseOrder->id)->delete();
+    
         // Redirect back with success message
         return redirect()->back()->with('success', 'Purchase Order and its associated items deleted successfully.');
     }
+    
 
     //filter purchase order
 

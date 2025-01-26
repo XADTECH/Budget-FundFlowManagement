@@ -23,7 +23,8 @@ return new class extends Migration
             $table->decimal('allocated_budget', 15, 2)->default(0);  
             $table->decimal('initial_allocation_budget', 15, 2)->default(0);  
             $table->decimal('total_dpm', 15, 2)->default(0);  
-            $table->decimal('total_lpo', 15, 2)->default(0);   
+            $table->decimal('total_lpo', 15, 2)->default(0);
+            $table->decimal('committed_total_lpo', 15, 2)->default(0);   
             $table->string('reference_code');
             $table->timestamps();
         });

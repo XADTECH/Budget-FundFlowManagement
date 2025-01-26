@@ -17,14 +17,14 @@ return new class extends Migration {
             $table->string('po_number');
             $table->json('items'); // JSON field to store item details
             $table->unsignedBigInteger('project_id')->nullable();
-            $table->decimal('allocated_budget_amount')->default(0);
-            $table->decimal('amount_requested', 10, 2)->default(0);
-            $table->decimal('total_vat', 10, 2)->default(0);
-            $table->decimal('total_discount', 10, 2)->default(0);
-            $table->decimal('balance_budget')->default(0);
-            $table->decimal('total_balance')->default(0);
-            $table->decimal('delivery_charges')->default(0);
-            $table->decimal('budget_utilization')->default(0);
+            $table->decimal('allocated_budget_amount', 15, 2)->default(0);
+            $table->decimal('amount_requested', 15, 2)->default(0);
+            $table->decimal('total_vat', 15, 2)->default(0);
+            $table->decimal('total_discount', 15, 2)->default(0);
+            $table->decimal('balance_budget', 15, 2)->default(0);
+            $table->decimal('total_balance', 15, 2)->default(0);
+            $table->decimal('delivery_charges', 15, 2)->default(0);
+            $table->decimal('budget_utilization', 15, 2)->default(0);
             $table->timestamps();
         });
     }
