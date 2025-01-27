@@ -303,73 +303,75 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('project_search');
-            const dropdown = document.getElementById('project_name');
-            const dropdownContainer = document.querySelector('.dropdown-options');
-            const hiddenProjectId = document.getElementById('project_id_hidden');
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('project_search');
+    const dropdown = document.getElementById('project_name');
+    const dropdownContainer = document.querySelector('.dropdown-options');
+    const hiddenProjectId = document.getElementById('project_id_hidden');
 
-            // Filter the dropdown options based on user input
-            searchInput.addEventListener('input', function() {
-                const searchText = searchInput.value.toLowerCase();
-                let found = false;
+    // Function to check and set project_id based on input text
+    function matchProjectInput() {
+        const searchText = searchInput.value.toLowerCase().trim();
+        let found = false;
 
-                for (let i = 0; i < dropdown.options.length; i++) {
-                    const option = dropdown.options[i];
-                    if (option.text.toLowerCase().includes(searchText)) {
-                        option.style.display = 'block';
-                        found = true;
-                    } else {
-                        option.style.display = 'none';
-                    }
+        for (let i = 0; i < dropdown.options.length; i++) {
+            const option = dropdown.options[i];
+            if (option.text.toLowerCase().includes(searchText)) {
+                option.style.display = 'block';
+                if (option.text.toLowerCase() === searchText) {
+                    hiddenProjectId.value = option.value;
+                    found = true;
                 }
-
-                dropdownContainer.style.display = found ? 'block' : 'none';
-            });
-
-            // When user selects an option, update hidden input and search box
-            dropdown.addEventListener('change', function() {
-                const selectedIndex = dropdown.selectedIndex;
-                if (selectedIndex > 0) {
-                    const selectedValue = dropdown.options[selectedIndex].value;
-                    const selectedText = dropdown.options[selectedIndex].text;
-
-                    // Set hidden input to the selected ID
-                    hiddenProjectId.value = selectedValue;
-
-                    // Show the selected text in the search box
-                    searchInput.value = selectedText;
-                }
-
-                dropdownContainer.style.display = 'none';
-            });
-
-            dropdown.addEventListener('click', function() {
-                const selectedValue = dropdown.value;
-                hiddenProjectId.value = selectedValue;
-            });
-
-
-            // Hide the dropdown if user clicks outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.dropdown-container')) {
-                    dropdownContainer.style.display = 'none';
-                }
-            });
-
-            // Show the dropdown when the search input is focused
-            searchInput.addEventListener('focus', function() {
-                dropdownContainer.style.display = 'block';
-            });
-        });
-
-        document.querySelector('form').addEventListener('submit', function(event) {
-            if (!hiddenProjectId.value) {
-                event.preventDefault();
-                alert('Please select a valid project.');
+            } else {
+                option.style.display = 'none';
             }
-        });
-    </script>
+        }
+
+        dropdownContainer.style.display = found ? 'block' : 'none';
+    }
+
+    // Event listener for input/paste to check for matching project
+    searchInput.addEventListener('input', matchProjectInput);
+    searchInput.addEventListener('paste', function() {
+        setTimeout(matchProjectInput, 100);
+    });
+
+    // When user selects an option, update hidden input and search box
+    dropdown.addEventListener('change', function() {
+        const selectedIndex = dropdown.selectedIndex;
+        if (selectedIndex > 0) {
+            hiddenProjectId.value = dropdown.options[selectedIndex].value;
+            searchInput.value = dropdown.options[selectedIndex].text;
+        }
+        dropdownContainer.style.display = 'none';
+    });
+
+    dropdown.addEventListener('click', function() {
+        hiddenProjectId.value = dropdown.value;
+    });
+
+    // Hide the dropdown if user clicks outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.dropdown-container')) {
+            dropdownContainer.style.display = 'none';
+        }
+    });
+
+    // Show the dropdown when the search input is focused
+    searchInput.addEventListener('focus', function() {
+        dropdownContainer.style.display = 'block';
+    });
+
+    // Validate form before submission
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!hiddenProjectId.value) {
+            event.preventDefault();
+            alert('Please select a valid project.');
+        }
+    });
+});
+
+  </script>
 
 @endsection

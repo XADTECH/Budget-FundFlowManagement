@@ -25,6 +25,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('payment_term');
             $table->decimal('subtotal', 10, 2)->nullable();
+            $table->decimal('delivery_charges', 10, 2)->nullable();
             $table->decimal('vat', 10, 2)->nullable();
             $table->decimal('total', 10, 2)->nullable();
             $table->decimal('budget_total', 10, 2)->nullable();

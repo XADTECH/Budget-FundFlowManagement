@@ -317,6 +317,7 @@ Route::post('/pages/delete-budget-project-revenue/{id}', [BudgetController::clas
 
     Route::get('/filter-purchase-orders', [PurcahseOrderController::class, 'filterPurchaseOrders'])->name('filter-purchase-orders');
 
+    Route::get('/get-purchase-order/{poNumber}', [PurcahseOrderController::class, 'getPurchaseOrder']);
 
 
     //user management
